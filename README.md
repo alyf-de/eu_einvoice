@@ -36,6 +36,13 @@ This app can use GitHub Actions for CI. The following workflows are configured:
 - Linters: Runs [Frappe Semgrep Rules](https://github.com/frappe/semgrep-rules) and [pip-audit](https://pypi.org/project/pip-audit/) on every pull request.
 
 
+### Dependencies
+
+- [drafthorse](https://pypi.org/project/drafthorse/)
+    Create and parse ZUGFeRD XML invoices
+- [factur-x](https://pypi.org/project/factur-x/)
+    Extract XML file from a PDF file
+
 ### License
 
 gpl-3.0
