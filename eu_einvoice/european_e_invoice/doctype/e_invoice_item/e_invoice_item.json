@@ -1,0 +1,124 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-08-25 10:57:25.968745",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "product_section",
+  "product_name",
+  "seller_product_id",
+  "product_description",
+  "column_break_grml",
+  "item",
+  "delivery_section",
+  "billed_quantity",
+  "unit_code",
+  "column_break_pmsf",
+  "uom",
+  "agreement_section",
+  "net_rate",
+  "settlement_section",
+  "tax_rate",
+  "total_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "product_section",
+   "fieldtype": "Section Break",
+   "label": "Product"
+  },
+  {
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Product Name"
+  },
+  {
+   "fieldname": "product_description",
+   "fieldtype": "Small Text",
+   "label": "Product Description"
+  },
+  {
+   "fieldname": "column_break_grml",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "delivery_section",
+   "fieldtype": "Section Break",
+   "label": "Delivery"
+  },
+  {
+   "fieldname": "billed_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Billed Quantity"
+  },
+  {
+   "fieldname": "unit_code",
+   "fieldtype": "Data",
+   "label": "Unit Code"
+  },
+  {
+   "fieldname": "column_break_pmsf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "agreement_section",
+   "fieldtype": "Section Break",
+   "label": "Agreement"
+  },
+  {
+   "fieldname": "net_rate",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Net Rate"
+  },
+  {
+   "fieldname": "settlement_section",
+   "fieldtype": "Section Break",
+   "label": "Settlement"
+  },
+  {
+   "fieldname": "tax_rate",
+   "fieldtype": "Percent",
+   "label": "Tax Rate"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total Amount"
+  },
+  {
+   "fieldname": "seller_product_id",
+   "fieldtype": "Data",
+   "label": "Seller Product ID"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-08-25 11:33:39.214634",
+ "modified_by": "Administrator",
+ "module": "European e-Invoice",
+ "name": "E Invoice Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
