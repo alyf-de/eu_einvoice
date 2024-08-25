@@ -65,6 +65,7 @@
    "label": "E-Invoice"
   },
   {
+   "depends_on": "einvoice",
    "fieldname": "trade_tab",
    "fieldtype": "Tab Break",
    "label": "Trade"
@@ -234,7 +235,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-25 12:39:27.030108",
+ "modified": "2024-08-25 16:30:40.653103",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
