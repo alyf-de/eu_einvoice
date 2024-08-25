@@ -12,6 +12,7 @@
   "product_description",
   "column_break_grml",
   "item",
+  "create_item",
   "delivery_section",
   "billed_quantity",
   "unit_code",
@@ -107,12 +108,19 @@
    "fieldname": "seller_product_id",
    "fieldtype": "Data",
    "label": "Seller Product ID"
+  },
+  {
+   "default": "0",
+   "fieldname": "create_item",
+   "fieldtype": "Check",
+   "label": "Create Item",
+   "read_only_depends_on": "item"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-25 11:33:39.214634",
+ "modified": "2024-08-25 16:31:31.794308",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Item",
