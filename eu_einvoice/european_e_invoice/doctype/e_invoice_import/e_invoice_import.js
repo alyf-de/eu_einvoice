@@ -19,5 +19,13 @@ frappe.ui.form.on("E Invoice Import", {
 				],
 			};
 		});
+
+		frm.set_query("item", "items", function (doc, cdt, cdn) {
+			return {
+				filters: {
+					is_purchase_item: 1,
+				},
+			};
+		});
 	},
 });
