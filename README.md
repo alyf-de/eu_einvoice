@@ -2,6 +2,9 @@
 
 Create and import european e-invoices with ERPNext
 
+> [!WARNING]
+> This app is under active development and should **not** yet be used in production environments. Things can **break and change at any time**.
+
 ### Installation
 
 You can install this app using the [bench](https://github.com/frappe/bench) CLI:
