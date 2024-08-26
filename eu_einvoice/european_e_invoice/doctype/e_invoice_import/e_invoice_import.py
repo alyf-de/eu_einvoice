@@ -1,13 +1,13 @@
 # Copyright (c) 2024, ALYF GmbH and contributors
 # For license information, please see license.txt
 
-import json
+
 from pathlib import Path
 
 import frappe
 from drafthorse.models.document import Document as DrafthorseDocument
 from erpnext import get_default_company
-from frappe import _dict, get_site_path
+from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
 from frappe.utils.data import today
 
@@ -25,13 +25,13 @@ class EInvoiceImport(Document):
 
 	def before_submit(self):
 		if not self.supplier:
-			frappe.throw("Please create or select a supplier before submitting")
+			frappe.throw(_("Please create or select a supplier before submitting"))
 
 		if not self.company:
-			frappe.throw("Please select a company before submitting")
+			frappe.throw(_("Please select a company before submitting"))
 
-		if not self.items:
-			frappe.throw("No items found in the invoice")
+		if not (self.items and all(row.item for row in self.items)):
+			frappe.throw(_("Please map all invoice lines to an item before submitting"))
 
 		self.create_purchase_invoice()
 
