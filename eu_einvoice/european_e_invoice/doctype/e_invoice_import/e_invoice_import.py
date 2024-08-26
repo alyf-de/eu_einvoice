@@ -55,6 +55,17 @@ class EInvoiceImport(Document):
 		supplier_address: DF.Link | None
 	# end: auto-generated types
 
+	def validate(self):
+		if (
+			self.id
+			and self.supplier
+			and frappe.db.get_single_value("Accounts Settings", "check_supplier_invoice_uniqueness")
+			and frappe.db.exists(
+				"E Invoice Import", {"id": self.id, "name": ("!=", self.name), "supplier": self.supplier}
+			)
+		):
+			frappe.throw(_("An E Invoice Import with the same Invoice ID and Supplier already exists."))
+
 	def before_save(self):
 		if self.einvoice and self.has_value_changed("einvoice"):
 			self.parse_einvoice()
