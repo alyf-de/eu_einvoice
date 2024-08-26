@@ -251,7 +251,7 @@ def create_supplier_address(source_name, target_doc=None):
 
 
 @frappe.whitelist()
-def create_item(source_doc, target_doc=None):
+def create_item(source_name, target_doc=None):
 	def post_process(source, target):
 		if frappe.db.get_single_value("Stock Settings", "item_naming_by") == "Item Code":
 			target.item_code = target.item_name
@@ -266,7 +266,7 @@ def create_item(source_doc, target_doc=None):
 
 	return get_mapped_doc(
 		"E Invoice Item",
-		source_doc,
+		source_name,
 		{
 			"E Invoice Item": {
 				"doctype": "Item",
