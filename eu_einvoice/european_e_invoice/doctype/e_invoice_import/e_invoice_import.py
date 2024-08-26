@@ -3,6 +3,7 @@
 
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import frappe
 from drafthorse.models.document import Document as DrafthorseDocument
@@ -10,6 +11,11 @@ from erpnext import get_default_company
 from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
 from frappe.utils.data import today
+
+if TYPE_CHECKING:
+	from drafthorse.models.party import PostalTradeAddress, TradeParty
+	from drafthorse.models.tradelines import LineItem
+	from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
 
 
 class EInvoiceImport(Document):
@@ -85,7 +91,7 @@ class EInvoiceImport(Document):
 		for li in doc.trade.items.children:
 			self.parse_line_item(li)
 
-	def parse_seller(self, seller):
+	def parse_seller(self, seller: "TradeParty"):
 		self.seller_name = str(seller.name)
 		if frappe.db.exists("Supplier", self.seller_name):
 			self.supplier = self.seller_name
@@ -97,7 +103,7 @@ class EInvoiceImport(Document):
 
 		self.parse_address(seller.address, "seller")
 
-	def parse_buyer(self, buyer):
+	def parse_buyer(self, buyer: "TradeParty"):
 		self.buyer_name = str(buyer.name)
 		if frappe.db.exists("Company", self.buyer_name):
 			self.company = self.buyer_name
@@ -106,7 +112,7 @@ class EInvoiceImport(Document):
 
 		self.parse_address(buyer.address, "buyer")
 
-	def parse_address(self, address, prefix: str) -> _dict:
+	def parse_address(self, address: "PostalTradeAddress", prefix: str) -> _dict:
 		country = frappe.db.get_value("Country", {"code": str(address.country_id).lower()}, "name")
 
 		self.set(f"{prefix}_city", str(address.city_name))
@@ -115,7 +121,7 @@ class EInvoiceImport(Document):
 		self.set(f"{prefix}_postcode", str(address.postcode))
 		self.set(f"{prefix}_country", str(country))
 
-	def parse_line_item(self, li):
+	def parse_line_item(self, li: "LineItem"):
 		item = self.append("items")
 		supplier = None
 
@@ -167,7 +173,7 @@ class EInvoiceImport(Document):
 		self.create_supplier_address = 0
 
 	def create_purchase_invoice(self):
-		pi = frappe.new_doc("Purchase Invoice")
+		pi: "PurchaseInvoice" = frappe.new_doc("Purchase Invoice")
 		pi.supplier = self.supplier
 		pi.company = self.company
 		pi.posting_date = today()
