@@ -11,6 +11,15 @@ frappe.ui.form.on("E Invoice Import", {
 			};
 		});
 
+		frm.set_query("purchase_order", function (doc) {
+			return {
+				filters: {
+					docstatus: 1,
+					company: doc.company,
+				},
+			};
+		});
+
 		frm.set_query("supplier_address", function (doc) {
 			return {
 				filters: [
