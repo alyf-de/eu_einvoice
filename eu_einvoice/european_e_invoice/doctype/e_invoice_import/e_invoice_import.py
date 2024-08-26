@@ -14,7 +14,7 @@ from frappe.utils.data import today
 
 class EInvoiceImport(Document):
 	def before_save(self):
-		if self.has_value_changed("einvoice"):
+		if self.einvoice and self.has_value_changed("einvoice"):
 			self.parse_einvoice()
 
 		if not self.supplier and self.create_supplier:
