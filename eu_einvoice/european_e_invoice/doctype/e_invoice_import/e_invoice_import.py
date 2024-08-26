@@ -57,6 +57,9 @@ class EInvoiceImport(Document):
 	def before_save(self):
 		if self.einvoice and self.has_value_changed("einvoice"):
 			self.parse_einvoice()
+			self.guess_supplier()
+			self.guess_company()
+			self.guess_uom()
 
 	def before_submit(self):
 		if not self.supplier:
@@ -86,23 +89,13 @@ class EInvoiceImport(Document):
 
 	def parse_seller(self, seller: "TradeParty"):
 		self.seller_name = str(seller.name)
-		if frappe.db.exists("Supplier", self.seller_name):
-			self.supplier = self.seller_name
 		self.seller_tax_id = (
 			seller.tax_registrations.children[0].id._text if seller.tax_registrations.children else None
 		)
-		if self.seller_tax_id and not self.supplier:
-			self.supplier = frappe.db.get_value("Supplier", {"tax_id": self.seller_tax_id}, "name")
-
 		self.parse_address(seller.address, "seller")
 
 	def parse_buyer(self, buyer: "TradeParty"):
 		self.buyer_name = str(buyer.name)
-		if frappe.db.exists("Company", self.buyer_name):
-			self.company = self.buyer_name
-		else:
-			self.company = get_default_company()
-
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: "PostalTradeAddress", prefix: str) -> _dict:
@@ -137,11 +130,39 @@ class EInvoiceImport(Document):
 
 		item.billed_quantity = float(li.delivery.billed_quantity._amount)
 		item.unit_code = str(li.delivery.billed_quantity._unit_code)
-		item.uom = frappe.db.get_value("UOM", {"common_code": item.unit_code}, "name")
-
 		item.net_rate = rate
 		item.tax_rate = float(li.settlement.trade_tax.rate_applicable_percent._value)
 		item.total_amount = float(li.settlement.monetary_summation.total_amount._value)
+
+	def guess_supplier(self):
+		if self.supplier:
+			return
+
+		if frappe.db.exists("Supplier", self.seller_name):
+			self.supplier = self.seller_name
+
+		if self.seller_tax_id:
+			self.supplier = frappe.db.get_value("Supplier", {"tax_id": self.seller_tax_id}, "name")
+
+	def guess_company(self):
+		if self.company:
+			return
+
+		if frappe.db.exists("Company", self.buyer_name):
+			self.company = self.buyer_name
+		else:
+			self.company = get_default_company()
+
+	def guess_uom(self):
+		for row in self.items:
+			if row.uom:
+				continue
+
+			if row.unit_code:
+				row.uom = frappe.db.get_value("UOM", {"common_code": row.unit_code}, "name")
+			elif row.item:
+				stock_uom, purchase_uom = frappe.db.get_value("Item", row.item, ["stock_uom", "purchase_uom"])
+				row.uom = purchase_uom or stock_uom
 
 
 @frappe.whitelist()
