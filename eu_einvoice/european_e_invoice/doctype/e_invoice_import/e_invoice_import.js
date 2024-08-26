@@ -28,4 +28,16 @@ frappe.ui.form.on("E Invoice Import", {
 			};
 		});
 	},
+	create_supplier: function (frm) {
+		frappe.model.open_mapped_doc({
+			method: "eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.create_supplier",
+			frm: frm,
+		});
+	},
+	create_supplier_address: function (frm) {
+		frappe.model.open_mapped_doc({
+			method: "eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.create_supplier_address",
+			frm: frm,
+		});
+	},
 });

@@ -10,6 +10,7 @@ from drafthorse.models.document import Document as DrafthorseDocument
 from erpnext import get_default_company
 from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
 from frappe.utils.data import today
 
 if TYPE_CHECKING:
@@ -37,8 +38,6 @@ class EInvoiceImport(Document):
 		buyer_name: DF.Data | None
 		buyer_postcode: DF.Data | None
 		company: DF.Link | None
-		create_supplier: DF.Check
-		create_supplier_address: DF.Check
 		currency: DF.Link | None
 		einvoice: DF.Attach | None
 		id: DF.Data | None
@@ -58,12 +57,6 @@ class EInvoiceImport(Document):
 	def before_save(self):
 		if self.einvoice and self.has_value_changed("einvoice"):
 			self.parse_einvoice()
-
-		if not self.supplier and self.create_supplier:
-			self._create_supplier()
-
-		if not self.supplier_address and self.create_supplier_address:
-			self._create_supplier_address()
 
 	def before_submit(self):
 		if not self.supplier:
@@ -150,28 +143,6 @@ class EInvoiceImport(Document):
 		item.tax_rate = float(li.settlement.trade_tax.rate_applicable_percent._value)
 		item.total_amount = float(li.settlement.monetary_summation.total_amount._value)
 
-	def _create_supplier(self):
-		supplier = frappe.new_doc("Supplier")
-		supplier.supplier_name = self.seller_name
-		supplier.tax_id = self.seller_tax_id
-		supplier.insert()
-
-		self.supplier = supplier.name
-		self.create_supplier = 0
-
-	def _create_supplier_address(self):
-		address = frappe.new_doc("Address")
-		address.address_line1 = self.seller_address_line_1
-		address.address_line2 = self.seller_address_line_2
-		address.city = self.seller_city
-		address.pincode = self.seller_postcode
-		address.country = self.seller_country
-		address.append("links", {"link_doctype": "Supplier", "link_name": self.supplier})
-		address.insert()
-
-		self.supplier_address = address.name
-		self.create_supplier_address = 0
-
 	def create_purchase_invoice(self):
 		pi: "PurchaseInvoice" = frappe.new_doc("Purchase Invoice")
 		pi.supplier = self.supplier
@@ -195,3 +166,48 @@ class EInvoiceImport(Document):
 		# pi.einvoice_import = self.name
 		pi.set_missing_values()
 		pi.insert(ignore_mandatory=True)
+
+
+@frappe.whitelist()
+def create_supplier(source_name, target_doc=None):
+	return get_mapped_doc(
+		"E Invoice Import",
+		source_name,
+		{
+			"E Invoice Import": {
+				"doctype": "Supplier",
+				"field_map": {
+					"seller_name": "supplier_name",
+					"seller_tax_id": "tax_id",
+					"seller_country": "country",
+					"currency": "default_currency",
+				},
+			}
+		},
+		target_doc,
+	)
+
+
+@frappe.whitelist()
+def create_supplier_address(source_name, target_doc=None):
+	def post_process(source, target):
+		target.append("links", {"link_doctype": "Supplier", "link_name": source.supplier})
+
+	return get_mapped_doc(
+		"E Invoice Import",
+		source_name,
+		{
+			"E Invoice Import": {
+				"doctype": "Address",
+				"field_map": {
+					"seller_address_line_1": "address_line1",
+					"seller_address_line_2": "address_line2",
+					"seller_city": "city",
+					"seller_postcode": "pincode",
+					"seller_country": "country",
+				},
+			}
+		},
+		target_doc,
+		post_process,
+	)

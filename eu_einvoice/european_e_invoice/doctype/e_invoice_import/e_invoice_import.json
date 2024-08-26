@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "autoname": "hash",
  "creation": "2024-08-24 09:41:48.844623",
  "doctype": "DocType",
@@ -114,10 +113,10 @@
   },
   {
    "default": "0",
+   "depends_on": "eval: !doc.supplier",
    "fieldname": "create_supplier",
-   "fieldtype": "Check",
-   "label": "Create Supplier",
-   "read_only_depends_on": "supplier"
+   "fieldtype": "Button",
+   "label": "Create Supplier"
   },
   {
    "fieldname": "column_break_reul",
@@ -192,10 +191,10 @@
   },
   {
    "default": "0",
+   "depends_on": "eval: doc.supplier && !doc.supplier_address",
    "fieldname": "create_supplier_address",
-   "fieldtype": "Check",
-   "label": "Create Supplier Address",
-   "read_only_depends_on": "eval: doc.supplier_address || (!doc.supplier && !doc.create_supplier)"
+   "fieldtype": "Button",
+   "label": "Create Supplier Address"
   },
   {
    "fieldname": "seller_tax_id",
@@ -235,7 +234,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-25 16:30:40.653103",
+ "modified": "2024-08-26 13:51:00.482706",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
