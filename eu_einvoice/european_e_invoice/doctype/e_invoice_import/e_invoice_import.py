@@ -43,6 +43,7 @@ class EInvoiceImport(Document):
 		id: DF.Data | None
 		issue_date: DF.Date | None
 		items: DF.Table[EInvoiceItem]
+		purchase_order: DF.Link | None
 		seller_address_line_1: DF.Data | None
 		seller_address_line_2: DF.Data | None
 		seller_city: DF.Data | None
@@ -279,4 +280,22 @@ def create_item(source_name, target_doc=None):
 		},
 		target_doc,
 		post_process,
+	)
+
+
+@frappe.whitelist()
+def create_einvoice_from_po(source_name, target_doc=None):
+	return get_mapped_doc(
+		"Purchase Order",
+		source_name,
+		{
+			"Purchase Order": {
+				"doctype": "E Invoice Import",
+				"field_map": {
+					"name": "purchase_order",
+				},
+				"field_no_map": ["items"],
+			}
+		},
+		target_doc,
 	)
