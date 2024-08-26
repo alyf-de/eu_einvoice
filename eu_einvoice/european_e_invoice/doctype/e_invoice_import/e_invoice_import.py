@@ -13,6 +13,42 @@ from frappe.utils.data import today
 
 
 class EInvoiceImport(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_item.e_invoice_item import EInvoiceItem
+
+		amended_from: DF.Link | None
+		buyer_address_line_1: DF.Data | None
+		buyer_address_line_2: DF.Data | None
+		buyer_city: DF.Data | None
+		buyer_country: DF.Link | None
+		buyer_name: DF.Data | None
+		buyer_postcode: DF.Data | None
+		company: DF.Link | None
+		create_supplier: DF.Check
+		create_supplier_address: DF.Check
+		currency: DF.Link | None
+		einvoice: DF.Attach | None
+		id: DF.Data | None
+		issue_date: DF.Date | None
+		items: DF.Table[EInvoiceItem]
+		seller_address_line_1: DF.Data | None
+		seller_address_line_2: DF.Data | None
+		seller_city: DF.Data | None
+		seller_country: DF.Link | None
+		seller_name: DF.Data | None
+		seller_postcode: DF.Data | None
+		seller_tax_id: DF.Data | None
+		supplier: DF.Link | None
+		supplier_address: DF.Link | None
+	# end: auto-generated types
+
 	def before_save(self):
 		if self.einvoice and self.has_value_changed("einvoice"):
 			self.parse_einvoice()
