@@ -34,12 +34,14 @@
    "fieldname": "product_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Product Name"
+   "label": "Product Name",
+   "read_only": 1
   },
   {
    "fieldname": "product_description",
    "fieldtype": "Small Text",
-   "label": "Product Description"
+   "label": "Product Description",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_grml",
@@ -60,12 +62,14 @@
    "fieldname": "billed_quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Billed Quantity"
+   "label": "Billed Quantity",
+   "read_only": 1
   },
   {
    "fieldname": "unit_code",
    "fieldtype": "Data",
-   "label": "Unit Code"
+   "label": "Unit Code",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_pmsf",
@@ -84,9 +88,11 @@
   },
   {
    "fieldname": "net_rate",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Net Rate"
+   "label": "Net Rate",
+   "options": "currency",
+   "read_only": 1
   },
   {
    "fieldname": "settlement_section",
@@ -96,18 +102,22 @@
   {
    "fieldname": "tax_rate",
    "fieldtype": "Percent",
-   "label": "Tax Rate"
+   "label": "Tax Rate",
+   "read_only": 1
   },
   {
    "fieldname": "total_amount",
-   "fieldtype": "Float",
+   "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Total Amount"
+   "label": "Total Amount",
+   "options": "currency",
+   "read_only": 1
   },
   {
    "fieldname": "seller_product_id",
    "fieldtype": "Data",
-   "label": "Seller Product ID"
+   "label": "Seller Product ID",
+   "read_only": 1
   },
   {
    "default": "0",
@@ -121,7 +131,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-26 14:10:15.375742",
+ "modified": "2024-08-26 14:50:15.775645",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Item",

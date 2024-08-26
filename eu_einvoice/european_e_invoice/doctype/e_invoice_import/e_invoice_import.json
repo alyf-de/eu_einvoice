@@ -232,13 +232,14 @@
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
-   "options": "Currency"
+   "options": "Currency",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-26 14:45:42.598268",
+ "modified": "2024-08-26 14:52:01.324281",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",

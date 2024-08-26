@@ -16,7 +16,7 @@ class EInvoiceItem(Document):
 
 		billed_quantity: DF.Float
 		item: DF.Link | None
-		net_rate: DF.Float
+		net_rate: DF.Currency
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
@@ -24,7 +24,7 @@ class EInvoiceItem(Document):
 		product_name: DF.Data | None
 		seller_product_id: DF.Data | None
 		tax_rate: DF.Percent
-		total_amount: DF.Float
+		total_amount: DF.Currency
 		unit_code: DF.Data | None
 		uom: DF.Link | None
 	# end: auto-generated types
