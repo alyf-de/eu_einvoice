@@ -143,29 +143,41 @@ class EInvoiceImport(Document):
 		item.tax_rate = float(li.settlement.trade_tax.rate_applicable_percent._value)
 		item.total_amount = float(li.settlement.monetary_summation.total_amount._value)
 
-	def create_purchase_invoice(self):
-		pi: "PurchaseInvoice" = frappe.new_doc("Purchase Invoice")
-		pi.supplier = self.supplier
-		pi.company = self.company
-		pi.posting_date = today()
-		pi.bill_no = self.id
-		pi.bill_date = self.issue_date
-		pi.currency = self.currency
-		for item in self.items:
-			pi.append(
-				"items",
-				{
-					"item_code": item.item,
-					"qty": item.billed_quantity,
-					"uom": item.uom,
-					"rate": item.net_rate,
-				},
-			)
 
-		# TODO: add back-link to Purchase Invoice
-		# pi.einvoice_import = self.name
-		pi.set_missing_values()
-		pi.insert(ignore_mandatory=True)
+@frappe.whitelist()
+def create_purchase_invoice(source_name, target_doc=None):
+	def post_process(source, target: "PurchaseInvoice"):
+		target.set_missing_values()
+
+	return get_mapped_doc(
+		"E Invoice Import",
+		source_name,
+		{
+			"E Invoice Import": {
+				"doctype": "Purchase Invoice",
+				"field_map": {
+					# TODO: add back-link to Purchase Invoice
+					"supplier": "supplier",
+					"company": "company",
+					"id": "bill_no",
+					"issue_date": "bill_date",
+					"currency": "currency",
+				},
+				# "field_no_map": ["items"],
+			},
+			"E Invoice Item": {
+				"doctype": "Purchase Invoice Item",
+				"field_map": {
+					"item": "item_code",
+					"billed_quantity": "qty",
+					"uom": "uom",
+					"net_rate": "rate",
+				},
+			},
+		},
+		target_doc,
+		post_process,
+	)
 
 
 @frappe.whitelist()
