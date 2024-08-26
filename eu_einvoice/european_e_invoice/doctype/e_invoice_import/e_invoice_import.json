@@ -210,13 +210,17 @@
   {
    "fieldname": "issue_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Issue Date",
    "read_only": 1
   },
   {
    "fieldname": "id",
    "fieldtype": "Data",
-   "label": "ID",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Invoice ID",
    "read_only": 1
   },
   {
@@ -234,7 +238,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-26 13:51:00.482706",
+ "modified": "2024-08-26 14:45:42.598268",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
@@ -286,5 +290,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "seller_name"
 }
