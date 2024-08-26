@@ -111,8 +111,9 @@
   },
   {
    "default": "0",
+   "depends_on": "eval: !doc.item",
    "fieldname": "create_item",
-   "fieldtype": "Check",
+   "fieldtype": "Button",
    "label": "Create Item",
    "read_only_depends_on": "item"
   }
@@ -120,7 +121,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-25 16:31:31.794308",
+ "modified": "2024-08-26 14:10:15.375742",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Item",

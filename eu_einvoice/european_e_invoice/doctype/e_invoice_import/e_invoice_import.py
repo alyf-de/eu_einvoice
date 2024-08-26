@@ -211,3 +211,35 @@ def create_supplier_address(source_name, target_doc=None):
 		target_doc,
 		post_process,
 	)
+
+
+@frappe.whitelist()
+def create_item(source_doc, target_doc=None):
+	def post_process(source, target):
+		if frappe.db.get_single_value("Stock Settings", "item_naming_by") == "Item Code":
+			target.item_code = target.item_name
+		target.is_purchase_item = 1
+		target.append(
+			"supplier_items",
+			{
+				"supplier": frappe.db.get_value("E Invoice Import", source.parent, "supplier"),
+				"supplier_part_no": source.seller_product_id,
+			},
+		)
+
+	return get_mapped_doc(
+		"E Invoice Item",
+		source_doc,
+		{
+			"E Invoice Item": {
+				"doctype": "Item",
+				"field_map": {
+					"product_name": "item_name",
+					"product_description": "description",
+					"uom": "stock_uom",
+				},
+			}
+		},
+		target_doc,
+		post_process,
+	)

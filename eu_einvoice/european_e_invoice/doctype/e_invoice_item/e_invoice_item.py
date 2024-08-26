@@ -15,7 +15,6 @@ class EInvoiceItem(Document):
 		from frappe.types import DF
 
 		billed_quantity: DF.Float
-		create_item: DF.Check
 		item: DF.Link | None
 		net_rate: DF.Float
 		parent: DF.Data

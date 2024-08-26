@@ -41,3 +41,12 @@ frappe.ui.form.on("E Invoice Import", {
 		});
 	},
 });
+
+frappe.ui.form.on("E Invoice Item", {
+	create_item: function (frm, cdt, cdn) {
+		frappe.model.open_mapped_doc({
+			method: "eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.create_item",
+			source_name: cdn,
+		});
+	},
+});
