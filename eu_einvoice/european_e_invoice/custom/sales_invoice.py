@@ -79,7 +79,14 @@ def get_xml(invoice, company, seller_address, customer_address):
 	).upper()
 
 	doc.trade.agreement.buyer.name = invoice.customer_name
-	doc.trade.agreement.buyer_reference = invoice.po_no or "unknown"
+
+	if invoice.po_no:
+		doc.trade.agreement.buyer_reference = invoice.po_no
+		doc.trade.agreement.buyer_order.issuer_assigned_id = invoice.po_no
+
+	if invoice.po_date:
+		doc.trade.agreement.buyer_order.issue_date_time = invoice.po_date
+
 	doc.trade.agreement.buyer.address.line_one = customer_address.address_line1
 	doc.trade.agreement.buyer.address.line_two = customer_address.address_line2
 	doc.trade.agreement.buyer.address.postcode = customer_address.pincode

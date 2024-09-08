@@ -46,6 +46,10 @@ This app can use GitHub Actions for CI. The following workflows are configured:
 - [factur-x](https://pypi.org/project/factur-x/)
     Extract XML file from a PDF file
 
+### Sales Invoice
+
+For german government customers, the "Leitwegs-ID" should be entered into the field _Customer's Purchase Order_ of the **Sales Invoice**. This way it will show up in the XML's `BuyerReference` element.
+
 ### License
 
 gpl-3.0
