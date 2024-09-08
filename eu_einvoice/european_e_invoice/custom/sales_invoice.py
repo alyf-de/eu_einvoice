@@ -5,6 +5,7 @@ from drafthorse.models.accounting import ApplicableTradeTax
 from drafthorse.models.document import Document
 from drafthorse.models.party import TaxRegistration
 from drafthorse.models.tradelines import LineItem
+from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
 from frappe.utils.data import flt
 
 
@@ -107,30 +108,35 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		li = LineItem()
 		li.document.line_id = str(item.idx)
 		li.product.name = item.item_name
-		li.agreement.net.amount = flt(item.net_amount, item.precision("net_amount"))
+		net_amount = flt(item.net_amount, item.precision("net_amount"))
+		li.agreement.net.amount = net_amount
 		unit_code = frappe.db.get_value("UOM", item.uom, "common_code") or "C62"
 		li.delivery.billed_quantity = (
 			flt(item.qty, item.precision("qty")),
 			unit_code,
 		)
 		li.settlement.trade_tax.type_code = "VAT"
-		li.settlement.trade_tax.category_code = (
-			# TODO: implement VAT category code as custom field
-			# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred5305.htm
-			"S"
-		)
-		li.settlement.trade_tax.rate_applicable_percent = Decimal("19.00")
-		li.settlement.monetary_summation.total_amount = flt(item.amount, item.precision("amount"))
+		li.settlement.trade_tax.category_code = "S"
+		li.settlement.monetary_summation.total_amount = item.amount
 		doc.trade.items.add(li)
 
-	trade_tax = ApplicableTradeTax()
-	trade_tax.calculated_amount = invoice.total_taxes_and_charges
-	trade_tax.basis_amount = invoice.net_total
-	trade_tax.type_code = "VAT"
-	trade_tax.category_code = "S"
-	# TODO: implement VAT dynamically as specified in invoice
-	trade_tax.rate_applicable_percent = Decimal("19.00")
-	doc.trade.settlement.trade_tax.add(trade_tax)
+	for tax_row in get_itemised_tax_breakup_data(invoice):
+		tax_row.pop("item")
+		taxable_amount = tax_row.pop("taxable_amount")
+		trade_tax = ApplicableTradeTax()
+		trade_tax.basis_amount = round(taxable_amount, 2)
+		for tax_name in tax_row.keys():
+			tax_rate = tax_row[tax_name]["tax_rate"]
+			tax_amount = tax_row[tax_name]["tax_amount"]
+			if not tax_amount:
+				continue
+
+			trade_tax.calculated_amount = round(tax_amount, 2)
+			trade_tax.rate_applicable_percent = Decimal("%.2f" % tax_rate)
+			trade_tax.type_code = "VAT"
+			trade_tax.category_code = "S"
+			doc.trade.settlement.trade_tax.add(trade_tax)
+			break
 
 	doc.trade.settlement.monetary_summation.line_total = invoice.total
 	doc.trade.settlement.monetary_summation.charge_total = Decimal("0.00")
