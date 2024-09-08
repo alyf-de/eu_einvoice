@@ -13,8 +13,14 @@ def download_xrechnung(invoice_id: str):
 	invoice = frappe.get_doc("Sales Invoice", invoice_id)
 	invoice.check_permission("read")
 
-	seller_address = frappe.get_doc("Address", invoice.company_address)
-	customer_address = frappe.get_doc("Address", invoice.customer_address)
+	seller_address = None
+	if invoice.company_address:
+		seller_address = frappe.get_doc("Address", invoice.company_address)
+
+	customer_address = None
+	if invoice.customer_address:
+		customer_address = frappe.get_doc("Address", invoice.customer_address)
+
 	company = frappe.get_doc("Company", invoice.company)
 
 	frappe.local.response.filename = f"{invoice_id}.xml"
@@ -22,7 +28,7 @@ def download_xrechnung(invoice_id: str):
 	frappe.local.response.type = "download"
 
 
-def get_xml(invoice, company, seller_address, customer_address):
+def get_xml(invoice, company, seller_address=None, customer_address=None):
 	doc = Document()
 	doc.context.guideline_parameter.id = "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended"
 	doc.header.id = invoice.name
@@ -70,13 +76,14 @@ def get_xml(invoice, company, seller_address, customer_address):
 	if company.email:
 		doc.trade.agreement.seller.contact.email.address = company.email
 
-	doc.trade.agreement.seller.address.line_one = seller_address.address_line1
-	doc.trade.agreement.seller.address.line_two = seller_address.address_line2
-	doc.trade.agreement.seller.address.postcode = seller_address.pincode
-	doc.trade.agreement.seller.address.city_name = seller_address.city
-	doc.trade.agreement.seller.address.country_id = frappe.db.get_value(
-		"Country", seller_address.country, "code"
-	).upper()
+	if seller_address:
+		doc.trade.agreement.seller.address.line_one = seller_address.address_line1
+		doc.trade.agreement.seller.address.line_two = seller_address.address_line2
+		doc.trade.agreement.seller.address.postcode = seller_address.pincode
+		doc.trade.agreement.seller.address.city_name = seller_address.city
+		doc.trade.agreement.seller.address.country_id = frappe.db.get_value(
+			"Country", seller_address.country, "code"
+		).upper()
 
 	doc.trade.agreement.buyer.name = invoice.customer_name
 
@@ -87,13 +94,14 @@ def get_xml(invoice, company, seller_address, customer_address):
 	if invoice.po_date:
 		doc.trade.agreement.buyer_order.issue_date_time = invoice.po_date
 
-	doc.trade.agreement.buyer.address.line_one = customer_address.address_line1
-	doc.trade.agreement.buyer.address.line_two = customer_address.address_line2
-	doc.trade.agreement.buyer.address.postcode = customer_address.pincode
-	doc.trade.agreement.buyer.address.city_name = customer_address.city
-	doc.trade.agreement.buyer.address.country_id = frappe.db.get_value(
-		"Country", customer_address.country, "code"
-	).upper()
+	if customer_address:
+		doc.trade.agreement.buyer.address.line_one = customer_address.address_line1
+		doc.trade.agreement.buyer.address.line_two = customer_address.address_line2
+		doc.trade.agreement.buyer.address.postcode = customer_address.pincode
+		doc.trade.agreement.buyer.address.city_name = customer_address.city
+		doc.trade.agreement.buyer.address.country_id = frappe.db.get_value(
+			"Country", customer_address.country, "code"
+		).upper()
 
 	for item in invoice.items:
 		li = LineItem()
