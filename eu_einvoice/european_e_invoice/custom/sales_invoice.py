@@ -138,6 +138,7 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	doc.trade.settlement.monetary_summation.tax_basis_total = invoice.net_total
 	doc.trade.settlement.monetary_summation.tax_total = invoice.total_taxes_and_charges
 	doc.trade.settlement.monetary_summation.grand_total = invoice.grand_total
+	doc.trade.settlement.monetary_summation.prepaid_total = invoice.total_advance
 	doc.trade.settlement.monetary_summation.due_amount = invoice.outstanding_amount
 
 	return doc.serialize(schema="FACTUR-X_EXTENDED")
