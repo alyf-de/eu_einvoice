@@ -69,7 +69,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
 
 ### Purchase Invoice
 
-To import a new eInvoice, create a new **E Invoice Import** and upload the XML file.
+To import a new eInvoice, create a new **E Invoice Import** and upload the XML or PDF file.
 
 ## Contributing
 
