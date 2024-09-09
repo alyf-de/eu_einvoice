@@ -1,3 +1,4 @@
+import re
 from decimal import Decimal
 
 import frappe
@@ -69,9 +70,16 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 
 	doc.trade.agreement.seller.name = invoice.company
 	if invoice.company_tax_id:
+		try:
+			seller_tax_id = validate_vat_id(invoice.company_tax_id.strip())
+			seller_vat_scheme = "VA"
+		except ValueError:
+			seller_tax_id = invoice.company_tax_id.strip()
+			seller_vat_scheme = "FC"
+
 		doc.trade.agreement.seller.tax_registrations.add(
 			TaxRegistration(
-				id=("VA", invoice.company_tax_id),
+				id=(seller_vat_scheme, seller_tax_id),
 			)
 		)
 
@@ -108,9 +116,16 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		).upper()
 
 	if invoice.tax_id:
+		try:
+			customer_tax_id = validate_vat_id(invoice.tax_id.strip())
+			customer_vat_scheme = "VA"
+		except ValueError:
+			customer_tax_id = invoice.tax_id.strip()
+			customer_vat_scheme = "FC"
+
 		doc.trade.agreement.buyer.tax_registrations.add(
 			TaxRegistration(
-				id=("VA", invoice.tax_id),
+				id=(customer_vat_scheme, customer_tax_id),
 			)
 		)
 
@@ -192,3 +207,20 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	doc.trade.settlement.monetary_summation.due_amount = invoice.outstanding_amount
 
 	return doc.serialize(schema="FACTUR-X_EXTENDED")
+
+
+def validate_vat_id(vat_id: str) -> tuple[str, str]:
+	COUNTRY_CODE_REGEX = r"^[A-Z]{2}$"
+	VAT_NUMBER_REGEX = r"^[0-9A-Za-z\+\*\.]{2,12}$"
+
+	country_code = vat_id[:2].upper()
+	vat_number = vat_id[2:].replace(" ", "")
+
+	# check vat_number and country_code with regex
+	if not re.match(COUNTRY_CODE_REGEX, country_code):
+		raise ValueError("Invalid country code")
+
+	if not re.match(VAT_NUMBER_REGEX, vat_number):
+		raise ValueError("Invalid VAT number")
+
+	return country_code + vat_number
