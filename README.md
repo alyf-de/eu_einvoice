@@ -1,11 +1,11 @@
-### European e-Invoice
+## European e-Invoice
 
 Create and import european e-invoices with ERPNext
 
 > [!WARNING]
 > This app is under active development and should **not** yet be used in production environments. Things can **break and change at any time**.
 
-### Installation
+## Installation
 
 You can install this app using the [bench](https://github.com/frappe/bench) CLI:
 
@@ -15,7 +15,19 @@ bench get-app $URL_OF_THIS_REPO --branch develop
 bench install-app eu_einvoice
 ```
 
-### Contributing
+## Usage
+
+### Sales Invoice
+
+To create a new eInvoice, open a **Sales Invoice** and click on "..." > "Download eInvoice".
+
+For german government customers, the "Leitwegs-ID" should be entered into the field _Customer's Purchase Order_ of the **Sales Invoice**. This way it will show up in the XML's `BuyerReference` element.
+
+### Purchase Invoice
+
+To import a new eInvoice, create a new **E Invoice Import** and upload the XML file.
+
+## Contributing
 
 This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
 
@@ -38,18 +50,19 @@ This app can use GitHub Actions for CI. The following workflows are configured:
 - CI: Installs this app and runs unit tests on every push to `develop` branch.
 - Linters: Runs [Frappe Semgrep Rules](https://github.com/frappe/semgrep-rules) and [pip-audit](https://pypi.org/project/pip-audit/) on every pull request.
 
-
 ### Dependencies
 
-- [drafthorse](https://pypi.org/project/drafthorse/)
-    Create and parse ZUGFeRD XML invoices
-- [factur-x](https://pypi.org/project/factur-x/)
-    Extract XML file from a PDF file
+- [drafthorse](https://pypi.org/project/drafthorse/) by Raphael Michel, released under the Apache License 2.0
+    Used to create and parse XML invoices
+- [factur-x](https://pypi.org/project/factur-x/) by Alexis de Lattre, released unser a BSD License
+    Used to extract XML data from a PDF file
 
-### Sales Invoice
+## License
 
-For german government customers, the "Leitwegs-ID" should be entered into the field _Customer's Purchase Order_ of the **Sales Invoice**. This way it will show up in the XML's `BuyerReference` element.
+Copyright (C) 2024 ALYF GmbH
 
-### License
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or(at your option) any later version.
 
-gpl-3.0
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
