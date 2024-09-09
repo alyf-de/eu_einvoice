@@ -4,6 +4,7 @@ import frappe
 from drafthorse.models.accounting import ApplicableTradeTax
 from drafthorse.models.document import Document
 from drafthorse.models.party import TaxRegistration
+from drafthorse.models.payment import PaymentTerms
 from drafthorse.models.tradelines import LineItem
 from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
 from frappe.core.utils import html2text
@@ -158,6 +159,20 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		trade_tax.calculated_amount = Decimal("0.00")
 		trade_tax.rate_applicable_percent = Decimal("0.00")
 		doc.trade.settlement.trade_tax.add(trade_tax)
+
+	for ps in invoice.payment_schedule:
+		payment_terms = PaymentTerms()
+		payment_terms.description = ps.description
+		payment_terms.due = ps.due_date
+		payment_terms.partial_amount.add((ps.payment_amount, invoice.currency))
+		if ps.discount and ps.discount_date:
+			payment_terms.discount_terms.basis_date_time = ps.discount_date
+			if ps.discount_type == "Percentage":
+				payment_terms.discount_terms.calculation_percent = ps.discount
+			elif ps.discount_type == "Amount":
+				payment_terms.discount_terms.actual_amount = ps.discount
+
+		doc.trade.settlement.terms.add(payment_terms)
 
 	doc.trade.settlement.monetary_summation.line_total = invoice.total
 	doc.trade.settlement.monetary_summation.charge_total = Decimal("0.00")
