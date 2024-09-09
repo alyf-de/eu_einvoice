@@ -145,7 +145,7 @@ class EInvoiceImport(Document):
 			item_code = frappe.db.get_value(
 				"Item Supplier", {"supplier": supplier, "supplier_part_no": item.seller_product_id}, "parent"
 			)
-		item.item = item_code
+		item.item = item_code or None
 
 		item.billed_quantity = float(li.delivery.billed_quantity._amount)
 		item.unit_code = str(li.delivery.billed_quantity._unit_code)
