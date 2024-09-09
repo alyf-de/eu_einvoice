@@ -119,6 +119,13 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 			flt(item.qty, item.precision("qty")),
 			unit_code,
 		)
+
+		if item.delivery_note:
+			li.delivery.delivery_note.issuer_assigned_id = item.delivery_note
+			li.delivery.delivery_note.issue_date_time = frappe.db.get_value(
+				"Delivery Note", item.delivery_note, "posting_date"
+			)
+
 		li.settlement.trade_tax.type_code = "VAT"
 		li.settlement.trade_tax.category_code = "S"
 		li.settlement.monetary_summation.total_amount = item.amount
