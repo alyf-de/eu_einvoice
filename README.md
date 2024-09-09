@@ -1,6 +1,16 @@
 ## European e-Invoice
 
-Create and import european e-invoices with ERPNext
+Create and import e-invoices with ERPNext.
+
+In particular, this app supports reading and writing electronic invoices according to the following standards:
+
+- ZUGFeRD
+- XRechnung
+- Factur-X
+- UN/CEFACT Cross-Industry-Invoice (CII)
+- EN16931
+
+This app cannot read or write UBL invoices. It also does not provide any special way of sending or receiving e-invoices (e.g. Peppol). Instead, it focuses on the conversion between ERPNext's internal data model and the XML format of the above standards.
 
 > [!WARNING]
 > This app is under active development and should **not** yet be used in production environments. Things can **break and change at any time**.
