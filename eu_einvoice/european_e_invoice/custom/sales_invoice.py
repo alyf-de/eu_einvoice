@@ -107,6 +107,13 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 			"Country", customer_address.country, "code"
 		).upper()
 
+	if invoice.tax_id:
+		doc.trade.agreement.buyer.tax_registrations.add(
+			TaxRegistration(
+				id=("VA", invoice.tax_id),
+			)
+		)
+
 	for item in invoice.items:
 		li = LineItem()
 		li.document.line_id = str(item.idx)
