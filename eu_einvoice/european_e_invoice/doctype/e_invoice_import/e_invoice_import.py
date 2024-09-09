@@ -11,7 +11,6 @@ from erpnext import get_default_company
 from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils.data import today
 
 if TYPE_CHECKING:
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
