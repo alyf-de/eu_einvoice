@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import frappe
 from drafthorse.models.document import Document as DrafthorseDocument
 from erpnext import get_default_company
+from facturx import get_xml_from_pdf
 from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
@@ -86,7 +87,13 @@ class EInvoiceImport(Document):
 
 	def parse_einvoice(self):
 		path_to_einvoice = Path(get_site_path(self.einvoice.lstrip("/"))).resolve()
-		xml = path_to_einvoice.read_bytes()
+		if path_to_einvoice.suffix == ".pdf":
+			xml_filename, xml = get_xml_from_pdf(path_to_einvoice.read_bytes())
+		elif path_to_einvoice.suffix == ".xml":
+			xml = path_to_einvoice.read_bytes()
+		else:
+			frappe.throw(_("Unsupported file format '{0}'").format(path_to_einvoice.suffix))
+
 		doc = DrafthorseDocument.parse(xml)
 		self.id = str(doc.header.id)
 		self.issue_date = str(doc.header.issue_date_time)
