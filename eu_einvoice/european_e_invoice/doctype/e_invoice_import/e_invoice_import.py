@@ -68,7 +68,7 @@ class EInvoiceImport(Document):
 
 	def before_save(self):
 		if self.einvoice and self.has_value_changed("einvoice"):
-			self.parse_einvoice()
+			self.read_values_from_einvoice()
 			self.guess_supplier()
 			self.guess_company()
 			self.guess_uom()
@@ -85,18 +85,14 @@ class EInvoiceImport(Document):
 
 		self.create_purchase_invoice()
 
-	def parse_einvoice(self):
-		path_to_einvoice = Path(get_site_path(self.einvoice.lstrip("/"))).resolve()
-		if path_to_einvoice.suffix == ".pdf":
-			xml_filename, xml = get_xml_from_pdf(path_to_einvoice.read_bytes())
-			if not xml:
-				frappe.throw(_("No XML data found in PDF file."))
-		elif path_to_einvoice.suffix == ".xml":
-			xml = path_to_einvoice.read_bytes()
-		else:
-			frappe.throw(_("Unsupported file format '{0}'").format(path_to_einvoice.suffix))
+	def get_parsed_einvoice(self) -> DrafthorseDocument:
+		return DrafthorseDocument.parse(
+			get_xml_bytes(Path(get_site_path(self.einvoice.lstrip("/"))).resolve())
+		)
 
-		doc = DrafthorseDocument.parse(xml)
+	def read_values_from_einvoice(self) -> None:
+		doc = self.get_parsed_einvoice()
+
 		self.id = str(doc.header.id)
 		self.issue_date = str(doc.header.issue_date_time)
 		self.currency = str(doc.trade.settlement.currency_code)
@@ -191,6 +187,20 @@ class EInvoiceImport(Document):
 			elif row.item:
 				stock_uom, purchase_uom = frappe.db.get_value("Item", row.item, ["stock_uom", "purchase_uom"])
 				row.uom = purchase_uom or stock_uom
+
+
+def get_xml_bytes(file: Path) -> bytes:
+	"""Reads the XML data from the given XML or PDF file path."""
+	if file.suffix == ".pdf":
+		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes())
+		if not xml_bytes:
+			frappe.throw(_("No XML data found in PDF file."))
+	elif file.suffix == ".xml":
+		xml_bytes = file.read_bytes()
+	else:
+		frappe.throw(_("Unsupported file format '{0}'").format(file.suffix))
+
+	return xml_bytes
 
 
 @frappe.whitelist()
