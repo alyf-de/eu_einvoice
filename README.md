@@ -23,6 +23,50 @@ To create a new eInvoice, open a **Sales Invoice** and click on "..." > "Downloa
 
 For german government customers, the "Leitwegs-ID" should be entered into the field _Customer's Purchase Order_ of the **Sales Invoice**. This way it will show up in the XML's `BuyerReference` element.
 
+The following fields of the **Sales Invoice** are currently considered for the eInvoice:
+
+- Invoice type (credit note, corrected invoice, commercial invoice)
+- Invoice number
+- Invoice date
+- Due date
+- Language
+- Currency
+- Company Name
+- Company Address
+- Company Tax ID
+- Company Phone (fetched from **Company**)
+- Company Email (fetched from **Company**)
+- Customer Name
+- Customer Address
+- Customer's Purchase Order (doubles as "Leitwegs-ID" for german government customers)
+- Customer's Purchase Order Date
+- Customer's Tax ID
+- Items:
+    - Item Name
+    - Description
+    - Company's Item Code
+    - Customer's Item Code
+    - Delivery Note number and date
+    - Quantity + Unit
+    - Rate
+    - Net Amount
+    - Amount
+- Payment terms:
+    - Description
+    - Due date
+    - Amount
+    - Early Payment Discount
+        - Percentage or Amount
+        - Due date
+- Tax Breakup / Taxes and Charges Calculation
+- Total
+- Discount Amount
+- Net Total
+- Total Taxes and Charges
+- Grand Total
+- Total Advance
+- Outstanding Amount
+
 ### Purchase Invoice
 
 To import a new eInvoice, create a new **E Invoice Import** and upload the XML file.
