@@ -54,7 +54,8 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 
 	doc.header.name = "RECHNUNG"
 	doc.header.issue_date_time = invoice.posting_date
-	doc.header.languages.add(invoice.language)
+	if invoice.language:
+		doc.header.languages.add(invoice.language)
 
 	doc.trade.settlement.payee.name = invoice.customer_name
 	doc.trade.settlement.invoicee.name = invoice.customer_name
