@@ -6,6 +6,7 @@ from drafthorse.models.document import Document
 from drafthorse.models.party import TaxRegistration
 from drafthorse.models.tradelines import LineItem
 from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
+from frappe.core.utils import html2text
 from frappe.utils.data import flt
 
 
@@ -108,6 +109,9 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		li = LineItem()
 		li.document.line_id = str(item.idx)
 		li.product.name = item.item_name
+		li.product.seller_assigned_id = item.item_code
+		li.product.buyer_assigned_id = item.customer_item_code
+		li.product.description = html2text(item.description)
 		net_amount = flt(item.net_amount, item.precision("net_amount"))
 		li.agreement.net.amount = net_amount
 		unit_code = frappe.db.get_value("UOM", item.uom, "common_code") or "C62"
