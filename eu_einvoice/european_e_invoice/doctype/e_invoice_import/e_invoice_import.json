@@ -60,6 +60,7 @@
    "label": "File Section"
   },
   {
+   "description": "Upload the <code>.xml</code> or <code>.pdf</code> file provided by your supplier.",
    "fieldname": "einvoice",
    "fieldtype": "Attach",
    "label": "E-Invoice"
@@ -246,7 +247,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-08-26 18:48:05.470456",
+ "modified": "2024-09-09 12:08:08.252121",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",

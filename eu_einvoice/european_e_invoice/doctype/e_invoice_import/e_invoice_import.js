@@ -38,6 +38,17 @@ frappe.ui.form.on("E Invoice Import", {
 		});
 	},
 	refresh: function (frm) {
+		const attach_field = frm.fields_dict["einvoice"];
+		attach_field.on_attach_click = function () {
+			attach_field.set_upload_options();
+			attach_field.upload_options.restrictions.allowed_file_types = [
+				"application/pdf",
+				"application/xml",
+				"text/xml",
+			];
+			attach_field.file_uploader = new frappe.ui.FileUploader(attach_field.upload_options);
+		};
+
 		if (frm.doc.docstatus === 1) {
 			frm.add_custom_button(
 				__("Purchase Invoice"),
