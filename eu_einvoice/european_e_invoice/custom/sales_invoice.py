@@ -124,6 +124,7 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		li.settlement.monetary_summation.total_amount = item.amount
 		doc.trade.items.add(li)
 
+	tax_added = False
 	for tax_row in get_itemised_tax_breakup_data(invoice):
 		tax_row.pop("item")
 		taxable_amount = tax_row.pop("taxable_amount")
@@ -140,7 +141,16 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 			trade_tax.type_code = "VAT"
 			trade_tax.category_code = "S"
 			doc.trade.settlement.trade_tax.add(trade_tax)
+			tax_added = True
 			break
+
+	if not tax_added:
+		trade_tax = ApplicableTradeTax()
+		trade_tax.type_code = "VAT"
+		trade_tax.category_code = "S"
+		trade_tax.calculated_amount = Decimal("0.00")
+		trade_tax.rate_applicable_percent = Decimal("0.00")
+		doc.trade.settlement.trade_tax.add(trade_tax)
 
 	doc.trade.settlement.monetary_summation.line_total = invoice.total
 	doc.trade.settlement.monetary_summation.charge_total = Decimal("0.00")
