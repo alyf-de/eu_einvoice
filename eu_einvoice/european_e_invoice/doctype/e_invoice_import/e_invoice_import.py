@@ -89,6 +89,8 @@ class EInvoiceImport(Document):
 		path_to_einvoice = Path(get_site_path(self.einvoice.lstrip("/"))).resolve()
 		if path_to_einvoice.suffix == ".pdf":
 			xml_filename, xml = get_xml_from_pdf(path_to_einvoice.read_bytes())
+			if not xml:
+				frappe.throw(_("No XML data found in PDF file."))
 		elif path_to_einvoice.suffix == ".xml":
 			xml = path_to_einvoice.read_bytes()
 		else:
