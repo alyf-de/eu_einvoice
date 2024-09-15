@@ -215,7 +215,7 @@ def create_purchase_invoice(source_name, target_doc=None):
 			"E Invoice Import": {
 				"doctype": "Purchase Invoice",
 				"field_map": {
-					# TODO: add back-link to Purchase Invoice
+					"name": "e_invoice_import",
 					"supplier": "supplier",
 					"company": "company",
 					"id": "bill_no",

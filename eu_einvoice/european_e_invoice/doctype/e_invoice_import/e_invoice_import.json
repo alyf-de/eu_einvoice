@@ -246,8 +246,13 @@
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2024-09-09 12:08:08.252121",
+ "links": [
+  {
+   "link_doctype": "Purchase Invoice",
+   "link_fieldname": "e_invoice_import"
+  }
+ ],
+ "modified": "2024-09-15 11:36:46.090400",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
