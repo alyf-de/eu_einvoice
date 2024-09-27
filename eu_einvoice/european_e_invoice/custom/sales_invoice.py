@@ -6,6 +6,7 @@ from drafthorse.models.accounting import ApplicableTradeTax
 from drafthorse.models.document import Document
 from drafthorse.models.party import TaxRegistration
 from drafthorse.models.payment import PaymentTerms
+from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
 from frappe import _
@@ -157,32 +158,44 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		doc.trade.items.add(li)
 
 	tax_added = False
-	for tax_row in get_itemised_tax_breakup_data(invoice):
-		tax_row.pop("item")
-		taxable_amount = tax_row.pop("taxable_amount")
-		trade_tax = ApplicableTradeTax()
-		trade_tax.basis_amount = round(taxable_amount, 2)
-		for tax_name in tax_row.keys():
-			tax_rate = tax_row[tax_name]["tax_rate"]
-			tax_amount = tax_row[tax_name]["tax_amount"]
-			if not tax_amount:
-				continue
+	for i, tax in enumerate(invoice.taxes):
+		if not tax.tax_amount:
+			continue
 
-			trade_tax.calculated_amount = round(tax_amount, 2)
-			trade_tax.rate_applicable_percent = Decimal("%.2f" % tax_rate)
+		if tax.charge_type == "Actual":
+			service_charge = LogisticsServiceCharge()
+			service_charge.description = tax.description
+			service_charge.applied_amount = tax.tax_amount
+			doc.trade.settlement.service_charge.add(service_charge)
+		elif tax.charge_type == "On Net Total":
+			trade_tax = ApplicableTradeTax()
+			trade_tax.calculated_amount = tax.tax_amount
 			trade_tax.type_code = "VAT"
 			trade_tax.category_code = "S"
+			tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+			trade_tax.rate_applicable_percent = tax_rate
+
+			# We don't know the basis amount for this tax, so we try to calculate it
+			if tax.tax_amount and tax_rate:
+				trade_tax.basis_amount = tax.tax_amount / tax_rate * 100
+			else:
+				trade_tax.basis_amount = 0
+
 			doc.trade.settlement.trade_tax.add(trade_tax)
 			tax_added = True
-			break
-
-	for i, tax in enumerate(invoice.taxes):
-		if tax.charge_type == "On Previous Row Amount":
+		elif tax.charge_type == "On Previous Row Amount":
 			trade_tax = ApplicableTradeTax()
 			trade_tax.basis_amount = invoice.taxes[i - 1].tax_amount
 			trade_tax.rate_applicable_percent = tax.rate
 			trade_tax.calculated_amount = tax.tax_amount
-			trade_tax.type_code = "VAT"
+
+			if invoice.taxes[i - 1].charge_type == "Actual":
+				# VAT for a LogisticsServiceCharge
+				trade_tax.type_code = "VAT"
+			else:
+				# A tax or duty applied on and in addition to existing duties and taxes.
+				trade_tax.type_code = "SUR"
+
 			trade_tax.category_code = "S"
 			doc.trade.settlement.trade_tax.add(trade_tax)
 			tax_added = True
@@ -191,17 +204,24 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 			trade_tax.basis_amount = invoice.taxes[i - 1].total
 			trade_tax.rate_applicable_percent = tax.rate
 			trade_tax.calculated_amount = tax.tax_amount
-			trade_tax.type_code = "VAT"
+
+			if invoice.taxes[i - 1].charge_type == "Actual":
+				# VAT for a LogisticsServiceCharge
+				trade_tax.type_code = "VAT"
+			else:
+				# A tax or duty applied on and in addition to existing duties and taxes.
+				trade_tax.type_code = "SUR"
+
 			trade_tax.category_code = "S"
 			doc.trade.settlement.trade_tax.add(trade_tax)
 			tax_added = True
 
 	if not tax_added:
 		trade_tax = ApplicableTradeTax()
-		trade_tax.type_code = "VAT"
-		trade_tax.category_code = "S"
-		trade_tax.calculated_amount = Decimal("0.00")
-		trade_tax.rate_applicable_percent = Decimal("0.00")
+		trade_tax.type_code = "FRE"
+		trade_tax.category_code = "S"  # TODO: many possible values for tax free
+		trade_tax.calculated_amount = 0
+		trade_tax.rate_applicable_percent = 0
 		doc.trade.settlement.trade_tax.add(trade_tax)
 
 	for ps in invoice.payment_schedule:
