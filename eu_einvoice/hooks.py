@@ -140,13 +140,11 @@ after_install = "eu_einvoice.install.after_install"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Sales Invoice": {
+		"validate": "eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc",
+	}
+}
 
 # Scheduled Tasks
 # ---------------

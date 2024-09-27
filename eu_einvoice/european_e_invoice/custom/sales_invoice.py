@@ -8,6 +8,7 @@ from drafthorse.models.party import TaxRegistration
 from drafthorse.models.payment import PaymentTerms
 from drafthorse.models.tradelines import LineItem
 from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
+from frappe import _
 from frappe.core.utils import html2text
 from frappe.utils.data import flt
 
@@ -244,3 +245,16 @@ def validate_vat_id(vat_id: str) -> tuple[str, str]:
 		raise ValueError("Invalid VAT number")
 
 	return country_code + vat_number
+
+
+def validate_doc(doc, event):
+	"""Validate the Sales Invoice form."""
+	for tax_row in doc.taxes:
+		if tax_row.charge_type == "On Item Quantity":
+			frappe.msgprint(
+				_("{0} row #{1}: Type '{2}' is not supported in e-invoice").format(
+					_(doc.meta.get_label("taxes")), tax_row.idx, _(tax_row.charge_type)
+				),
+				alert=True,
+				indicator="orange",
+			)
