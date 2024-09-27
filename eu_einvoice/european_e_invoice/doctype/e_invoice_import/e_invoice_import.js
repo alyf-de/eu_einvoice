@@ -36,6 +36,15 @@ frappe.ui.form.on("E Invoice Import", {
 				},
 			};
 		});
+
+		frm.set_query("tax_account", "taxes", function (doc, cdt, cdn) {
+			return {
+				filters: {
+					account_type: "Tax",
+					company: doc.company,
+				},
+			};
+		});
 	},
 	refresh: function (frm) {
 		const attach_field = frm.fields_dict["einvoice"];

@@ -14,6 +14,7 @@ from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 
 if TYPE_CHECKING:
+	from drafthorse.models.accounting import ApplicableTradeTax
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
 	from drafthorse.models.tradelines import LineItem
 	from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
@@ -29,6 +30,9 @@ class EInvoiceImport(Document):
 		from frappe.types import DF
 
 		from eu_einvoice.european_e_invoice.doctype.e_invoice_item.e_invoice_item import EInvoiceItem
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_trade_tax.e_invoice_trade_tax import (
+			EInvoiceTradeTax,
+		)
 
 		amended_from: DF.Link | None
 		buyer_address_line_1: DF.Data | None
@@ -53,6 +57,7 @@ class EInvoiceImport(Document):
 		seller_tax_id: DF.Data | None
 		supplier: DF.Link | None
 		supplier_address: DF.Link | None
+		taxes: DF.Table[EInvoiceTradeTax]
 	# end: auto-generated types
 
 	def validate(self):
@@ -83,8 +88,6 @@ class EInvoiceImport(Document):
 		if not (self.items and all(row.item for row in self.items)):
 			frappe.throw(_("Please map all invoice lines to an item before submitting"))
 
-		self.create_purchase_invoice()
-
 	def get_parsed_einvoice(self) -> DrafthorseDocument:
 		return DrafthorseDocument.parse(
 			get_xml_bytes(Path(get_site_path(self.einvoice.lstrip("/"))).resolve())
@@ -110,6 +113,10 @@ class EInvoiceImport(Document):
 		self.items = []
 		for li in doc.trade.items.children:
 			self.parse_line_item(li)
+
+		self.taxes = []
+		for tax in doc.trade.settlement.trade_tax.children:
+			self.parse_tax(tax)
 
 	def parse_seller(self, seller: "TradeParty"):
 		self.seller_name = str(seller.name)
@@ -157,6 +164,12 @@ class EInvoiceImport(Document):
 		item.net_rate = rate
 		item.tax_rate = float(li.settlement.trade_tax.rate_applicable_percent._value)
 		item.total_amount = float(li.settlement.monetary_summation.total_amount._value)
+
+	def parse_tax(self, tax: "ApplicableTradeTax"):
+		t = self.append("taxes")
+		t.basis_amount = float(tax.basis_amount._value)
+		t.rate_applicable_percent = float(tax.rate_applicable_percent._value)
+		t.calculated_amount = float(tax.calculated_amount._value)
 
 	def guess_supplier(self):
 		if self.supplier:
@@ -208,6 +221,9 @@ def create_purchase_invoice(source_name, target_doc=None):
 	def post_process(source, target: "PurchaseInvoice"):
 		target.set_missing_values()
 
+	def process_tax_row(source, target, source_parent):
+		target.charge_type = "Actual"
+
 	return get_mapped_doc(
 		"E Invoice Import",
 		source_name,
@@ -232,6 +248,15 @@ def create_purchase_invoice(source_name, target_doc=None):
 					"uom": "uom",
 					"net_rate": "rate",
 				},
+			},
+			"E Invoice Trade Tax": {
+				"doctype": "Purchase Taxes and Charges",
+				"field_map": {
+					"tax_account": "account_head",
+					"rate_applicable_percent": "rate",
+					"calculated_amount": "tax_amount",
+				},
+				"postprocess": process_tax_row,
 			},
 		},
 		target_doc,

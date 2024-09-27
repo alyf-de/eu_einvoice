@@ -37,7 +37,8 @@
   "items_section",
   "items",
   "settlement_section",
-  "currency"
+  "currency",
+  "taxes"
  ],
  "fields": [
   {
@@ -242,6 +243,12 @@
    "fieldtype": "Link",
    "label": "Purchase Order",
    "options": "Purchase Order"
+  },
+  {
+   "fieldname": "taxes",
+   "fieldtype": "Table",
+   "label": "Taxes",
+   "options": "E Invoice Trade Tax"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -252,7 +259,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2024-09-15 11:36:46.090400",
+ "modified": "2024-09-26 21:07:31.840574",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
