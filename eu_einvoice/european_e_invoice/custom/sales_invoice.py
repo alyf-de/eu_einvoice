@@ -175,6 +175,26 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 			tax_added = True
 			break
 
+	for i, tax in enumerate(invoice.taxes):
+		if tax.charge_type == "On Previous Row Amount":
+			trade_tax = ApplicableTradeTax()
+			trade_tax.basis_amount = invoice.taxes[i - 1].tax_amount
+			trade_tax.rate_applicable_percent = tax.rate
+			trade_tax.calculated_amount = tax.tax_amount
+			trade_tax.type_code = "VAT"
+			trade_tax.category_code = "S"
+			doc.trade.settlement.trade_tax.add(trade_tax)
+			tax_added = True
+		elif tax.charge_type == "On Previous Row Total":
+			trade_tax = ApplicableTradeTax()
+			trade_tax.basis_amount = invoice.taxes[i - 1].total
+			trade_tax.rate_applicable_percent = tax.rate
+			trade_tax.calculated_amount = tax.tax_amount
+			trade_tax.type_code = "VAT"
+			trade_tax.category_code = "S"
+			doc.trade.settlement.trade_tax.add(trade_tax)
+			tax_added = True
+
 	if not tax_added:
 		trade_tax = ApplicableTradeTax()
 		trade_tax.type_code = "VAT"
