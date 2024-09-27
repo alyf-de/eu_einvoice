@@ -68,7 +68,10 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Early Payment Discount
         - Percentage or Amount
         - Due date
-- Tax Breakup / Taxes and Charges Calculation
+- Sales Taxs and Charges
+    - The _Charge Type_ "Actual" is used as logistics or service charges.
+    - For _Charge Type_ "On Net Total", the taxable amount is calculated as `tax_amount / rate * 100`, if the rate is available in the tax row or in the corresponding Account.
+    - The _Charge Type_ "On Item Quantity" is not supported.
 - Total
 - Discount Amount
 - Net Total
@@ -80,6 +83,8 @@ The following fields of the **Sales Invoice** are currently considered for the e
 ### Purchase Invoice
 
 To import a new eInvoice, create a new **E Invoice Import** and upload the XML or PDF file.
+
+Taxes are mapped to "Actual" charges in the **Purchase Invoice**, so that ERPNext does not try to recalculate them.
 
 ## Contributing
 
