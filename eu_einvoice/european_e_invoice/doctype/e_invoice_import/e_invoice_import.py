@@ -206,7 +206,16 @@ class EInvoiceImport(Document):
 
 	def add_seller_product_ids_to_items(self):
 		for row in self.items:
-			row.add_seller_product_id_to_item(self.supplier)
+			try:
+				# This is a convenience feature. Failure to update the Item data
+				# should not prevent submission of the E Invoice Import.
+				row.add_seller_product_id_to_item(self.supplier)
+			except frappe.ValidationError:
+				frappe.log_error(
+					title="Failed to store Seller Product ID",
+					reference_doctype=self.doctype,
+					reference_name=self.name,
+				)
 
 
 def get_xml_bytes(file: Path) -> bytes:
