@@ -5,6 +5,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "document_tab",
   "file_section_section",
   "einvoice",
   "header_section",
@@ -12,30 +13,35 @@
   "id",
   "section_break_z2sq",
   "amended_from",
-  "trade_tab",
-  "agreement_section",
+  "agreement_tab",
+  "seller_section",
   "seller_name",
   "seller_tax_id",
   "seller_address_line_1",
   "seller_address_line_2",
-  "seller_city",
   "seller_postcode",
+  "seller_city",
   "seller_country",
+  "column_break_foui",
   "supplier",
   "create_supplier",
   "supplier_address",
   "create_supplier_address",
+  "buyer_section",
   "column_break_reul",
   "buyer_name",
   "buyer_address_line_1",
   "buyer_address_line_2",
-  "buyer_city",
   "buyer_postcode",
+  "buyer_city",
   "buyer_country",
+  "column_break_ldwo",
   "company",
   "purchase_order",
-  "items_section",
+  "items_tab",
   "items",
+  "delivery_tab",
+  "settlement_tab",
   "settlement_section",
   "currency",
   "taxes",
@@ -66,17 +72,6 @@
    "fieldname": "einvoice",
    "fieldtype": "Attach",
    "label": "E-Invoice"
-  },
-  {
-   "depends_on": "einvoice",
-   "fieldname": "trade_tab",
-   "fieldtype": "Tab Break",
-   "label": "Trade"
-  },
-  {
-   "fieldname": "agreement_section",
-   "fieldtype": "Section Break",
-   "label": "Agreement"
   },
   {
    "fieldname": "seller_name",
@@ -164,11 +159,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "items_section",
-   "fieldtype": "Section Break",
-   "label": "Items"
-  },
-  {
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Items",
@@ -229,8 +219,7 @@
   },
   {
    "fieldname": "settlement_section",
-   "fieldtype": "Section Break",
-   "label": "Settlement"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "currency",
@@ -256,6 +245,50 @@
    "fieldtype": "Table",
    "label": "Payment Terms",
    "options": "E Invoice Payment Term"
+  },
+  {
+   "fieldname": "document_tab",
+   "fieldtype": "Tab Break",
+   "label": "Document"
+  },
+  {
+   "fieldname": "column_break_foui",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "buyer_section",
+   "fieldtype": "Section Break",
+   "label": "Buyer"
+  },
+  {
+   "fieldname": "column_break_ldwo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "items_tab",
+   "fieldtype": "Tab Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "delivery_tab",
+   "fieldtype": "Tab Break",
+   "label": "Delivery"
+  },
+  {
+   "fieldname": "settlement_tab",
+   "fieldtype": "Tab Break",
+   "label": "Settlement"
+  },
+  {
+   "depends_on": "einvoice",
+   "fieldname": "agreement_tab",
+   "fieldtype": "Tab Break",
+   "label": "Agreement"
+  },
+  {
+   "fieldname": "seller_section",
+   "fieldtype": "Section Break",
+   "label": "Seller"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -266,7 +299,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2024-10-01 16:00:37.256519",
+ "modified": "2024-10-01 16:42:46.133199",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
