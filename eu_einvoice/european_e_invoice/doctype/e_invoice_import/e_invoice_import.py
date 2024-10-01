@@ -88,6 +88,9 @@ class EInvoiceImport(Document):
 		if not (self.items and all(row.item for row in self.items)):
 			frappe.throw(_("Please map all invoice lines to an item before submitting"))
 
+	def on_submit(self):
+		self.add_seller_product_ids_to_items()
+
 	def get_parsed_einvoice(self) -> DrafthorseDocument:
 		return DrafthorseDocument.parse(
 			get_xml_bytes(Path(get_site_path(self.einvoice.lstrip("/"))).resolve())
@@ -200,6 +203,10 @@ class EInvoiceImport(Document):
 			elif row.item:
 				stock_uom, purchase_uom = frappe.db.get_value("Item", row.item, ["stock_uom", "purchase_uom"])
 				row.uom = purchase_uom or stock_uom
+
+	def add_seller_product_ids_to_items(self):
+		for row in self.items:
+			row.add_seller_product_id_to_item(self.supplier)
 
 
 def get_xml_bytes(file: Path) -> bytes:
