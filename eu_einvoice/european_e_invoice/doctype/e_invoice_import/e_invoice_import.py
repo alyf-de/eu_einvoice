@@ -16,6 +16,7 @@ from frappe.model.mapper import get_mapped_doc
 if TYPE_CHECKING:
 	from drafthorse.models.accounting import ApplicableTradeTax
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
+	from drafthorse.models.payment import PaymentTerms
 	from drafthorse.models.tradelines import LineItem
 	from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
 
@@ -30,6 +31,9 @@ class EInvoiceImport(Document):
 		from frappe.types import DF
 
 		from eu_einvoice.european_e_invoice.doctype.e_invoice_item.e_invoice_item import EInvoiceItem
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_payment_term.e_invoice_payment_term import (
+			EInvoicePaymentTerm,
+		)
 		from eu_einvoice.european_e_invoice.doctype.e_invoice_trade_tax.e_invoice_trade_tax import (
 			EInvoiceTradeTax,
 		)
@@ -47,6 +51,7 @@ class EInvoiceImport(Document):
 		id: DF.Data | None
 		issue_date: DF.Date | None
 		items: DF.Table[EInvoiceItem]
+		payment_terms: DF.Table[EInvoicePaymentTerm]
 		purchase_order: DF.Link | None
 		seller_address_line_1: DF.Data | None
 		seller_address_line_2: DF.Data | None
@@ -121,6 +126,10 @@ class EInvoiceImport(Document):
 		for tax in doc.trade.settlement.trade_tax.children:
 			self.parse_tax(tax)
 
+		self.payment_terms = []
+		for term in doc.trade.settlement.terms.children:
+			self.parse_payment_term(term)
+
 	def parse_seller(self, seller: "TradeParty"):
 		self.seller_name = str(seller.name)
 		self.seller_tax_id = (
@@ -165,14 +174,29 @@ class EInvoiceImport(Document):
 		item.billed_quantity = float(li.delivery.billed_quantity._amount)
 		item.unit_code = str(li.delivery.billed_quantity._unit_code)
 		item.net_rate = rate
-		item.tax_rate = float(li.settlement.trade_tax.rate_applicable_percent._value)
+		if li.settlement.trade_tax.rate_applicable_percent._value:
+			item.tax_rate = float(li.settlement.trade_tax.rate_applicable_percent._value)
 		item.total_amount = float(li.settlement.monetary_summation.total_amount._value)
 
 	def parse_tax(self, tax: "ApplicableTradeTax"):
 		t = self.append("taxes")
-		t.basis_amount = float(tax.basis_amount._value)
+		t.basis_amount = float(tax.basis_amount._value or 0) or None
 		t.rate_applicable_percent = float(tax.rate_applicable_percent._value)
 		t.calculated_amount = float(tax.calculated_amount._value)
+
+	def parse_payment_term(self, term: "PaymentTerms"):
+		t = self.append("payment_terms")
+		t.due = term.due._value
+		partial_amount = [row[0] for row in term.partial_amount.children if row[1] == self.currency][0]
+		t.partial_amount = float(partial_amount)
+		t.description = term.description
+		t.discount_basis_date = term.discount_terms.basis_date_time._value
+
+		if term.discount_terms.calculation_percent._value:
+			t.discount_calculation_percent = float(term.discount_terms.calculation_percent._value)
+
+		if term.discount_terms.actual_amount._value:
+			t.discount_actual_amount = float(term.discount_terms.actual_amount._value)
 
 	def guess_supplier(self):
 		if self.supplier:
@@ -237,8 +261,16 @@ def create_purchase_invoice(source_name, target_doc=None):
 	def post_process(source, target: "PurchaseInvoice"):
 		target.set_missing_values()
 
-	def process_tax_row(source, target, source_parent):
+	def process_tax_row(source, target, source_parent) -> None:
 		target.charge_type = "Actual"
+
+	def process_payment_term(source, target, source_parent):
+		if source.discount_calculation_percent:
+			target.discount_type = "Percentage"
+			target.discount = source.discount_calculation_percent
+		elif source.discount_actual_amount:
+			target.discount_type = "Amount"
+			target.discount = source.discount_actual_amount
 
 	return get_mapped_doc(
 		"E Invoice Import",
@@ -273,6 +305,16 @@ def create_purchase_invoice(source_name, target_doc=None):
 					"calculated_amount": "tax_amount",
 				},
 				"postprocess": process_tax_row,
+			},
+			"E Invoice Payment Term": {
+				"doctype": "Payment Schedule",
+				"field_map": {
+					"due": "due_date",
+					"partial_amount": "payment_amount",
+					"description": "description",
+					"discount_basis_date": "discount_date",
+				},
+				"postprocess": process_payment_term,
 			},
 		},
 		target_doc,

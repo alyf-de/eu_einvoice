@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-01 15:54:37.279431",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "due",
+  "partial_amount",
+  "section_break_mgef",
+  "discount_basis_date",
+  "discount_calculation_percent",
+  "discount_actual_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "due",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Due",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "partial_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Partial Amount",
+   "options": "currency",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_mgef",
+   "fieldtype": "Section Break",
+   "label": "Discount"
+  },
+  {
+   "fieldname": "discount_basis_date",
+   "fieldtype": "Date",
+   "label": "Basis Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "discount_calculation_percent",
+   "fieldtype": "Percent",
+   "label": "Calculation Percent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "discount_actual_amount",
+   "fieldtype": "Currency",
+   "label": "Actual Amount",
+   "options": "currency",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-01 16:25:06.974472",
+ "modified_by": "Administrator",
+ "module": "European e-Invoice",
+ "name": "E Invoice Payment Term",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
