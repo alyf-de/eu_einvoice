@@ -45,6 +45,7 @@
   "settlement_section",
   "currency",
   "taxes",
+  "due_date",
   "payment_terms"
  ],
  "fields": [
@@ -289,6 +290,12 @@
    "fieldname": "seller_section",
    "fieldtype": "Section Break",
    "label": "Seller"
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "label": "Due Date",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -299,7 +306,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2024-10-01 16:42:46.133199",
+ "modified": "2024-10-14 10:33:22.117790",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",

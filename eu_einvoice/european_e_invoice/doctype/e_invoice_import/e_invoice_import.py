@@ -47,6 +47,7 @@ class EInvoiceImport(Document):
 		buyer_postcode: DF.Data | None
 		company: DF.Link | None
 		currency: DF.Link | None
+		due_date: DF.Date | None
 		einvoice: DF.Attach | None
 		id: DF.Data | None
 		issue_date: DF.Date | None
@@ -185,6 +186,10 @@ class EInvoiceImport(Document):
 		t.calculated_amount = float(tax.calculated_amount._value)
 
 	def parse_payment_term(self, term: "PaymentTerms"):
+		if not term.partial_amount.children:
+			self.due_date = term.due._value
+			return
+
 		t = self.append("payment_terms")
 		t.due = term.due._value
 		partial_amount = [row[0] for row in term.partial_amount.children if row[1] == self.currency][0]
