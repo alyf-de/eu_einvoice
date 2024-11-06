@@ -8,7 +8,7 @@ from drafthorse.models.party import TaxRegistration
 from drafthorse.models.payment import PaymentTerms
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
-from erpnext.controllers.taxes_and_totals import get_itemised_tax_breakup_data
+from erpnext.edi.doctype.code_list.code_list import get_codes_for
 from frappe import _
 from frappe.core.utils import html2text
 from frappe.utils.data import flt
@@ -66,11 +66,7 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	doc.trade.settlement.invoicee.name = invoice.customer_name
 
 	doc.trade.settlement.currency_code = invoice.currency
-	doc.trade.settlement.payment_means.type_code = (
-		# TODO: add as field in Mode of Payment
-		# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred4461.htm
-		"ZZZ"
-	)
+	doc.trade.settlement.payment_means.type_code = _get_payment_means_code(invoice.payment_terms_template)
 
 	doc.trade.agreement.seller.name = invoice.company
 	if invoice.company_tax_id:
@@ -142,7 +138,7 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		li.product.description = html2text(item.description)
 		net_amount = flt(item.net_amount, item.precision("net_amount"))
 		li.agreement.net.amount = net_amount
-		unit_code = frappe.db.get_value("UOM", item.uom, "common_code") or "C62"
+		unit_code = _get_uom_code(item.uom)
 		li.delivery.billed_quantity = (
 			flt(item.qty, item.precision("qty")),
 			unit_code,
@@ -252,6 +248,28 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	invoice.run_method("after_einvoice_generation", doc)
 
 	return doc.serialize(schema="FACTUR-X_EXTENDED")
+
+
+def _get_payment_means_code(payment_terms_template: str | None = None) -> str:
+	"""Return the Payment Means Code for the given Payment Terms Template or 'ZZZ'."""
+	pt_codes = None
+	if payment_terms_template:
+		pt_codes = get_codes_for(
+			"urn:xoev-de:xrechnung:codeliste:untdid.4461_3",
+			"Payment Terms Template",
+			payment_terms_template,
+		)
+
+	return pt_codes[0] if pt_codes else "ZZZ"
+
+
+def _get_uom_code(uom: str) -> str:
+	"""Return the UOM code for the given UOM or 'C62'."""
+	uom_codes = None
+	if uom:
+		uom_codes = get_codes_for("urn:xoev-de:kosit:codeliste:rec20_3", "UOM", uom)
+
+	return uom_codes[0] if uom_codes else "C62"
 
 
 def validate_vat_id(vat_id: str) -> tuple[str, str]:
