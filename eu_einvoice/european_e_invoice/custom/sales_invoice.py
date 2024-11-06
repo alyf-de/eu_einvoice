@@ -66,7 +66,11 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	doc.trade.settlement.invoicee.name = invoice.customer_name
 
 	doc.trade.settlement.currency_code = invoice.currency
-	doc.trade.settlement.payment_means.type_code = _get_payment_means_code(invoice.payment_terms_template)
+	doc.trade.settlement.payment_means.type_code = get_common_code(
+		["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"],
+		[("Payment Terms Template", invoice.payment_terms_template)],
+		default="ZZZ",
+	)
 
 	doc.trade.agreement.seller.name = invoice.company
 	if invoice.company_tax_id:
@@ -138,7 +142,11 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		li.product.description = html2text(item.description)
 		net_amount = flt(item.net_amount, item.precision("net_amount"))
 		li.agreement.net.amount = net_amount
-		unit_code = _get_uom_code(item.uom)
+		unit_code = get_common_code(
+			["urn:xoev-de:kosit:codeliste:rec20_3"],
+			[("UOM", item.uom)],
+			default="C62",
+		)
 		li.delivery.billed_quantity = (
 			flt(item.qty, item.precision("qty")),
 			unit_code,
@@ -250,26 +258,19 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	return doc.serialize(schema="FACTUR-X_EXTENDED")
 
 
-def _get_payment_means_code(payment_terms_template: str | None = None) -> str:
-	"""Return the Payment Means Code for the given Payment Terms Template or 'ZZZ'."""
-	pt_codes = None
-	if payment_terms_template:
-		pt_codes = get_codes_for(
-			"urn:xoev-de:xrechnung:codeliste:untdid.4461_3",
-			"Payment Terms Template",
-			payment_terms_template,
-		)
+def get_common_code(code_lists: list[str], records: list[tuple[str, str]], default: str) -> str:
+	"""Find a common code from a given list of code lists and records."""
+	codes = None
+	for code_list in code_lists:
+		for doctype, name in records:
+			if not name:
+				continue
 
-	return pt_codes[0] if pt_codes else "ZZZ"
+			codes = get_codes_for(code_list, doctype, name)
+			if codes:
+				break
 
-
-def _get_uom_code(uom: str) -> str:
-	"""Return the UOM code for the given UOM or 'C62'."""
-	uom_codes = None
-	if uom:
-		uom_codes = get_codes_for("urn:xoev-de:kosit:codeliste:rec20_3", "UOM", uom)
-
-	return uom_codes[0] if uom_codes else "C62"
+	return codes[0] if codes else default
 
 
 def validate_vat_id(vat_id: str) -> tuple[str, str]:
