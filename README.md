@@ -138,6 +138,10 @@ def after_einvoice_generation(doc, einvoice):
     einvoice.trade.agreement.buyer.name = "Special Customer Name, only for eInvoices"
 ```
 
+## Validation
+
+You can upload an XML invoice file to https://www.itb.ec.europa.eu/invoice/upload and validate it as "CII Invoice CML".
+
 ## Contributing
 
 This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
