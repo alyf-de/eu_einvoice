@@ -63,15 +63,9 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		# Document/message claiming payment for goods or services supplied under
 		# conditions agreed between seller and buyer.
 		doc.header.type_code = "380"
-
-	doc.header.name = "RECHNUNG"
 	doc.header.issue_date_time = invoice.posting_date
-	if invoice.language:
-		doc.header.languages.add(invoice.language)
 
 	doc.trade.settlement.payee.name = invoice.customer_name
-	doc.trade.settlement.invoicee.name = invoice.customer_name
-
 	doc.trade.settlement.currency_code = invoice.currency
 	doc.trade.settlement.payment_means.type_code = payment_means_codes.get(
 		[("Payment Terms Template", invoice.payment_terms_template)]
