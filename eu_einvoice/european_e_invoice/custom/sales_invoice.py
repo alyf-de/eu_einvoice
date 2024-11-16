@@ -269,7 +269,12 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		payment_terms = PaymentTerms()
 		payment_terms.description = ps.description
 		payment_terms.due = ps.due_date
-		payment_terms.partial_amount.add((ps.payment_amount, invoice.currency))
+
+		if len(invoice.payment_schedule) > 1:
+			payment_terms.partial_amount.add(
+				(ps.payment_amount, None)
+			)  # [CII-DT-031] - currencyID should not be present
+
 		if ps.discount and ps.discount_date:
 			payment_terms.discount_terms.basis_date_time = ps.discount_date
 			if ps.discount_type == "Percentage":
