@@ -169,6 +169,14 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 				("Sales Taxes and Charges Template", invoice.taxes_and_charges),
 			]
 		)
+		if li.settlement.trade_tax.category_code._text == "AE":
+			# [BR-AE-05] In an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "Reverse charge" the Invoiced item VAT rate (BT-152) shall be 0 (zero).
+			li.settlement.trade_tax.rate_applicable_percent = 0
+		else:
+			li.settlement.trade_tax.rate_applicable_percent = get_item_rate(
+				item.item_tax_template, invoice.taxes
+			)
+
 		li.settlement.monetary_summation.total_amount = item.amount
 		doc.trade.items.add(li)
 
@@ -316,3 +324,22 @@ def validate_doc(doc, event):
 				alert=True,
 				indicator="orange",
 			)
+
+
+def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
+	"""Get the tax rate for an item from the item tax template and the taxes table."""
+	if item_tax_template:
+		# match the accounts from the taxes table with the rate from the item tax template
+		tax_template = frappe.get_doc("Item Tax Template", item_tax_template)
+		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
+
+		for tax in tax_template.taxes:
+			if tax.tax_type in applicable_accounts:
+				return tax.tax_rate
+
+	# if only one tax is on net total, return its rate
+	tax_rates = [tax.tax_rate for tax in taxes if tax.charge_type == "On Net Total"]
+	if len(tax_rates) == 1:
+		return tax_rates[0]
+
+	return None
