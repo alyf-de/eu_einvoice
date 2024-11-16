@@ -19,6 +19,7 @@ uom_codes = CommonCodeRetriever(
 )
 payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
 duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
+vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:vatex_1"], "vatex-eu-ae")
 
 
 @frappe.whitelist()
@@ -171,6 +172,16 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 				item.item_tax_template, invoice.taxes
 			)
 
+		if li.settlement.trade_tax.rate_applicable_percent._value == 0:
+			li.settlement.trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
+				[
+					("Item Tax Template", item.item_tax_template),
+					("Account", item.income_account),
+					("Tax Category", invoice.tax_category),
+					("Sales Taxes and Charges Template", invoice.taxes_and_charges),
+				]
+			)
+
 		li.settlement.monetary_summation.total_amount = item.amount
 		doc.trade.items.add(li)
 
@@ -263,6 +274,12 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		trade_tax.basis_amount = invoice.net_total
 		trade_tax.rate_applicable_percent = 0
 		trade_tax.calculated_amount = 0
+		trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
+			[
+				("Tax Category", invoice.tax_category),
+				("Sales Taxes and Charges Template", invoice.taxes_and_charges),
+			]
+		)
 		doc.trade.settlement.trade_tax.add(trade_tax)
 
 	for ps in invoice.payment_schedule:
