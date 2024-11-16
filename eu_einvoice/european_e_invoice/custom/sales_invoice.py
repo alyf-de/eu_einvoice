@@ -259,13 +259,16 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 
 	if not tax_added:
 		trade_tax = ApplicableTradeTax()
+		trade_tax.type_code = "VAT"  # [CII-DT-037] - TypeCode shall be 'VAT'
 		trade_tax.category_code = duty_tax_fee_category_codes.get(
 			[
 				("Tax Category", invoice.tax_category),
 				("Sales Taxes and Charges Template", invoice.taxes_and_charges),
 			]
 		)
+		trade_tax.basis_amount = invoice.net_total
 		trade_tax.rate_applicable_percent = 0
+		trade_tax.calculated_amount = 0
 		doc.trade.settlement.trade_tax.add(trade_tax)
 
 	for ps in invoice.payment_schedule:
