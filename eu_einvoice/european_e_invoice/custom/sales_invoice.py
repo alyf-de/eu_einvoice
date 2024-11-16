@@ -8,10 +8,17 @@ from drafthorse.models.party import TaxRegistration
 from drafthorse.models.payment import PaymentTerms
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
-from erpnext.edi.doctype.code_list.code_list import get_codes_for
 from frappe import _
 from frappe.core.utils import html2text
 from frappe.utils.data import flt
+
+from eu_einvoice.common_codes import CommonCodeRetriever
+
+uom_codes = CommonCodeRetriever(
+	["urn:xoev-de:kosit:codeliste:rec20_3", "urn:xoev-de:kosit:codeliste:rec21_3"], "C62"
+)
+payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
+duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
 
 
 @frappe.whitelist()
@@ -66,10 +73,9 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	doc.trade.settlement.invoicee.name = invoice.customer_name
 
 	doc.trade.settlement.currency_code = invoice.currency
-	doc.trade.settlement.payment_means.type_code = get_common_code(
-		["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"],
-		[("Payment Terms Template", invoice.payment_terms_template)],
-		default="ZZZ",
+	doc.trade.settlement.payment_means.type_code = payment_means_codes.get(
+		[("Payment Terms Template", invoice.payment_terms_template)]
+		+ [("Mode of Payment", term.mode_of_payment) for term in invoice.payment_schedule]
 	)
 
 	doc.trade.agreement.seller.name = invoice.company
@@ -142,14 +148,10 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 		li.product.description = html2text(item.description)
 		net_amount = flt(item.net_amount, item.precision("net_amount"))
 		li.agreement.net.amount = net_amount
-		unit_code = get_common_code(
-			["urn:xoev-de:kosit:codeliste:rec20_3"],
-			[("UOM", item.uom)],
-			default="C62",
-		)
+
 		li.delivery.billed_quantity = (
 			flt(item.qty, item.precision("qty")),
-			unit_code,
+			uom_codes.get([("UOM", item.uom)]),
 		)
 
 		if item.delivery_note:
@@ -159,7 +161,14 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 			)
 
 		li.settlement.trade_tax.type_code = "VAT"
-		li.settlement.trade_tax.category_code = "S"
+		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(
+			[
+				("Item Tax Template", item.item_tax_template),
+				("Account", item.income_account),
+				("Tax Category", invoice.tax_category),
+				("Sales Taxes and Charges Template", invoice.taxes_and_charges),
+			]
+		)
 		li.settlement.monetary_summation.total_amount = item.amount
 		doc.trade.items.add(li)
 
@@ -177,7 +186,13 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 			trade_tax = ApplicableTradeTax()
 			trade_tax.calculated_amount = tax.tax_amount
 			trade_tax.type_code = "VAT"
-			trade_tax.category_code = "S"
+			trade_tax.category_code = duty_tax_fee_category_codes.get(
+				[
+					("Account", tax.account_head),
+					("Tax Category", invoice.tax_category),
+					("Sales Taxes and Charges Template", invoice.taxes_and_charges),
+				]
+			)
 			tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
 			trade_tax.rate_applicable_percent = tax_rate
 
@@ -202,7 +217,13 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 				# A tax or duty applied on and in addition to existing duties and taxes.
 				trade_tax.type_code = "SUR"
 
-			trade_tax.category_code = "S"
+			trade_tax.category_code = duty_tax_fee_category_codes.get(
+				[
+					("Account", tax.account_head),
+					("Tax Category", invoice.tax_category),
+					("Sales Taxes and Charges Template", invoice.taxes_and_charges),
+				]
+			)
 			doc.trade.settlement.trade_tax.add(trade_tax)
 			tax_added = True
 		elif tax.charge_type == "On Previous Row Total":
@@ -218,15 +239,24 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 				# A tax or duty applied on and in addition to existing duties and taxes.
 				trade_tax.type_code = "SUR"
 
-			trade_tax.category_code = "S"
+			trade_tax.category_code = duty_tax_fee_category_codes.get(
+				[
+					("Account", tax.account_head),
+					("Tax Category", invoice.tax_category),
+					("Sales Taxes and Charges Template", invoice.taxes_and_charges),
+				]
+			)
 			doc.trade.settlement.trade_tax.add(trade_tax)
 			tax_added = True
 
 	if not tax_added:
 		trade_tax = ApplicableTradeTax()
-		trade_tax.type_code = "FRE"
-		trade_tax.category_code = "S"  # TODO: many possible values for tax free
-		trade_tax.calculated_amount = 0
+		trade_tax.category_code = duty_tax_fee_category_codes.get(
+			[
+				("Tax Category", invoice.tax_category),
+				("Sales Taxes and Charges Template", invoice.taxes_and_charges),
+			]
+		)
 		trade_tax.rate_applicable_percent = 0
 		doc.trade.settlement.trade_tax.add(trade_tax)
 
@@ -256,21 +286,6 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 	invoice.run_method("after_einvoice_generation", doc)
 
 	return doc.serialize(schema="FACTUR-X_EXTENDED")
-
-
-def get_common_code(code_lists: list[str], records: list[tuple[str, str]], default: str) -> str:
-	"""Find a common code from a given list of code lists and records."""
-	codes = None
-	for code_list in code_lists:
-		for doctype, name in records:
-			if not name:
-				continue
-
-			codes = get_codes_for(code_list, doctype, name)
-			if codes:
-				break
-
-	return codes[0] if codes else default
 
 
 def validate_vat_id(vat_id: str) -> tuple[str, str]:
