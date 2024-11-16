@@ -206,7 +206,7 @@ def get_xml(invoice, company, seller_address=None, customer_address=None):
 
 			# We don't know the basis amount for this tax, so we try to calculate it
 			if tax.tax_amount and tax_rate:
-				trade_tax.basis_amount = tax.tax_amount / tax_rate * 100
+				trade_tax.basis_amount = round(tax.tax_amount / tax_rate * 100, 2)
 			else:
 				trade_tax.basis_amount = 0
 
