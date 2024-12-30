@@ -120,6 +120,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Company's Item Code
     - Customer's Item Code
     - Delivery Note number and date
+    - Sales Order number and date (added on document level, only if there is exactly one Sales Order)
     - Quantity + Unit
     - Rate
     - Net Amount
