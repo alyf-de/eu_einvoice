@@ -27,6 +27,8 @@ Please use a branch (`MAJOR_VERSION`) that matches the major version of ERPNext 
 
 ## Setup
 
+### Code Lists
+
 E-invoices rely on common codes that describe the content of the invoice. E.g. "C62" is used for the UOM "One" and "ZZZ" is used for a mutually agreed mode of payment.
 
 Common codes are part of a code list. You'll need to import the code lists and map the codes you need to the corresponding ERPNext entities. Please use the "Import Genericode" button in **Code List** and paste the URL linked below.
@@ -46,6 +48,14 @@ The retrieval of codes goes from the most specific to the most general. E.g. for
 ### Buyer Reference (German: Leitweg-ID)
 
 If you work with government customers or similar large organizations, you might need to specify their _Buyer Reference_ in the eInvoice. This is done by setting the _Buyer Reference_ field in the **Sales Invoice**. You can already fill this field in the **Customer** master data or the **Sales Order**.
+
+### Bank Details
+
+If you want your eInvoice to contain bank details, you need to set up a **Mode of Payment** of type "Bank", link the company's corresponding **Account** and create a **Bank Account** for the same account.
+
+Then, you can map a **Common Code** from **Code List** "UNTDID.4461", e.g. "Credit Transfer" (30) or "SEPA Credit Transfer" (58), to the **Mode of Payment**.
+
+Please note that the eInvoice standard only supports one payment means per invoice, so you should not specify multiple **Modes of Payment** in the same invoice.
 
 ## Usage
 
@@ -117,6 +127,10 @@ The following fields of the **Sales Invoice** are currently considered for the e
 - Terms and Conditions Details (converted to markdown)
 - Incoterm and named place
 - Payment Schedule
+    - Mode of Payment -> Account -> Bank Account
+        - IBAN
+        - Bank
+            - SWIFT Number
     - Description
     - Due date
     - Amount
