@@ -606,6 +606,7 @@ def validate_doc(doc, event):
 				indicator="orange",
 			)
 
+	modes_of_payment = set()
 	for ps in doc.payment_schedule:
 		if ps.discount_date and date_diff(ps.discount_date, doc.posting_date) < 0:
 			frappe.msgprint(
@@ -615,6 +616,18 @@ def validate_doc(doc, event):
 				alert=True,
 				indicator="orange",
 			)
+
+		if ps.mode_of_payment:
+			modes_of_payment.add(ps.mode_of_payment)
+
+	if len(modes_of_payment) > 1:
+		frappe.msgprint(
+			_("{0}: Only one mode of payment will be considered in the e-invoice.").format(
+				_(doc.meta.get_label("payment_schedule"))
+			),
+			alert=True,
+			indicator="orange",
+		)
 
 	validate_einvoice(doc)
 
