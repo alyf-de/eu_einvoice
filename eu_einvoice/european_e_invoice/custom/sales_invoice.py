@@ -136,10 +136,7 @@ class EInvoiceGenerator:
 			self._add_empty_tax()
 
 		self.doc.trade.settlement.currency_code = self.invoice.currency
-		self.doc.trade.settlement.payment_means.type_code = payment_means_codes.get(
-			[("Payment Terms Template", self.invoice.payment_terms_template)]
-			+ [("Mode of Payment", term.mode_of_payment) for term in self.invoice.payment_schedule]
-		)
+		self._add_payment_means()
 
 		if self.invoice.from_date:
 			self.doc.trade.settlement.period.start = getdate(self.invoice.from_date)
@@ -532,6 +529,26 @@ class EInvoiceGenerator:
 
 			self.doc.trade.settlement.terms.add(payment_terms)
 
+	def _add_payment_means(self):
+		self.doc.trade.settlement.payment_means.type_code = payment_means_codes.get(
+			[("Payment Terms Template", self.invoice.payment_terms_template)]
+			+ [("Mode of Payment", term.mode_of_payment) for term in self.invoice.payment_schedule]
+		)
+
+		modes_of_payment = {ps.mode_of_payment for ps in self.invoice.payment_schedule if ps.mode_of_payment}
+		for mode_of_payment in modes_of_payment:
+			iban, bic = get_bank_details(mode_of_payment, self.invoice.company)
+			if not iban:
+				continue
+
+			self.doc.trade.settlement.payment_means.payee_account.iban = iban
+
+			if self.profile >= EInvoiceProfile.EN16931:
+				self.doc.trade.settlement.payment_means.payee_account.account_name = self.invoice.company
+				self.doc.trade.settlement.payment_means.payee_institution.bic = bic
+
+			break
+
 	def _set_totals(self):
 		actual_charge_total = sum(tax.tax_amount for tax in self.invoice.taxes if tax.charge_type == "Actual")
 		tax_total = sum(tax.tax_amount for tax in self.invoice.taxes if tax.charge_type != "Actual")
@@ -589,6 +606,7 @@ def validate_doc(doc, event):
 				indicator="orange",
 			)
 
+	modes_of_payment = set()
 	for ps in doc.payment_schedule:
 		if ps.discount_date and date_diff(ps.discount_date, doc.posting_date) < 0:
 			frappe.msgprint(
@@ -598,6 +616,18 @@ def validate_doc(doc, event):
 				alert=True,
 				indicator="orange",
 			)
+
+		if ps.mode_of_payment:
+			modes_of_payment.add(ps.mode_of_payment)
+
+	if len(modes_of_payment) > 1:
+		frappe.msgprint(
+			_("{0}: Only one mode of payment will be considered in the e-invoice.").format(
+				_(doc.meta.get_label("payment_schedule"))
+			),
+			alert=True,
+			indicator="orange",
+		)
 
 	validate_einvoice(doc)
 
@@ -656,6 +686,32 @@ def get_skonto_line(days: int, percent: float, basis_amount: float | None = None
 		parts.append(f"BASISBETRAG={basis_amount:.2f}")
 
 	return "#" + "#".join(parts) + "#"
+
+
+def get_bank_details(mode_of_payment: str, company: str) -> tuple[str | None, str | None]:
+	"""Get the bank details for a mode of payment."""
+	empty_tuple = (None, None)
+	if frappe.db.get_value("Mode of Payment", mode_of_payment, "type") != "Bank":
+		return empty_tuple
+
+	account = frappe.db.get_value(
+		"Mode of Payment Account", {"parent": mode_of_payment, "company": company}, "default_account"
+	)
+	if not account:
+		return empty_tuple
+
+	bank_account_name = frappe.db.get_value(
+		"Bank Account", {"account": account, "company": company, "is_company_account": 1, "disabled": 0}
+	)
+	if not bank_account_name:
+		return empty_tuple
+
+	iban, bank = frappe.db.get_value("Bank Account", bank_account_name, ["iban", "bank"])
+	if not iban:
+		return empty_tuple
+
+	bic = frappe.db.get_value("Bank", bank, "swift_number") if bank else None
+	return (iban, bic or None)
 
 
 @frappe.whitelist(allow_guest=True)
