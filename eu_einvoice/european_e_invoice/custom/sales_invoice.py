@@ -694,11 +694,15 @@ def get_bank_details(mode_of_payment: str, company: str) -> tuple[str | None, st
 	if frappe.db.get_value("Mode of Payment", mode_of_payment, "type") != "Bank":
 		return empty_tuple
 
-	account = frappe.db.get_value("Mode of Payment Account", {"parent": mode_of_payment, "company": company}, "default_account")
+	account = frappe.db.get_value(
+		"Mode of Payment Account", {"parent": mode_of_payment, "company": company}, "default_account"
+	)
 	if not account:
 		return empty_tuple
 
-	bank_account_name = frappe.db.get_value("Bank Account", {"account": account, "company": company, "is_company_account": 1, "disabled": 0})
+	bank_account_name = frappe.db.get_value(
+		"Bank Account", {"account": account, "company": company, "is_company_account": 1, "disabled": 0}
+	)
 	if not bank_account_name:
 		return empty_tuple
 
