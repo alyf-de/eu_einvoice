@@ -128,8 +128,19 @@ class EInvoiceGenerator:
 		if self.invoice.po_date:
 			self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
+		sales_orders = set()
 		for item in self.invoice.items:
+			if item.sales_order:
+				sales_orders.add(item.sales_order)
+
 			self._add_line_item(item)
+
+		if len(sales_orders) == 1 and self.profile >= EInvoiceProfile.EXTENDED:
+			so_name = sales_orders.pop()
+			self.doc.trade.agreement.seller_order.issuer_assigned_id = so_name
+			self.doc.trade.agreement.seller_order.issue_date_time = frappe.db.get_value(
+				"Sales Order", so_name, "transaction_date"
+			)
 
 		tax_added = self._add_taxes_and_charges()
 		if not tax_added:
