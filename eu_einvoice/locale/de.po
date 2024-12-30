@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2024-12-19 17:05+0053\n"
+"POT-Creation-Date: 2024-12-30 15:34+0053\n"
 "PO-Revision-Date: 2024-11-25 18:57+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -104,11 +104,11 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:612
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:642
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:618
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:648
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -465,11 +465,15 @@ msgstr "Validierungsfehler"
 msgid "View {0}"
 msgstr "{0} ansehen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:595
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:613
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:585
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:602
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:625
+msgid "{0}: Only one mode of payment will be considered in the e-invoice."
+msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 
