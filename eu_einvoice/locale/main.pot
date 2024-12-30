@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2024-12-12 00:15+0053\n"
-"PO-Revision-Date: 2024-12-12 00:15+0053\n"
+"POT-Creation-Date: 2024-12-30 15:34+0053\n"
+"PO-Revision-Date: 2024-12-30 15:34+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -108,11 +108,11 @@ msgstr ""
 msgid "Calculation Percent"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:570
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:642
 msgid "Cannot create E Invoice."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:576
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:648
 msgid "Cannot validate E Invoice schematron."
 msgstr ""
 
@@ -479,11 +479,15 @@ msgstr ""
 msgid "View {0}"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:553
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:613
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:543
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:602
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:625
+msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
 
