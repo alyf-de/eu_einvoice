@@ -551,3 +551,43 @@ def link_to_purchase_invoice(einvoice: str, purchase_invoice: str):
 		frappe.throw(_("E Invoice Import {0} does not exist").format(einvoice))
 
 	pi.db_set("e_invoice_import", einvoice)
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def po_item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=False):
+	item_code = filters.pop("item_code")
+	purchase_order = filters.pop("parent")
+
+	if not purchase_order:
+		return []
+
+	purchase_order = frappe.get_doc("Purchase Order", purchase_order)
+	purchase_order.check_permission("read")
+
+	return [
+		[
+			row.name,
+			_("Row {0}").format(row.idx),
+			row.item_code,
+			row.description[:100] + "..." if len(row.description) > 40 else row.description,
+			row.get_formatted("qty") + " " + row.uom,
+			row.get_formatted("net_rate") + " / " + row.uom,
+		]
+		for row in purchase_order.items
+		if not item_code or row.item_code == item_code
+	]
+
+
+@frappe.whitelist()
+def get_po_item_details(po_detail: str):
+	purchase_order_name = frappe.db.get_value("Purchase Order Item", po_detail, "parent")
+	purchase_order = frappe.get_doc("Purchase Order", purchase_order_name)
+	if not purchase_order.has_permission("read"):
+		return {}
+
+	row = purchase_order.getone("items", {"name": po_detail})
+	return {
+		"item_code": row.item_code,
+		"uom": row.uom,
+	}
