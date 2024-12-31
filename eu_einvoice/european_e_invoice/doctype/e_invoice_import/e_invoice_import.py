@@ -142,7 +142,7 @@ class EInvoiceImport(Document):
 		self.parse_seller(doc.trade.agreement.seller)
 		self.parse_buyer(doc.trade.agreement.buyer)
 
-		buyer_reference = str(doc.trade.agreement.buyer_order.issuer_assigned_id)
+		buyer_reference = doc.trade.agreement.buyer_order.issuer_assigned_id._text
 		if (
 			not self.purchase_order
 			and buyer_reference
