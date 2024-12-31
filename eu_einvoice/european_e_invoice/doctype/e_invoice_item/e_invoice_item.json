@@ -13,6 +13,7 @@
   "column_break_grml",
   "item",
   "create_item",
+  "po_detail",
   "delivery_section",
   "billed_quantity",
   "unit_code",
@@ -126,12 +127,18 @@
    "fieldtype": "Button",
    "label": "Create Item",
    "read_only_depends_on": "item"
+  },
+  {
+   "fieldname": "po_detail",
+   "fieldtype": "Link",
+   "label": "Purchase Order Row",
+   "options": "Purchase Order Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-26 14:50:15.775645",
+ "modified": "2024-12-31 09:04:36.581784",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Item",

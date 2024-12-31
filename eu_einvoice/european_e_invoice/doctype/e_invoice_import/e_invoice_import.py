@@ -93,6 +93,8 @@ class EInvoiceImport(Document):
 			self.guess_uom()
 			self.guess_item_code()
 
+		self.guess_po_details()
+
 	def before_submit(self):
 		if not self.supplier:
 			frappe.throw(_("Please create or select a supplier before submitting"))
@@ -310,6 +312,35 @@ class EInvoiceImport(Document):
 					{"supplier": self.supplier, "supplier_part_no": row.seller_product_id},
 					"parent",
 				)
+
+	def guess_po_details(self):
+		if not self.purchase_order:
+			for pi_row in self.items:
+				pi_row.po_detail = None
+			return
+
+		purchase_order = frappe.get_doc("Purchase Order", self.purchase_order)
+		po_items = [
+			frappe._dict(
+				name=po_row.name,
+				item_code=po_row.item_code,
+				unbilled_amount=po_row.amount - po_row.billed_amt,
+			)
+			for po_row in purchase_order.items
+		]
+		for pi_row in self.items:
+			if pi_row.po_detail and frappe.db.exists(
+				"Purchase Order Item", {"name": pi_row.po_detail, "parent": self.purchase_order}
+			):
+				continue
+
+			for po_row in po_items:
+				if po_row.item_code == pi_row.item and po_row.unbilled_amount >= pi_row.total_amount:
+					pi_row.po_detail = po_row.name
+					po_row.unbilled_amount -= pi_row.total_amount
+					break
+			else:
+				pi_row.po_detail = None
 
 	def add_seller_product_ids_to_items(self):
 		for row in self.items:
