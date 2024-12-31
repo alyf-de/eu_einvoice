@@ -379,6 +379,10 @@ def create_purchase_invoice(source_name, target_doc=None):
 	def post_process(source, target: "PurchaseInvoice"):
 		target.set_missing_values()
 
+	def process_item_row(source, target, source_parent) -> None:
+		if source_parent.purchase_order:
+			target.purchase_order = source_parent.purchase_order
+
 	def process_tax_row(source, target, source_parent) -> None:
 		target.charge_type = "Actual"
 
@@ -414,6 +418,7 @@ def create_purchase_invoice(source_name, target_doc=None):
 					"uom": "uom",
 					"net_rate": "rate",
 				},
+				"postprocess": process_item_row,
 			},
 			"E Invoice Trade Tax": {
 				"doctype": "Purchase Taxes and Charges",
