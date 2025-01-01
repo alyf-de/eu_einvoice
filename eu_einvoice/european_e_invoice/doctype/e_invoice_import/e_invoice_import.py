@@ -567,7 +567,7 @@ def po_item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=F
 	if not purchase_order:
 		return []
 
-	purchase_order = frappe.get_doc("Purchase Order", purchase_order)
+	purchase_order = frappe.get_cached_doc("Purchase Order", purchase_order)
 	purchase_order.check_permission("read")
 
 	return [
@@ -587,7 +587,7 @@ def po_item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=F
 @frappe.whitelist()
 def get_po_item_details(po_detail: str):
 	purchase_order_name = frappe.db.get_value("Purchase Order Item", po_detail, "parent")
-	purchase_order = frappe.get_doc("Purchase Order", purchase_order_name)
+	purchase_order = frappe.get_cached_doc("Purchase Order", purchase_order_name)
 	if not purchase_order.has_permission("read"):
 		return {}
 
