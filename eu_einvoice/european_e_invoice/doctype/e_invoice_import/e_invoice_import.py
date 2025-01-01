@@ -570,7 +570,7 @@ def po_item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=F
 	purchase_order = frappe.get_cached_doc("Purchase Order", purchase_order)
 	purchase_order.check_permission("read")
 
-	return [
+	results = [
 		[
 			row.name,
 			_("Row {0}").format(row.idx),
@@ -582,6 +582,11 @@ def po_item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=F
 		for row in purchase_order.items
 		if not item_code or row.item_code == item_code
 	]
+
+	if not txt:
+		return results
+
+	return [row for row in results if txt in ", ".join(row)]
 
 
 @frappe.whitelist()
