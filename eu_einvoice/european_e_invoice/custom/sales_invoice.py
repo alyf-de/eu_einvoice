@@ -4,7 +4,7 @@ import re
 from typing import TYPE_CHECKING
 
 import frappe
-from drafthorse.models.accounting import ApplicableTradeTax
+from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
 from drafthorse.models.document import Document, IncludedNote
 from drafthorse.models.party import TaxRegistration, URIUniversalCommunication
 from drafthorse.models.payment import PaymentTerms
@@ -381,10 +381,27 @@ class EInvoiceGenerator:
 			if not tax.tax_amount:
 				continue
 
-			if tax.charge_type == "Actual":
+			if tax.charge_type == "Actual" and self.profile >= EInvoiceProfile.EXTENDED:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
 				service_charge.applied_amount = tax.tax_amount
+
+				if len(self.invoice.taxes) > i + 1:
+					vat_line = self.invoice.taxes[i + 1]
+					if vat_line.charge_type in ("On Previous Row Amount", "On Previous Row Total"):
+						# Add applied VAT for the service charge (BR-FXEXT-S-08)
+						service_charge_tax = AppliedTradeTax()
+						service_charge_tax.type_code = "VAT"
+						service_charge_tax.rate_applicable_percent = vat_line.rate
+						service_charge_tax.category_code = duty_tax_fee_category_codes.get(
+							[
+								("Account", vat_line.account_head),
+								("Tax Category", self.invoice.tax_category),
+								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+							]
+						)
+						service_charge.trade_tax.add(service_charge_tax)
+
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
 				trade_tax = ApplicableTradeTax()
@@ -602,6 +619,18 @@ def validate_doc(doc, event):
 				_("{0} row #{1}: Type '{2}' is not supported in e-invoice").format(
 					_(doc.meta.get_label("taxes")), tax_row.idx, _(tax_row.charge_type)
 				),
+				alert=True,
+				indicator="orange",
+			)
+
+		if (
+			tax_row.charge_type == "Actual"
+			and EInvoiceProfile(doc.einvoice_profile) < EInvoiceProfile.EXTENDED
+		):
+			frappe.msgprint(
+				_(
+					"{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
+				).format(_(doc.meta.get_label("taxes")), tax_row.idx),
 				alert=True,
 				indicator="orange",
 			)
