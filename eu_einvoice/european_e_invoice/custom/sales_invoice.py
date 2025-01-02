@@ -381,7 +381,7 @@ class EInvoiceGenerator:
 			if not tax.tax_amount:
 				continue
 
-			if tax.charge_type == "Actual":
+			if tax.charge_type == "Actual" and self.profile >= EInvoiceProfile.EXTENDED:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
 				service_charge.applied_amount = tax.tax_amount
@@ -619,6 +619,18 @@ def validate_doc(doc, event):
 				_("{0} row #{1}: Type '{2}' is not supported in e-invoice").format(
 					_(doc.meta.get_label("taxes")), tax_row.idx, _(tax_row.charge_type)
 				),
+				alert=True,
+				indicator="orange",
+			)
+
+		if (
+			tax_row.charge_type == "Actual"
+			and EInvoiceProfile(doc.einvoice_profile) < EInvoiceProfile.EXTENDED
+		):
+			frappe.msgprint(
+				_(
+					"{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
+				).format(_(doc.meta.get_label("taxes")), tax_row.idx),
 				alert=True,
 				indicator="orange",
 			)
