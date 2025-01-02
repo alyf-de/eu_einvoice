@@ -4,7 +4,7 @@ import re
 from typing import TYPE_CHECKING
 
 import frappe
-from drafthorse.models.accounting import ApplicableTradeTax
+from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
 from drafthorse.models.document import Document, IncludedNote
 from drafthorse.models.party import TaxRegistration, URIUniversalCommunication
 from drafthorse.models.payment import PaymentTerms
@@ -385,6 +385,27 @@ class EInvoiceGenerator:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
 				service_charge.applied_amount = tax.tax_amount
+
+				# Add VAT for the service charge to prevent BR-FXEXT-S-08
+				try:
+					vat_line = self.invoice.taxes[i + 1]
+					if vat_line.charge_type in ("On Previous Row Amount", "On Previous Row Total"):
+						service_charge_tax = AppliedTradeTax()
+						service_charge_tax.type_code = "VAT"
+						service_charge_tax.rate_applicable_percent = vat_line.rate
+						service_charge_tax.category_code = duty_tax_fee_category_codes.get(
+							[
+								("Account", vat_line.account_head),
+								("Tax Category", self.invoice.tax_category),
+								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+							]
+						)
+						service_charge.trade_tax.add(service_charge_tax)
+				except IndexError:
+					# No VAT line after the service charge
+					# can still be valid if no tax is applied
+					pass
+
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
 				trade_tax = ApplicableTradeTax()
