@@ -139,7 +139,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Discount
     - Discount Date
 - Sales Taxs and Charges
-    - The _Charge Type_ "Actual" is used as logistics or service charges.
+    - The _Charge Type_ "Actual" is used as logistics or service charges. If you want to add VAT for the service charge, you need to add a _Charge Type_ "On Previous Row Amount" or "On Previous Row Total" immediately after the service charge.
     - For _Charge Type_ "On Net Total", the taxable amount is calculated as `tax_amount / rate * 100`, if the rate is available in the tax row or in the corresponding Account [1].
     - The _Charge Type_ "On Item Quantity" is not supported.
 - Total
