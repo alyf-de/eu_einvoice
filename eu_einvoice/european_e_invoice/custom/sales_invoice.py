@@ -400,10 +400,10 @@ class EInvoiceGenerator:
 				service_charge.description = tax.description
 				service_charge.applied_amount = tax.tax_amount
 
-				# Add VAT for the service charge to prevent BR-FXEXT-S-08
-				try:
+				if len(self.invoice.taxes) > i + 1:
 					vat_line = self.invoice.taxes[i + 1]
 					if vat_line.charge_type in ("On Previous Row Amount", "On Previous Row Total"):
+						# Add applied VAT for the service charge (BR-FXEXT-S-08)
 						service_charge_tax = AppliedTradeTax()
 						service_charge_tax.type_code = "VAT"
 						service_charge_tax.rate_applicable_percent = vat_line.rate
@@ -415,10 +415,6 @@ class EInvoiceGenerator:
 							]
 						)
 						service_charge.trade_tax.add(service_charge_tax)
-				except IndexError:
-					# No VAT line after the service charge
-					# can still be valid if no tax is applied
-					pass
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
