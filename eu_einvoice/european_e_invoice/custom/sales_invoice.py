@@ -263,6 +263,9 @@ class EInvoiceGenerator:
 			self.doc.trade.agreement.seller.contact.fax.number = self.company.fax
 
 	def _set_buyer(self):
+		if frappe.db.get_single_value("Selling Settings", "cust_master_name") != "Customer Name":
+			self.doc.trade.agreement.buyer.id = self.invoice.customer
+
 		self.doc.trade.agreement.buyer.name = self.invoice.customer_name
 
 		self._set_buyer_address()
