@@ -785,28 +785,37 @@ def download_pdf(
 			frappe.local.response.filecontent = zugferd_pdf
 
 
-def _create_symlink_to_icc_profile() -> None:
-	"""Create a symlink to the ICC profile in the Ghostscript installation."""
+def _get_icc_profile_path() -> str:
+	"""Get the path to the ICC profile used by Ghostscript."""
 	import os
 	import re
 	import subprocess
 
 	gs_output = subprocess.run(["gs", "-h"], capture_output=True, text=True)
-	search_paths = re.findall(r"Search path:\n([0-9a-zA-Z\/ :.\n]+)Ghostscript", gs_output.stdout, re.DOTALL)
-	search_paths = search_paths[0].replace("\n", "").strip()
-	lib_path = None
-	paths = search_paths.split(":")
-	for path in paths:
-		if path.strip().endswith("/lib"):
-			lib_path = path.strip()[:-4]
-			break
-	if lib_path:
-		icc_path = os.path.join(lib_path, "iccprofiles/srgb.icc")
-		if os.path.isfile(icc_path):
-			os.symlink(icc_path, "srgb.icc")
-			return
+	# the output of `gs -h` contains the search paths for Ghostscript
+	# it looks like the following:
+	# ...
+	# Search path:
+	#   /usr/share/ghostscript/9.55.0/Resource/Init :
+	#   /usr/share/ghostscript/9.55.0/lib :
+	#   /usr/share/ghostscript/9.55.0/Resource/Font :
+	#   /usr/share/ghostscript/fonts : /var/lib/ghostscript/fonts :
+	#   /usr/share/cups/fonts : /usr/share/ghostscript/fonts :
+	#   /usr/local/lib/ghostscript/fonts : /usr/share/fonts
+	# Ghostscript is also using fontconfig to search for font files
+	# ...
+	search_paths = re.search(r"Search path:\n(.*?)Ghostscript", gs_output.stdout, re.DOTALL)
+	if not search_paths:
+		raise RuntimeError("Unable to find Ghostscript search paths")
 
-	raise RuntimeError("Unable to find ICC profile in Ghostscript search paths")
+	for path in search_paths.group(1).split(":"):
+		path = path.strip()
+		if path.endswith("/lib"):
+			icc_path = os.path.join(path[:-4], "iccprofiles")
+			if os.path.exists(icc_path):
+				return icc_path
+
+	raise RuntimeError("Unable to find ICC profiles folder in Ghostscript search paths.")
 
 
 def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
@@ -815,10 +824,11 @@ def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 	import re
 	import subprocess
 
+	cwd = None
 	if not os.path.isfile("srgb.icc"):
 		# the PDFA_def.ps file requires the srgb.icc file to be present in the current directory
-		# if it is not present, we create a symlink to the srgb.icc file in the Ghostscript installation
-		_create_symlink_to_icc_profile()
+		# if it is not present, change the current working directory to the Ghostscript installation
+		cwd = _get_icc_profile_path()
 
 	with subprocess.Popen(
 		[
@@ -835,6 +845,7 @@ def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 			"PDFA_def.ps",
 			"-",
 		],
+		cwd=cwd,
 		stdin=subprocess.PIPE,
 		stdout=subprocess.PIPE,
 		stderr=subprocess.PIPE,
