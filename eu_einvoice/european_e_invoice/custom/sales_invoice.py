@@ -785,7 +785,7 @@ def download_pdf(
 			frappe.local.response.filecontent = zugferd_pdf
 
 
-def _create_symlink_to_icc_profile():
+def _create_symlink_to_icc_profile() -> None:
 	"""Create a symlink to the ICC profile in the Ghostscript installation."""
 	import os
 	import re
@@ -845,7 +845,7 @@ def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 		return pdfa_data
 
 
-def _is_ghostscript_installed():
+def _is_ghostscript_installed() -> bool:
 	"""Check if Ghostscript is installed on the system."""
 	import shutil
 
