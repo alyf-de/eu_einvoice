@@ -785,6 +785,73 @@ def download_pdf(
 			frappe.local.response.filecontent = zugferd_pdf
 
 
+def _create_symlink_to_icc_profile():
+	"""Create a symlink to the ICC profile in the Ghostscript installation."""
+	import os
+	import re
+	import subprocess
+
+	gs_output = subprocess.run(["gs", "-h"], capture_output=True, text=True)
+	search_paths = re.findall(r"Search path:\n([0-9a-zA-Z\/ :.\n]+)Ghostscript", gs_output.stdout, re.DOTALL)
+	search_paths = search_paths[0].replace("\n", "").strip()
+	lib_path = None
+	paths = search_paths.split(":")
+	for path in paths:
+		if path.strip().endswith("/lib"):
+			lib_path = path.strip()[:-4]
+			break
+	if lib_path:
+		icc_path = os.path.join(lib_path, "iccprofiles/srgb.icc")
+		if os.path.isfile(icc_path):
+			os.symlink(icc_path, "srgb.icc")
+			return
+
+	raise RuntimeError("Unable to find ICC profile in Ghostscript search paths")
+
+
+def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
+	"""Convert the PDF data to PDF/A-3 using Ghostscript."""
+	import os
+	import re
+	import subprocess
+
+	if not os.path.isfile("srgb.icc"):
+		# the PDFA_def.ps file requires the srgb.icc file to be present in the current directory
+		# if it is not present, we create a symlink to the srgb.icc file in the Ghostscript installation
+		_create_symlink_to_icc_profile()
+
+	with subprocess.Popen(
+		[
+			"gs",
+			"-q",
+			"-dPDFA=3",
+			"-dBATCH",
+			"-dNOPAUSE",
+			"-dPDFACompatibilityPolicy=1",
+			"-sColorConversionStrategy=RGB",
+			"--permit-file-read=srgb.icc",
+			"-sDEVICE=pdfwrite",
+			"-sOutputFile=-",
+			"PDFA_def.ps",
+			"-",
+		],
+		stdin=subprocess.PIPE,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.PIPE,
+	) as proc:
+		pdfa_data, err = proc.communicate(input=pdf_data)
+		if proc.returncode != 0:
+			raise RuntimeError(f"Ghostscript error: {err.decode()}")
+		return pdfa_data
+
+
+def _is_ghostscript_installed():
+	"""Check if Ghostscript is installed on the system."""
+	import shutil
+
+	return shutil.which("gs") is not None
+
+
 def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 	"""Return the PDF data with the invoice attached as XML.
 
@@ -793,6 +860,9 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 	    pdf_data: The PDF data as bytes.
 	"""
 	from drafthorse.pdf import attach_xml
+
+	if _is_ghostscript_installed():
+		pdf_data = _convert_pdf_to_pdfa(pdf_data)
 
 	level = frappe.db.get_value("Sales Invoice", invoice_id, "einvoice_profile")
 	if level == "XRECHNUNG":
