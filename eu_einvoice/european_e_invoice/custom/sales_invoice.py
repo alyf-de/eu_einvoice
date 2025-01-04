@@ -810,13 +810,13 @@ def _get_icc_profile_path() -> str:
 	if not search_paths:
 		raise RuntimeError("Unable to find /lib path in Ghostscript search paths")
 
-	if search_paths:
-		path = search_paths.group(2).strip()
-		icc_path = os.path.join(path[:-4], "iccprofiles")
-		if os.path.exists(icc_path):
-			return icc_path
+	path = search_paths.group(2).strip()
+	icc_path = os.path.join(path[:-4], "iccprofiles")
 
-	raise RuntimeError("Unable to find ICC profiles folder in Ghostscript search paths.")
+	if not os.path.exists(icc_path):
+		raise RuntimeError("Unable to find ICC profiles folder in Ghostscript search paths.")
+
+	return icc_path
 
 
 def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
