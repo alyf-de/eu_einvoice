@@ -804,16 +804,17 @@ def _get_icc_profile_path() -> str:
 	#   /usr/local/lib/ghostscript/fonts : /usr/share/fonts
 	# Ghostscript is also using fontconfig to search for font files
 	# ...
-	search_paths = re.search(r"Search path:\n(.*?)Ghostscript", gs_output.stdout, re.DOTALL)
+	search_paths = re.search(
+		r"Search path:([\s\S]+) (\/.+\/lib) ([\s\S]+)Ghostscript", gs_output.stdout, re.DOTALL
+	)
 	if not search_paths:
-		raise RuntimeError("Unable to find Ghostscript search paths")
+		raise RuntimeError("Unable to find /lib path in Ghostscript search paths")
 
-	for path in search_paths.group(1).split(":"):
-		path = path.strip()
-		if path.endswith("/lib"):
-			icc_path = os.path.join(path[:-4], "iccprofiles")
-			if os.path.exists(icc_path):
-				return icc_path
+	if search_paths:
+		path = search_paths.group(2).strip()
+		icc_path = os.path.join(path[:-4], "iccprofiles")
+		if os.path.exists(icc_path):
+			return icc_path
 
 	raise RuntimeError("Unable to find ICC profiles folder in Ghostscript search paths.")
 
