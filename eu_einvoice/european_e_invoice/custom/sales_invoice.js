@@ -1,6 +1,12 @@
 frappe.ui.form.on("Sales Invoice", {
 	refresh: function (frm) {
 		frm.trigger("add_einvoice_button");
+
+		if (!frm.is_dirty() && !frm.doc.einvoice_is_correct) {
+			frm.dashboard.set_headline_alert(
+				__("Please note the validation errors of the e-invoice.")
+			);
+		}
 	},
 	add_einvoice_button: function (frm) {
 		frm.page.add_menu_item(__("Download eInvoice"), () => {
