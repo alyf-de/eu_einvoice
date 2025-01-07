@@ -143,7 +143,6 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - For _Charge Type_ "On Net Total", the taxable amount is calculated as `tax_amount / rate * 100`, if the rate is available in the tax row or in the corresponding Account [1].
     - The _Charge Type_ "On Item Quantity" is not supported.
 - Total
-- Discount Amount
 - Net Total
 - Total Taxes and Charges
 - Grand Total
@@ -151,6 +150,8 @@ The following fields of the **Sales Invoice** are currently considered for the e
 - Outstanding Amount
 
 [1] The correct taxable amount is only available starting from ERPNext v16. For earlier versions we currently have to approximate it, which comes with a small error margin.
+
+Document-level discounts are currently not supported, because the e invoice standard requires much more information than just the discount amount (e.g. the reason and applicable VAT rate).
 
 ### Purchase Invoice
 
