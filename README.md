@@ -283,6 +283,7 @@ Many thanks to the following companies for sponsoring the initial development of
 - iXGate UG
 - Kautenburger IT GmbH
 - MERECS Engineering GmbH
+- Royal Software GmbH
 - voidsy GmbH
 - … and many more
 
