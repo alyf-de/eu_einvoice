@@ -222,9 +222,11 @@ def after_einvoice_generation(doc: "SalesInvoice", event: str, einvoice: "Docume
 > [!WARNING]
 > These methods are also triggered during the `validate` event of the **Sales Invoice**. In this case, if you change the Sales Invoice object, these changes will be saved to the database.
 
-## Validation
+## External validation
 
-You can upload an XML invoice file to https://www.itb.ec.europa.eu/invoice/upload and validate it as "CII Invoice CML".
+You can upload an XML invoice file to https://www.itb.ec.europa.eu/invoice/upload and validate it as "CII Invoice CML". Please use the _E Invoice Profile_ "EN 16931" for generating your invoice.
+
+E-invoices according to the "XRECHNUNG" profile can be validated at https://erechnungsvalidator.service-bw.de.
 
 ## Contributing
 
