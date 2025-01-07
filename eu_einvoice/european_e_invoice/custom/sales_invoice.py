@@ -588,9 +588,6 @@ class EInvoiceGenerator:
 		if actual_charge_total:
 			self.doc.trade.settlement.monetary_summation.charge_total = actual_charge_total
 
-		if self.invoice.discount_amount:
-			self.doc.trade.settlement.monetary_summation.allowance_total = self.invoice.discount_amount
-
 		self.doc.trade.settlement.monetary_summation.tax_basis_total = (
 			self.invoice.net_total + actual_charge_total
 		)
@@ -668,6 +665,13 @@ def validate_doc(doc, event):
 			_("{0}: Only one mode of payment will be considered in the e-invoice.").format(
 				_(doc.meta.get_label("payment_schedule"))
 			),
+			alert=True,
+			indicator="orange",
+		)
+
+	if doc.discount_amount:
+		frappe.msgprint(
+			_("A document level discount is currently not supported in the e-invoice."),
 			alert=True,
 			indicator="orange",
 		)
