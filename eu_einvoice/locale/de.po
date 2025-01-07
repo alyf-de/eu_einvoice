@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2024-12-30 15:34+0053\n"
+"POT-Creation-Date: 2025-01-07 20:39+0053\n"
 "PO-Revision-Date: 2024-11-25 18:57+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:674
+msgid "A document level discount is currently not supported in the e-invoice."
+msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
 #. Label of the discount_actual_amount (Currency) field in DocType 'E Invoice
 #. Payment Term'
@@ -37,7 +41,7 @@ msgstr "Vereinbarung"
 msgid "Amended From"
 msgstr "Korrektur von"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:81
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:86
 msgid "An E Invoice Import with the same Invoice ID and Supplier already exists."
 msgstr "Eine E-Rechnung mit der gleichen Rechnungs-ID und Lieferanten existiert bereits."
 
@@ -110,11 +114,11 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:642
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:689
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:648
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:695
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -123,7 +127,7 @@ msgstr "E-Rechnung konnte nicht validiert werden."
 msgid "Company"
 msgstr "Unternehmen"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:173
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:180
 msgid "Could not validate E Invoice schematron. See Error Log for details."
 msgstr "E-Rechnung konnte nicht validiert werden. Details im Fehlerlog."
 
@@ -136,7 +140,7 @@ msgstr "Erstellen"
 msgid "Create Item"
 msgstr "Artikel erstellen"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:82
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:93
 msgid "Create Purchase Invoice"
 msgstr "Eingangsrechnung erstellen"
 
@@ -175,7 +179,7 @@ msgstr "Rabatt"
 msgid "Document"
 msgstr "Dokument"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:6
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:12
 msgid "Download eInvoice"
 msgstr "E-Rechnung herunterladen"
 
@@ -196,7 +200,7 @@ msgstr "Fälligkeitsdatum"
 msgid "E Invoice Import"
 msgstr "E-Rechnungs-Import"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:516
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:556
 msgid "E Invoice Import {0} does not exist"
 msgstr "E-Rechnungs-Import {0} existiert nicht"
 
@@ -268,7 +272,7 @@ msgstr "Artikel"
 msgid "Items"
 msgstr "Positionen"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:68
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:79
 msgid "Link to {0}"
 msgstr "Mit {0} verknüpfen"
 
@@ -277,7 +281,7 @@ msgstr "Mit {0} verknüpfen"
 msgid "Net Rate"
 msgstr "Nettopreis"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:333
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:368
 msgid "No XML data found in PDF file."
 msgstr "Keine XML-Daten in der PDF-Datei gefunden."
 
@@ -292,15 +296,19 @@ msgstr "Teilbetrag"
 msgid "Payment Terms"
 msgstr "Zahlungsbedingungen"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:93
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:100
 msgid "Please create or select a supplier before submitting"
 msgstr "Bitte vor dem Buchen einen Lieferanten auswählen oder erstellen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:99
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:106
 msgid "Please map all invoice lines to an item before submitting"
 msgstr "Bitte vor dem Buchen alle Positionen einem Artikel zuordnen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:96
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:7
+msgid "Please note the validation errors of the e-invoice."
+msgstr "Bitte beachten Sie die Validierungsfehler der E-Rechnung."
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:103
 msgid "Please select a company before submitting"
 msgstr "Bitte vor dem Buchen ein Unternehmen auswählen."
 
@@ -326,7 +334,7 @@ msgstr "Produktname"
 msgid "Profile"
 msgstr "Profil"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:510
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:550
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
 msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
 
@@ -340,6 +348,11 @@ msgstr ""
 msgid "Purchase Order"
 msgstr "Lieferantenauftrag"
 
+#. Label of the po_detail (Link) field in DocType 'E Invoice Item'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
+msgid "Purchase Order Row"
+msgstr ""
+
 #. Name of a role
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Purchase User"
@@ -350,6 +363,10 @@ msgstr ""
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_trade_tax/e_invoice_trade_tax.json
 msgid "Rate Applicable Percent"
 msgstr "Anwendbarer Prozentsatz"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:576
+msgid "Row {0}"
+msgstr ""
 
 #. Label of the seller_section (Section Break) field in DocType 'E Invoice
 #. Import'
@@ -437,7 +454,7 @@ msgstr "Steuersatz"
 msgid "Taxes"
 msgstr "Steuern"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:129
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:136
 msgid "The uploaded file does not contain valid XML data."
 msgstr "Die hochgeladene Datei enthält keine gültige XML-Daten."
 
@@ -456,7 +473,7 @@ msgstr "Einheit"
 msgid "Unit Code"
 msgstr "Einheits-Code"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:337
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:372
 msgid "Unsupported file format '{0}'"
 msgstr "Nicht unterstütztes Dateiformat '{0}'"
 
@@ -477,19 +494,23 @@ msgstr "Validierungsdetails"
 msgid "Validation Errors"
 msgstr "Validierungsfehler"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:64
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:75
 msgid "View {0}"
 msgstr "{0} ansehen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:613
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:653
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:602
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:642
+msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
+msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:630
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:625
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:665
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 
