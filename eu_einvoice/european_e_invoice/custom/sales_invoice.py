@@ -875,7 +875,10 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 	from drafthorse.pdf import attach_xml
 
 	if _is_ghostscript_installed():
-		pdf_data = _convert_pdf_to_pdfa(pdf_data)
+		try:
+			pdf_data = _convert_pdf_to_pdfa(pdf_data)
+		except RuntimeError:
+			frappe.log_error("Error converting PDF to PDF/A-3 using Ghostscript.")
 
 	level = frappe.db.get_value("Sales Invoice", invoice_id, "einvoice_profile")
 	if level == "XRECHNUNG":
