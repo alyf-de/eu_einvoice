@@ -20,6 +20,7 @@ class EInvoiceItem(Document):
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
+		po_detail: DF.Link | None
 		product_description: DF.SmallText | None
 		product_name: DF.Data | None
 		seller_product_id: DF.Data | None
