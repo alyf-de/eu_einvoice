@@ -822,7 +822,6 @@ def _get_icc_profile_path() -> str:
 def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 	"""Convert the PDF data to PDF/A-3 using Ghostscript."""
 	import os
-	import re
 	import subprocess
 
 	cwd = None
