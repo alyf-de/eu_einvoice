@@ -120,6 +120,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Company's Item Code
     - Customer's Item Code
     - Delivery Note number and date
+    - Sales Order number and date (added on document level, only if there is exactly one Sales Order)
     - Quantity + Unit
     - Rate
     - Net Amount
@@ -138,11 +139,10 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Discount
     - Discount Date
 - Sales Taxs and Charges
-    - The _Charge Type_ "Actual" is used as logistics or service charges.
+    - The _Charge Type_ "Actual" is used as logistics or service charges. It is only supported by the eInvoice profiles "EXTENDED" and "XRECHNUNG". If you want to add VAT for the service charge, you need to add a _Charge Type_ "On Previous Row Amount" or "On Previous Row Total" immediately after the service charge.
     - For _Charge Type_ "On Net Total", the taxable amount is calculated as `tax_amount / rate * 100`, if the rate is available in the tax row or in the corresponding Account [1].
     - The _Charge Type_ "On Item Quantity" is not supported.
 - Total
-- Discount Amount
 - Net Total
 - Total Taxes and Charges
 - Grand Total
@@ -150,6 +150,8 @@ The following fields of the **Sales Invoice** are currently considered for the e
 - Outstanding Amount
 
 [1] The correct taxable amount is only available starting from ERPNext v16. For earlier versions we currently have to approximate it, which comes with a small error margin.
+
+Document-level discounts are currently not supported, because the e invoice standard requires much more information than just the discount amount (e.g. the reason and applicable VAT rate).
 
 ### Purchase Invoice
 
@@ -220,9 +222,11 @@ def after_einvoice_generation(doc: "SalesInvoice", event: str, einvoice: "Docume
 > [!WARNING]
 > These methods are also triggered during the `validate` event of the **Sales Invoice**. In this case, if you change the Sales Invoice object, these changes will be saved to the database.
 
-## Validation
+## External validation
 
-You can upload an XML invoice file to https://www.itb.ec.europa.eu/invoice/upload and validate it as "CII Invoice CML".
+You can upload an XML invoice file to https://www.itb.ec.europa.eu/invoice/upload and validate it as "CII Invoice CML". Please use the _E Invoice Profile_ "EN 16931" for generating your invoice.
+
+E-invoices according to the "XRECHNUNG" profile can be validated at https://erechnungsvalidator.service-bw.de.
 
 ## Contributing
 
@@ -282,6 +286,7 @@ Many thanks to the following companies for sponsoring the initial development of
 - iXGate UG
 - Kautenburger IT GmbH
 - MERECS Engineering GmbH
+- Royal Software GmbH
 - voidsy GmbH
 - … and many more
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2024-12-30 15:34+0053\n"
+"POT-Creation-Date: 2025-01-07 20:39+0053\n"
 "PO-Revision-Date: 2024-11-25 18:57+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -17,6 +17,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:674
+msgid "A document level discount is currently not supported in the e-invoice."
+msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
 #. Label of a Currency field in DocType 'E Invoice Payment Term'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_payment_term/e_invoice_payment_term.json
@@ -104,11 +108,11 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:642
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:689
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:648
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:695
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -166,7 +170,7 @@ msgstr "Rabatt"
 msgid "Document"
 msgstr "Dokument"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:6
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:12
 msgid "Download eInvoice"
 msgstr "E-Rechnung herunterladen"
 
@@ -286,6 +290,10 @@ msgstr "Bitte vor dem Buchen einen Lieferanten auswählen oder erstellen."
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:104
 msgid "Please map all invoice lines to an item before submitting"
 msgstr "Bitte vor dem Buchen alle Positionen einem Artikel zuordnen."
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:7
+msgid "Please note the validation errors of the e-invoice."
+msgstr "Bitte beachten Sie die Validierungsfehler der E-Rechnung."
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:101
 msgid "Please select a company before submitting"
@@ -465,15 +473,19 @@ msgstr "Validierungsfehler"
 msgid "View {0}"
 msgstr "{0} ansehen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:613
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:653
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:602
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:642
+msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
+msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:630
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:625
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:665
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 

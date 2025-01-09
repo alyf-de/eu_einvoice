@@ -4,7 +4,7 @@ import re
 from typing import TYPE_CHECKING
 
 import frappe
-from drafthorse.models.accounting import ApplicableTradeTax
+from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
 from drafthorse.models.document import Document, IncludedNote
 from drafthorse.models.party import TaxRegistration, URIUniversalCommunication
 from drafthorse.models.payment import PaymentTerms
@@ -128,8 +128,19 @@ class EInvoiceGenerator:
 		if self.invoice.po_date:
 			self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
+		sales_orders = set()
 		for item in self.invoice.items:
+			if item.sales_order:
+				sales_orders.add(item.sales_order)
+
 			self._add_line_item(item)
+
+		if len(sales_orders) == 1 and self.profile >= EInvoiceProfile.EXTENDED:
+			so_name = sales_orders.pop()
+			self.doc.trade.agreement.seller_order.issuer_assigned_id = so_name
+			self.doc.trade.agreement.seller_order.issue_date_time = frappe.db.get_value(
+				"Sales Order", so_name, "transaction_date"
+			)
 
 		tax_added = self._add_taxes_and_charges()
 		if not tax_added:
@@ -263,6 +274,9 @@ class EInvoiceGenerator:
 			self.doc.trade.agreement.seller.contact.fax.number = self.company.fax
 
 	def _set_buyer(self):
+		if frappe.db.get_single_value("Selling Settings", "cust_master_name") != "Customer Name":
+			self.doc.trade.agreement.buyer.id = self.invoice.customer
+
 		self.doc.trade.agreement.buyer.name = self.invoice.customer_name
 
 		self._set_buyer_address()
@@ -381,10 +395,27 @@ class EInvoiceGenerator:
 			if not tax.tax_amount:
 				continue
 
-			if tax.charge_type == "Actual":
+			if tax.charge_type == "Actual" and self.profile >= EInvoiceProfile.EXTENDED:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
 				service_charge.applied_amount = tax.tax_amount
+
+				if len(self.invoice.taxes) > i + 1:
+					vat_line = self.invoice.taxes[i + 1]
+					if vat_line.charge_type in ("On Previous Row Amount", "On Previous Row Total"):
+						# Add applied VAT for the service charge (BR-FXEXT-S-08)
+						service_charge_tax = AppliedTradeTax()
+						service_charge_tax.type_code = "VAT"
+						service_charge_tax.rate_applicable_percent = vat_line.rate
+						service_charge_tax.category_code = duty_tax_fee_category_codes.get(
+							[
+								("Account", vat_line.account_head),
+								("Tax Category", self.invoice.tax_category),
+								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+							]
+						)
+						service_charge.trade_tax.add(service_charge_tax)
+
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
 				trade_tax = ApplicableTradeTax()
@@ -557,9 +588,6 @@ class EInvoiceGenerator:
 		if actual_charge_total:
 			self.doc.trade.settlement.monetary_summation.charge_total = actual_charge_total
 
-		if self.invoice.discount_amount:
-			self.doc.trade.settlement.monetary_summation.allowance_total = self.invoice.discount_amount
-
 		self.doc.trade.settlement.monetary_summation.tax_basis_total = (
 			self.invoice.net_total + actual_charge_total
 		)
@@ -606,6 +634,18 @@ def validate_doc(doc, event):
 				indicator="orange",
 			)
 
+		if (
+			tax_row.charge_type == "Actual"
+			and EInvoiceProfile(doc.einvoice_profile) < EInvoiceProfile.EXTENDED
+		):
+			frappe.msgprint(
+				_(
+					"{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
+				).format(_(doc.meta.get_label("taxes")), tax_row.idx),
+				alert=True,
+				indicator="orange",
+			)
+
 	modes_of_payment = set()
 	for ps in doc.payment_schedule:
 		if ps.discount_date and date_diff(ps.discount_date, doc.posting_date) < 0:
@@ -625,6 +665,13 @@ def validate_doc(doc, event):
 			_("{0}: Only one mode of payment will be considered in the e-invoice.").format(
 				_(doc.meta.get_label("payment_schedule"))
 			),
+			alert=True,
+			indicator="orange",
+		)
+
+	if doc.discount_amount:
+		frappe.msgprint(
+			_("A document level discount is currently not supported in the e-invoice."),
 			alert=True,
 			indicator="orange",
 		)
