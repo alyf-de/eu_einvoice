@@ -267,10 +267,10 @@ class EInvoiceGenerator:
 			if self.seller_contact.phone:
 				seller_contact_phone = self.seller_contact.phone
 
-		if seller_contact_phone:
+		if seller_contact_phone and self.profile >= EInvoiceProfile.EN16931:
 			self.doc.trade.agreement.seller.contact.telephone.number = seller_contact_phone
 
-		if self.company.fax:
+		if self.company.fax and self.profile >= EInvoiceProfile.EXTENDED:
 			self.doc.trade.agreement.seller.contact.fax.number = self.company.fax
 
 	def _set_buyer(self):
@@ -331,7 +331,7 @@ class EInvoiceGenerator:
 			if self.invoice.contact_email:
 				self.doc.trade.agreement.buyer.contact.email.address = self.invoice.contact_email
 
-		if buyer_contact_phone:
+		if buyer_contact_phone and self.profile >= EInvoiceProfile.EN16931:
 			self.doc.trade.agreement.buyer.contact.telephone.number = buyer_contact_phone
 
 	def _add_line_item(self, item: SalesInvoiceItem):
