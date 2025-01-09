@@ -810,8 +810,8 @@ def _get_icc_profile_path() -> str:
 	if not search_paths:
 		raise RuntimeError("Unable to find /lib path in Ghostscript search paths")
 
-	path = search_paths.group(2).strip()
-	icc_path = os.path.join(path[:-4], "iccprofiles")
+	library_path = search_paths.group(2).strip()
+	icc_path = os.path.join(library_path[:-4], "iccprofiles")
 
 	if not os.path.exists(icc_path):
 		raise RuntimeError("Unable to find ICC profiles folder in Ghostscript search paths.")
@@ -828,13 +828,14 @@ def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 	cwd = None
 	if not os.path.isfile("srgb.icc"):
 		# the PDFA_def.ps file requires the srgb.icc file to be present in the current directory
-		# if it is not present, change the current working directory to the Ghostscript installation
+		# if it is not present, change the current working directory to the icc profile path.
 		cwd = _get_icc_profile_path()
 
 	with subprocess.Popen(
 		[
 			"gs",
 			"-q",
+			"-sstdout=%stderr",
 			"-dPDFA=3",
 			"-dBATCH",
 			"-dNOPAUSE",
