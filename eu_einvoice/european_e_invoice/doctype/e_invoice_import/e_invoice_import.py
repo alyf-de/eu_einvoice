@@ -362,11 +362,11 @@ def flt_or_none(value) -> float | None:
 
 def get_xml_bytes(file: Path) -> bytes:
 	"""Reads the XML data from the given XML or PDF file path."""
-	if file.suffix == ".pdf":
+	if file.suffix.lower() == ".pdf":
 		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes(), check_xsd=False)
 		if not xml_bytes:
 			frappe.throw(_("No XML data found in PDF file."))
-	elif file.suffix == ".xml":
+	elif file.suffix.lower() == ".xml":
 		xml_bytes = file.read_bytes()
 	else:
 		frappe.throw(_("Unsupported file format '{0}'").format(file.suffix))
