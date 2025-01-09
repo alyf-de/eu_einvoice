@@ -839,7 +839,7 @@ def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 			"-dPDFA=3",
 			"-dBATCH",
 			"-dNOPAUSE",
-			"-dPDFACompatibilityPolicy=1",
+			"-dPDFACompatibilityPolicy=2",
 			"-sColorConversionStrategy=RGB",
 			"--permit-file-read=srgb.icc",
 			"-sDEVICE=pdfwrite",
