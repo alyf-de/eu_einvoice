@@ -112,7 +112,12 @@ class EInvoiceImport(Document):
 
 		invoices = frappe.get_list(
 			"Purchase Invoice",
-			filters={"bill_no": self.id, "supplier": self.supplier, "company": self.company},
+			filters={
+				"bill_no": self.id,
+				"supplier": self.supplier,
+				"company": self.company,
+				"docstatus": ("!=", 2),
+			},
 			fields=["name", "e_invoice_import"],
 		)
 		linked_invoice = next(
