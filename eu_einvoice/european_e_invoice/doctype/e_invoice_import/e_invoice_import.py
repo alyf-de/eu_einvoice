@@ -417,6 +417,7 @@ def create_purchase_invoice(source_name, target_doc=None):
 					"billed_quantity": "qty",
 					"uom": "uom",
 					"net_rate": "rate",
+					"po_detail": "po_detail",
 				},
 				"postprocess": process_item_row,
 			},
