@@ -153,6 +153,22 @@ The following fields of the **Sales Invoice** are currently considered for the e
 
 Document-level discounts are currently not supported, because the e invoice standard requires much more information than just the discount amount (e.g. the reason and applicable VAT rate).
 
+#### Embedding the Factur-X logo
+
+If you like, you can embed one of the official Factur-X logos in your invoice PDF. This way, a human can easily identify the invoice as a Factur-X eInvoice.
+
+To do this, use the `get_einvoice_logo` method in your jinja **Print Format**. This method returns a base64-encoded data URL, which can be used in an `<img>` tag.
+
+```jinja
+<img src="{{ get_einvoice_logo(doc.einvoice_profile) }}" alt="{{ doc.einvoice_profile }} e-invoice logo" />
+```
+
+The following logos are available:
+
+BASIC | EN 16931 | EXTENDED
+--- | --- | ---
+![BASIC](eu_einvoice/public/img/fx-basic.png) | ![EN 16931](eu_einvoice/public/img/fx-en16931.png) | ![EXTENDED](eu_einvoice/public/img/fx-extended.png)
+
 ### Purchase Invoice
 
 To import a new eInvoice, create a new **E Invoice Import** and upload the XML or PDF file.
