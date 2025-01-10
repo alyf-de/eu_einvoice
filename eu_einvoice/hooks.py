@@ -77,10 +77,11 @@ doctype_js = {
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "eu_einvoice.utils.jinja_methods",
-# 	"filters": "eu_einvoice.utils.jinja_filters"
-# }
+jinja = {
+	"methods": [
+		"eu_einvoice.jinja.get_einvoice_logo",
+	],
+}
 
 # Installation
 # ------------
