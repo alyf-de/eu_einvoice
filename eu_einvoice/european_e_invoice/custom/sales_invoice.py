@@ -384,7 +384,7 @@ class EInvoiceGenerator:
 					("Tax Category", self.invoice.tax_category),
 					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 				]
-			)
+			).upper()
 
 		li.settlement.monetary_summation.total_amount = item.amount
 		self.doc.trade.items.add(li)
@@ -515,7 +515,7 @@ class EInvoiceGenerator:
 				("Tax Category", self.invoice.tax_category),
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 			]
-		)
+		).upper()
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
 
 	def _add_payment_terms(self):
