@@ -132,7 +132,7 @@ class EInvoiceGenerator:
 		if self.invoice.po_no:
 			self.doc.trade.agreement.buyer_order.issuer_assigned_id = self.invoice.po_no
 
-			if self.invoice.po_date:
+			if self.invoice.po_date and self.profile >= EInvoiceProfile.EXTENDED:
 				self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
 		sales_orders = set()
