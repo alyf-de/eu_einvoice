@@ -11,7 +11,13 @@ In particular, this app supports reading and writing electronic invoices accordi
 
 All profiles except for "XRECHNUNG" can be embedded in a PDF file, known as ZUGFeRD or Factur-X.
 
-This app cannot read or write UBL invoices. It also does not provide any special way of sending or receiving e-invoices (e.g. Peppol). Instead, it focuses on the conversion between ERPNext's internal data model and the XML format of the above standards.
+<a href="https://www.zugferd-community.net/de/alyf_gmbh" target="_blank">
+    <img src="img/member_partner_quer_klein.jpg" alt="We are a ZUGFeRD Community Member Partner" width="250"/>
+</a >
+
+---
+
+This app cannot currently read or write UBL invoices. It also does not provide any special way of sending or receiving e-invoices (e.g. Peppol). Instead, it focuses on the conversion between ERPNext's internal data model and the XML format of the above standards.
 
 ## Installation
 
