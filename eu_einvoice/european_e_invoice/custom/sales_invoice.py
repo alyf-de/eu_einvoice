@@ -55,6 +55,10 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 	if invoice.customer_address:
 		buyer_address = frappe.get_doc("Address", invoice.customer_address)
 
+	shipping_address = None
+	if invoice.shipping_address_name:
+		shipping_address = frappe.get_doc("Address", invoice.shipping_address_name)
+
 	seller_contact = None
 	if invoice.get("company_contact_person"):
 		seller_contact = frappe.get_doc("Contact", invoice.company_contact_person)
@@ -72,6 +76,7 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 		company=company,
 		seller_address=seller_address,
 		buyer_address=buyer_address,
+		shipping_address=shipping_address,
 		seller_contact=seller_contact,
 		buyer_contact=buyer_contact,
 	)
@@ -93,6 +98,7 @@ class EInvoiceGenerator:
 		company: Company,
 		seller_address: Address | None = None,
 		buyer_address: Address | None = None,
+		shipping_address: Address | None = None,
 		seller_contact: Contact | None = None,
 		buyer_contact: Contact | None = None,
 	):
@@ -101,6 +107,7 @@ class EInvoiceGenerator:
 		self.company = company
 		self.seller_address = seller_address
 		self.buyer_address = buyer_address
+		self.shipping_address = shipping_address
 		self.seller_contact = seller_contact
 		self.buyer_contact = buyer_contact
 		self.doc = None
@@ -125,8 +132,8 @@ class EInvoiceGenerator:
 		if self.invoice.po_no:
 			self.doc.trade.agreement.buyer_order.issuer_assigned_id = self.invoice.po_no
 
-		if self.invoice.po_date:
-			self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
+			if self.invoice.po_date and self.profile >= EInvoiceProfile.EXTENDED:
+				self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
 		sales_orders = set()
 		for item in self.invoice.items:
@@ -267,10 +274,10 @@ class EInvoiceGenerator:
 			if self.seller_contact.phone:
 				seller_contact_phone = self.seller_contact.phone
 
-		if seller_contact_phone:
+		if seller_contact_phone and self.profile >= EInvoiceProfile.EN16931:
 			self.doc.trade.agreement.seller.contact.telephone.number = seller_contact_phone
 
-		if self.company.fax:
+		if self.company.fax and self.profile >= EInvoiceProfile.EXTENDED:
 			self.doc.trade.agreement.seller.contact.fax.number = self.company.fax
 
 	def _set_buyer(self):
@@ -280,6 +287,7 @@ class EInvoiceGenerator:
 		self.doc.trade.agreement.buyer.name = self.invoice.customer_name
 
 		self._set_buyer_address()
+		self._set_shipping_address()
 
 		if self.profile > EInvoiceProfile.BASIC:
 			self._set_buyer_contact()
@@ -320,6 +328,18 @@ class EInvoiceGenerator:
 			"Country", self.buyer_address.country, "code"
 		).upper()
 
+	def _set_shipping_address(self):
+		if not self.shipping_address:
+			return
+
+		self.doc.trade.delivery.ship_to.address.line_one = self.shipping_address.address_line1
+		self.doc.trade.delivery.ship_to.address.line_two = self.shipping_address.address_line2
+		self.doc.trade.delivery.ship_to.address.postcode = self.shipping_address.pincode
+		self.doc.trade.delivery.ship_to.address.city_name = self.shipping_address.city
+		self.doc.trade.delivery.ship_to.address.country_id = frappe.db.get_value(
+			"Country", self.shipping_address.country, "code"
+		).upper()
+
 	def _set_buyer_contact(self):
 		buyer_contact_phone = self.invoice.contact_mobile
 		if self.buyer_contact:
@@ -331,7 +351,7 @@ class EInvoiceGenerator:
 			if self.invoice.contact_email:
 				self.doc.trade.agreement.buyer.contact.email.address = self.invoice.contact_email
 
-		if buyer_contact_phone:
+		if buyer_contact_phone and self.profile >= EInvoiceProfile.EN16931:
 			self.doc.trade.agreement.buyer.contact.telephone.number = buyer_contact_phone
 
 	def _add_line_item(self, item: SalesInvoiceItem):
@@ -368,8 +388,8 @@ class EInvoiceGenerator:
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 			]
 		)
-		if li.settlement.trade_tax.category_code._text == "AE":
-			# [BR-AE-05] In an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "Reverse charge" the Invoiced item VAT rate (BT-152) shall be 0 (zero).
+		if li.settlement.trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
+			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
 			li.settlement.trade_tax.rate_applicable_percent = 0
 		else:
 			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes)
@@ -384,7 +404,7 @@ class EInvoiceGenerator:
 					("Tax Category", self.invoice.tax_category),
 					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 				]
-			)
+			).upper()
 
 		li.settlement.monetary_summation.total_amount = item.amount
 		self.doc.trade.items.add(li)
@@ -515,7 +535,7 @@ class EInvoiceGenerator:
 				("Tax Category", self.invoice.tax_category),
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 			]
-		)
+		).upper()
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
 
 	def _add_payment_terms(self):
