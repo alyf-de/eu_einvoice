@@ -368,8 +368,8 @@ class EInvoiceGenerator:
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 			]
 		)
-		if li.settlement.trade_tax.category_code._text == "AE":
-			# [BR-AE-05] In an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "Reverse charge" the Invoiced item VAT rate (BT-152) shall be 0 (zero).
+		if li.settlement.trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
+			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
 			li.settlement.trade_tax.rate_applicable_percent = 0
 		else:
 			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes)
