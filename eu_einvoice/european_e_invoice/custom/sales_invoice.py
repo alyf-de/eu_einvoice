@@ -55,6 +55,10 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 	if invoice.customer_address:
 		buyer_address = frappe.get_doc("Address", invoice.customer_address)
 
+	shipping_address = None
+	if invoice.shipping_address_name:
+		shipping_address = frappe.get_doc("Address", invoice.shipping_address_name)
+
 	seller_contact = None
 	if invoice.get("company_contact_person"):
 		seller_contact = frappe.get_doc("Contact", invoice.company_contact_person)
@@ -72,6 +76,7 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 		company=company,
 		seller_address=seller_address,
 		buyer_address=buyer_address,
+		shipping_address=shipping_address,
 		seller_contact=seller_contact,
 		buyer_contact=buyer_contact,
 	)
@@ -93,6 +98,7 @@ class EInvoiceGenerator:
 		company: Company,
 		seller_address: Address | None = None,
 		buyer_address: Address | None = None,
+		shipping_address: Address | None = None,
 		seller_contact: Contact | None = None,
 		buyer_contact: Contact | None = None,
 	):
@@ -101,6 +107,7 @@ class EInvoiceGenerator:
 		self.company = company
 		self.seller_address = seller_address
 		self.buyer_address = buyer_address
+		self.shipping_address = shipping_address
 		self.seller_contact = seller_contact
 		self.buyer_contact = buyer_contact
 		self.doc = None
@@ -280,6 +287,7 @@ class EInvoiceGenerator:
 		self.doc.trade.agreement.buyer.name = self.invoice.customer_name
 
 		self._set_buyer_address()
+		self._set_shipping_address()
 
 		if self.profile > EInvoiceProfile.BASIC:
 			self._set_buyer_contact()
@@ -318,6 +326,18 @@ class EInvoiceGenerator:
 		self.doc.trade.agreement.buyer.address.city_name = self.buyer_address.city
 		self.doc.trade.agreement.buyer.address.country_id = frappe.db.get_value(
 			"Country", self.buyer_address.country, "code"
+		).upper()
+
+	def _set_shipping_address(self):
+		if not self.shipping_address:
+			return
+
+		self.doc.trade.delivery.ship_to.address.line_one = self.shipping_address.address_line1
+		self.doc.trade.delivery.ship_to.address.line_two = self.shipping_address.address_line2
+		self.doc.trade.delivery.ship_to.address.postcode = self.shipping_address.pincode
+		self.doc.trade.delivery.ship_to.address.city_name = self.shipping_address.city
+		self.doc.trade.delivery.ship_to.address.country_id = frappe.db.get_value(
+			"Country", self.shipping_address.country, "code"
 		).upper()
 
 	def _set_buyer_contact(self):
