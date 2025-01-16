@@ -37,6 +37,17 @@ frappe.ui.form.on("E Invoice Import", {
 			};
 		});
 
+		frm.set_query("po_detail", "items", function (doc, cdt, cdn) {
+			const row = locals[cdt][cdn];
+			return {
+				query: "eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.po_item_query",
+				filters: {
+					parent: doc.purchase_order,
+					item_code: row.item,
+				},
+			};
+		});
+
 		frm.set_query("tax_account", "taxes", function (doc, cdt, cdn) {
 			return {
 				filters: {
@@ -108,5 +119,26 @@ frappe.ui.form.on("E Invoice Item", {
 			method: "eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.create_item",
 			source_name: cdn,
 		});
+	},
+
+	po_detail: function (frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		if (!row.po_detail || (row.item && row.uom) || !frappe.model.can_read("Purchase Order")) {
+			return;
+		}
+
+		frappe
+			.xcall(
+				"eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.get_po_item_details",
+				{ po_detail: row.po_detail }
+			)
+			.then((r) => {
+				if (r.item_code && !row.item) {
+					frappe.model.set_value(cdt, cdn, "item", r.item_code);
+				}
+				if (r.uom && !row.uom) {
+					frappe.model.set_value(cdt, cdn, "uom", r.uom);
+				}
+			});
 	},
 });
