@@ -805,6 +805,85 @@ def download_pdf(
 			frappe.local.response.filecontent = zugferd_pdf
 
 
+def _get_icc_profile_path() -> str:
+	"""Get the path to the ICC profile used by Ghostscript."""
+	import os
+	import re
+	import subprocess
+
+	gs_output = subprocess.run(["gs", "-h"], capture_output=True, text=True)
+	# the output of `gs -h` contains the search paths for Ghostscript
+	# it looks like the following:
+	# ...
+	# Search path:
+	#   /usr/share/ghostscript/9.55.0/Resource/Init :
+	#   /usr/share/ghostscript/9.55.0/lib :
+	#   /usr/share/ghostscript/9.55.0/Resource/Font :
+	#   /usr/share/ghostscript/fonts : /var/lib/ghostscript/fonts :
+	#   /usr/share/cups/fonts : /usr/share/ghostscript/fonts :
+	#   /usr/local/lib/ghostscript/fonts : /usr/share/fonts
+	# Ghostscript is also using fontconfig to search for font files
+	# ...
+	search_paths = re.search(
+		r"Search path:([\s\S]+) (\/.+\/lib) ([\s\S]+)Ghostscript", gs_output.stdout, re.DOTALL
+	)
+	if not search_paths:
+		raise RuntimeError("Unable to find /lib path in Ghostscript search paths")
+
+	library_path = search_paths.group(2).strip()
+	icc_path = os.path.join(library_path[:-4], "iccprofiles")
+
+	if not os.path.exists(icc_path):
+		raise RuntimeError("Unable to find ICC profiles folder in Ghostscript search paths.")
+
+	return icc_path
+
+
+def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
+	"""Convert the PDF data to PDF/A-3 using Ghostscript."""
+	import os
+	import subprocess
+
+	cwd = None
+	if not os.path.isfile("srgb.icc"):
+		# the PDFA_def.ps file requires the srgb.icc file to be present in the current directory
+		# if it is not present, change the current working directory to the icc profile path.
+		cwd = _get_icc_profile_path()
+
+	with subprocess.Popen(
+		[
+			"gs",
+			"-q",
+			"-sstdout=%stderr",
+			"-dPDFA=3",
+			"-dBATCH",
+			"-dNOPAUSE",
+			"-dPDFACompatibilityPolicy=2",
+			"-sColorConversionStrategy=RGB",
+			"--permit-file-read=srgb.icc",
+			"-sDEVICE=pdfwrite",
+			"-sOutputFile=-",
+			"PDFA_def.ps",
+			"-",
+		],
+		cwd=cwd,
+		stdin=subprocess.PIPE,
+		stdout=subprocess.PIPE,
+		stderr=subprocess.PIPE,
+	) as proc:
+		pdfa_data, err = proc.communicate(input=pdf_data)
+		if proc.returncode != 0:
+			raise RuntimeError(f"Ghostscript error: {err.decode()}")
+		return pdfa_data
+
+
+def _is_ghostscript_installed() -> bool:
+	"""Check if Ghostscript is installed on the system."""
+	import shutil
+
+	return shutil.which("gs") is not None
+
+
 def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 	"""Return the PDF data with the invoice attached as XML.
 
@@ -813,6 +892,12 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 	    pdf_data: The PDF data as bytes.
 	"""
 	from drafthorse.pdf import attach_xml
+
+	if _is_ghostscript_installed():
+		try:
+			pdf_data = _convert_pdf_to_pdfa(pdf_data)
+		except RuntimeError:
+			frappe.log_error("Error converting PDF to PDF/A-3 using Ghostscript.")
 
 	level = frappe.db.get_value("Sales Invoice", invoice_id, "einvoice_profile")
 	if level == "XRECHNUNG":
