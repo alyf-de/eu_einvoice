@@ -259,9 +259,7 @@ class EInvoiceGenerator:
 			electronic_address = self.company.email
 
 		if electronic_address:
-			self.doc.trade.agreement.seller.electronic_address.add(
-				URIUniversalCommunication(uri_ID=("EM", electronic_address))
-			)
+			self.doc.trade.agreement.seller.electronic_address.uri_ID = ("EM", electronic_address)
 
 	def _set_seller_contact(self):
 		seller_contact_phone = self.company.phone_no
@@ -293,9 +291,7 @@ class EInvoiceGenerator:
 			self._set_buyer_contact()
 
 		if self.invoice.contact_email:
-			self.doc.trade.agreement.buyer.electronic_address.add(
-				URIUniversalCommunication(uri_ID=("EM", self.invoice.contact_email))
-			)
+			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.invoice.contact_email)
 
 		self._set_buyer_tax_id()
 
