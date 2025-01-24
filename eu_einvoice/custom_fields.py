@@ -2,6 +2,16 @@ from .utils import identity as _
 
 
 def get_custom_fields():
+	PROFILE_OPTIONS = "\n".join(
+		[
+			"",
+			"BASIC",
+			"EN 16931",
+			"EXTENDED",
+			"XRECHNUNG",
+		]
+	)
+
 	return {
 		"Purchase Invoice": [
 			{
@@ -52,15 +62,7 @@ def get_custom_fields():
 				"label": _("E Invoice Profile"),
 				"insert_after": "e_invoice_validation_section",
 				"fieldtype": "Select",
-				"options": "\n".join(
-					[
-						"BASIC",
-						"EN 16931",
-						"EXTENDED",
-						"XRECHNUNG",
-					]
-				),
-				"default": "EXTENDED",
+				"options": PROFILE_OPTIONS,
 				"print_hide": 1,
 			},
 			{
@@ -70,6 +72,7 @@ def get_custom_fields():
 				"fieldtype": "Check",
 				"read_only": 1,
 				"print_hide": 1,
+				"depends_on": "eval:!!doc.einvoice_profile",
 			},
 			{
 				"fieldname": "validation_errors",
@@ -78,7 +81,7 @@ def get_custom_fields():
 				"fieldtype": "Text",
 				"read_only": 1,
 				"print_hide": 1,
-				"depends_on": "eval:!doc.einvoice_is_correct",
+				"depends_on": "eval:doc.einvoice_profile && !doc.einvoice_is_correct",
 			},
 		],
 	}
