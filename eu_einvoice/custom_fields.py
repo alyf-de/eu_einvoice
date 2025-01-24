@@ -30,6 +30,14 @@ def get_custom_fields():
 				"insert_after": "language",
 				"fieldtype": "Data",
 			},
+			{
+				"fieldname": "einvoice_profile",
+				"label": _("E Invoice Profile"),
+				"insert_after": "buyer_reference",
+				"fieldtype": "Select",
+				"options": PROFILE_OPTIONS,
+				"default": "EXTENDED",
+			},
 		],
 		"Sales Order": [
 			{
@@ -63,6 +71,8 @@ def get_custom_fields():
 				"insert_after": "e_invoice_validation_section",
 				"fieldtype": "Select",
 				"options": PROFILE_OPTIONS,
+				"fetch_from": "customer.einvoice_profile",
+				"fetch_if_empty": 1,
 				"print_hide": 1,
 			},
 			{
