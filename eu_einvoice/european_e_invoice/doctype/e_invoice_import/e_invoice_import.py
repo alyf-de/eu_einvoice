@@ -136,7 +136,7 @@ class EInvoiceImport(Document):
 	def read_values_from_einvoice(self) -> None:
 		xml_bytes = self.get_xml_bytes()
 		try:
-			doc = DrafthorseDocument.parse(xml_bytes)
+			doc = DrafthorseDocument.parse(xml_bytes, strict=False)
 		except XMLSyntaxError:
 			frappe.throw(_("The uploaded file does not contain valid XML data."))
 
