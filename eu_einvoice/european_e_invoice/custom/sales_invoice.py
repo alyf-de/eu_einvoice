@@ -703,6 +703,9 @@ def validate_einvoice(doc: SalesInvoice):
 	doc.einvoice_is_correct = 0
 	doc.validation_errors = ""
 
+	if not doc.einvoice_profile:
+		return
+
 	try:
 		xml_string = get_einvoice(doc).decode()
 	except Exception:
@@ -900,7 +903,7 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 			frappe.log_error("Error converting PDF to PDF/A-3 using Ghostscript.")
 
 	level = frappe.db.get_value("Sales Invoice", invoice_id, "einvoice_profile")
-	if level == "XRECHNUNG":
+	if not level or level == "XRECHNUNG":
 		# XRECHNUNG does not support embedding into PDF
 		return pdf_data
 
