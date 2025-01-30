@@ -567,8 +567,8 @@ def link_to_purchase_invoice(einvoice: str, purchase_invoice: str):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def po_item_query(doctype, txt, searchfield, start, page_len, filters, as_dict=False):
-	item_code = filters.pop("item_code")
-	purchase_order = filters.pop("parent")
+	item_code = filters.pop("item_code", None)
+	purchase_order = filters.pop("parent", None)
 
 	if not purchase_order:
 		return []
