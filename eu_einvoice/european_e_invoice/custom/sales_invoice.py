@@ -408,9 +408,6 @@ class EInvoiceGenerator:
 	def _add_taxes_and_charges(self):
 		tax_added = False
 		for i, tax in enumerate(self.invoice.taxes):
-			if not tax.tax_amount:
-				continue
-
 			if tax.charge_type == "Actual" and self.profile >= EInvoiceProfile.EXTENDED:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
