@@ -77,7 +77,7 @@ When you open the print preview of the **Sales Invoice** and click on "PDF", the
 > You can test both XML and PDF+XML files by re-importing them, using the **E Invoice Import** DocType.
 
 <details>
-<summary>List of imported fields</summary>
+<summary>List of exported fields</summary>
 
 The following fields of the **Sales Invoice** are currently considered for the eInvoice:
 
@@ -197,9 +197,9 @@ A problematic eInvoice will look like this. You can see the validation errors in
 It is still possible to import an invoice, even if there are formal validation errors.
 
 <details>
-<summary>List of extracted fields</summary>
+<summary>List of imported fields</summary>
 
-The following fields are currently extracted from the eInvoice:
+The following fields are currently imported from the eInvoice:
 
 - Invoice ID
 - Issue Date
