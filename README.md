@@ -76,6 +76,9 @@ When you open the print preview of the **Sales Invoice** and click on "PDF", the
 > [!TIP]
 > You can test both XML and PDF+XML files by re-importing them, using the **E Invoice Import** DocType.
 
+<details>
+<summary>List of imported fields</summary>
+
 The following fields of the **Sales Invoice** are currently considered for the eInvoice:
 
 - Invoice type (credit note, corrected invoice, commercial invoice)
@@ -157,6 +160,8 @@ The following fields of the **Sales Invoice** are currently considered for the e
 
 [1] The correct taxable amount is only available starting from ERPNext v16. For earlier versions we currently have to approximate it, which comes with a small error margin.
 
+</details>
+
 Document-level discounts are currently not supported, because the e invoice standard requires much more information than just the discount amount (e.g. the reason and applicable VAT rate).
 
 #### Embedding the Factur-X logo
@@ -190,6 +195,56 @@ A problematic eInvoice will look like this. You can see the validation errors in
 ![Problematic eInvoice](img/incorrect_import.png)
 
 It is still possible to import an invoice, even if there are formal validation errors.
+
+<details>
+<summary>List of extracted fields</summary>
+
+The following fields are currently extracted from the eInvoice:
+
+- Invoice ID
+- Issue Date
+- Currency
+- Seller (Supplier)
+    - Name
+    - Tax ID
+    - Address
+        - Address Line 1
+        - Address Line 2
+        - Postcode
+        - City
+        - Country
+- Buyer (Company)
+    - Name
+    - Address
+        - Address Line 1
+        - Address Line 2
+        - Postcode
+        - City
+        - Country
+- Buyer Reference (mapped to Purchase Order if it exists)
+- Items
+    - Product Name
+    - Product Description
+    - Seller's Product ID
+    - Buyer's Product ID (mapped to Item Code if it exists)
+    - Billed Quantity
+    - Unit Code (mapped to UOM)
+    - Net Rate
+    - Tax Rate
+    - Total Amount
+- Taxes
+    - Basis Amount
+    - Rate Applicable Percent
+    - Calculated Amount
+- Payment Terms
+    - Due Date
+    - Partial Amount
+    - Description
+    - Discount Basis Date
+    - Discount Calculation Percent
+    - Discount Actual Amount
+
+</details>
 
 Taxes are mapped to "Actual" charges in the **Purchase Invoice**, so that ERPNext does not try to recalculate them.
 
