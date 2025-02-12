@@ -67,19 +67,12 @@ Please note that the eInvoice standard only supports one payment means per invoi
 
 ### Sales Invoice
 
-During validation of the **Sales Invoice**, the potential eInvoice is created and validated against the schematron rules for the selected _E Invoice Profile_, so that you can see any potential problems before submitting it.
+To create an outgoing eInvoice, you need to create a **Sales Invoice** and select the _E Invoice Profile_ you want to use.
 
-To download the XML file (XRechnung), open a **Sales Invoice** and click on "..." > "Download eInvoice".
-
-When you open the print preview of the **Sales Invoice** and click on "PDF", the generated PDF file will have the e-invoice XML embedded. An exception is the _E Invoice Profile_ "XRECHNUNG", which is intended to be a plain XML file. In this case, the PDF will not have the XML embedded.
-
-> [!TIP]
-> You can test both XML and PDF+XML files by re-importing them, using the **E Invoice Import** DocType.
+The following fields of the **Sales Invoice** are currently considered for the eInvoice:
 
 <details>
 <summary>List of exported fields</summary>
-
-The following fields of the **Sales Invoice** are currently considered for the eInvoice:
 
 - Invoice type (credit note, corrected invoice, commercial invoice)
 - Invoice number
@@ -164,6 +157,25 @@ The following fields of the **Sales Invoice** are currently considered for the e
 
 Document-level discounts are currently not supported, because the e invoice standard requires much more information than just the discount amount (e.g. the reason and applicable VAT rate).
 
+During validation of the **Sales Invoice**, the potential eInvoice is created and validated against the schematron rules for the selected _E Invoice Profile_, so that you can see any potential problems before submitting it.
+
+#### Export Sales Invoice as XML (XRechnung) or PDF+XML (ZUGFeRD)
+
+To download the XML file (XRechnung), open a **Sales Invoice** and click on "..." > "Download eInvoice".
+
+When you open the print preview of the **Sales Invoice** and click on "PDF", the generated PDF file will have the e-invoice XML embedded. An exception is the _E Invoice Profile_ "XRECHNUNG", which is intended to be a plain XML file. In this case, the PDF will not have the XML embedded.
+
+> [!TIP]
+> You can test both XML and PDF+XML files by re-importing them, using the **E Invoice Import** DocType.
+
+If [Ghostscript](https://www.ghostscript.com/) is installed on your system, the app will automatically attempt to convert the PDF to PDF/A-3 format before embedding the XML. This ensures maximum compatibility with document management systems and long-term archival requirements.
+
+The conversion requires:
+1. Ghostscript to be installed on your system
+2. The ICC profile `srgb.icc` to be available in Ghostscript's search paths
+
+If the conversion fails, the app will fall back to embedding the XML in a regular PDF file and log an error message.
+
 #### Embedding the Factur-X logo
 
 If you like, you can embed one of the official Factur-X logos in your invoice PDF. This way, a human can easily identify the invoice as a Factur-X eInvoice.
@@ -243,6 +255,10 @@ The following fields are currently imported from the eInvoice:
     - Discount Basis Date
     - Discount Calculation Percent
     - Discount Actual Amount
+- Payment Means
+    - Payee Account Name
+    - Payee BIC
+    - Payee IBAN
 
 </details>
 
