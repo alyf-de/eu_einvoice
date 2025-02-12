@@ -52,6 +52,10 @@
   "taxes",
   "due_date",
   "payment_terms",
+  "billing_period_section",
+  "billing_period_start",
+  "column_break_etpy",
+  "billing_period_end",
   "payment_means_section",
   "payee_account_name",
   "payee_iban",
@@ -359,6 +363,27 @@
    "fieldtype": "Data",
    "label": "BIC",
    "read_only": 1
+  },
+  {
+   "fieldname": "billing_period_section",
+   "fieldtype": "Section Break",
+   "label": "Billing Period"
+  },
+  {
+   "fieldname": "billing_period_start",
+   "fieldtype": "Date",
+   "label": "Billing Period Start",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_etpy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "billing_period_end",
+   "fieldtype": "Date",
+   "label": "Billing Period End",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -369,7 +394,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2025-02-12 23:47:22.751802",
+ "modified": "2025-02-13 00:31:19.390900",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
