@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 	from drafthorse.models.accounting import ApplicableTradeTax
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
 	from drafthorse.models.payment import PaymentTerms
-	from drafthorse.models.trade import PaymentMeans
+	from drafthorse.models.trade import BillingSpecifiedPeriod, PaymentMeans
 	from drafthorse.models.tradelines import LineItem
 	from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
 
@@ -45,6 +45,8 @@ class EInvoiceImport(Document):
 		)
 
 		amended_from: DF.Link | None
+		billing_period_end: DF.Date | None
+		billing_period_start: DF.Date | None
 		buyer_address_line_1: DF.Data | None
 		buyer_address_line_2: DF.Data | None
 		buyer_city: DF.Data | None
@@ -174,6 +176,7 @@ class EInvoiceImport(Document):
 			self.parse_payment_term(term)
 
 		self.parse_bank_details(doc.trade.settlement.payment_means)
+		self.parse_billing_period(doc.trade.settlement.period)
 
 	def _validate_schematron(self, xml_bytes):
 		self.validation_errors = ""
@@ -282,6 +285,10 @@ class EInvoiceImport(Document):
 		if EInvoiceProfile(self.profile) >= EInvoiceProfile.EN16931:
 			self.payee_account_name = payment_means.payee_account.account_name._text or None
 			self.payee_bic = payment_means.payee_institution.bic._text or None
+
+	def parse_billing_period(self, period: "BillingSpecifiedPeriod"):
+		self.billing_period_start = period.start._value
+		self.billing_period_end = period.end._value
 
 	def guess_supplier(self):
 		if self.supplier:
@@ -425,6 +432,8 @@ def create_purchase_invoice(source_name, target_doc=None):
 					"id": "bill_no",
 					"issue_date": "bill_date",
 					"currency": "currency",
+					"billing_period_start": "from_date",
+					"billing_period_end": "to_date",
 				},
 				# "field_no_map": ["items"],
 			},
