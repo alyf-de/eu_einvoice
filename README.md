@@ -259,6 +259,9 @@ The following fields are currently imported from the eInvoice:
     - Payee Account Name
     - Payee BIC
     - Payee IBAN
+- Billing Period
+    - Start Date
+    - End Date
 
 </details>
 
