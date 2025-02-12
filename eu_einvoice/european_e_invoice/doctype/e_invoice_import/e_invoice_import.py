@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 	from drafthorse.models.accounting import ApplicableTradeTax
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
 	from drafthorse.models.payment import PaymentTerms
+	from drafthorse.models.trade import PaymentMeans
 	from drafthorse.models.tradelines import LineItem
 	from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
 
@@ -58,6 +59,9 @@ class EInvoiceImport(Document):
 		id: DF.Data | None
 		issue_date: DF.Date | None
 		items: DF.Table[EInvoiceItem]
+		payee_account_name: DF.Data | None
+		payee_bic: DF.Data | None
+		payee_iban: DF.Data | None
 		payment_terms: DF.Table[EInvoicePaymentTerm]
 		profile: DF.ReadOnly | None
 		purchase_order: DF.Link | None
@@ -169,6 +173,8 @@ class EInvoiceImport(Document):
 		for term in doc.trade.settlement.terms.children:
 			self.parse_payment_term(term)
 
+		self.parse_bank_details(doc.trade.settlement.payment_means)
+
 	def _validate_schematron(self, xml_bytes):
 		self.validation_errors = ""
 		xml_string = xml_bytes.decode("utf-8")
@@ -269,6 +275,13 @@ class EInvoiceImport(Document):
 
 		if term.discount_terms.actual_amount._value:
 			t.discount_actual_amount = float(term.discount_terms.actual_amount._value)
+
+	def parse_bank_details(self, payment_means: "PaymentMeans"):
+		self.payee_iban = payment_means.payee_account.iban._text or None
+
+		if EInvoiceProfile(self.profile) >= EInvoiceProfile.EN16931:
+			self.payee_account_name = payment_means.payee_account.account_name._text or None
+			self.payee_bic = payment_means.payee_institution.bic._text or None
 
 	def guess_supplier(self):
 		if self.supplier:

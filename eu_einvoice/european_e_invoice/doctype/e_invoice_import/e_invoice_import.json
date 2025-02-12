@@ -51,7 +51,11 @@
   "currency",
   "taxes",
   "due_date",
-  "payment_terms"
+  "payment_terms",
+  "payment_means_section",
+  "payee_account_name",
+  "payee_iban",
+  "payee_bic"
  ],
  "fields": [
   {
@@ -332,6 +336,29 @@
    "label": "Profile",
    "options": "BASIC\nEN 16931\nEXTENDED\nXRECHNUNG",
    "read_only": 1
+  },
+  {
+   "fieldname": "payment_means_section",
+   "fieldtype": "Section Break",
+   "label": "Payment Means"
+  },
+  {
+   "fieldname": "payee_account_name",
+   "fieldtype": "Data",
+   "label": "Account Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payee_iban",
+   "fieldtype": "Data",
+   "label": "IBAN",
+   "read_only": 1
+  },
+  {
+   "fieldname": "payee_bic",
+   "fieldtype": "Data",
+   "label": "BIC",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -342,7 +369,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2024-12-14 13:01:20.243475",
+ "modified": "2025-02-12 23:47:22.751802",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
