@@ -52,6 +52,16 @@
   "taxes",
   "due_date",
   "payment_terms",
+  "monetary_summation_section",
+  "line_total",
+  "allowance_total",
+  "charge_total",
+  "tax_basis_total",
+  "tax_total",
+  "column_break_wvau",
+  "grand_total",
+  "total_prepaid",
+  "due_payable",
   "billing_period_section",
   "billing_period_start",
   "column_break_etpy",
@@ -384,6 +394,71 @@
    "fieldtype": "Date",
    "label": "Billing Period End",
    "read_only": 1
+  },
+  {
+   "fieldname": "monetary_summation_section",
+   "fieldtype": "Section Break",
+   "label": "Monetary Summation"
+  },
+  {
+   "fieldname": "line_total",
+   "fieldtype": "Currency",
+   "label": "Line Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tax_basis_total",
+   "fieldtype": "Currency",
+   "label": "Tax Basis Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tax_total",
+   "fieldtype": "Currency",
+   "label": "Tax Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_wvau",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "label": "Grand Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_prepaid",
+   "fieldtype": "Currency",
+   "label": "Total Prepaid",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "due_payable",
+   "fieldtype": "Currency",
+   "label": "Due Payable",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "allowance_total",
+   "fieldtype": "Currency",
+   "label": "Allowance Total",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "charge_total",
+   "fieldtype": "Currency",
+   "label": "Charge Total",
+   "options": "currency",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -394,7 +469,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2025-02-13 00:31:19.390900",
+ "modified": "2025-02-24 05:53:50.848425",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
@@ -444,6 +519,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
