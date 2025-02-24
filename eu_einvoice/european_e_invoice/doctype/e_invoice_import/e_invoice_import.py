@@ -19,7 +19,7 @@ from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile, get_profile
 
 if TYPE_CHECKING:
-	from drafthorse.models.accounting import ApplicableTradeTax
+	from drafthorse.models.accounting import ApplicableTradeTax, MonetarySummation
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
 	from drafthorse.models.payment import PaymentTerms
 	from drafthorse.models.trade import BillingSpecifiedPeriod, PaymentMeans
@@ -44,6 +44,7 @@ class EInvoiceImport(Document):
 			EInvoiceTradeTax,
 		)
 
+		allowance_total: DF.Currency
 		amended_from: DF.Link | None
 		billing_period_end: DF.Date | None
 		billing_period_start: DF.Date | None
@@ -53,14 +54,18 @@ class EInvoiceImport(Document):
 		buyer_country: DF.Link | None
 		buyer_name: DF.Data | None
 		buyer_postcode: DF.Data | None
+		charge_total: DF.Currency
 		company: DF.Link | None
 		currency: DF.Link | None
 		due_date: DF.Date | None
+		due_payable: DF.Currency
 		e_invoice_is_correct: DF.Check
 		einvoice: DF.Attach | None
+		grand_total: DF.Currency
 		id: DF.Data | None
 		issue_date: DF.Date | None
 		items: DF.Table[EInvoiceItem]
+		line_total: DF.Currency
 		payee_account_name: DF.Data | None
 		payee_bic: DF.Data | None
 		payee_iban: DF.Data | None
@@ -76,7 +81,10 @@ class EInvoiceImport(Document):
 		seller_tax_id: DF.Data | None
 		supplier: DF.Link | None
 		supplier_address: DF.Link | None
+		tax_basis_total: DF.Currency
+		tax_total: DF.Currency
 		taxes: DF.Table[EInvoiceTradeTax]
+		total_prepaid: DF.Currency
 		validation_errors: DF.Text | None
 	# end: auto-generated types
 
@@ -175,6 +183,7 @@ class EInvoiceImport(Document):
 		for term in doc.trade.settlement.terms.children:
 			self.parse_payment_term(term)
 
+		self.parse_monetary_summation(doc.trade.settlement.monetary_summation)
 		self.parse_bank_details(doc.trade.settlement.payment_means)
 		self.parse_billing_period(doc.trade.settlement.period)
 
@@ -278,6 +287,19 @@ class EInvoiceImport(Document):
 
 		if term.discount_terms.actual_amount._value:
 			t.discount_actual_amount = float(term.discount_terms.actual_amount._value)
+
+	def parse_monetary_summation(self, summation: "MonetarySummation"):
+		self.line_total = flt_or_none(summation.line_total._value)
+		self.allowance_total = flt_or_none(summation.allowance_total._value)
+		self.charge_total = flt_or_none(summation.charge_total._value)
+		self.tax_basis_total = flt_or_none(summation.tax_basis_total._amount)
+		for value, currency in summation.tax_total_other_currency.children:
+			if currency is None or currency == self.currency:
+				self.tax_total = flt_or_none(value)
+				break
+		self.grand_total = flt_or_none(summation.grand_total._amount)
+		self.total_prepaid = flt_or_none(summation.prepaid_total._value)
+		self.due_payable = flt_or_none(summation.due_amount._value)
 
 	def parse_bank_details(self, payment_means: "PaymentMeans"):
 		self.payee_iban = payment_means.payee_account.iban._text or None
