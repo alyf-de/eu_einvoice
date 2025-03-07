@@ -59,11 +59,17 @@ def get_custom_fields():
 				"fetch_if_empty": 1,
 			},
 			{
+				"fieldname": "einvoice_tab",
+				"label": _("E Invoicing"),
+				"insert_after": "terms",
+				"fieldtype": "Tab Break",
+			},
+			{
 				"fieldname": "e_invoice_validation_section",
-				"label": _("E Invoice Validation"),
-				"insert_after": "remarks",
+				"label": "",
+				"insert_after": "einvoice_tab",
 				"fieldtype": "Section Break",
-				"collapsible": 1,
+				"collapsible": 0,
 			},
 			{
 				"fieldname": "einvoice_profile",
