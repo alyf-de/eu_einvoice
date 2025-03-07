@@ -1,0 +1,86 @@
+{
+ "app": "eu_einvoice",
+ "charts": [],
+ "content": "[{\"id\":\"7omeqgcKJn\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New E Invoice Import\",\"col\":4}},{\"id\":\"6xZPLmX5jr\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Sales Invoice\",\"col\":4}},{\"id\":\"fcxw8heUSI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Documentation\",\"col\":4}},{\"id\":\"R90qJHG-fp\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"YQxqOYQ_kG\",\"type\":\"card\",\"data\":{\"card_name\":\"Setup\",\"col\":4}}]",
+ "creation": "2024-09-29 17:58:44.619269",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "integration",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "E-Invoicing",
+ "links": [
+  {
+   "description": "Code Lists are typically public lists of common codes used in data interchange between third parties",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Setup",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Code List",
+   "link_count": 0,
+   "link_to": "Code List",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Common Code",
+   "link_count": 0,
+   "link_to": "Common Code",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-03-07 07:17:56.903277",
+ "modified_by": "Administrator",
+ "module": "European e-Invoice",
+ "name": "E-Invoicing",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 23.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "New E Invoice Import",
+   "link_to": "E Invoice Import",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Documentation",
+   "type": "URL",
+   "url": "https://github.com/alyf-de/eu_einvoice"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "New",
+   "label": "New Sales Invoice",
+   "link_to": "Sales Invoice",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "E-Invoicing",
+ "type": "Workspace"
+}
