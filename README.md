@@ -162,13 +162,18 @@ When you open the print preview of the **Sales Invoice** and click on "PDF", the
 > [!TIP]
 > You can test both XML and PDF+XML files by re-importing them, using the **E Invoice Import** DocType.
 
-If [Ghostscript](https://www.ghostscript.com/) is installed on your system, the app will automatically attempt to convert the PDF to PDF/A-3 format before embedding the XML. This ensures maximum compatibility with document management systems and long-term archival requirements.
+#### PDF/A-3 conversion
+
+The app will automatically attempt to convert the PDF to PDF/A-3 format before embedding the XML. This ensures maximum compatibility with document management systems and long-term archival requirements.
+
+This conversion is done using [Ghostscript](https://www.ghostscript.com/), a free, open-source interpreter for the PostScript language and for PDF files.
 
 The conversion requires:
-1. Ghostscript to be installed on your system
+
+1. Ghostscript to be installed globally on your system/server 
 2. The ICC profile `srgb.icc` to be available in Ghostscript's search paths
 
-If the conversion fails, the app will fall back to embedding the XML in a regular PDF file and log an error message.
+If Ghostscript is installed and the conversion fails, the app will fall back to embedding the XML in a regular PDF file and log an error message.
 
 #### Embedding the Factur-X logo
 
