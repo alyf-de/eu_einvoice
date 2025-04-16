@@ -23,8 +23,8 @@ class EInvoiceProfile(Enum):
 		order = [
 			EInvoiceProfile.BASIC,
 			EInvoiceProfile.EN16931,
-			EInvoiceProfile.EXTENDED,
 			EInvoiceProfile.XRECHNUNG,
+			EInvoiceProfile.EXTENDED,
 		]
 		return order.index(self) < order.index(other)
 
