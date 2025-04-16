@@ -29,16 +29,16 @@ class EInvoiceProfile(Enum):
 PROFILE_TO_SCHEMA = {
 	EInvoiceProfile.BASIC: "FACTUR-X_BASIC",
 	EInvoiceProfile.EN16931: "FACTUR-X_EN16931",
+	EInvoiceProfile.XRECHNUNG: "FACTUR-X_EN16931",
 	EInvoiceProfile.EXTENDED: "FACTUR-X_EXTENDED",
-	EInvoiceProfile.XRECHNUNG: "FACTUR-X_EXTENDED",  # TODO: https://github.com/pretix/python-drafthorse/issues/54
 }
 
 # Map of EInvoiceProfile to GuidelineSpecifiedDocumentContextParameter
 PROFILE_TO_GUIDELINE = {
 	EInvoiceProfile.BASIC: "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic",
 	EInvoiceProfile.EN16931: "urn:cen.eu:en16931:2017",
-	EInvoiceProfile.EXTENDED: "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended",
 	EInvoiceProfile.XRECHNUNG: "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0",
+	EInvoiceProfile.EXTENDED: "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended",
 }
 GUIDELINE_TO_PROFILE = {v: k for k, v in PROFILE_TO_GUIDELINE.items()}
 
