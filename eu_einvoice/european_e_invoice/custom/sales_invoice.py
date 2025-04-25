@@ -402,7 +402,7 @@ class EInvoiceGenerator:
 				]
 			).upper()
 
-		li.settlement.monetary_summation.total_amount = item.amount
+		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
 
 	def _add_taxes_and_charges(self):
@@ -596,7 +596,7 @@ class EInvoiceGenerator:
 	def _set_totals(self):
 		actual_charge_total = sum(tax.tax_amount for tax in self.invoice.taxes if tax.charge_type == "Actual")
 		tax_total = sum(tax.tax_amount for tax in self.invoice.taxes if tax.charge_type != "Actual")
-		self.doc.trade.settlement.monetary_summation.line_total = self.invoice.total
+		self.doc.trade.settlement.monetary_summation.line_total = flt(self.invoice.net_total, self.invoice.precision("net_total"))
 
 		if actual_charge_total:
 			self.doc.trade.settlement.monetary_summation.charge_total = actual_charge_total
