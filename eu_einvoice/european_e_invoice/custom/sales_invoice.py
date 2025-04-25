@@ -112,6 +112,7 @@ class EInvoiceGenerator:
 		self.buyer_contact = buyer_contact
 		self.doc = None
 		self.item_tax_rates = set()
+		self.delivery_dates = []
 
 	def get_einvoice(self) -> Document | None:
 		"""Return the einvoice document as a Python object."""
@@ -162,6 +163,7 @@ class EInvoiceGenerator:
 		if self.invoice.to_date:
 			self.doc.trade.settlement.period.end = getdate(self.invoice.to_date)
 
+		self._add_delivery_date()
 		self._add_payment_terms()
 		self._set_totals()
 
@@ -369,11 +371,13 @@ class EInvoiceGenerator:
 			uom_codes.get([("UOM", item.uom)]),
 		)
 
-		if item.delivery_note and self.profile >= EInvoiceProfile.EXTENDED:
-			li.delivery.delivery_note.issuer_assigned_id = item.delivery_note
-			li.delivery.delivery_note.issue_date_time = frappe.db.get_value(
-				"Delivery Note", item.delivery_note, "posting_date"
-			)
+		if item.delivery_note:
+			posting_date = frappe.db.get_value("Delivery Note", item.delivery_note, "posting_date")
+			self.delivery_dates.append(posting_date)
+
+			if self.profile >= EInvoiceProfile.EXTENDED:
+				li.delivery.delivery_note.issuer_assigned_id = item.delivery_note
+				li.delivery.delivery_note.issue_date_time = getdate(posting_date)
 
 		li.settlement.trade_tax.type_code = "VAT"
 		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(
@@ -530,6 +534,17 @@ class EInvoiceGenerator:
 			]
 		).upper()
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
+
+	def _add_delivery_date(self):
+		if self.delivery_dates:
+			self.doc.trade.delivery.event.occurrence = sorted(self.delivery_dates)[-1]
+			return
+
+		if self.invoice.to_date:
+			self.doc.trade.delivery.event.occurrence = self.invoice.to_date
+			return
+
+		self.doc.trade.delivery.event.occurrence = self.invoice.posting_date
 
 	def _add_payment_terms(self):
 		for ps in self.invoice.payment_schedule:
