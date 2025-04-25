@@ -537,14 +537,13 @@ class EInvoiceGenerator:
 
 	def _add_delivery_date(self):
 		if self.delivery_dates:
-			self.doc.trade.delivery.event.occurrence = sorted(self.delivery_dates)[-1]
-			return
+			delivery_date = sorted(self.delivery_dates)[-1]
+		elif self.invoice.to_date:
+			delivery_date = self.invoice.to_date
+		else:
+			delivery_date = self.invoice.posting_date
 
-		if self.invoice.to_date:
-			self.doc.trade.delivery.event.occurrence = self.invoice.to_date
-			return
-
-		self.doc.trade.delivery.event.occurrence = self.invoice.posting_date
+		self.doc.trade.delivery.event.occurrence = delivery_date
 
 	def _add_payment_terms(self):
 		for ps in self.invoice.payment_schedule:
