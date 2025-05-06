@@ -13,6 +13,7 @@
   "e_invoice_is_correct",
   "validation_details_section",
   "validation_errors",
+  "validation_warnings",
   "header_section",
   "issue_date",
   "id",
@@ -459,6 +460,13 @@
    "label": "Charge Total",
    "options": "currency",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.validation_warnings",
+   "fieldname": "validation_warnings",
+   "fieldtype": "Text",
+   "label": "Validation Warnings",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -469,7 +477,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2025-02-24 05:53:50.848425",
+ "modified": "2025-05-07 00:53:28.840615",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
