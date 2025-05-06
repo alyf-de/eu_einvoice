@@ -23,13 +23,19 @@ def get_errors_from_stylesheet(xml_string: str, stylesheet: str) -> list[str]:
 	return extract_failed_asserts(report)
 
 
-def extract_failed_asserts(xml: bytes) -> list[str]:
+def extract_failed_asserts(xml: bytes) -> tuple[list[str], list[str]]:
 	root = objectify.fromstring(xml)
 	failed_asserts = root.xpath(
 		"//svrl:failed-assert/svrl:text",
 		namespaces={"svrl": "http://purl.oclc.org/dsdl/svrl"},
 	)
-	return [failed_assert.text.strip() for failed_assert in failed_asserts if failed_assert.text]
+	warnings = root.xpath(
+		"//svrl:successful-report/svrl:text",
+		namespaces={"svrl": "http://purl.oclc.org/dsdl/svrl"},
+	)
+	errors = [failed_assert.text.strip() for failed_assert in failed_asserts if failed_assert.text]
+	warnings = [warning.text.strip() for warning in warnings if warning.text]
+	return errors, warnings
 
 
 def get_validation_report(xml_string: str, stylesheet_file: str) -> bytes:

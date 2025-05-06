@@ -707,6 +707,7 @@ def validate_doc(doc, event):
 def validate_einvoice(doc: SalesInvoice):
 	doc.einvoice_is_correct = 0
 	doc.validation_errors = ""
+	doc.validation_warnings = ""
 
 	if not doc.einvoice_profile:
 		return
@@ -719,9 +720,11 @@ def validate_einvoice(doc: SalesInvoice):
 
 	try:
 		invoice_profile = EInvoiceProfile(doc.einvoice_profile)
-		validation_errors = get_validation_errors(xml_string, invoice_profile)
+		validation_errors, warnings = get_validation_errors(xml_string, invoice_profile)
+
 		if invoice_profile == EInvoiceProfile.XRECHNUNG:
-			validation_errors += get_validation_errors(xml_string, EInvoiceProfile.EN16931)
+			basic_errors, basic_warnings = get_validation_errors(xml_string, EInvoiceProfile.EN16931)
+			validation_errors += basic_errors
 	except Exception:
 		doc.validation_errors = _("Cannot validate E Invoice schematron.")
 		return
@@ -730,6 +733,9 @@ def validate_einvoice(doc: SalesInvoice):
 		doc.validation_errors += "\n".join(validation_errors)
 	else:
 		doc.einvoice_is_correct = 1
+
+	if any(warnings):
+		doc.validation_warnings += "\n".join(warnings)
 
 
 def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
