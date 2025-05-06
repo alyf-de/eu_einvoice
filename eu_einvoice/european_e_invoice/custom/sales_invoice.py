@@ -620,7 +620,6 @@ class EInvoiceGenerator:
 		self.doc.trade.settlement.monetary_summation.tax_basis_total = (
 			self.invoice.net_total + actual_charge_total
 		)
-		self.doc.trade.settlement.monetary_summation.tax_total = tax_total
 		self.doc.trade.settlement.monetary_summation.tax_total_other_currency.add(
 			(tax_total, self.invoice.currency)
 		)
