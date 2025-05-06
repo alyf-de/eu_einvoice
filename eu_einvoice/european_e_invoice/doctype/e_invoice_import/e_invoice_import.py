@@ -86,6 +86,7 @@ class EInvoiceImport(Document):
 		taxes: DF.Table[EInvoiceTradeTax]
 		total_prepaid: DF.Currency
 		validation_errors: DF.Text | None
+		validation_warnings: DF.Text | None
 	# end: auto-generated types
 
 	def validate(self):
@@ -189,10 +190,13 @@ class EInvoiceImport(Document):
 
 	def _validate_schematron(self, xml_bytes):
 		self.validation_errors = ""
+		self.validation_warnings = ""
 		xml_string = xml_bytes.decode("utf-8")
 
 		try:
-			validation_errors = get_validation_errors(xml_string, EInvoiceProfile(self.profile))
+			validation_errors, validation_warnings = get_validation_errors(
+				xml_string, EInvoiceProfile(self.profile)
+			)
 		except Exception:
 			frappe.log_error(
 				title="E Invoice schematron validation",
@@ -211,6 +215,9 @@ class EInvoiceImport(Document):
 			self.validation_errors += "\n".join(validation_errors)
 		else:
 			self.e_invoice_is_correct = 1
+
+		if any(validation_warnings):
+			self.validation_warnings += "\n".join(validation_warnings)
 
 	def parse_seller(self, seller: "TradeParty"):
 		self.seller_name = str(seller.name)
