@@ -99,5 +99,14 @@ def get_custom_fields():
 				"print_hide": 1,
 				"depends_on": "eval:doc.einvoice_profile && !doc.einvoice_is_correct",
 			},
+			{
+				"fieldname": "validation_warnings",
+				"label": _("Validation Warnings"),
+				"insert_after": "validation_errors",
+				"fieldtype": "Text",
+				"read_only": 1,
+				"print_hide": 1,
+				"depends_on": "eval:doc.einvoice_profile && doc.validation_warnings",
+			},
 		],
 	}
