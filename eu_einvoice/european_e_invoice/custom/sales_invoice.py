@@ -362,9 +362,15 @@ class EInvoiceGenerator:
 			li.product.buyer_assigned_id = item.customer_item_code
 			li.product.description = html2text(item.description)
 
-		li.agreement.net.amount = flt(item.net_rate, item.precision("net_rate"))
+		# ERPNext won’t accept negative quantities, and the e-invoice rules (BR-27)
+		# won’t accept negative prices. To work around this, we flip the signs:
+		# a line that would have had a negative price and positive quantity is
+		# instead sent with a positive price and a negative quantity.
+		multiplier = -1 if item.net_rate < 0 and item.qty > 0 else 1
+
+		li.agreement.net.amount = flt(item.net_rate, item.precision("net_rate")) * multiplier
 		li.delivery.billed_quantity = (
-			flt(item.qty, item.precision("qty")),
+			flt(item.qty, item.precision("qty")) * multiplier,
 			uom_codes.get([("UOM", item.uom)]),
 		)
 
