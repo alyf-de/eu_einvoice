@@ -4,6 +4,6 @@
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
-execute:from eu_einvoice.install import after_install; after_install() # 13
+execute:from eu_einvoice.install import after_install; after_install() # 14
 eu_einvoice.patches.set_profile_in_sales_invoice # 3
 eu_einvoice.patches.set_profile_in_import
