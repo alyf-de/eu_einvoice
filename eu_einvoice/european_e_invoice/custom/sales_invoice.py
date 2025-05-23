@@ -366,11 +366,11 @@ class EInvoiceGenerator:
 		# won’t accept negative prices. To work around this, we flip the signs:
 		# a line that would have had a negative price and positive quantity is
 		# instead sent with a positive price and a negative quantity.
-		MULTIPLIER = -1 if item.net_rate < 0 and item.qty > 0 else 1
+		multiplier = -1 if item.net_rate < 0 and item.qty > 0 else 1
 
-		li.agreement.net.amount = flt(item.net_rate, item.precision("net_rate")) * MULTIPLIER
+		li.agreement.net.amount = flt(item.net_rate, item.precision("net_rate")) * multiplier
 		li.delivery.billed_quantity = (
-			flt(item.qty, item.precision("qty")) * MULTIPLIER,
+			flt(item.qty, item.precision("qty")) * multiplier,
 			uom_codes.get([("UOM", item.uom)]),
 		)
 
