@@ -367,7 +367,15 @@ class EInvoiceGenerator:
 			flt(item.qty, item.precision("qty")),
 			uom_codes.get([("UOM", item.uom)]),
 		)
-
+		
+		# Erpnext does not allow negative quantites, EInvoice does not allow negative amounts, switch the sign around
+		if item.net_rate < 0:
+			li.agreement.net.amount = -1*flt(item.net_rate, item.precision("net_rate"))
+			li.delivery.billed_quantity = (
+				-1*flt(item.qty, item.precision("qty")),
+				uom_codes.get([("UOM", item.uom)]),
+			)
+		
 		if item.delivery_note:
 			posting_date = frappe.db.get_value("Delivery Note", item.delivery_note, "posting_date")
 			self.delivery_dates.append(posting_date)
