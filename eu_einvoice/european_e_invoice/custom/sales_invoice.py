@@ -611,29 +611,36 @@ class EInvoiceGenerator:
 			break
 
 	def _set_totals(self):
+		# [BR-DEC-09]-The allowed maximum number of decimals for the Sum of Invoice line net amount (BT-106) is 2.
+		self.doc.trade.settlement.monetary_summation.line_total = flt(self.invoice.net_total, 2)
+
 		actual_charge_total = sum(tax.tax_amount for tax in self.invoice.taxes if tax.charge_type == "Actual")
-		tax_total = sum(tax.tax_amount for tax in self.invoice.taxes if tax.charge_type != "Actual")
-		self.doc.trade.settlement.monetary_summation.line_total = flt(
-			self.invoice.net_total, self.invoice.precision("net_total")
-		)
-
 		if actual_charge_total:
-			self.doc.trade.settlement.monetary_summation.charge_total = actual_charge_total
+			# [BR-DEC-11]-The allowed maximum number of decimals for the Sum of charges on document level (BT-108) is 2.
+			self.doc.trade.settlement.monetary_summation.charge_total = flt(actual_charge_total, 2)
 
-		self.doc.trade.settlement.monetary_summation.tax_basis_total = (
-			self.invoice.net_total + actual_charge_total
+		# [BR-DEC-12]-The allowed maximum number of decimals for the Invoice total amount without VAT (BT-109) is 2.
+		self.doc.trade.settlement.monetary_summation.tax_basis_total = flt(
+			self.invoice.net_total + actual_charge_total, 2
 		)
+
+		tax_total = sum(tax.tax_amount for tax in self.invoice.taxes if tax.charge_type != "Actual")
+		# [BR-DEC-13]-The allowed maximum number of decimals for the Invoice total VAT amount (BT-110) is 2.
 		self.doc.trade.settlement.monetary_summation.tax_total_other_currency.add(
-			(tax_total, self.invoice.currency)
+			(flt(tax_total, 2), self.invoice.currency)
 		)
-		self.doc.trade.settlement.monetary_summation.grand_total = self.invoice.grand_total
 
+		# [BR-DEC-14]-The allowed maximum number of decimals for the Invoice total amount with VAT (BT-112) is 2.
+		self.doc.trade.settlement.monetary_summation.grand_total = flt(self.invoice.grand_total, 2)
+
+		# [BR-DEC-16]-The allowed maximum number of decimals for the Paid amount (BT-113) is 2.
 		if self.invoice.outstanding_amount == 0:
-			self.doc.trade.settlement.monetary_summation.prepaid_total = self.invoice.grand_total
+			self.doc.trade.settlement.monetary_summation.prepaid_total = flt(self.invoice.grand_total, 2)
 		else:
-			self.doc.trade.settlement.monetary_summation.prepaid_total = self.invoice.total_advance
+			self.doc.trade.settlement.monetary_summation.prepaid_total = flt(self.invoice.total_advance, 2)
 
-		self.doc.trade.settlement.monetary_summation.due_amount = self.invoice.outstanding_amount
+		# [BR-DEC-18]-The allowed maximum number of decimals for the Amount due for payment (BT-115) is 2.
+		self.doc.trade.settlement.monetary_summation.due_amount = flt(self.invoice.outstanding_amount, 2)
 
 
 def validate_vat_id(vat_id: str) -> tuple[str, str]:
