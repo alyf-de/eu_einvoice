@@ -426,13 +426,22 @@ def get_xml_bytes(einvoice: str) -> bytes:
 		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes(), check_xsd=False)
 		if not xml_bytes:
 			frappe.throw(
-				_("No XML data found in PDF file."),
+				msg=_(
+					"No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
+				),
+				title=_("Not an E-Invoice"),
 				primary_action=CREATE_PI_ACTION,
 			)
 	elif file.suffix.lower() == ".xml":
 		xml_bytes = file.read_bytes()
 	else:
-		frappe.throw(_("Unsupported file format '{0}'").format(file.suffix), primary_action=CREATE_PI_ACTION)
+		frappe.throw(
+			msg=_(
+				"The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
+			).format(file.suffix),
+			title=_("Unsupported file format"),
+			primary_action=CREATE_PI_ACTION,
+		)
 
 	return xml_bytes
 
