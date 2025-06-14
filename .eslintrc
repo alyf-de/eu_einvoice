@@ -25,6 +25,7 @@
 	},
 	"root": true,
 	"globals": {
+		"eu_einvoice": true,
 		"frappe": true,
 		"Vue": true,
 		"SetVueGlobals": true,

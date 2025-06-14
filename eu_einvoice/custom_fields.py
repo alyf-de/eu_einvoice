@@ -21,7 +21,14 @@ def get_custom_fields():
 				"fieldtype": "Link",
 				"options": "E Invoice Import",
 				"read_only": 1,
-			}
+				"depends_on": "eval:doc.e_invoice_import",
+			},
+			{
+				"fieldname": "supplier_invoice_file",
+				"label": _("Supplier Invoice File"),
+				"insert_after": "bill_date",
+				"fieldtype": "Attach",
+			},
 		],
 		"Customer": [
 			{
