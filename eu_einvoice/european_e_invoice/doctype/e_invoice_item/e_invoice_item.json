@@ -33,7 +33,7 @@
   },
   {
    "fieldname": "product_name",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Product Name",
    "read_only": 1
