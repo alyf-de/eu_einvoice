@@ -246,8 +246,14 @@ class EInvoiceImport(Document):
 		basis_qty = float(li.agreement.net.basis_quantity._amount or "1")
 		rate = net_rate / basis_qty
 
-		item.product_name = str(li.product.name)
-		item.product_description = str(li.product.description)
+		product_name_full = str(li.product.name)
+		product_description = str(li.product.description)
+		if len(product_name_full) > 140:
+			item.product_name = product_name_full[:140]
+			item.product_description = product_name_full + " | " + product_description
+		else:
+			item.product_name = product_name_full
+			item.product_description = product_description
 		item.seller_product_id = str(li.product.seller_assigned_id)
 		item_code = str(li.product.buyer_assigned_id)
 		if item_code and not frappe.db.exists("Item", item_code):
