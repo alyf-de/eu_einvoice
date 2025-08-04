@@ -146,7 +146,7 @@ class EInvoiceImport(Document):
 		self.set_onload("unlinked_invoice", unlinked_invoice)
 
 	def get_xml_bytes(self) -> bytes:
-		return get_xml_bytes(Path(get_site_path(self.einvoice.lstrip("/"))).resolve())
+		return get_xml_bytes(self.einvoice)
 
 	def read_values_from_einvoice(self) -> None:
 		xml_bytes = self.get_xml_bytes()
@@ -420,18 +420,41 @@ def flt_or_none(value) -> float | None:
 	return float(value) if value is not None else None
 
 
-def get_xml_bytes(file: Path) -> bytes:
-	"""Reads the XML data from the given XML or PDF file path."""
+def get_xml_bytes(einvoice: str) -> bytes:
+	"""Reads the XML data from the attached XML or PDF file."""
+	CREATE_PI_ACTION = {
+		"label": _("Create Purchase Invoice"),
+		"client_action": "eu_einvoice.utils.new_purchase_invoice",
+	}
+
+	file = relative_url_to_path(einvoice)
 	if file.suffix.lower() == ".pdf":
 		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes(), check_xsd=False)
 		if not xml_bytes:
-			frappe.throw(_("No XML data found in PDF file."))
+			frappe.throw(
+				msg=_(
+					"No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
+				),
+				title=_("Not an E-Invoice"),
+				primary_action=CREATE_PI_ACTION,
+			)
 	elif file.suffix.lower() == ".xml":
 		xml_bytes = file.read_bytes()
 	else:
-		frappe.throw(_("Unsupported file format '{0}'").format(file.suffix))
+		frappe.throw(
+			msg=_(
+				"The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
+			).format(file.suffix),
+			title=_("Unsupported file format"),
+			primary_action=CREATE_PI_ACTION,
+		)
 
 	return xml_bytes
+
+
+def relative_url_to_path(url: str) -> Path:
+	"""Convert a relative URL to a file path."""
+	return Path(get_site_path(url.lstrip("/"))).resolve()
 
 
 @frappe.whitelist()
