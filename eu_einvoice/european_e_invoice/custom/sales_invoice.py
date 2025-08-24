@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import mimetypes
+import os
 import re
+from base64 import b64encode
 from typing import TYPE_CHECKING
 
 import frappe
@@ -8,9 +11,11 @@ from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
 from drafthorse.models.document import Document, IncludedNote
 from drafthorse.models.party import TaxRegistration, URIUniversalCommunication
 from drafthorse.models.payment import PaymentTerms
+from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
+from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.utils import html2text
 from frappe.utils.data import date_diff, flt, getdate, to_markdown
 
@@ -136,6 +141,9 @@ class EInvoiceGenerator:
 			if self.invoice.po_date and self.profile >= EInvoiceProfile.EXTENDED:
 				self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
+		if self.profile >= EInvoiceProfile.EN16931:
+			self._embed_attachment()
+
 		sales_orders = set()
 		for item in self.invoice.items:
 			if item.sales_order:
@@ -166,6 +174,18 @@ class EInvoiceGenerator:
 		self._add_delivery_date()
 		self._add_payment_terms()
 		self._set_totals()
+
+	def _embed_attachment(self):
+		"""Add the embedded document to the einvoice."""
+		if not self.invoice.einvoice_embedded_document:
+			return
+
+		file_id, (mime_type, file_name, content) = get_attached_file(self.invoice.einvoice_embedded_document)
+		ref_doc = AdditionalReferencedDocument()
+		ref_doc.issuer_assigned_id = file_id
+		ref_doc.attached_object = (mime_type, file_name, content)
+		ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
+		self.doc.trade.agreement.additional_references.add(ref_doc)
 
 	def _set_context(self):
 		"""Set default context according to XRechnung 3.0.2"""
@@ -809,6 +829,21 @@ def get_bank_details(mode_of_payment: str, company: str) -> tuple[str | None, st
 
 	bic = frappe.db.get_value("Bank", bank, "swift_number") if bank else None
 	return (iban, bic or None)
+
+
+def get_attached_file(file_url: str) -> tuple[str, tuple[str, str, str]]:
+	"""Get the attached file from the file URL.
+
+	Returns a tuple of the file name and a tuple of the mime type, file name, and base64-encoded content.
+	"""
+	file = find_file_by_url(file_url)
+	content = file.get_content()
+	file_name = os.path.basename(file_url)
+	mime_type = mimetypes.guess_type(file_url)[0]
+	if isinstance(content, str):
+		content = content.encode("utf-8")
+
+	return file.name, (mime_type, file_name, b64encode(content).decode("utf-8"))
 
 
 @frappe.whitelist(allow_guest=True)
