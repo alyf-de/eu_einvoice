@@ -7,7 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2025-08-04 18:47+0053\n"
+=======
+"POT-Creation-Date: 2025-08-26 12:21+0053\n"
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 "PO-Revision-Date: 2024-11-25 18:57+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -16,9 +20,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.13.1\n"
+"Generated-By: Babel 2.16.0\n"
 
+<<<<<<< HEAD
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:712
+=======
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:732
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
@@ -32,8 +40,18 @@ msgstr ""
 msgid "Actual Amount"
 msgstr "Tatsächlicher Betrag"
 
+<<<<<<< HEAD
 #. Label of a Tab Break field in DocType 'E Invoice Import'
 #. Label of a Section Break field in DocType 'E Invoice Item'
+=======
+#: eu_einvoice/custom_fields.py:97
+msgid "Additional supporting document to be embedded in the e-invoice file."
+msgstr "Zusätzliches Dokument, das in die E-Rechnung eingebettet werden soll."
+
+#. Label of the agreement_tab (Tab Break) field in DocType 'E Invoice Import'
+#. Label of the agreement_section (Section Break) field in DocType 'E Invoice
+#. Item'
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
 msgid "Agreement"
@@ -138,11 +156,19 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
+<<<<<<< HEAD
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:731
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:742
+=======
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:751
+msgid "Cannot create E Invoice."
+msgstr "E-Rechnung konnte nicht erstellt werden."
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:762
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -159,14 +185,22 @@ msgstr ""
 #. Description of a Card Break in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Code Lists are typically public lists of common codes used in data interchange between third parties"
+<<<<<<< HEAD
 msgstr "Code-Listen sind in der Regel öffentliche Listen von häufig verwendeten Codes, die für den Datenaustausch mit Kunden und Lieferanten verwendet werden."
+=======
+msgstr "Code-Listen sind in der Regel öffentliche Listen von häufig verwendeten Codes, die in der Datenübertragung zwischen Drittanbietern verwendet werden."
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 
 #. Label of a Link in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Common Code"
 msgstr ""
 
+<<<<<<< HEAD
 #. Label of a Link field in DocType 'E Invoice Import'
+=======
+#. Label of the company (Link) field in DocType 'E Invoice Import'
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Company"
 msgstr "Unternehmen"
@@ -256,8 +290,14 @@ msgstr "E-Rechnungs-Import"
 msgid "E Invoice Import {0} does not exist"
 msgstr "E-Rechnungs-Import {0} existiert nicht"
 
+<<<<<<< HEAD
 #. Label of a Check field in DocType 'E Invoice Import'
 #: eu_einvoice/custom_fields.py:93
+=======
+#. Label of the e_invoice_is_correct (Check) field in DocType 'E Invoice
+#. Import'
+#: eu_einvoice/custom_fields.py:101
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "E Invoice Is Correct"
 msgstr "E-Rechnung ist korrekt"
@@ -283,7 +323,11 @@ msgstr "E-Rechnungs-Steuer"
 
 #: eu_einvoice/custom_fields.py:70
 msgid "E Invoicing"
+<<<<<<< HEAD
 msgstr "E-Rechnung"
+=======
+msgstr ""
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 
 #. Label of a Attach field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
@@ -293,9 +337,20 @@ msgstr "E-Rechnung"
 #. Name of a Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "E-Invoicing"
+<<<<<<< HEAD
 msgstr "E-Rechnungen"
 
 #. Label of a Section Break field in DocType 'E Invoice Import'
+=======
+msgstr "E-Rechnung"
+
+#: eu_einvoice/custom_fields.py:93
+msgid "Embedded Document"
+msgstr ""
+
+#. Label of the file_section_section (Section Break) field in DocType 'E
+#. Invoice Import'
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "File Section"
 msgstr "Datei-Abschnitt"
@@ -359,6 +414,22 @@ msgstr "Nettopreis"
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "New E Invoice Import"
 msgstr "Neuer E-Rechnungs-Import"
+<<<<<<< HEAD
+=======
+
+#. Label of a shortcut in the E-Invoicing Workspace
+#: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
+msgid "New Sales Invoice"
+msgstr "Neue Ausgangsrechnung"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:435
+msgid "No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
+msgstr "In der PDF-Datei wurden keine maschinenlesbaren Daten gefunden. Sie können stattdessen eine reguläre Eingangsrechnung manuell erstellen."
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:438
+msgid "Not an E-Invoice"
+msgstr "Keine E-Rechnung"
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 
 #. Label of a shortcut in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
@@ -424,11 +495,14 @@ msgstr "Produktname"
 msgid "Profile"
 msgstr "Profil"
 
+<<<<<<< HEAD
 #. Linked DocType in E Invoice Import's connections
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Purchase Invoice"
 msgstr ""
 
+=======
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:636
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
 msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
@@ -517,9 +591,15 @@ msgstr "Ausgleich"
 #. Label of a Card Break in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Setup"
+<<<<<<< HEAD
 msgstr "Einrichtung"
 
 #. Label of a Link field in DocType 'E Invoice Import'
+=======
+msgstr ""
+
+#. Label of the supplier (Link) field in DocType 'E Invoice Import'
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Supplier"
 msgstr "Lieferant"
@@ -531,7 +611,11 @@ msgstr "Lieferanten-Adresse"
 
 #: eu_einvoice/custom_fields.py:28
 msgid "Supplier Invoice File"
+<<<<<<< HEAD
 msgstr "Lieferanten-Rechnungsdatei"
+=======
+msgstr "Lieferantenrechnungsdatei"
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 
 #. Name of a role
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
@@ -565,7 +649,11 @@ msgstr "Steuern"
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:445
 msgid "The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
+<<<<<<< HEAD
 msgstr "Das Format der hochgeladenen Datei ({0}) wird für E-Rechnungen nicht unterstützt. Bitte laden Sie eine gültige E-Rechnungsdatei hoch oder erstellen Sie stattdessen manuell eine reguläre Eingangsrechnung."
+=======
+msgstr "Das Format der hochgeladenen Datei ({0}) wird für E-Rechnungen nicht unterstützt. Bitte laden Sie eine gültige E-Rechnungsdatei hoch oder erstellen Sie stattdessen eine reguläre Eingangsrechnung manuell."
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:156
 msgid "The uploaded file does not contain valid XML data."
@@ -605,14 +693,24 @@ msgstr "Laden Sie die von Ihrem Lieferanten bereitgestellte <code>.xml</code>- o
 msgid "Validation Details"
 msgstr "Validierungsdetails"
 
+<<<<<<< HEAD
 #. Label of a Text field in DocType 'E Invoice Import'
 #: eu_einvoice/custom_fields.py:102
+=======
+#. Label of the validation_errors (Text) field in DocType 'E Invoice Import'
+#: eu_einvoice/custom_fields.py:110
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Validation Errors"
 msgstr "Validierungsfehler"
 
+<<<<<<< HEAD
 #. Label of a Text field in DocType 'E Invoice Import'
 #: eu_einvoice/custom_fields.py:111
+=======
+#. Label of the validation_warnings (Text) field in DocType 'E Invoice Import'
+#: eu_einvoice/custom_fields.py:119
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Validation Warnings"
 msgstr "Validierungswarnungen"
@@ -621,6 +719,7 @@ msgstr "Validierungswarnungen"
 msgid "View {0}"
 msgstr "{0} ansehen"
 
+<<<<<<< HEAD
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:691
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
@@ -634,6 +733,21 @@ msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:703
+=======
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:711
+msgid "{0} row #{1}: Discount Date should be after Posting Date"
+msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:700
+msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
+msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:688
+msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
+msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:723
+>>>>>>> a21b7f1 (feat: support attached files (IBT-72) (#160))
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 

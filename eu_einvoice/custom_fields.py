@@ -89,6 +89,14 @@ def get_custom_fields():
 				"print_hide": 1,
 			},
 			{
+				"fieldname": "einvoice_embedded_document",
+				"label": _("Embedded Document"),
+				"insert_after": "einvoice_profile",
+				"fieldtype": "Attach",
+				"depends_on": "einvoice_profile",
+				"description": _("Additional supporting document to be embedded in the e-invoice file."),
+			},
+			{
 				"fieldname": "einvoice_is_correct",
 				"label": _("E Invoice Is Correct"),
 				"insert_after": "e_invoice_validation_section",
