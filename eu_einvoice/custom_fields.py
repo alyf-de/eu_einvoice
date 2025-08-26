@@ -94,6 +94,7 @@ def get_custom_fields():
 				"insert_after": "einvoice_profile",
 				"fieldtype": "Attach",
 				"depends_on": "einvoice_profile",
+				"description": _("Additional supporting document to be embedded in the e-invoice file."),
 			},
 			{
 				"fieldname": "einvoice_is_correct",
