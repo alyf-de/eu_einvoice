@@ -144,6 +144,8 @@ The following fields of the **Sales Invoice** are currently considered for the e
 - Grand Total
 - Total Advance
 - Outstanding Amount
+- Embedded Document
+    This attachment field can be used to embed an additional supporting document into the e-invoice (XML-)file. For example, a time report in PDF format.
 
 [1] The correct taxable amount is only available starting from ERPNext v16. For earlier versions we currently have to approximate it, which comes with a small error margin.
 
