@@ -180,10 +180,20 @@ class EInvoiceGenerator:
 		if not self.invoice.einvoice_embedded_document:
 			return
 
-		file_id, (mime_type, file_name, content) = get_attached_file(self.invoice.einvoice_embedded_document)
+		file = find_file_by_url(self.invoice.einvoice_embedded_document)
+
+		content = None
+		if not file.is_remote_file:
+			file_name = os.path.basename(file.file_url)
+			mime_type = mimetypes.guess_type(file.file_url)[0]
+			content = as_base_64(file.get_content())
+
 		ref_doc = AdditionalReferencedDocument()
-		ref_doc.issuer_assigned_id = file_id
-		ref_doc.attached_object = (mime_type, file_name, content)
+		ref_doc.issuer_assigned_id = file.name
+		if file.is_remote_file:
+			ref_doc.uri_id = file.file_url
+		else:
+			ref_doc.attached_object = (mime_type, file_name, content)
 		ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
 		self.doc.trade.agreement.additional_references.add(ref_doc)
 
@@ -831,19 +841,12 @@ def get_bank_details(mode_of_payment: str, company: str) -> tuple[str | None, st
 	return (iban, bic or None)
 
 
-def get_attached_file(file_url: str) -> tuple[str, tuple[str, str, str]]:
-	"""Get the attached file from the file URL.
-
-	Returns a tuple of the file name and a tuple of the mime type, file name, and base64-encoded content.
-	"""
-	file = find_file_by_url(file_url)
-	content = file.get_content()
-	file_name = os.path.basename(file_url)
-	mime_type = mimetypes.guess_type(file_url)[0]
+def as_base_64(content: str | bytes) -> str:
+	"""Convert a string or bytes object to a base64-encoded string."""
 	if isinstance(content, str):
 		content = content.encode("utf-8")
 
-	return file.name, (mime_type, file_name, b64encode(content).decode("utf-8"))
+	return b64encode(content).decode("utf-8")
 
 
 @frappe.whitelist(allow_guest=True)
