@@ -287,7 +287,7 @@ msgstr "E-Rechnungs-Steuer"
 
 #: eu_einvoice/custom_fields.py:70
 msgid "E Invoicing"
-msgstr ""
+msgstr "E-Rechnung"
 
 #. Label of a Attach field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
@@ -297,11 +297,11 @@ msgstr "E-Rechnung"
 #. Name of a Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "E-Invoicing"
-msgstr "E-Rechnung"
+msgstr "E-Rechnungen"
 
 #: eu_einvoice/custom_fields.py:93
 msgid "Embedded Document"
-msgstr ""
+msgstr "Eingebettetes Dokument"
 
 #. Label of a Section Break field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
