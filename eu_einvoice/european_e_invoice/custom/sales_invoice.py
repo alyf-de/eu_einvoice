@@ -748,17 +748,17 @@ def validate_doc(doc, event):
 
 
 def validate_einvoice(doc: SalesInvoice, event: str):
-	if event not in ["before_save", "before_submit"]:
-		return
-
-	validation_state = frappe.get_single_value("E Invoice Settings", "validation_on_save_insert") if event == "before_save" else frappe.get_single_value("E Invoice Settings", "validation_on_submit")
-
-	if validation_state == "No Validation":
-		return
-
 	doc.einvoice_is_correct = 0
 	doc.validation_errors = ""
 	doc.validation_warnings = ""
+
+	settings = frappe.get_single("E Invoice Settings")
+
+	if doc.docstatus == 1 and not settings.validate_sales_invoice_on_submit:
+		return
+
+	if doc.docstatus == 0 and not settings.validate_sales_invoice_on_save:
+		return
 
 	if not doc.einvoice_profile:
 		return
@@ -782,17 +782,24 @@ def validate_einvoice(doc: SalesInvoice, event: str):
 
 	if any(validation_errors):
 		doc.validation_errors += "\n".join(validation_errors)
-		if validation_state == "Error":
-			frappe.throw(_("E Invoice is not correct."))
-		elif validation_state == "Warning":
-			frappe.msgprint(_("E Invoice is not correct."), alert=True, indicator="red")
 	else:
 		doc.einvoice_is_correct = 1
 
 	if any(warnings):
 		doc.validation_warnings += "\n".join(warnings)
-		if validation_state == "Warning":
-			frappe.msgprint(_("E Invoice is not correct. {0}", warnings), alert=True, indicator="orange")
+
+	if not doc.einvoice_is_correct and (
+		(doc.docstatus == 1 and settings.error_action_on_submit)
+		or (doc.docstatus == 0 and settings.error_action_on_save)
+	):
+		frappe.msgprint(
+			msg=doc.validation_errors.replace("\n", "<br><br>"),
+			title=_("E Invoice is not correct"),
+			raise_exception=(
+				(doc.docstatus == 1 and settings.error_action_on_submit == "Error Message")
+				or (doc.docstatus == 0 and settings.error_action_on_save == "Error Message")
+			),
+		)
 
 
 def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:

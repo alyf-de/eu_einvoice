@@ -14,8 +14,14 @@ class EInvoiceSettings(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
-		validation_on_save_insert: DF.Literal["Silent Validation", "No Validation", "Warning", "Error"]
-		validation_on_submit: DF.Literal["Silent Validation", "No Validation", "Warning", "Error"]
+		error_action_on_save: DF.Literal["", "Warning Message", "Error Message"]
+		error_action_on_submit: DF.Literal["", "Warning Message", "Error Message"]
+		validate_sales_invoice_on_save: DF.Check
+		validate_sales_invoice_on_submit: DF.Check
 	# end: auto-generated types
 
-	pass
+	def before_validate(self):
+		if not self.validate_sales_invoice_on_save:
+			self.error_action_on_save = ""
+		if not self.validate_sales_invoice_on_submit:
+			self.error_action_on_submit = ""
