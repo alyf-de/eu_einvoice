@@ -751,12 +751,12 @@ def validate_doc(doc, event):
 	if settings.should_validate(doc.docstatus):
 		validate_einvoice(doc)
 
-	if not doc.einvoice_is_correct and doc.validation_errors and settings.should_show_message(doc.docstatus):
-		frappe.msgprint(
-			msg=doc.validation_errors.replace("\n", "<br><br>"),
-			title=_("E Invoice is not correct"),
-			raise_exception=settings.should_raise_exception(doc.docstatus),
-		)
+		if not doc.einvoice_is_correct and settings.should_show_message(doc.docstatus):
+			frappe.msgprint(
+				msg=doc.validation_errors.replace("\n", "<br><br>"),
+				title=_("E Invoice is not correct"),
+				raise_exception=settings.should_raise_exception(doc.docstatus),
+			)
 
 
 def validate_einvoice(doc: SalesInvoice):
