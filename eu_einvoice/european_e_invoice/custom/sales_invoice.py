@@ -744,10 +744,10 @@ def validate_doc(doc, event):
 			indicator="orange",
 		)
 
-	validate_einvoice(doc, event)
+	validate_einvoice(doc)
 
 
-def validate_einvoice(doc: SalesInvoice, event: str):
+def validate_einvoice(doc: SalesInvoice):
 	doc.einvoice_is_correct = 0
 	doc.validation_errors = ""
 	doc.validation_warnings = ""
