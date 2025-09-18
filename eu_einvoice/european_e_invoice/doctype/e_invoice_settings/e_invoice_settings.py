@@ -2,6 +2,7 @@
 # For license information, please see license.txt
 
 # import frappe
+from frappe.model.docstatus import DocStatus
 from frappe.model.document import Document
 
 
@@ -25,3 +26,21 @@ class EInvoiceSettings(Document):
 			self.error_action_on_save = ""
 		if not self.validate_sales_invoice_on_submit:
 			self.error_action_on_submit = ""
+
+	def should_validate(self, docstatus: DocStatus) -> bool:
+		"""Return True if a Sales Invoice should be validated."""
+		return (docstatus == DocStatus.submitted() and self.validate_sales_invoice_on_submit) or (
+			docstatus == DocStatus.draft() and self.validate_sales_invoice_on_save
+		)
+
+	def should_raise_exception(self, docstatus: DocStatus) -> bool:
+		"""Return True if the error action is set to 'Error Message'."""
+		return (docstatus == DocStatus.submitted() and self.error_action_on_submit == "Error Message") or (
+			docstatus == DocStatus.draft() and self.error_action_on_save == "Error Message"
+		)
+
+	def should_show_message(self, docstatus: DocStatus) -> bool:
+		"""Return True if any error action is set."""
+		return (docstatus == DocStatus.submitted() and self.error_action_on_submit) or (
+			docstatus == DocStatus.draft() and self.error_action_on_save
+		)

@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 	from frappe.contacts.doctype.address.address import Address
 	from frappe.contacts.doctype.contact.contact import Contact
 
+	from eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings import EInvoiceSettings
+
 uom_codes = CommonCodeRetriever(
 	["urn:xoev-de:kosit:codeliste:rec20_3", "urn:xoev-de:kosit:codeliste:rec21_3"], "C62"
 )
@@ -744,21 +746,23 @@ def validate_doc(doc, event):
 			indicator="orange",
 		)
 
-	validate_einvoice(doc)
+	settings: EInvoiceSettings = frappe.get_single("E Invoice Settings")
+
+	if settings.should_validate(doc.docstatus):
+		validate_einvoice(doc)
+
+	if not doc.einvoice_is_correct and doc.validation_errors and settings.should_show_message(doc.docstatus):
+		frappe.msgprint(
+			msg=doc.validation_errors.replace("\n", "<br><br>"),
+			title=_("E Invoice is not correct"),
+			raise_exception=settings.should_raise_exception(doc.docstatus),
+		)
 
 
 def validate_einvoice(doc: SalesInvoice):
 	doc.einvoice_is_correct = 0
 	doc.validation_errors = ""
 	doc.validation_warnings = ""
-
-	settings = frappe.get_single("E Invoice Settings")
-
-	if doc.docstatus == 1 and not settings.validate_sales_invoice_on_submit:
-		return
-
-	if doc.docstatus == 0 and not settings.validate_sales_invoice_on_save:
-		return
 
 	if not doc.einvoice_profile:
 		return
@@ -787,19 +791,6 @@ def validate_einvoice(doc: SalesInvoice):
 
 	if any(warnings):
 		doc.validation_warnings += "\n".join(warnings)
-
-	if not doc.einvoice_is_correct and (
-		(doc.docstatus == 1 and settings.error_action_on_submit)
-		or (doc.docstatus == 0 and settings.error_action_on_save)
-	):
-		frappe.msgprint(
-			msg=doc.validation_errors.replace("\n", "<br><br>"),
-			title=_("E Invoice is not correct"),
-			raise_exception=(
-				(doc.docstatus == 1 and settings.error_action_on_submit == "Error Message")
-				or (doc.docstatus == 0 and settings.error_action_on_save == "Error Message")
-			),
-		)
 
 
 def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
