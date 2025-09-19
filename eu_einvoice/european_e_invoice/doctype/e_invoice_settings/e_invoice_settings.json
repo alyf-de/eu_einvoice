@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-09-05 12:02:26.455512",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sales_invoice_section",
+  "validate_sales_invoice_on_save",
+  "validate_sales_invoice_on_submit",
+  "column_break_rnbc",
+  "error_action_on_save",
+  "error_action_on_submit"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "validate_sales_invoice_on_save",
+   "fieldtype": "Check",
+   "label": "Validate Sales Invoice on Save"
+  },
+  {
+   "default": "1",
+   "fieldname": "validate_sales_invoice_on_submit",
+   "fieldtype": "Check",
+   "label": "Validate Sales Invoice on Submit"
+  },
+  {
+   "fieldname": "sales_invoice_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Invoice"
+  },
+  {
+   "fieldname": "column_break_rnbc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "validate_sales_invoice_on_save",
+   "fieldname": "error_action_on_save",
+   "fieldtype": "Select",
+   "label": "Action on Validation Error during Save",
+   "options": "\nWarning Message\nError Message"
+  },
+  {
+   "depends_on": "validate_sales_invoice_on_submit",
+   "fieldname": "error_action_on_submit",
+   "fieldtype": "Select",
+   "label": "Action on Validation Error during Submit",
+   "options": "\nWarning Message\nError Message"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-09-18 19:27:08.732100",
+ "modified_by": "Administrator",
+ "module": "European e-Invoice",
+ "name": "E Invoice Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
