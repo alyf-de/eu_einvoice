@@ -54,11 +54,7 @@
    "type": "Link"
   }
  ],
-<<<<<<< HEAD
- "modified": "2025-03-07 13:39:31.104993",
-=======
  "modified": "2025-09-18 19:30:29.015365",
->>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E-Invoicing",
@@ -94,11 +90,6 @@
    "type": "DocType"
   }
  ],
-<<<<<<< HEAD
- "title": "E-Invoicing"
-}
-=======
  "title": "E-Invoicing",
  "type": "Workspace"
 }
->>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
