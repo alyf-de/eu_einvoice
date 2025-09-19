@@ -95,6 +95,7 @@ def get_custom_fields():
 				"fieldtype": "Check",
 				"read_only": 1,
 				"print_hide": 1,
+				"no_copy": 1,
 				"depends_on": "eval:!!doc.einvoice_profile",
 			},
 			{
@@ -104,6 +105,7 @@ def get_custom_fields():
 				"fieldtype": "Text",
 				"read_only": 1,
 				"print_hide": 1,
+				"no_copy": 1,
 				"depends_on": "eval:doc.einvoice_profile && !doc.einvoice_is_correct",
 			},
 			{
@@ -113,6 +115,7 @@ def get_custom_fields():
 				"fieldtype": "Text",
 				"read_only": 1,
 				"print_hide": 1,
+				"no_copy": 1,
 				"depends_on": "eval:doc.einvoice_profile && doc.validation_warnings",
 			},
 		],
