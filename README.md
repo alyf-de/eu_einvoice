@@ -122,6 +122,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Postcode
     - City
     - Country
+    - Email ID (only if Contact Email is not set)
 - Contact Email
 - Contact Mobile (takes precedence over Contact Person > Phone)
 - Contact Person
