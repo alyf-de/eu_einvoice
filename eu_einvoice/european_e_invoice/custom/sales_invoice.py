@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 	from frappe.contacts.doctype.address.address import Address
 	from frappe.contacts.doctype.contact.contact import Contact
 
+	from eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings import EInvoiceSettings
+
 uom_codes = CommonCodeRetriever(
 	["urn:xoev-de:kosit:codeliste:rec20_3", "urn:xoev-de:kosit:codeliste:rec21_3"], "C62"
 )
@@ -744,7 +746,17 @@ def validate_doc(doc, event):
 			indicator="orange",
 		)
 
-	validate_einvoice(doc)
+	settings: EInvoiceSettings = frappe.get_single("E Invoice Settings")
+
+	if settings.should_validate(doc.docstatus):
+		validate_einvoice(doc)
+
+		if not doc.einvoice_is_correct and settings.should_show_message(doc.docstatus):
+			frappe.msgprint(
+				msg=doc.validation_errors.replace("\n", "<br><br>"),
+				title=_("E Invoice is not correct"),
+				raise_exception=settings.should_raise_exception(doc.docstatus),
+			)
 
 
 def validate_einvoice(doc: SalesInvoice):

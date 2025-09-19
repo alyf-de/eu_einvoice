@@ -7,8 +7,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2025-08-26 13:09+0053\n"
 "PO-Revision-Date: 2025-08-26 13:09+0053\n"
+=======
+"POT-Creation-Date: 2025-09-18 19:28+0053\n"
+"PO-Revision-Date: 2025-09-18 19:28+0053\n"
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -25,7 +30,24 @@ msgstr ""
 msgid "Account Name"
 msgstr ""
 
+<<<<<<< HEAD
 #. Label of a Currency field in DocType 'E Invoice Payment Term'
+=======
+#. Label of the error_action_on_save (Select) field in DocType 'E Invoice
+#. Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Action on Validation Error during Save"
+msgstr ""
+
+#. Label of the error_action_on_submit (Select) field in DocType 'E Invoice
+#. Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Action on Validation Error during Submit"
+msgstr ""
+
+#. Label of the discount_actual_amount (Currency) field in DocType 'E Invoice
+#. Payment Term'
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_payment_term/e_invoice_payment_term.json
 msgid "Actual Amount"
 msgstr ""
@@ -140,11 +162,19 @@ msgstr ""
 msgid "Calculation Percent"
 msgstr ""
 
+<<<<<<< HEAD
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:761
 msgid "Cannot create E Invoice."
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:772
+=======
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:769
+msgid "Cannot create E Invoice."
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:780
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
 msgid "Cannot validate E Invoice schematron."
 msgstr ""
 
@@ -279,8 +309,17 @@ msgid "E Invoice Profile"
 msgstr ""
 
 #. Name of a DocType
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "E Invoice Settings"
+msgstr ""
+
+#. Name of a DocType
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_trade_tax/e_invoice_trade_tax.json
 msgid "E Invoice Trade Tax"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:797
+msgid "E Invoice is not correct"
 msgstr ""
 
 #: eu_einvoice/custom_fields.py:70
@@ -301,7 +340,20 @@ msgstr ""
 msgid "Embedded Document"
 msgstr ""
 
+<<<<<<< HEAD
 #. Label of a Section Break field in DocType 'E Invoice Import'
+=======
+#. Option for the 'Action on Validation Error during Save' (Select) field in
+#. DocType 'E Invoice Settings'
+#. Option for the 'Action on Validation Error during Submit' (Select) field in
+#. DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Error Message"
+msgstr ""
+
+#. Label of the file_section_section (Section Break) field in DocType 'E
+#. Invoice Import'
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "File Section"
 msgstr ""
@@ -468,7 +520,18 @@ msgstr ""
 msgid "Row {0}"
 msgstr ""
 
+<<<<<<< HEAD
 #. Label of a Section Break field in DocType 'E Invoice Import'
+=======
+#. Label of the sales_invoice_section (Section Break) field in DocType 'E
+#. Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Sales Invoice"
+msgstr ""
+
+#. Label of the seller_section (Section Break) field in DocType 'E Invoice
+#. Import'
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Seller"
 msgstr ""
@@ -541,6 +604,7 @@ msgstr ""
 
 #. Name of a role
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "System Manager"
 msgstr ""
 
@@ -606,7 +670,24 @@ msgstr ""
 msgid "Upload the <code>.xml</code> or <code>.pdf</code> file provided by your supplier."
 msgstr ""
 
+<<<<<<< HEAD
 #. Label of a Section Break field in DocType 'E Invoice Import'
+=======
+#. Label of the validate_sales_invoice_on_save (Check) field in DocType 'E
+#. Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Validate Sales Invoice on Save"
+msgstr ""
+
+#. Label of the validate_sales_invoice_on_submit (Check) field in DocType 'E
+#. Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Validate Sales Invoice on Submit"
+msgstr ""
+
+#. Label of the validation_details_section (Section Break) field in DocType 'E
+#. Invoice Import'
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Validation Details"
 msgstr ""
@@ -627,6 +708,17 @@ msgstr ""
 msgid "View {0}"
 msgstr ""
 
+<<<<<<< HEAD
+=======
+#. Option for the 'Action on Validation Error during Save' (Select) field in
+#. DocType 'E Invoice Settings'
+#. Option for the 'Action on Validation Error during Submit' (Select) field in
+#. DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Warning Message"
+msgstr ""
+
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:721
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr ""
