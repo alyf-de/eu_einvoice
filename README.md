@@ -51,9 +51,14 @@ For example, let's say your standard **Payment Terms Template** is "Bank Transfe
 
 The retrieval of codes goes from the most specific to the most general. E.g. for determining the VAT type of a line item, we first look for a code using the specific item's _Item Tax Template_ and _Income Account_, then fall back to the code for the invoice's _Tax Category_ or _Sales Taxes and Charges Template_.
 
-### Buyer Reference (German: Leitweg-ID)
+### Buyer Reference
 
 If you work with government customers or similar large organizations, you might need to specify their _Buyer Reference_ in the eInvoice. This is done by setting the _Buyer Reference_ field in the **Sales Invoice**. You can already fill this field in the **Customer** master data or the **Sales Order**.
+
+The national terms for this field are:
+
+- Germany: _Leitweg-ID_
+- France: _Code Service_
 
 ### Bank Details
 
