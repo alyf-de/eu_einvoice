@@ -322,7 +322,9 @@ class EInvoiceGenerator:
 		if self.profile > EInvoiceProfile.BASIC:
 			self._set_buyer_contact()
 
-		if self.invoice.contact_email:
+		if self.buyer_address.email_id:
+			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.buyer_address.email_id)
+		elif self.invoice.contact_email:
 			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.invoice.contact_email)
 
 		self._set_buyer_tax_id()
