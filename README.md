@@ -63,6 +63,16 @@ Then, you can map a **Common Code** from **Code List** "UNTDID.4461", e.g. "Cred
 
 Please note that the eInvoice standard only supports one payment means per invoice, so you should not specify multiple **Modes of Payment** in the same invoice.
 
+### E Invoice Settings
+
+eInvoice validation can be time-consuming. Use **E Invoice Settings** to configure when validation occurs and how errors are handled:
+
+- **Validate Sales Invoice on Save/Submit**: Enable or disable validation at these stages.
+- **Action on Validation Error**: Choose how to handle validation errors:
+  - *Empty* (default): No action taken
+  - *Warning Message*: Show errors but allow save/submit
+  - *Error Message*: Block save/submit and show errors
+
 ## Usage
 
 ### Sales Invoice
