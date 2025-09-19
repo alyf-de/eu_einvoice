@@ -738,6 +738,7 @@ def validate_einvoice(doc: SalesInvoice):
 		if invoice_profile == EInvoiceProfile.XRECHNUNG:
 			basic_errors, basic_warnings = get_validation_errors(xml_string, EInvoiceProfile.EN16931)
 			validation_errors += basic_errors
+			warnings += basic_warnings
 	except Exception:
 		doc.validation_errors = _("Cannot validate E Invoice schematron.")
 		return
