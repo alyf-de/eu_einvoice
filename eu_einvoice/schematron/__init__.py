@@ -13,11 +13,11 @@ PROFILE_TO_XSL = {
 }
 
 
-def get_validation_errors(xml_string: str, profile: EInvoiceProfile) -> list[str]:
+def get_validation_errors(xml_string: str, profile: EInvoiceProfile):
 	return get_errors_from_stylesheet(xml_string, PROFILE_TO_XSL[profile])
 
 
-def get_errors_from_stylesheet(xml_string: str, stylesheet: str) -> list[str]:
+def get_errors_from_stylesheet(xml_string: str, stylesheet: str):
 	stylesheet_path = Path(__file__).parent / stylesheet
 	report = get_validation_report(xml_string, str(stylesheet_path))
 	return extract_failed_asserts(report)
