@@ -16,7 +16,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Setup",
-   "link_count": 2,
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -40,9 +40,23 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "E Invoice Settings",
+   "link_count": 0,
+   "link_to": "E Invoice Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
+<<<<<<< HEAD
  "modified": "2025-03-07 13:50:20.284761",
+=======
+ "modified": "2025-09-18 19:30:29.015365",
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E-Invoicing",
@@ -78,5 +92,11 @@
    "type": "DocType"
   }
  ],
+<<<<<<< HEAD
  "title": "E-Invoicing"
 }
+=======
+ "title": "E-Invoicing",
+ "type": "Workspace"
+}
+>>>>>>> d3614cf (feat(Sales Invoice): make validation configurable (IBT-86) (#162))
