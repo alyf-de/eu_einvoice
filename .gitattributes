@@ -1,0 +1,3 @@
+eu_einvoice/schematron/*.xml linguist-vendored
+eu_einvoice/schematron/*.xsl linguist-vendored
+eu_einvoice/locale/* linguist-generated
