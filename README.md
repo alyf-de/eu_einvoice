@@ -126,9 +126,9 @@ The following fields of the **Sales Invoice** are currently considered for the e
 - Contact Email (for buyer.electronic_address )
 - Contact Person
     - Full Name
-    - Phone (takes precedence over Mobil No)
-    - E-Mail Address
-    - Mobil No
+    - Phone (takes precedence over Mobile No)
+    - Email Address
+    - Mobile No
     - Department
 - Customer's Purchase Order
 - Customer's Purchase Order Date
