@@ -123,7 +123,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - City
     - Country
     - Email ID (only if Contact Email is not set)
-- Contact Email (for buyer.electronic_address )
+- Contact Email (Used as buyer electronic address, BT-49. Falls back to Email ID from Customer Address if missing.)
 - Contact Person
     - Full Name
     - Phone (takes precedence over Mobile No)
