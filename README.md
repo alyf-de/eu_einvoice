@@ -123,11 +123,12 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - City
     - Country
     - Email ID (only if Contact Email is not set)
-- Contact Email
-- Contact Mobile (takes precedence over Contact Person > Phone)
+- Contact Email (for buyer.electronic_address )
 - Contact Person
     - Full Name
-    - Phone
+    - Phone (takes precedence over Mobil No)
+    - E-Mail Address
+    - Mobil No
     - Department
 - Customer's Purchase Order
 - Customer's Purchase Order Date
@@ -198,7 +199,7 @@ This conversion is done using [Ghostscript](https://www.ghostscript.com/), a fre
 
 The conversion requires:
 
-1. Ghostscript to be installed globally on your system/server 
+1. Ghostscript to be installed globally on your system/server
 2. The ICC profile `srgb.icc` to be available in Ghostscript's search paths
 
 If Ghostscript is installed and the conversion fails, the app will fall back to embedding the XML in a regular PDF file and log an error message.
