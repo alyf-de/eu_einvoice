@@ -1,5 +1,6 @@
 exclude: "node_modules|.git"
 default_stages: [pre-commit]
+default_install_hook_types: [pre-commit, commit-msg]
 fail_fast: false
 
 repos:
@@ -58,6 +59,13 @@ repos:
               eu_einvoice/templates/includes/.*|
               eu_einvoice/public/js/lib/.*
           )$
+
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.22.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ["@commitlint/config-conventional"]
 
 ci:
   autoupdate_schedule: weekly
