@@ -1,7 +1,6 @@
-exclude: 'node_modules|.git'
+exclude: "node_modules|.git"
 default_stages: [pre-commit]
 fail_fast: false
-
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -35,33 +34,32 @@ repos:
         types_or: [javascript, vue, scss]
         # Ignore any files that might contain jinja / bundles
         exclude: |
-            (?x)^(
-                eu_einvoice/public/dist/.*|
-                .*node_modules.*|
-                .*boilerplate.*|
-                eu_einvoice/templates/includes/.*|
-                eu_einvoice/public/js/lib/.*
-            )$
-
+          (?x)^(
+              eu_einvoice/public/dist/.*|
+              .*node_modules.*|
+              .*boilerplate.*|
+              eu_einvoice/templates/includes/.*|
+              eu_einvoice/public/js/lib/.*
+          )$
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v8.44.0
     hooks:
       - id: eslint
         types_or: [javascript]
-        args: ['--quiet']
+        args: ["--quiet"]
         # Ignore any files that might contain jinja / bundles
         exclude: |
-            (?x)^(
-                eu_einvoice/public/dist/.*|
-                cypress/.*|
-                .*node_modules.*|
-                .*boilerplate.*|
-                eu_einvoice/templates/includes/.*|
-                eu_einvoice/public/js/lib/.*
-            )$
+          (?x)^(
+              eu_einvoice/public/dist/.*|
+              cypress/.*|
+              .*node_modules.*|
+              .*boilerplate.*|
+              eu_einvoice/templates/includes/.*|
+              eu_einvoice/public/js/lib/.*
+          )$
 
 ci:
-    autoupdate_schedule: weekly
-    skip: []
-    submodules: false
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
