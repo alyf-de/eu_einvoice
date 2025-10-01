@@ -52,6 +52,7 @@ class EInvoiceImport(Document):
 		buyer_address_line_2: DF.Data | None
 		buyer_city: DF.Data | None
 		buyer_country: DF.Link | None
+		buyer_id: DF.Data | None
 		buyer_name: DF.Data | None
 		buyer_postcode: DF.Data | None
 		charge_total: DF.Currency
@@ -76,6 +77,7 @@ class EInvoiceImport(Document):
 		seller_address_line_2: DF.Data | None
 		seller_city: DF.Data | None
 		seller_country: DF.Link | None
+		seller_id: DF.Data | None
 		seller_name: DF.Data | None
 		seller_postcode: DF.Data | None
 		seller_tax_id: DF.Data | None
@@ -105,6 +107,7 @@ class EInvoiceImport(Document):
 			self.read_values_from_einvoice()
 			self.guess_supplier()
 			self.guess_company()
+			self.guess_company_and_supplier()
 			self.guess_uom()
 			self.guess_item_code()
 
@@ -221,6 +224,7 @@ class EInvoiceImport(Document):
 
 	def parse_seller(self, seller: "TradeParty"):
 		self.seller_name = str(seller.name)
+		self.seller_id = str(seller.id)
 		self.seller_tax_id = (
 			seller.tax_registrations.children[0].id._text if seller.tax_registrations.children else None
 		)
@@ -228,6 +232,7 @@ class EInvoiceImport(Document):
 
 	def parse_buyer(self, buyer: "TradeParty"):
 		self.buyer_name = str(buyer.name)
+		self.buyer_id = str(buyer.id)
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: "PostalTradeAddress", prefix: str) -> _dict:
@@ -349,7 +354,37 @@ class EInvoiceImport(Document):
 
 		if frappe.db.exists("Company", self.buyer_name):
 			self.company = self.buyer_name
-		else:
+
+	def guess_company_and_supplier(self):
+		"""Guess company and supplier based on buyer ID.
+
+		If the buyer ID is provided and we have already found either Company or
+		Supplier, we can find the other one.
+		"""
+		if not self.buyer_id:
+			return
+
+		if self.company and not self.supplier:
+			suppliers = frappe.get_all(
+				"Customer Number At Supplier",
+				filters={"customer_number": self.buyer_id, "company": self.company, "parenttype": "Supplier"},
+				pluck="parent",
+				limit=2,
+			)
+			if len(suppliers) == 1:
+				self.supplier = suppliers[0]
+
+		if self.supplier and not self.company:
+			companies = frappe.get_all(
+				"Customer Number At Supplier",
+				filters={"customer_number": self.buyer_id, "parent": self.supplier, "parenttype": "Supplier"},
+				pluck="company",
+				limit=2,
+			)
+			if len(companies) == 1:
+				self.company = companies[0]
+
+		if not self.company:
 			self.company = get_default_company()
 
 	def guess_uom(self):
