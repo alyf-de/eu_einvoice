@@ -329,11 +329,19 @@ class EInvoiceImport(Document):
 		if self.supplier:
 			return
 
-		if frappe.db.exists("Supplier", self.seller_name):
-			self.supplier = self.seller_name
+		if self.seller_id and frappe.db.exists("Supplier", self.seller_id):
+			self.supplier = self.seller_id
+			return
 
-		if self.seller_tax_id:
-			self.supplier = frappe.db.get_value("Supplier", {"tax_id": self.seller_tax_id}, "name")
+		if self.seller_name and frappe.db.exists("Supplier", self.seller_name):
+			self.supplier = self.seller_name
+			return
+
+		if self.seller_tax_id and (
+			supplier := frappe.db.get_value("Supplier", {"tax_id": self.seller_tax_id}, "name")
+		):
+			self.supplier = supplier
+			return
 
 	def guess_company(self):
 		if self.company:
