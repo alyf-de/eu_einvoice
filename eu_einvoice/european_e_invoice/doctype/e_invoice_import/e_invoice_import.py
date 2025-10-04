@@ -52,6 +52,8 @@ class EInvoiceImport(Document):
 		buyer_address_line_2: DF.Data | None
 		buyer_city: DF.Data | None
 		buyer_country: DF.Link | None
+		buyer_electronic_address: DF.Data | None
+		buyer_electronic_address_scheme: DF.Data | None
 		buyer_name: DF.Data | None
 		buyer_postcode: DF.Data | None
 		charge_total: DF.Currency
@@ -76,6 +78,8 @@ class EInvoiceImport(Document):
 		seller_address_line_2: DF.Data | None
 		seller_city: DF.Data | None
 		seller_country: DF.Link | None
+		seller_electronic_address: DF.Data | None
+		seller_electronic_address_scheme: DF.Data | None
 		seller_name: DF.Data | None
 		seller_postcode: DF.Data | None
 		seller_tax_id: DF.Data | None
@@ -224,10 +228,14 @@ class EInvoiceImport(Document):
 		self.seller_tax_id = (
 			seller.tax_registrations.children[0].id._text if seller.tax_registrations.children else None
 		)
+		self.seller_electronic_address = str(seller.electronic_address.uri_ID._text)
+		self.seller_electronic_address_scheme = str(seller.electronic_address.uri_ID._scheme_id)
 		self.parse_address(seller.address, "seller")
 
 	def parse_buyer(self, buyer: "TradeParty"):
 		self.buyer_name = str(buyer.name)
+		self.buyer_electronic_address = str(buyer.electronic_address.uri_ID._text)
+		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: "PostalTradeAddress", prefix: str) -> _dict:

@@ -24,6 +24,10 @@
   "column_break_metg",
   "company",
   "purchase_order",
+  "section_break_oyba",
+  "buyer_electronic_address_scheme",
+  "column_break_remv",
+  "buyer_electronic_address",
   "section_break_qegd",
   "column_break_reul",
   "buyer_address_line_1",
@@ -38,6 +42,10 @@
   "column_break_jjaa",
   "supplier",
   "create_supplier",
+  "section_break_sqyh",
+  "seller_electronic_address_scheme",
+  "column_break_qxvl",
+  "seller_electronic_address",
   "section_break_lrsy",
   "seller_address_line_1",
   "seller_address_line_2",
@@ -480,6 +488,46 @@
   {
    "fieldname": "section_break_lrsy",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "buyer_electronic_address_scheme",
+   "fieldtype": "Data",
+   "label": "Buyer Electronic Address Scheme",
+   "read_only": 1
+  },
+  {
+   "fieldname": "buyer_electronic_address",
+   "fieldtype": "Data",
+   "label": "Buyer Electronic Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "seller_electronic_address_scheme",
+   "fieldtype": "Data",
+   "label": "Seller Electronic Address Scheme",
+   "read_only": 1
+  },
+  {
+   "fieldname": "seller_electronic_address",
+   "fieldtype": "Data",
+   "label": "Seller Electronic Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_oyba",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_remv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_sqyh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_qxvl",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -490,7 +538,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2025-10-04 17:52:04.926238",
+ "modified": "2025-10-04 18:04:03.032057",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
