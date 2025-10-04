@@ -110,6 +110,8 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Phone No
     - Email
     - Fax
+    - Electronic Address Scheme
+    - Electronic Address
 - Company Name
 - Company Address
     - Address Line 1
@@ -123,6 +125,9 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Phone (takes precedence over Company > Phone No)
     - Department
 - Company Tax ID
+- Customer
+    - Electronic Address Scheme
+    - Electronic Address
 - Customer Name
 - Buyer Reference (fetched from **Sales Order** or **Customer**)
 - Customer Address
@@ -132,7 +137,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - City
     - Country
     - Email ID (only if Contact Email is not set)
-- Contact Email (Used as buyer electronic address, BT-49. Falls back to Email ID from Customer Address if missing.)
+- Contact Email
 - Contact Person
     - Full Name
     - Phone (takes precedence over Mobile No)
@@ -256,6 +261,8 @@ The following fields are currently imported from the eInvoice:
 - Seller (Supplier)
     - Name
     - Tax ID
+    - Electronic Address Scheme
+    - Electronic Address
     - Address
         - Address Line 1
         - Address Line 2
@@ -264,6 +271,8 @@ The following fields are currently imported from the eInvoice:
         - Country
 - Buyer (Company)
     - Name
+    - Electronic Address Scheme
+    - Electronic Address
     - Address
         - Address Line 1
         - Address Line 2
