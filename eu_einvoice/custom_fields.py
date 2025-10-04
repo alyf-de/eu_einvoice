@@ -32,9 +32,15 @@ def get_custom_fields():
 		],
 		"Customer": [
 			{
+				"fieldname": "einvoice_tab",
+				"label": _("E Invoicing"),
+				"insert_after": "portal_users",
+				"fieldtype": "Tab Break",
+			},
+			{
 				"fieldname": "buyer_reference",
 				"label": _("Buyer Reference"),
-				"insert_after": "language",
+				"insert_after": "einvoice_tab",
 				"fieldtype": "Data",
 			},
 			{
