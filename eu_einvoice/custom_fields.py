@@ -51,6 +51,64 @@ def get_custom_fields():
 				"options": PROFILE_OPTIONS,
 				"default": "EXTENDED",
 			},
+			{
+				"fieldname": "electronic_address_scheme",
+				"label": _("Electronic Address Scheme"),
+				"insert_after": "einvoice_profile",
+				"fieldtype": "Link",
+				"options": "Common Code",
+			},
+			{
+				"fieldname": "electronic_address",
+				"label": _("Electronic Address"),
+				"insert_after": "electronic_address_scheme",
+				"fieldtype": "Data",
+				"depends_on": "electronic_address_scheme",
+			},
+		],
+		"Company": [
+			{
+				"fieldname": "einvoice_tab",
+				"label": _("E Invoicing"),
+				"insert_after": "default_operating_cost_account",
+				"fieldtype": "Tab Break",
+			},
+			{
+				"fieldname": "electronic_address_scheme",
+				"label": _("Electronic Address Scheme"),
+				"insert_after": "einvoice_tab",
+				"fieldtype": "Link",
+				"options": "Common Code",
+			},
+			{
+				"fieldname": "electronic_address",
+				"label": _("Electronic Address"),
+				"insert_after": "electronic_address_scheme",
+				"fieldtype": "Data",
+				"depends_on": "electronic_address_scheme",
+			},
+		],
+		"Supplier": [
+			{
+				"fieldname": "einvoice_tab",
+				"label": _("E Invoicing"),
+				"insert_after": "portal_users",
+				"fieldtype": "Tab Break",
+			},
+			{
+				"fieldname": "electronic_address_scheme",
+				"label": _("Electronic Address Scheme"),
+				"insert_after": "einvoice_tab",
+				"fieldtype": "Link",
+				"options": "Common Code",
+			},
+			{
+				"fieldname": "electronic_address",
+				"label": _("Electronic Address"),
+				"insert_after": "electronic_address_scheme",
+				"fieldtype": "Data",
+				"depends_on": "electronic_address_scheme",
+			},
 		],
 		"Sales Order": [
 			{
