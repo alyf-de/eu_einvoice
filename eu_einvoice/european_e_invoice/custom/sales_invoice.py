@@ -742,7 +742,9 @@ def validate_einvoice(doc: SalesInvoice):
 	try:
 		xml_string = get_einvoice(doc).decode()
 	except Exception:
-		doc.validation_errors = _("Cannot create E Invoice.")
+		msg = _("Cannot create E Invoice.")
+		doc.validation_errors = msg
+		frappe.log_error(msg, reference_doctype=doc.doctype, reference_name=doc.name)
 		return
 
 	try:
@@ -754,7 +756,9 @@ def validate_einvoice(doc: SalesInvoice):
 			validation_errors += basic_errors
 			warnings += basic_warnings
 	except Exception:
-		doc.validation_errors = _("Cannot validate E Invoice schematron.")
+		msg = _("Cannot validate E Invoice schematron.")
+		doc.validation_errors = msg
+		frappe.log_error(msg, reference_doctype=doc.doctype, reference_name=doc.name)
 		return
 
 	if any(validation_errors):
