@@ -401,18 +401,18 @@ class EInvoiceGenerator:
 		).upper()
 
 	def _set_buyer_contact(self):
-		buyer_contact_phone = self.invoice.contact_mobile
 		if self.buyer_contact:
 			self.doc.trade.agreement.buyer.contact.person_name = self.buyer_contact.full_name
 			if self.buyer_contact.department:
 				self.doc.trade.agreement.buyer.contact.department_name = self.buyer_contact.department
-			if self.buyer_contact.phone:
-				buyer_contact_phone = self.buyer_contact.phone
-			if self.invoice.contact_email:
-				self.doc.trade.agreement.buyer.contact.email.address = self.invoice.contact_email
+			if self.buyer_contact.email_id:
+				self.doc.trade.agreement.buyer.contact.email.address = self.buyer_contact.email_id
 
-		if buyer_contact_phone and self.profile >= EInvoiceProfile.EN16931:
-			self.doc.trade.agreement.buyer.contact.telephone.number = buyer_contact_phone
+			if self.profile >= EInvoiceProfile.EN16931:
+				if self.buyer_contact.phone:
+					self.doc.trade.agreement.buyer.contact.telephone.number = self.buyer_contact.phone
+				elif self.buyer_contact.mobile_no:
+					self.doc.trade.agreement.buyer.contact.telephone.number = self.buyer_contact.mobile_no
 
 	def _add_line_item(self, item: SalesInvoiceItem):
 		li = LineItem()
@@ -800,7 +800,9 @@ def validate_einvoice(doc: SalesInvoice):
 	try:
 		xml_string = get_einvoice(doc).decode()
 	except Exception:
-		doc.validation_errors = _("Cannot create E Invoice.")
+		msg = _("Cannot create E Invoice.")
+		doc.validation_errors = msg
+		frappe.log_error(msg, reference_doctype=doc.doctype, reference_name=doc.name)
 		return
 
 	try:
@@ -812,7 +814,9 @@ def validate_einvoice(doc: SalesInvoice):
 			validation_errors += basic_errors
 			warnings += basic_warnings
 	except Exception:
-		doc.validation_errors = _("Cannot validate E Invoice schematron.")
+		msg = _("Cannot validate E Invoice schematron.")
+		doc.validation_errors = msg
+		frappe.log_error(msg, reference_doctype=doc.doctype, reference_name=doc.name)
 		return
 
 	if any(validation_errors):
