@@ -21,6 +21,7 @@
   "amended_from",
   "agreement_tab",
   "seller_section",
+  "seller_id",
   "seller_name",
   "seller_tax_id",
   "seller_address_line_1",
@@ -35,6 +36,7 @@
   "create_supplier_address",
   "buyer_section",
   "column_break_reul",
+  "buyer_id",
   "buyer_name",
   "buyer_address_line_1",
   "buyer_address_line_2",
@@ -467,6 +469,18 @@
    "fieldtype": "Text",
    "label": "Validation Warnings",
    "read_only": 1
+  },
+  {
+   "fieldname": "buyer_id",
+   "fieldtype": "Data",
+   "label": "Buyer ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "seller_id",
+   "fieldtype": "Data",
+   "label": "Seller ID",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -477,7 +491,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2025-05-07 00:53:28.840615",
+ "modified": "2025-10-01 02:52:45.579946",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
