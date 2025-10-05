@@ -50,8 +50,6 @@ The retrieval of codes goes from the most specific to the most general. E.g. for
 
 If you work with government customers or similar large organizations, you might need to specify their _Buyer Reference_ in the eInvoice. This is done by setting the _Buyer Reference_ field in the **Sales Invoice**. You can already fill this field in the **Customer** master data or the **Sales Order**.
 
-<<<<<<< HEAD
-=======
 The national terms for this field are:
 
 - Germany: _Leitweg-ID_
@@ -65,7 +63,6 @@ Please make sure to import the **Electronic Address Scheme** code list first.
 
 If not specified, email addresses are used as electronic addresses for outgoing invoices. For the Customer, we use the _Contact Email_ or _Buyer Address_ > _Email ID_. For the Company, we use the _Seller Contact_ > _Email ID_ or _Company_ > _Email_.
 
->>>>>>> 260fd71 (feat: electronic address of buyer and seller (#185))
 ### Bank Details
 
 If you want your eInvoice to contain bank details, you need to set up a **Mode of Payment** of type "Bank", link the company's corresponding **Account** and create a **Bank Account** for the same account.
