@@ -287,6 +287,13 @@ class EInvoiceGenerator:
 		).upper()
 
 	def _set_seller_electronic_address(self):
+		if self.company.electronic_address_scheme and self.company.electronic_address:
+			self.doc.trade.agreement.seller.electronic_address.uri_ID = (
+				frappe.db.get_value("Common Code", self.company.electronic_address_scheme, "common_code"),
+				self.company.electronic_address,
+			)
+			return
+
 		if self.seller_contact and self.seller_contact.email_id:
 			electronic_address = self.seller_contact.email_id
 		else:
@@ -324,12 +331,21 @@ class EInvoiceGenerator:
 		if self.profile > EInvoiceProfile.BASIC:
 			self._set_buyer_contact()
 
+		self._set_buyer_electronic_address()
+		self._set_buyer_tax_id()
+
+	def _set_buyer_electronic_address(self):
+		if self.customer.electronic_address_scheme and self.customer.electronic_address:
+			self.doc.trade.agreement.buyer.electronic_address.uri_ID = (
+				frappe.db.get_value("Common Code", self.customer.electronic_address_scheme, "common_code"),
+				self.customer.electronic_address,
+			)
+			return
+
 		if self.invoice.contact_email:
 			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.invoice.contact_email)
 		elif self.buyer_address.email_id:
 			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.buyer_address.email_id)
-
-		self._set_buyer_tax_id()
 
 	def _set_buyer_tax_id(self):
 		if not self.invoice.tax_id:
