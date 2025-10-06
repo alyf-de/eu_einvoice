@@ -51,7 +51,7 @@ If you work with government customers or similar large organizations, you might 
 
 ### Bank Details
 
-If you want your eInvoice to contain bank details, you need to set up a **Mode of Payment** of type "Bank", link the company's corresponding **Account** and create a **Bank Account** for the same account.
+If you want your eInvoice to contain bank details, you need to set up a **Mode of Payment** of type "Bank", link the company's corresponding **Account** and create a **Bank Account** for the same account. Moreover, you need to select this **Mode of Payment** in your **Payment Terms Template** under _Payment Terms_ -> _Mode of Payment_.
 
 Then, you can map a **Common Code** from **Code List** "UNTDID.4461", e.g. "Credit Transfer" (30) or "SEPA Credit Transfer" (58), to the **Mode of Payment**.
 
