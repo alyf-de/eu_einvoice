@@ -119,6 +119,13 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Email Address
     - Mobile No
     - Department
+- Shipping Address
+    - Address Title (falls back to _Customer Name_)
+    - Address Line 1
+    - Address Line 2
+    - Postcode
+    - City
+    - Country
 - Customer's Purchase Order
 - Customer's Purchase Order Date
 - Customer's Tax ID
