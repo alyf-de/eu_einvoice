@@ -40,6 +40,7 @@ Code List | Mapped DocType | Default Value
 [Codes for Passengers, Types of Cargo, Packages and Packaging Materials](https://www.xrepository.de/api/xrepository/urn:xoev-de:kosit:codeliste:rec21_3:technischerBestandteilGenericode) (optional) | UOM | C62
 [Codes for Duty Tax and Fee Categories](https://www.xrepository.de/api/xrepository/urn:xoev-de:kosit:codeliste:untdid.5305_3:technischerBestandteilGenericode) | Item Tax Template, Account, Tax Category, Sales Taxes and Charges Template | S
 [VAT exemption reason code list](https://www.xrepository.de/api/xrepository/urn:xoev-de:kosit:codeliste:vatex_1:technischerBestandteilGenericode) | Item Tax Template, Account, Tax Category, Sales Taxes and Charges Template | vatex-eu-ae
+[Electronic Address Scheme](https://www.xrepository.de/api/xrepository/urn:xoev-de:kosit:codeliste:eas_5:technischerBestandteilGenericode) (Mapping: _as Title_: scheme-name, _as Code_: aesc, _as Description_: remark) | N/A | EM
 
 For example, let's say your standard **Payment Terms Template** is "Bank Transfer, 30 days". You'll need to find the suitable **Common Code** for bank transfers within the **Code List** "UNTDID.4461". In this case, the code is "58". Then you add a row to the _Applies To_ table, select "Payment Terms Template" as the _Link Document Type_ and "Bank Transfer, 30 days" as the _Link Name_. If you now create an Invoice with this **Payment Terms Template**, the eInvoice will contain the code "58" for the payment means, signalling that the payment should done via bank transfer.
 
@@ -48,6 +49,19 @@ The retrieval of codes goes from the most specific to the most general. E.g. for
 ### Buyer Reference (German: Leitweg-ID)
 
 If you work with government customers or similar large organizations, you might need to specify their _Buyer Reference_ in the eInvoice. This is done by setting the _Buyer Reference_ field in the **Sales Invoice**. You can already fill this field in the **Customer** master data or the **Sales Order**.
+
+The national terms for this field are:
+
+- Germany: _Leitweg-ID_
+- France: _Code Service_
+
+### Electronic Address
+
+If you send your invoice via PEPPOL, you might need to specify your and your customer's electronic addresses. This is done by setting the _Electronic Address Scheme_ and _Electronic Address_ fields in the **Company**, **Customer** and **Supplier** master data.
+
+Please make sure to import the **Electronic Address Scheme** code list first.
+
+If not specified, email addresses are used as electronic addresses for outgoing invoices. For the Customer, we use the _Contact Email_ or _Buyer Address_ > _Email ID_. For the Company, we use the _Seller Contact_ > _Email ID_ or _Company_ > _Email_.
 
 ### Bank Details
 
@@ -90,6 +104,8 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Phone No
     - Email
     - Fax
+    - Electronic Address Scheme
+    - Electronic Address
 - Company Name
 - Company Address
     - Address Line 1
@@ -103,6 +119,9 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Phone (takes precedence over Company > Phone No)
     - Department
 - Company Tax ID
+- Customer
+    - Electronic Address Scheme
+    - Electronic Address
 - Customer Name
 - Buyer Reference (fetched from **Sales Order** or **Customer**)
 - Customer Address
@@ -112,7 +131,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - City
     - Country
     - Email ID (only if Contact Email is not set)
-- Contact Email (Used as buyer electronic address, BT-49. Falls back to Email ID from Customer Address if missing.)
+- Contact Email
 - Contact Person
     - Full Name
     - Phone (takes precedence over Mobile No)
@@ -236,6 +255,8 @@ The following fields are currently extracted from the eInvoice:
 - Seller (Supplier)
     - Name
     - Tax ID
+    - Electronic Address Scheme
+    - Electronic Address
     - Address
         - Address Line 1
         - Address Line 2
@@ -244,6 +265,8 @@ The following fields are currently extracted from the eInvoice:
         - Country
 - Buyer (Company)
     - Name
+    - Electronic Address Scheme
+    - Electronic Address
     - Address
         - Address Line 1
         - Address Line 2
