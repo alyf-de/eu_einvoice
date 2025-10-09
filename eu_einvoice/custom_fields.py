@@ -65,14 +65,14 @@ def get_custom_fields():
 				"fieldtype": "Data",
 				"depends_on": "electronic_address_scheme",
 			},
-      {
-        "description": _("Supplier numbers assigned by the customer"),
+			{
+				"description": _("Supplier numbers assigned by the customer"),
 				"fieldname": "supplier_numbers",
 				"fieldtype": "Table",
 				"label": _("Supplier Numbers"),
 				"options": "Supplier Number At Customer",
 				"insert_after": "electronic_address",
-      },
+			},
 		],
 		"Company": [
 			{
@@ -117,7 +117,7 @@ def get_custom_fields():
 				"fieldtype": "Data",
 				"depends_on": "electronic_address_scheme",
 			},
-      {
+			{
 				"description": _("Customer numbers assigned by the supplier"),
 				"fieldname": "customer_numbers",
 				"fieldtype": "Table",
