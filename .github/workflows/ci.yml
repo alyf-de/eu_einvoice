@@ -2,10 +2,26 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - version-15
+  workflow_dispatch:
   pull_request:
+    paths-ignore:
+      - '**.js'
+      - '**.css'
+      - '**.md'
+      - '**.html'
+      - '**.csv'
+      - '**.po'
+      - '**.pot'
+      - '.editorconfig'
+      - '.eslintrc'
+      - '.gitattributes'
+      - '.gitignore'
+      - '.pre-commit-config.yaml'
+      - 'commitlint.config.js'
+      - 'license.txt'
+      - 'README.md'
+      - '.github/workflows/copilot-setup-steps.yml'
+      - '.github/workflows/linter.yml'
 
 concurrency:
   group: version-15-eu_einvoice-${{ github.event.number }}
