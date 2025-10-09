@@ -392,6 +392,9 @@ class EInvoiceGenerator:
 		if not self.shipping_address:
 			return
 
+		self.doc.trade.delivery.ship_to.name = (
+			self.shipping_address.address_title or self.invoice.customer_name
+		)
 		self.doc.trade.delivery.ship_to.address.line_one = self.shipping_address.address_line1
 		self.doc.trade.delivery.ship_to.address.line_two = self.shipping_address.address_line2
 		self.doc.trade.delivery.ship_to.address.postcode = self.shipping_address.pincode
