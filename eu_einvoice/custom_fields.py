@@ -65,6 +65,14 @@ def get_custom_fields():
 				"fieldtype": "Data",
 				"depends_on": "electronic_address_scheme",
 			},
+      {
+        "description": _("Supplier numbers assigned by the customer"),
+				"fieldname": "supplier_numbers",
+				"fieldtype": "Table",
+				"label": _("Supplier Numbers"),
+				"options": "Supplier Number At Customer",
+				"insert_after": "electronic_address",
+      },
 		],
 		"Company": [
 			{
@@ -92,7 +100,7 @@ def get_custom_fields():
 			{
 				"fieldname": "einvoice_tab",
 				"label": _("E Invoicing"),
-				"insert_after": "portal_users",
+				"insert_after": "column_break_1mqv",
 				"fieldtype": "Tab Break",
 			},
 			{
@@ -108,6 +116,14 @@ def get_custom_fields():
 				"insert_after": "electronic_address_scheme",
 				"fieldtype": "Data",
 				"depends_on": "electronic_address_scheme",
+			},
+      {
+				"description": _("Customer numbers assigned by the supplier"),
+				"fieldname": "customer_numbers",
+				"fieldtype": "Table",
+				"label": "Customer Numbers",
+				"options": "Customer Number At Supplier",
+				"insert_after": "electronic_address",
 			},
 		],
 		"Sales Order": [
