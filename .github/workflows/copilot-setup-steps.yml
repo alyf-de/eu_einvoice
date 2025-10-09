@@ -66,10 +66,19 @@ jobs:
       - name: Install
         working-directory: /home/runner/frappe-bench
         run: |
-          bench get-app --resolve-deps eu_einvoice $GITHUB_WORKSPACE
+          bench get-app --resolve-deps --soft-link eu_einvoice $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
           bench --site test_site install-app eu_einvoice
           bench build
         env:
           CI: 'Yes'
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Activate pre-commit
+        working-directory: /home/runner/frappe-bench/apps/eu_einvoice
+        run: |
+          pre-commit --version
+          pre-commit install

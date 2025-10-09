@@ -63,6 +63,12 @@ This is a Frappe Framework app for creating and importing European e-invoices wi
 
 ## Frappe Bench Commands
 
+### Bench Location
+
+- **Local development**: Varies by installation
+- **GitHub Actions CI**: `/home/runner/frappe-bench`
+- **App location in CI**: `/home/runner/frappe-bench/apps/eu_einvoice`
+
 ### Development
 ```bash
 # Start development server
