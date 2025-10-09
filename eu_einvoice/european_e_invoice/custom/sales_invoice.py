@@ -26,6 +26,7 @@ from eu_einvoice.utils import EInvoiceProfile, get_drafthorse_schema, get_guidel
 if TYPE_CHECKING:
 	from erpnext.accounts.doctype.sales_invoice.sales_invoice import SalesInvoice
 	from erpnext.accounts.doctype.sales_invoice_item.sales_invoice_item import SalesInvoiceItem
+	from erpnext.selling.doctype.customer.customer import Customer
 	from erpnext.setup.doctype.company.company import Company
 	from frappe.contacts.doctype.address.address import Address
 	from frappe.contacts.doctype.contact.contact import Contact
@@ -74,6 +75,7 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 	if invoice.contact_person:
 		buyer_contact = frappe.get_doc("Contact", invoice.contact_person)
 
+	customer = frappe.get_doc("Customer", invoice.customer)
 	company = frappe.get_doc("Company", invoice.company)
 
 	profile = EInvoiceProfile(invoice.einvoice_profile)
@@ -81,6 +83,7 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 		profile=profile,
 		invoice=invoice,
 		company=company,
+		customer=customer,
 		seller_address=seller_address,
 		buyer_address=buyer_address,
 		shipping_address=shipping_address,
@@ -103,6 +106,7 @@ class EInvoiceGenerator:
 		profile: EInvoiceProfile,
 		invoice: SalesInvoice,
 		company: Company,
+		customer: Customer,
 		seller_address: Address | None = None,
 		buyer_address: Address | None = None,
 		shipping_address: Address | None = None,
@@ -112,6 +116,7 @@ class EInvoiceGenerator:
 		self.profile = profile
 		self.invoice = invoice
 		self.company = company
+		self.customer = customer
 		self.seller_address = seller_address
 		self.buyer_address = buyer_address
 		self.shipping_address = shipping_address
@@ -254,8 +259,15 @@ class EInvoiceGenerator:
 		if self.profile > EInvoiceProfile.BASIC:
 			self._set_seller_contact()
 
+		self._set_seller_id()
 		self._set_seller_electronic_address()
 		self._set_seller_address()
+
+	def _set_seller_id(self):
+		for row in self.customer.supplier_numbers:
+			if row.company == self.invoice.company and row.supplier_number:
+				self.doc.trade.agreement.seller.id = row.supplier_number
+				break
 
 	def _set_seller_tax_id(self):
 		if not self.invoice.company_tax_id:

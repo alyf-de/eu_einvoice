@@ -45,6 +45,24 @@ def get_custom_fields():
 				"options": PROFILE_OPTIONS,
 				"default": "EXTENDED",
 			},
+			{
+				"description": _("Supplier numbers assigned by the customer"),
+				"fieldname": "supplier_numbers",
+				"fieldtype": "Table",
+				"label": _("Supplier Numbers"),
+				"options": "Supplier Number At Customer",
+				"insert_after": "customer_details",
+			},
+		],
+		"Supplier": [
+			{
+				"description": _("Customer numbers assigned by the supplier"),
+				"fieldname": "customer_numbers",
+				"fieldtype": "Table",
+				"label": "Customer Numbers",
+				"options": "Customer Number At Supplier",
+				"insert_after": "language",
+			}
 		],
 		"Sales Order": [
 			{
