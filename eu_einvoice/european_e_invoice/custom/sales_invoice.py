@@ -356,7 +356,7 @@ class EInvoiceGenerator:
 
 		if self.invoice.contact_email:
 			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.invoice.contact_email)
-		elif self.buyer_address.email_id:
+		elif self.buyer_address and self.buyer_address.email_id:
 			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.buyer_address.email_id)
 
 	def _set_buyer_tax_id(self):
