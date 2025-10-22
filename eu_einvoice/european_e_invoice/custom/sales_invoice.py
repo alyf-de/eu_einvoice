@@ -801,7 +801,9 @@ def validate_einvoice(doc: SalesInvoice):
 		return
 
 	try:
-		xml_string = get_einvoice(doc).decode()
+		xml_bytes = get_einvoice(doc)
+		doc._einvoice_xml_bytes = xml_bytes
+		xml_string = xml_bytes.decode()
 	except Exception:
 		msg = _("Cannot create E Invoice.")
 		doc.validation_errors = msg
@@ -829,6 +831,78 @@ def validate_einvoice(doc: SalesInvoice):
 
 	if any(warnings):
 		doc.validation_warnings += "\n".join(warnings)
+
+
+def attach_xml_on_submit(doc: SalesInvoice, event: str):
+	"""
+	Attach XML file to Sales Invoice on submit if auto-attach is enabled.
+
+	This function is called via doc_events hook when a Sales Invoice is submitted.
+	It checks E Invoice Settings and attaches the XRECHNUNG XML to the specified field
+	or as a general attachment if no field is specified.
+	"""
+	if not doc.einvoice_profile or doc.einvoice_profile != "XRECHNUNG":
+		return
+
+	settings = frappe.get_cached_doc("E Invoice Settings")
+	if not settings.auto_attach_xml:
+		return
+
+	try:
+		xml_content = getattr(doc, "_einvoice_xml_bytes", None) or get_einvoice(doc)
+	except Exception:
+		doc.log_error("E Invoice Auto-Attach Failed")
+		# Don't raise exception - allow submit to continue even if attachment fails
+		return
+
+	# Pass None if no field is specified to create general attachment
+	field_name = settings.attach_field_for_xml_file or None
+	try:
+		_attach_xml_file(doc, xml_content, field_name)
+	except Exception:
+		doc.log_error("E Invoice Auto-Attach File Creation Failed")
+		# Don't raise exception - allow submit to continue
+		return
+
+
+def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | None):
+	"""
+	Create File document and attach XML to specified field or as general attachment.
+
+	Args:
+	    doc: Sales Invoice document
+	    xml_content: XML file content as bytes
+	    field_name: Target attachment field name (None for general attachment)
+	"""
+	if not xml_content:
+		doc.log_error("E Invoice Auto-Attach: Empty XML content")
+		return
+
+	if field_name and not hasattr(doc, field_name):
+		doc.log_error(f"E Invoice Auto-Attach: Invalid field '{field_name}'")
+		return
+
+	file_name = f"{doc.name}.xml".replace("/", "-")
+
+	# Create new File document
+	file_doc = frappe.new_doc("File")
+	file_doc.file_name = file_name
+	file_doc.content = xml_content
+	file_doc.folder = "Home/Attachments"
+	file_doc.is_private = 1
+	file_doc.attached_to_doctype = doc.doctype
+	file_doc.attached_to_name = doc.name
+
+	# Only set attached_to_field if field is specified
+	if field_name:
+		file_doc.attached_to_field = field_name
+
+	# Save file
+	file_doc.save(ignore_permissions=True)
+
+	# Update field value on Sales Invoice only if field is specified
+	if field_name:
+		doc.db_set(field_name, file_doc.file_url)
 
 
 def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
