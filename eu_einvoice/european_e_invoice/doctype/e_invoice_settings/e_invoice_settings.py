@@ -18,6 +18,8 @@ class EInvoiceSettings(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		alert_email: DF.Data | None
+		alert_on_validation_failure: DF.Check
 		auto_create_items: DF.Check
 		auto_create_supplier: DF.Check
 		auto_match_po: DF.Check
@@ -25,6 +27,7 @@ class EInvoiceSettings(Document):
 		default_business_process: DF.Data | None
 		default_einvoice_profile: DF.Literal["", "BASIC", "EN 16931", "EXTENDED", "XRECHNUNG"]
 		embed_xml_in_pdf: DF.Check
+		enable_audit_log: DF.Check
 		enable_pdfa_conversion: DF.Check
 		enable_schematron_caching: DF.Check
 		error_action_on_save: DF.Literal["", "Warning Message", "Error Message"]
@@ -46,6 +49,7 @@ class EInvoiceSettings(Document):
 		"""Validate settings."""
 		self._validate_business_process_urn()
 		self._validate_expense_account()
+		self._validate_alert_email()
 		self._check_ghostscript_availability()
 
 	def before_validate(self):
@@ -75,6 +79,13 @@ class EInvoiceSettings(Document):
 				frappe.throw(
 					_("Import Default Expense Account must be of type 'Expense Account' or 'Cost of Goods Sold'")
 				)
+
+	def _validate_alert_email(self):
+		"""Validate alert email format."""
+		if self.alert_on_validation_failure and self.alert_email:
+			# Simple email validation
+			if not re.match(r"[^@]+@[^@]+\.[^@]+", self.alert_email):
+				frappe.throw(_("Invalid alert email address format"))
 
 	def _check_ghostscript_availability(self):
 		"""Check if Ghostscript is installed if PDF/A conversion is enabled."""

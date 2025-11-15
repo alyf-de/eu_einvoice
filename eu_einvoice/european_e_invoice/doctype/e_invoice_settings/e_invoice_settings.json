@@ -38,6 +38,10 @@
   "validation_advanced_section",
   "enable_schematron_caching",
   "validate_xrechnung_against_en16931",
+  "enable_audit_log",
+  "monitoring_section",
+  "alert_on_validation_failure",
+  "alert_email",
   "help_tab",
   "help_section",
   "help_html"
@@ -246,6 +250,33 @@
    "fieldname": "validate_xrechnung_against_en16931",
    "fieldtype": "Check",
    "label": "Validate XRechnung against EN 16931"
+  },
+  {
+   "default": "1",
+   "description": "Log all e-invoice generation and validation events for auditing",
+   "fieldname": "enable_audit_log",
+   "fieldtype": "Check",
+   "label": "Enable Audit Logging"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "monitoring_section",
+   "fieldtype": "Section Break",
+   "label": "Alerts & Monitoring"
+  },
+  {
+   "default": "0",
+   "description": "Send email alerts when validation failures occur repeatedly",
+   "fieldname": "alert_on_validation_failure",
+   "fieldtype": "Check",
+   "label": "Alert on Validation Failures"
+  },
+  {
+   "depends_on": "alert_on_validation_failure",
+   "description": "Email address to send validation failure alerts to",
+   "fieldname": "alert_email",
+   "fieldtype": "Data",
+   "label": "Alert Email Address"
   },
   {
    "fieldname": "help_tab",
