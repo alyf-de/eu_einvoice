@@ -109,3 +109,98 @@ class EInvoiceSettings(Document):
 		return (docstatus == DocStatus.submitted() and self.error_action_on_submit) or (
 			docstatus == DocStatus.draft() and self.error_action_on_save
 		)
+
+	@frappe.whitelist()
+	def get_statistics(self):
+		"""Get usage statistics for e-invoices.
+
+		Returns:
+		    Dict with statistics about e-invoice generation and validation
+		"""
+		from frappe.utils import add_to_date, now_datetime
+
+		last_30_days = add_to_date(now_datetime(), days=-30)
+
+		# Get basic counts
+		total_generated = frappe.db.count(
+			"Sales Invoice",
+			filters={"einvoice_profile": ["!=", ""], "creation": [">=", last_30_days]},
+		)
+
+		validation_passed = frappe.db.count(
+			"Sales Invoice",
+			filters={"einvoice_is_correct": 1, "creation": [">=", last_30_days]},
+		)
+
+		validation_failed = frappe.db.count(
+			"Sales Invoice",
+			filters={
+				"einvoice_is_correct": 0,
+				"einvoice_profile": ["!=", ""],
+				"creation": [">=", last_30_days],
+			},
+		)
+
+		total_imported = frappe.db.count("E Invoice Import", filters={"creation": [">=", last_30_days]})
+
+		# Get profile breakdown
+		profile_breakdown = frappe.db.sql(
+			"""
+			SELECT einvoice_profile, COUNT(*) as count
+			FROM `tabSales Invoice`
+			WHERE einvoice_profile IS NOT NULL
+			AND einvoice_profile != ''
+			AND creation >= %s
+			GROUP BY einvoice_profile
+			ORDER BY count DESC
+		""",
+			last_30_days,
+			as_dict=True,
+		)
+
+		# Get cache info
+		from eu_einvoice.schematron import get_cache_info
+
+		cache_info = get_cache_info()
+
+		return {
+			"total_generated": total_generated,
+			"validation_passed": validation_passed,
+			"validation_failed": validation_failed,
+			"total_imported": total_imported,
+			"profile_breakdown": profile_breakdown,
+			"cache_info": cache_info,
+			"success_rate": round((validation_passed / total_generated * 100) if total_generated > 0 else 0, 1),
+		}
+
+	@frappe.whitelist()
+	def clear_validation_cache(self):
+		"""Clear the Schematron validation cache.
+
+		Returns:
+		    Dict with success message
+		"""
+		from eu_einvoice.schematron import clear_cache, get_cache_info
+
+		# Get cache info before clearing
+		cache_before = get_cache_info()
+
+		# Clear the cache
+		clear_cache()
+
+		# Get cache info after clearing
+		cache_after = get_cache_info()
+
+		frappe.msgprint(
+			_(
+				"Schematron stylesheet cache cleared. "
+				"Freed {0} compiled stylesheets from memory."
+			).format(cache_before["cache_size"]),
+			indicator="green",
+		)
+
+		return {
+			"message": "Cache cleared successfully",
+			"cache_before": cache_before,
+			"cache_after": cache_after,
+		}

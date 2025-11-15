@@ -6,6 +6,7 @@ frappe.ui.form.on("E Invoice Settings", {
 		frm.trigger("setup_help_content");
 		frm.trigger("setup_buttons");
 		frm.trigger("setup_field_dependencies");
+		frm.trigger("load_statistics");
 	},
 
 	setup_help_content(frm) {
@@ -135,11 +136,107 @@ frappe.ui.form.on("E Invoice Settings", {
 				frm.trigger("show_test_validation_dialog");
 			}, __("Tools"));
 
+			// Add "Clear Cache" button
+			frm.add_custom_button(__("Clear Cache"), () => {
+				frm.trigger("clear_cache");
+			}, __("Tools"));
+
+			// Add "Refresh Statistics" button
+			frm.add_custom_button(__("Refresh Statistics"), () => {
+				frm.trigger("load_statistics");
+			}, __("Tools"));
+
+			// Add "Download Sample" button
+			frm.add_custom_button(__("Download Sample Invoice"), () => {
+				window.open("/api/method/eu_einvoice.european_e_invoice.api.download_sample_invoice", "_blank");
+			}, __("Tools"));
+
 			// Add "View Documentation" button
 			frm.add_custom_button(__("Open EU Validator"), () => {
 				window.open("https://www.itb.ec.europa.eu/invoice/upload", "_blank");
 			}, __("Tools"));
 		}
+	},
+
+	load_statistics(frm) {
+		// Load usage statistics and display in dashboard
+		if (frm.is_new()) return;
+
+		frm.call("get_statistics").then(r => {
+			if (r.message) {
+				frm.trigger("display_statistics", r.message);
+			}
+		});
+	},
+
+	display_statistics(frm, stats) {
+		// Display statistics in a dashboard-style section
+		const stats_html = `
+			<div style="padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px;">
+				<h4 style="margin-top: 0; border-bottom: 2px solid #0089ff; padding-bottom: 10px;">
+					📊 E-Invoice Statistics (Last 30 Days)
+				</h4>
+				<div class="row" style="margin-top: 15px;">
+					<div class="col-sm-3">
+						<div style="background: white; padding: 15px; border-radius: 4px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+							<div style="font-size: 32px; font-weight: bold; color: #0089ff;">${stats.total_generated}</div>
+							<div style="color: #6c757d; margin-top: 5px;">Generated</div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div style="background: white; padding: 15px; border-radius: 4px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+							<div style="font-size: 32px; font-weight: bold; color: #28a745;">${stats.validation_passed}</div>
+							<div style="color: #6c757d; margin-top: 5px;">Valid</div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div style="background: white; padding: 15px; border-radius: 4px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+							<div style="font-size: 32px; font-weight: bold; color: #dc3545;">${stats.validation_failed}</div>
+							<div style="color: #6c757d; margin-top: 5px;">Failed</div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div style="background: white; padding: 15px; border-radius: 4px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+							<div style="font-size: 32px; font-weight: bold; color: #17a2b8;">${stats.total_imported}</div>
+							<div style="color: #6c757d; margin-top: 5px;">Imported</div>
+						</div>
+					</div>
+				</div>
+				<div style="margin-top: 20px;">
+					<strong>Success Rate:</strong> ${stats.success_rate}% |
+					<strong>Cache Status:</strong> ${stats.cache_info.caching_enabled ? '✅ Enabled' : '❌ Disabled'}
+					(${stats.cache_info.cache_size} stylesheets cached)
+				</div>
+				${stats.profile_breakdown && stats.profile_breakdown.length > 0 ? `
+					<div style="margin-top: 15px;">
+						<strong>Profile Distribution:</strong>
+						<div style="margin-top: 10px;">
+							${stats.profile_breakdown.map(p => `
+								<div style="margin: 5px 0;">
+									<span style="display: inline-block; width: 120px; font-weight: 500;">${p.einvoice_profile}:</span>
+									<div style="display: inline-block; width: 200px; background: #e9ecef; border-radius: 3px; height: 20px; position: relative; vertical-align: middle;">
+										<div style="background: #0089ff; height: 100%; width: ${(p.count / stats.total_generated * 100)}%; border-radius: 3px;"></div>
+									</div>
+									<span style="margin-left: 10px;">${p.count} (${Math.round(p.count / stats.total_generated * 100)}%)</span>
+								</div>
+							`).join('')}
+						</div>
+					</div>
+				` : ''}
+			</div>
+		`;
+
+		// Insert stats before the first tab
+		const stats_wrapper = frm.fields_dict.sales_invoice_section.wrapper;
+		const existing_stats = stats_wrapper.querySelector('.einvoice-stats');
+		if (existing_stats) {
+			existing_stats.remove();
+		}
+
+		const stats_div = document.createElement('div');
+		stats_div.className = 'einvoice-stats';
+		stats_div.innerHTML = stats_html;
+		stats_wrapper.insertBefore(stats_div, stats_wrapper.firstChild);
 	},
 
 	setup_field_dependencies(frm) {
@@ -155,6 +252,20 @@ frappe.ui.form.on("E Invoice Settings", {
 		// Toggle visibility of PDF/A related fields
 		const pdfa_enabled = frm.doc.enable_pdfa_conversion;
 		frm.toggle_display("pdfa_fallback_behavior", pdfa_enabled);
+	},
+
+	clear_cache(frm) {
+		frappe.confirm(
+			__("This will clear all cached Schematron stylesheets. The next validation will be slower but will use the latest XSL files. Continue?"),
+			() => {
+				frm.call("clear_validation_cache").then(r => {
+					if (r.message) {
+						// Reload statistics to show updated cache info
+						frm.trigger("load_statistics");
+					}
+				});
+			}
+		);
 	},
 
 	show_test_validation_dialog(frm) {
@@ -184,9 +295,71 @@ frappe.ui.form.on("E Invoice Settings", {
 			size: "large",
 			primary_action_label: __("Validate"),
 			primary_action(values) {
-				frappe.show_alert({
-					message: __("Validation feature will be available in a future update"),
-					indicator: "blue"
+				frappe.call({
+					method: "eu_einvoice.european_e_invoice.api.test_validation",
+					args: {
+						test_file: values.test_file,
+						profile: values.profile
+					},
+					callback: (r) => {
+						if (r.message) {
+							const result = r.message;
+
+							if (result.success) {
+								frappe.msgprint({
+									title: __("✅ Validation Passed"),
+									message: `
+										<div style="color: #28a745; font-size: 16px; margin-bottom: 10px;">
+											<strong>The e-invoice is valid!</strong>
+										</div>
+										<div>
+											<strong>Profile:</strong> ${result.profile}<br>
+											<strong>Errors:</strong> ${result.error_count}<br>
+											<strong>Warnings:</strong> ${result.warning_count}
+										</div>
+										${result.warnings.length > 0 ? `
+											<div style="margin-top: 15px;">
+												<strong>Warnings:</strong>
+												<ul>
+													${result.warnings.map(w => `<li>${w}</li>`).join('')}
+												</ul>
+											</div>
+										` : ''}
+									`,
+									indicator: "green"
+								});
+							} else {
+								frappe.msgprint({
+									title: __("❌ Validation Failed"),
+									message: `
+										<div style="color: #dc3545; font-size: 16px; margin-bottom: 10px;">
+											<strong>The e-invoice contains errors</strong>
+										</div>
+										<div>
+											<strong>Profile:</strong> ${result.profile}<br>
+											<strong>Errors:</strong> ${result.error_count}<br>
+											<strong>Warnings:</strong> ${result.warning_count}
+										</div>
+										<div style="margin-top: 15px;">
+											<strong>Errors:</strong>
+											<ul style="max-height: 300px; overflow-y: auto;">
+												${result.errors.map(e => `<li>${e}</li>`).join('')}
+											</ul>
+										</div>
+										${result.warnings.length > 0 ? `
+											<div style="margin-top: 15px;">
+												<strong>Warnings:</strong>
+												<ul>
+													${result.warnings.map(w => `<li>${w}</li>`).join('')}
+												</ul>
+											</div>
+										` : ''}
+									`,
+									indicator: "red"
+								});
+							}
+						}
+					}
 				});
 				d.hide();
 			}
