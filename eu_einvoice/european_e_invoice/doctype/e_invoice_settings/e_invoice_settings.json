@@ -10,7 +10,37 @@
   "validate_sales_invoice_on_submit",
   "column_break_rnbc",
   "error_action_on_save",
-  "error_action_on_submit"
+  "error_action_on_submit",
+  "defaults_tab",
+  "defaults_section",
+  "default_einvoice_profile",
+  "default_business_process",
+  "column_break_defaults",
+  "auto_set_profile_from_customer",
+  "require_buyer_reference",
+  "pdf_settings_tab",
+  "pdf_section",
+  "enable_pdfa_conversion",
+  "pdfa_fallback_behavior",
+  "column_break_pdf",
+  "embed_xml_in_pdf",
+  "pdf_metadata_section",
+  "pdf_producer",
+  "pdf_creator",
+  "import_settings_tab",
+  "import_section",
+  "auto_create_supplier",
+  "auto_create_items",
+  "auto_match_po",
+  "column_break_import",
+  "import_validation_strictness",
+  "import_default_expense_account",
+  "validation_advanced_section",
+  "enable_schematron_caching",
+  "validate_xrechnung_against_en16931",
+  "help_tab",
+  "help_section",
+  "help_html"
  ],
  "fields": [
   {
@@ -47,6 +77,190 @@
    "fieldtype": "Select",
    "label": "Action on Validation Error during Submit",
    "options": "\nWarning Message\nError Message"
+  },
+  {
+   "fieldname": "defaults_tab",
+   "fieldtype": "Tab Break",
+   "label": "Defaults"
+  },
+  {
+   "fieldname": "defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Default Settings"
+  },
+  {
+   "default": "EN 16931",
+   "description": "Default profile for new Sales Invoices",
+   "fieldname": "default_einvoice_profile",
+   "fieldtype": "Select",
+   "label": "Default E-Invoice Profile",
+   "options": "\nBASIC\nEN 16931\nEXTENDED\nXRECHNUNG"
+  },
+  {
+   "default": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+   "description": "PEPPOL Business Process identifier (BT-23)",
+   "fieldname": "default_business_process",
+   "fieldtype": "Data",
+   "label": "Default Business Process URN"
+  },
+  {
+   "fieldname": "column_break_defaults",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Automatically use customer's preferred profile if set",
+   "fieldname": "auto_set_profile_from_customer",
+   "fieldtype": "Check",
+   "label": "Auto-set Profile from Customer"
+  },
+  {
+   "default": "0",
+   "description": "Make buyer reference mandatory for e-invoices (BT-10)",
+   "fieldname": "require_buyer_reference",
+   "fieldtype": "Check",
+   "label": "Require Buyer Reference"
+  },
+  {
+   "fieldname": "pdf_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "PDF Settings"
+  },
+  {
+   "fieldname": "pdf_section",
+   "fieldtype": "Section Break",
+   "label": "PDF/A-3 Conversion"
+  },
+  {
+   "default": "1",
+   "description": "Convert PDFs to PDF/A-3 standard using Ghostscript (required for ZUGFeRD compliance)",
+   "fieldname": "enable_pdfa_conversion",
+   "fieldtype": "Check",
+   "label": "Enable PDF/A-3 Conversion"
+  },
+  {
+   "default": "Log Error and Continue",
+   "depends_on": "enable_pdfa_conversion",
+   "description": "What to do if PDF/A conversion fails",
+   "fieldname": "pdfa_fallback_behavior",
+   "fieldtype": "Select",
+   "label": "PDF/A Conversion Failure Behavior",
+   "options": "Log Error and Continue\nShow Warning to User\nBlock PDF Download"
+  },
+  {
+   "fieldname": "column_break_pdf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Embed XML invoice data in PDF (ZUGFeRD/Factur-X format)",
+   "fieldname": "embed_xml_in_pdf",
+   "fieldtype": "Check",
+   "label": "Embed XML in PDF"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "pdf_metadata_section",
+   "fieldtype": "Section Break",
+   "label": "PDF Metadata"
+  },
+  {
+   "description": "PDF Producer metadata (e.g., 'ERPNext E-Invoice Module')",
+   "fieldname": "pdf_producer",
+   "fieldtype": "Data",
+   "label": "PDF Producer"
+  },
+  {
+   "description": "PDF Creator metadata (e.g., company name)",
+   "fieldname": "pdf_creator",
+   "fieldtype": "Data",
+   "label": "PDF Creator"
+  },
+  {
+   "fieldname": "import_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Import Settings"
+  },
+  {
+   "fieldname": "import_section",
+   "fieldtype": "Section Break",
+   "label": "E-Invoice Import Configuration"
+  },
+  {
+   "default": "0",
+   "description": "Automatically create supplier from e-invoice seller data if not found",
+   "fieldname": "auto_create_supplier",
+   "fieldtype": "Check",
+   "label": "Auto-create Supplier"
+  },
+  {
+   "default": "0",
+   "description": "Automatically create items from seller product IDs if not found",
+   "fieldname": "auto_create_items",
+   "fieldtype": "Check",
+   "label": "Auto-create Items"
+  },
+  {
+   "default": "1",
+   "description": "Automatically link imported invoice to Purchase Order by buyer reference",
+   "fieldname": "auto_match_po",
+   "fieldtype": "Check",
+   "label": "Auto-match Purchase Orders"
+  },
+  {
+   "fieldname": "column_break_import",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Lenient (Allow Warnings)",
+   "description": "How strict to be when validating imported e-invoices",
+   "fieldname": "import_validation_strictness",
+   "fieldtype": "Select",
+   "label": "Import Validation Strictness",
+   "options": "Lenient (Allow Warnings)\nStrict (Block on Warnings)\nVery Strict (Block on Schema Errors)"
+  },
+  {
+   "description": "Default expense account to use for imported invoices when account mapping is unclear",
+   "fieldname": "import_default_expense_account",
+   "fieldtype": "Link",
+   "label": "Default Expense Account",
+   "options": "Account"
+  },
+  {
+   "collapsible": 1,
+   "description": "Advanced validation and performance settings",
+   "fieldname": "validation_advanced_section",
+   "fieldtype": "Section Break",
+   "label": "Advanced Validation Settings"
+  },
+  {
+   "default": "1",
+   "description": "Cache compiled Schematron XSL stylesheets for faster validation (recommended)",
+   "fieldname": "enable_schematron_caching",
+   "fieldtype": "Check",
+   "label": "Enable Schematron Caching"
+  },
+  {
+   "default": "1",
+   "description": "Run additional EN 16931 validation for XRechnung invoices",
+   "fieldname": "validate_xrechnung_against_en16931",
+   "fieldtype": "Check",
+   "label": "Validate XRechnung against EN 16931"
+  },
+  {
+   "fieldname": "help_tab",
+   "fieldtype": "Tab Break",
+   "label": "Help"
+  },
+  {
+   "fieldname": "help_section",
+   "fieldtype": "Section Break",
+   "label": "Documentation & Resources"
+  },
+  {
+   "fieldname": "help_html",
+   "fieldtype": "HTML",
+   "label": "Help Content"
   }
  ],
  "grid_page_length": 50,
