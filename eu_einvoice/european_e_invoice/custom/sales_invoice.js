@@ -3,9 +3,7 @@ frappe.ui.form.on("Sales Invoice", {
 		frm.trigger("add_einvoice_button");
 
 		if (!frm.is_dirty() && !frm.doc.einvoice_is_correct && frm.doc.einvoice_profile) {
-			frm.dashboard.set_headline_alert(
-				__("Please note the validation errors of the e-invoice.")
-			);
+			frm.dashboard.set_headline_alert(__("Please note the validation errors of the e-invoice."));
 		}
 	},
 	add_einvoice_button: function (frm) {
