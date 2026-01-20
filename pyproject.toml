@@ -4,7 +4,7 @@ authors = [
     { name = "ALYF GmbH", email = "hallo@alyf.de"}
 ]
 description = "Create and import european e-invoices with ERPNext"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
@@ -25,7 +25,7 @@ build-backend = "flit_core.buildapi"
 
 [tool.ruff]
 line-length = 110
-target-version = "py310"
+target-version = "py314"
 
 [tool.ruff.lint]
 select = [
