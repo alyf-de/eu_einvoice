@@ -878,9 +878,20 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 		doc.log_error("E Invoice Auto-Attach: Empty XML content")
 		return
 
-	if field_name and not hasattr(doc, field_name):
-		doc.log_error(f"E Invoice Auto-Attach: Invalid field '{field_name}'")
-		return
+	if field_name:
+		if not hasattr(doc, field_name):
+			doc.log_error(
+				title="E Invoice Auto-Attach: invalid field",
+				message=f"Field '{field_name}' is configured for XML attachment, but does not exist on the document.",
+			)
+			return
+
+		if doc.get(field_name):
+			doc.log_error(
+				title="E Invoice Auto-Attach: conflicting value",
+				message=f"Field '{field_name}' is configured for XML attachment, but already has a value.",
+			)
+			return
 
 	file_name = f"{doc.name}.xml".replace("/", "-")
 
