@@ -1,5 +1,9 @@
-import globals from "globals";
-import js from "@eslint/js";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+// Use CJS resolver so pre-commit NODE_PATH is honored.
+const globals = require("globals");
+const js = require("@eslint/js");
 
 export default [
 	js.configs.recommended,
