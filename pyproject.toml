@@ -11,8 +11,8 @@ dependencies = [
     # "frappe~=15.0.0" # Installed and managed by bench.
     "factur-x~=3.1",
     "drafthorse~=2025.1.0",
-    "saxonche~=12.5.0",
-    "lxml>=4.9.3,<6.0.0",
+    "saxonche>=12.5.0,<13.0.0",
+    "lxml>=4.9.3,<=6.0.2",
 ]
 
 [build-system]

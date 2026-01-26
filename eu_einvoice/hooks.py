@@ -147,6 +147,7 @@ after_install = "eu_einvoice.install.after_install"
 doc_events = {
 	"Sales Invoice": {
 		"validate": "eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc",
+		"on_submit": "eu_einvoice.european_e_invoice.custom.sales_invoice.attach_xml_on_submit",
 	}
 }
 
