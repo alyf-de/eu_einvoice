@@ -81,6 +81,8 @@ eInvoice validation can be time-consuming. Use **E Invoice Settings** to configu
   - *Warning Message*: Show errors but allow save/submit
   - *Error Message*: Block save/submit and show errors
 
+If you are using a separate field for the sales invoice number, you can configure the field name in the **E Invoice Settings** -> **Sales Invoice Number**.
+
 ## Usage
 
 ### Sales Invoice
