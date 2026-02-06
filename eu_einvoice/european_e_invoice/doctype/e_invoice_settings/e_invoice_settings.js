@@ -3,10 +3,11 @@
 
 frappe.ui.form.on("E Invoice Settings", {
 	onload(frm) {
-		add_fields_to_mapping_table(frm);
+		frm.trigger("set_invoice_number_field_options");
 	},
+
 	refresh(frm) {
-		add_fields_to_mapping_table(frm);
+		frm.trigger("set_invoice_number_field_options");
 		frm.trigger("set_auto_attach_options");
 	},
 
@@ -27,28 +28,28 @@ frappe.ui.form.on("E Invoice Settings", {
 			);
 		});
 	},
+
+	set_invoice_number_field_options(frm) {
+		frappe.model.with_doctype("Sales Invoice", function () {
+			const meta = frappe.get_meta("Sales Invoice");
+			const options = meta.fields
+				.filter((d) => ["Data", "Read Only"].includes(d.fieldtype))
+				.map((value) => {
+					return {
+						label: `${__(value.label, null, "Sales Invoice")} (${value.fieldname})`,
+						value: value.fieldname,
+					};
+				})
+				.sort((a, b) => a.label.localeCompare(b.label));
+
+			frm.set_df_property("sales_invoice_number_field", "options", [
+				{
+					// Empty option is the default case, when this feature is not used
+					label: "",
+					value: "",
+				},
+				...options,
+			]);
+		});
+	},
 });
-
-let add_fields_to_mapping_table = function (frm) {
-	frappe.model.with_doctype("Sales Invoice", function () {
-		const meta = frappe.get_meta("Sales Invoice");
-		const options = meta.fields
-			.filter((d) => ["Data", "Read Only"].includes(d.fieldtype))
-			.map((value) => {
-				return {
-					label: `${__(value.label, null, "Sales Invoice")} (${value.fieldname})`,
-					value: value.fieldname,
-				};
-			})
-			.sort((a, b) => a.label.localeCompare(b.label));
-
-		frm.set_df_property("sales_invoice_number_field", "options", [
-			{
-				// Empty option is the default case, when this feature is not used
-				label: "",
-				value: "",
-			},
-			...options,
-		]);
-	});
-};
