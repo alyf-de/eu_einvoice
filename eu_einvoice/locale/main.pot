@@ -7,13 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2026-01-23 12:47+0053\n"
-"PO-Revision-Date: 2026-01-23 12:47+0053\n"
-=======
-"POT-Creation-Date: 2026-02-06 18:13+0053\n"
-"PO-Revision-Date: 2026-02-06 18:13+0053\n"
->>>>>>> 9874b84 (feat: allow selection of Sales Invoice Number Field (#222))
+"POT-Creation-Date: 2026-02-06 18:35+0053\n"
+"PO-Revision-Date: 2026-02-06 18:35+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -538,16 +533,13 @@ msgstr ""
 msgid "Sales Invoice"
 msgstr ""
 
-<<<<<<< HEAD
-#. Label of the seller_tab (Tab Break) field in DocType 'E Invoice Import'
-=======
-#. Label of a Autocomplete field in DocType 'E Invoice Settings'
+#. Label of the sales_invoice_number_field (Autocomplete) field in DocType 'E
+#. Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Sales Invoice Number Field"
 msgstr ""
 
-#. Label of a Tab Break field in DocType 'E Invoice Import'
->>>>>>> 9874b84 (feat: allow selection of Sales Invoice Number Field (#222))
+#. Label of the seller_tab (Tab Break) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Seller"
 msgstr ""
