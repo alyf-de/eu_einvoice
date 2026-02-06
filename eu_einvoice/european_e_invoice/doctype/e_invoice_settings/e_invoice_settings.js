@@ -39,9 +39,9 @@ let add_fields_to_mapping_table = function (frm) {
 		});
 
 		meta.fields.forEach((value) => {
-			if (!["Section Break", "Column Break"].includes(value.fieldtype)) {
+			if (["Data", "Read Only"].includes(value.fieldtype)) {
 				options.push({
-					label: value.label + " (" + value.fieldname + ")",
+					label: __(value.label) + " (" + value.fieldname + ")",
 					value: value.fieldname,
 				});
 			}
