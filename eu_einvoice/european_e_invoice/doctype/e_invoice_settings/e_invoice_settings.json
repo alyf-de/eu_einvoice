@@ -11,6 +11,7 @@
   "column_break_rnbc",
   "error_action_on_save",
   "error_action_on_submit",
+  "sales_invoice_number_field",
   "section_break_yldr",
   "auto_attach_xml",
   "attach_field_for_xml_file"
@@ -67,13 +68,19 @@
    "fieldname": "attach_field_for_xml_file",
    "fieldtype": "Autocomplete",
    "label": "Attach Field for XML File"
+  },
+  {
+   "description": "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>.",
+   "fieldname": "sales_invoice_number_field",
+   "fieldtype": "Autocomplete",
+   "label": "Sales Invoice Number Field"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-10-22 22:35:12.610452",
+ "modified": "2026-02-06 17:52:09.990716",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
