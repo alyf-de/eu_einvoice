@@ -7,19 +7,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-02-05 10:12+0000\n"
+"POT-Creation-Date: 2026-02-06 18:13+0053\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
-"Language-Team: hallo@alyf.de\n"
 "Language: de\n"
+"Language-Team: hallo@alyf.de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.13.1\n"
-"X-Generator: Poedit 3.8\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:783
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:785
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
@@ -171,11 +170,11 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:814
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:816
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:828
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:830
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -207,6 +206,12 @@ msgstr ""
 #: eu_einvoice/european_e_invoice/doctype/supplier_number_at_customer/supplier_number_at_customer.json
 msgid "Company"
 msgstr "Unternehmen"
+
+#. Description of the 'Sales Invoice Number Field' (Autocomplete) field in
+#. DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>."
+msgstr "Konfigurieren Sie dies, wenn Sie benutzerdefinierte Rechnungsnummern in einem anderen Feld als <code>name</code> speichern."
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:211
 msgid "Could not validate E Invoice schematron. See Error Log for details."
@@ -339,7 +344,7 @@ msgstr "E-Rechnungs-Einstellungen"
 msgid "E Invoice Trade Tax"
 msgstr "E-Rechnungs-Steuer"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:796
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:798
 msgid "E Invoice is not correct"
 msgstr "E-Rechnung ist nicht korrekt"
 
@@ -565,10 +570,10 @@ msgstr "Zeile {0}"
 msgid "Sales Invoice"
 msgstr "Ausgangsrechnung"
 
-#. Label of a Select field in DocType 'E Invoice Settings'
+#. Label of a Autocomplete field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
-msgid "Sales Invoice Number"
-msgstr "Nummer der Ausgangsrechnung"
+msgid "Sales Invoice Number Field"
+msgstr "Rechnungsnummer-Feld"
 
 #. Label of a Tab Break field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
@@ -775,18 +780,19 @@ msgstr "{0} ansehen"
 msgid "Warning Message"
 msgstr "Warnung"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:762
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:764
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:751
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:753
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:739
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:741
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:774
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:776
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
+
