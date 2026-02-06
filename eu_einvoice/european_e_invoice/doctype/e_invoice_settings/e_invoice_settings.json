@@ -72,7 +72,7 @@
   {
    "description": "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>.",
    "fieldname": "sales_invoice_number_field",
-   "fieldtype": "Select",
+   "fieldtype": "Autocomplete",
    "label": "Sales Invoice Number Field"
   }
  ],
@@ -80,7 +80,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-06 17:45:16.049024",
+ "modified": "2026-02-06 17:52:09.990716",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
