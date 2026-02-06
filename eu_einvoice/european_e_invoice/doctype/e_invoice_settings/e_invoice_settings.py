@@ -20,6 +20,7 @@ class EInvoiceSettings(Document):
 		auto_attach_xml: DF.Check
 		error_action_on_save: DF.Literal["", "Warning Message", "Error Message"]
 		error_action_on_submit: DF.Literal["", "Warning Message", "Error Message"]
+		sales_invoice_number_field: DF.Autocomplete | None
 		validate_sales_invoice_on_save: DF.Check
 		validate_sales_invoice_on_submit: DF.Check
 	# end: auto-generated types
