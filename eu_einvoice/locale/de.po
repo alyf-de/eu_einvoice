@@ -7,13 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2026-01-23 12:47+0053\n"
-"PO-Revision-Date: 2024-11-25 18:57+0053\n"
-=======
-"POT-Creation-Date: 2026-02-06 18:13+0053\n"
+"POT-Creation-Date: 2026-02-06 18:22+0053\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
->>>>>>> 9874b84 (feat: allow selection of Sales Invoice Number Field (#222))
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
 "Language-Team: hallo@alyf.de\n"
@@ -539,7 +534,8 @@ msgstr "Zeile {0}"
 msgid "Sales Invoice"
 msgstr "Ausgangsrechnung"
 
-#. Label of a Autocomplete field in DocType 'E Invoice Settings'
+#. Label of the sales_invoice_number_field (Autocomplete) field in DocType 'E
+#. Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Sales Invoice Number Field"
 msgstr "Rechnungsnummer-Feld"
