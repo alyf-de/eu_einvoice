@@ -31,26 +31,24 @@ frappe.ui.form.on("E Invoice Settings", {
 
 let add_fields_to_mapping_table = function (frm) {
 	frappe.model.with_doctype("Sales Invoice", function () {
-		let options = [];
-		let meta = frappe.get_meta("Sales Invoice");
-		options.push({
-			label: "Name (name)",
-			value: "name",
-		});
-
-		meta.fields.forEach((value) => {
-			if (["Data", "Read Only"].includes(value.fieldtype)) {
-				options.push({
-					label: __(value.label) + " (" + value.fieldname + ")",
+		const meta = frappe.get_meta("Sales Invoice");
+		const options = meta.fields
+			.filter((d) => ["Data", "Read Only"].includes(d.fieldtype))
+			.map((value) => {
+				return {
+					label: `${__(value.label, null, "Sales Invoice")} (${value.fieldname})`,
 					value: value.fieldname,
-				});
-			}
-		});
+				};
+			})
+			.sort((a, b) => a.label.localeCompare(b.label));
 
-		const target_fields_actions = ["sales_invoice_number_field"];
-
-		target_fields_actions.forEach((fieldname) => {
-			frm.set_df_property(fieldname, "options", options);
-		});
+		frm.set_df_property("sales_invoice_number_field", "options", [
+			{
+				// Empty option is the default case, when this feature is not used
+				label: "",
+				value: "",
+			},
+			...options,
+		]);
 	});
 };
