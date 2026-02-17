@@ -994,13 +994,20 @@ def as_base_64(content: str | bytes) -> str:
 
 @frappe.whitelist(allow_guest=True)
 def download_pdf(
-	doctype: str, name: str, format=None, doc=None, no_letterhead=0, language=None, letterhead=None
+	doctype: str,
+	name: str,
+	format=None,
+	doc=None,
+	no_letterhead=0,
+	language=None,
+	letterhead=None,
+	pdf_generator=None,
 ):
 	from frappe.utils.print_format import download_pdf as frappe_download_pdf
 
 	# Regular Frappe PDF download
 	# Sets frappe.local.response.filecontent to the PDF data
-	frappe_download_pdf(doctype, name, format, doc, no_letterhead, language, letterhead)
+	frappe_download_pdf(doctype, name, format, doc, no_letterhead, language, letterhead, pdf_generator)
 
 	# If the doctype is a Sales Invoice, try to attach the XML to the PDF
 	if doctype == "Sales Invoice":
