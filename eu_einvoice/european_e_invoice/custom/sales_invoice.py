@@ -4,7 +4,7 @@ import mimetypes
 import os
 import re
 from base64 import b64encode
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Literal
 
 import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 	from erpnext.setup.doctype.company.company import Company
 	from frappe.contacts.doctype.address.address import Address
 	from frappe.contacts.doctype.contact.contact import Contact
+	from frappe.model.document import Document as FrappeDocument
 
 	from eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings import EInvoiceSettings
 
@@ -996,12 +997,12 @@ def as_base_64(content: str | bytes) -> str:
 def download_pdf(
 	doctype: str,
 	name: str,
-	format=None,
-	doc=None,
-	no_letterhead=0,
-	language=None,
-	letterhead=None,
-	pdf_generator=None,
+	format: str | None = None,
+	doc: FrappeDocument | str | dict[str, Any] | None = None,
+	no_letterhead: str | int | None = None,
+	language: str | None = None,
+	letterhead: str | None = None,
+	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,
 ):
 	from frappe.utils.print_format import download_pdf as frappe_download_pdf
 
