@@ -214,12 +214,11 @@ class EInvoiceGenerator:
 		sales_invoice_number_field = frappe.db.get_single_value(
 			"E Invoice Settings", "sales_invoice_number_field"
 		)
-		if sales_invoice_number_field:
-			invoice_name = self.invoice.get(sales_invoice_number_field)
-		else:
-			invoice_name = self.invoice.name
 
-		self.doc.header.id = invoice_name
+		if sales_invoice_number_field and (invoice_number := self.invoice.get(sales_invoice_number_field)):
+			self.doc.header.id = invoice_number
+		else:
+			self.doc.header.id = self.invoice.name
 
 		# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred1001.htm
 		if self.invoice.is_return:
