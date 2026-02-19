@@ -8,7 +8,7 @@ def validate_swiss_vat(vat_id):
 	"""
 	# 1. Clean the string: keep only 'CHE' and the 9 digits
 	# Removes dots, hyphens, spaces, and suffixes (MWST/TVA/IVA)
-	normalized = re.sub(r"[^0-9A-Z]", "", vat_id.upper())
+	normalized = re.sub(r"(MWST|TVA|IVA|[^0-9A-Z])", "", vat_id.upper())
 
 	# Check basic structure: Must start with CHE followed by exactly 9 digits
 	if not re.match(r"^CHE\d{9}$", normalized):
