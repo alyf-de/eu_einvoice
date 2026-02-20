@@ -2,7 +2,13 @@ import re
 
 
 def normalize_swiss_vat_id(vat_id: str) -> str:
-	return vat_id.strip().replace(" ", "").replace("-", "").replace(".", "")[:12].upper()
+	"""
+	### Normalizes a Swiss VAT ID
+	- remove spaces, hyphens, dots
+	- Keep suffixes like MWST, TVA, IVA.
+	- Example: 'CHE-123.456.789 MWST' becomes 'CHE123456789MWST'
+	"""
+	return vat_id.strip().replace(" ", "").replace("-", "").replace(".", "").upper()
 
 
 def is_valid_swiss_vat_id(vat_id: str) -> bool:
@@ -10,11 +16,13 @@ def is_valid_swiss_vat_id(vat_id: str) -> bool:
 	Validates a Swiss VAT ID (UID).
 	Expected formats: 'CHE-123.456.789 MWST', 'CHE123456789', etc.
 	"""
-	# 1. Clean the string: keep only 'CHE' and the 9 digits
-	# Removes dots, hyphens, spaces, and suffixes (MWST/TVA/IVA)
+
 	normalized = normalize_swiss_vat_id(vat_id)
 
-	# Check basic structure: Must start with CHE followed by exactly 9 digits
+	# Remove allowed endings: MWST, TVA, IVA if present
+	normalized = re.sub(r"(MWST|TVA|IVA)$", "", normalized)
+
+	# 1. Check basic structure: Must start with CHE followed by exactly 9 digits
 	if not re.match(r"^CHE\d{9}$", normalized):
 		return False
 
