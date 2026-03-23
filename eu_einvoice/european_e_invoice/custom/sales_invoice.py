@@ -721,7 +721,7 @@ class EInvoiceGenerator:
 		self.doc.trade.settlement.monetary_summation.due_amount = flt(self.invoice.outstanding_amount, 2)
 
 
-def validate_vat_id(vat_id: str) -> tuple[str, str]:
+def validate_vat_id(vat_id: str) -> str:
 	COUNTRY_CODE_REGEX = r"^[A-Z]{2}$"
 	VAT_NUMBER_REGEX = r"^[0-9A-Za-z\+\*\.]{2,12}$"
 
