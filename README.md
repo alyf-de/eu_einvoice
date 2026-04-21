@@ -31,7 +31,7 @@ Please use a branch (`MAJOR_VERSION`) that matches the major version of ERPNext 
 
 E-invoices rely on common codes that describe the content of the invoice. E.g. "C62" is used for the UOM "One" and "ZZZ" is used for a mutually agreed mode of payment.
 
-Common codes are part of a code list. You'll need to import the code lists and map the codes you need to the corresponding ERPNext entities. Please use the "Import Genericode" button in **Code List** and paste the URL linked below.
+Common codes are part of a code list. You'll need to import the code lists and map the codes you need to the corresponding ERPNext entities. Please use the "Import Genericode" button in **Code List**, download the linked XML file first, and then upload it from your computer. Importing Genericode directly from a remote URL no longer works in recent ERPNext versions.
 
 Code List | Mapped DocType | Default Value
 ----------|----------------|--------------
