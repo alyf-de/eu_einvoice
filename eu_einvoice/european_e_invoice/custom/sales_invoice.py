@@ -127,6 +127,7 @@ class EInvoiceGenerator:
 		self.doc = None
 		self.item_tax_rates = set()
 		self.delivery_dates = []
+		self.vat_exemption_reason_text = ""
 
 	def get_einvoice(self) -> Document | None:
 		"""Return the einvoice document as a Python object."""
@@ -135,6 +136,9 @@ class EInvoiceGenerator:
 	def create_einvoice(self):
 		"""Create the einvoice document as a Python object."""
 		self.doc = Document()
+		self.vat_exemption_reason_text = str(
+			frappe.db.get_single_value("E Invoice Settings", "vat_exemption_reason_text") or ""
+		).strip()
 
 		self._set_context()
 		self._set_header()
@@ -273,7 +277,10 @@ class EInvoiceGenerator:
 		self._set_seller_address()
 
 	def _set_seller_id(self):
-		for row in self.customer.supplier_numbers:
+		supplier_numbers = getattr(self.customer, "supplier_numbers", None)
+		if not supplier_numbers:
+			return
+		for row in supplier_numbers:
 			if row.company == self.invoice.company and row.supplier_number:
 				self.doc.trade.agreement.seller.id = row.supplier_number
 				break
@@ -486,6 +493,7 @@ class EInvoiceGenerator:
 					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 				]
 			).upper()
+			self._set_optional_vat_exemption_reason_text(li.settlement.trade_tax)
 
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
@@ -614,7 +622,12 @@ class EInvoiceGenerator:
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 			]
 		).upper()
+		self._set_optional_vat_exemption_reason_text(trade_tax)
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
+
+	def _set_optional_vat_exemption_reason_text(self, trade_tax: ApplicableTradeTax) -> None:
+		if self.vat_exemption_reason_text:
+			trade_tax.exemption_reason = self.vat_exemption_reason_text
 
 	def _add_delivery_date(self):
 		if self.delivery_dates:
