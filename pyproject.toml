@@ -12,7 +12,7 @@ dependencies = [
     "factur-x~=3.1",
     "drafthorse~=2025.1.0",
     "saxonche>=12.5.0,<13.0.0",
-    "lxml>=4.9.3,<=6.0.2",
+    "lxml>=6.1.0,<7.0.0",
 ]
 
 [build-system]
