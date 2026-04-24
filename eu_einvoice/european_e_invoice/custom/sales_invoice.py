@@ -15,8 +15,10 @@ from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-from frappe.core.doctype.file.utils import find_file_by_url
+from frappe.core.doctype.file.utils import find_file_by_url, get_safe_file_name
 from frappe.core.utils import html2text
+from frappe.model.naming import parse_naming_series
+from frappe.utils import cstr
 from frappe.utils.data import date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
@@ -919,7 +921,9 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 			)
 			return
 
-	file_name = f"{doc.name}.xml".replace("/", "-")
+	settings = frappe.get_cached_doc("E Invoice Settings")
+	base_name = get_xml_attachment_file_base_name(doc, settings.auto_name_format_for_xml_file)
+	file_name = f"{base_name}.xml"
 
 	# Create new File document
 	file_doc = frappe.new_doc("File")
@@ -1142,3 +1146,46 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 
 	xml_bytes = get_einvoice(invoice_id)
 	return attach_xml(pdf_data, xml_bytes, level)
+
+
+# Naming series treats a dot-separated part that *starts with* ``#`` as the numeric
+# counter (see :func:`frappe.model.naming.parse_naming_series`). XML filenames must
+# not touch **Series**, so each segment is passed through ``str.lstrip("#")`` before
+# parsing-counter-shaped parts become empty and are skipped, without stripping ``#``
+# elsewhere in a segment before :func:`~frappe.core.doctype.file.utils.get_safe_file_name`.
+
+
+def get_xml_attachment_file_base_name(doc, pattern: str | None) -> str:
+	"""Return the file base name without ``.xml``.
+
+	The result is passed through :func:`~frappe.core.doctype.file.utils.get_safe_file_name`
+	(same rules as **File** attachments: ``/``, ``\\``, ``%``, ``?``, ``#`` → ``_``).
+
+	* **Empty** pattern → ``doc.name`` (same as before configurable naming).
+	* Otherwise → split the pattern on ``.`` like a naming series, remove a **leading**
+	  run of ``#`` from each segment (same edge as counter parts in
+	  :func:`frappe.model.naming.parse_naming_series`), then parse the segments with
+	  ``parse_naming_series`` (``MM``, ``YYYY``, ``{fieldname}``, literals, etc.).
+
+	On failure, logs an error and falls back to ``doc.name``.
+	"""
+	pattern = cstr(pattern or "").strip()
+	if not pattern:
+		return get_safe_file_name(cstr(doc.name))
+
+	parts = [p.lstrip("#") for p in pattern.split(".")]
+	try:
+		base = parse_naming_series(parts, doc=doc)
+	except Exception:
+		frappe.log_error(
+			title=_("E Invoice XML file name pattern failed"),
+			message=frappe.get_traceback(),
+			reference_doctype=getattr(doc, "doctype", None),
+			reference_name=getattr(doc, "name", None),
+		)
+		return get_safe_file_name(cstr(doc.name))
+
+	base = cstr(base).strip()
+	if not base:
+		return get_safe_file_name(cstr(doc.name))
+	return get_safe_file_name(base)

@@ -18,6 +18,7 @@ class EInvoiceSettings(Document):
 
 		attach_field_for_xml_file: DF.Autocomplete | None
 		auto_attach_xml: DF.Check
+		auto_name_format_for_xml_file: DF.Data | None
 		error_action_on_save: DF.Literal["", "Warning Message", "Error Message"]
 		error_action_on_submit: DF.Literal["", "Warning Message", "Error Message"]
 		sales_invoice_number_field: DF.Autocomplete | None
