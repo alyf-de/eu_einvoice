@@ -1,6 +1,7 @@
 # Copyright (c) 2024, ALYF GmbH and contributors
 # For license information, please see license.txt
 
+from __future__ import annotations
 
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -279,6 +280,8 @@ class EInvoiceImport(Document):
 		t.basis_amount = flt_or_none(tax.basis_amount._value)
 		t.rate_applicable_percent = flt_or_none(tax.rate_applicable_percent._value)
 		t.calculated_amount = flt_or_none(tax.calculated_amount._value)
+		reason_text = tax.exemption_reason._text
+		t.vat_exemption_reason_text = str(reason_text).strip() if reason_text else None
 
 	def parse_payment_term(self, term: PaymentTerms):
 		if not term.partial_amount.children:
