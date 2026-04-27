@@ -7,7 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2026-02-06 18:13+0053\n"
+=======
+"POT-Creation-Date: 2026-04-21 15:04+0000\n"
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -18,7 +22,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:785
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:803
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
@@ -61,7 +65,7 @@ msgstr "Abschläge gesamt"
 msgid "Amended From"
 msgstr "Korrektur von"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:105
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:106
 msgid "An E Invoice Import with the same Invoice ID and Supplier already exists."
 msgstr "Eine E-Rechnung mit der gleichen Rechnungs-ID und Lieferanten existiert bereits."
 
@@ -170,11 +174,11 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:816
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:834
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:830
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:848
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -183,6 +187,7 @@ msgstr "E-Rechnung konnte nicht validiert werden."
 msgid "Charge Total"
 msgstr "Zuschläge gesamt"
 
+<<<<<<< HEAD
 #. Label of a Link in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Code List"
@@ -202,6 +207,9 @@ msgstr ""
 #. Label of a Link field in DocType 'E Invoice Import'
 #. Label of a Link field in DocType 'Supplier Number At Customer'
 #: eu_einvoice/european_e_invoice/doctype/customer_number_at_supplier/customer_number_at_supplier.json
+=======
+#. Label of a Link field in DocType 'E Invoice Import'
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 #: eu_einvoice/european_e_invoice/doctype/supplier_number_at_customer/supplier_number_at_customer.json
 msgid "Company"
@@ -213,7 +221,7 @@ msgstr "Unternehmen"
 msgid "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>."
 msgstr "Konfigurieren Sie dies, wenn Sie benutzerdefinierte Rechnungsnummern in einem anderen Feld als <code>name</code> speichern."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:211
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:212
 msgid "Could not validate E Invoice schematron. See Error Log for details."
 msgstr "E-Rechnung konnte nicht validiert werden. Details im Fehlerlog."
 
@@ -227,7 +235,7 @@ msgid "Create Item"
 msgstr "Artikel erstellen"
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:93
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:434
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:437
 msgid "Create Purchase Invoice"
 msgstr "Eingangsrechnung erstellen"
 
@@ -246,6 +254,7 @@ msgstr "Lieferanten-Adresse erstellen"
 msgid "Currency"
 msgstr "Währung"
 
+<<<<<<< HEAD
 #. Label of a Data field in DocType 'Customer Number At Supplier'
 #: eu_einvoice/european_e_invoice/doctype/customer_number_at_supplier/customer_number_at_supplier.json
 msgid "Customer Number"
@@ -259,6 +268,12 @@ msgstr "Kundennummer beim Lieferanten"
 #: eu_einvoice/custom_fields.py:121
 msgid "Customer numbers assigned by the supplier"
 msgstr "Kundennummern, die vom Lieferanten zugewiesen wurden"
+=======
+#. Label of a Small Text field in DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Default VAT exemption reason"
+msgstr ""
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 
 #. Label of a Tab Break field in DocType 'E Invoice Import'
 #. Label of a Section Break field in DocType 'E Invoice Item'
@@ -308,12 +323,16 @@ msgstr "Fälliger Betrag"
 msgid "E Invoice Import"
 msgstr "E-Rechnungs-Import"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:650
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:653
 msgid "E Invoice Import {0} does not exist"
 msgstr "E-Rechnungs-Import {0} existiert nicht"
 
 #. Label of a Check field in DocType 'E Invoice Import'
+<<<<<<< HEAD
 #: eu_einvoice/custom_fields.py:181
+=======
+#: eu_einvoice/custom_fields.py:165
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "E Invoice Is Correct"
 msgstr "E-Rechnung ist korrekt"
@@ -344,7 +363,7 @@ msgstr "E-Rechnungs-Einstellungen"
 msgid "E Invoice Trade Tax"
 msgstr "E-Rechnungs-Steuer"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:798
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:816
 msgid "E Invoice is not correct"
 msgstr "E-Rechnung ist nicht korrekt"
 
@@ -384,11 +403,11 @@ msgstr "Eingebettetes Dokument"
 msgid "Error Message"
 msgstr "Fehlermeldung"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:50
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:51
 msgid "Field '{0}' does not exist on Sales Invoice doctype"
 msgstr "Feld '{0}' existiert nicht im DocType 'Sales Invoice'"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:58
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:59
 msgid "Field '{0}' must be of type 'Attach'. Current type: {1}"
 msgstr "Feld '{0}' muss vom Typ 'Anhängen' sein. Aktueller Typ: {1}"
 
@@ -410,8 +429,17 @@ msgstr "Kopfzeile"
 #. Label of a Data field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "IBAN"
-msgstr ""
+msgstr "IBAN"
 
+<<<<<<< HEAD
+=======
+#. Description of the 'Default VAT exemption reason' (Small Text) field in
+#. DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty."
+msgstr "Wenn ausgefüllt, wird der Text als BT-120 (<code>ram:ExemptionReason</code>) in der Steueraufschlüsselung geschrieben, sobald ein Befreiungsgrundcode ausgegeben wird. Bleibt das Feld leer, wird BT-120 im XML nicht gesetzt."
+
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #. Label of a Data field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Invoice ID"
@@ -452,6 +480,7 @@ msgstr "Gesamtbeträge"
 msgid "Net Rate"
 msgstr "Nettopreis"
 
+<<<<<<< HEAD
 #. Label of a shortcut in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "New E Invoice Import"
@@ -463,10 +492,13 @@ msgid "New Sales Invoice"
 msgstr "Neue Ausgangsrechnung"
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:443
+=======
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:446
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 msgid "No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
 msgstr "In der PDF-Datei wurden keine maschinenlesbaren Daten gefunden. Sie können stattdessen eine reguläre Eingangsrechnung manuell erstellen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:446
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:449
 msgid "Not an E-Invoice"
 msgstr "Keine E-Rechnung"
 
@@ -491,11 +523,11 @@ msgstr "Zahlungsmittel"
 msgid "Payment Terms"
 msgstr "Zahlungsbedingungen"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:119
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:120
 msgid "Please create or select a supplier before submitting"
 msgstr "Bitte vor dem Buchen einen Lieferanten auswählen oder erstellen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:125
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:126
 msgid "Please map all invoice lines to an item before submitting"
 msgstr "Bitte vor dem Buchen alle Positionen einem Artikel zuordnen."
 
@@ -503,7 +535,7 @@ msgstr "Bitte vor dem Buchen alle Positionen einem Artikel zuordnen."
 msgid "Please note the validation errors of the e-invoice."
 msgstr "Bitte beachten Sie die Validierungsfehler der E-Rechnung."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:122
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:123
 msgid "Please select a company before submitting"
 msgstr "Bitte vor dem Buchen ein Unternehmen auswählen."
 
@@ -530,9 +562,15 @@ msgstr "Profil"
 #. Linked DocType in E Invoice Import's connections
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Purchase Invoice"
+<<<<<<< HEAD
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:644
+=======
+msgstr "Eingangsrechnung"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:647
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
 msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
 
@@ -561,7 +599,7 @@ msgstr ""
 msgid "Rate Applicable Percent"
 msgstr "Anwendbarer Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:670
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:673
 msgid "Row {0}"
 msgstr "Zeile {0}"
 
@@ -637,11 +675,14 @@ msgstr "Verkäufer-Steuer-ID"
 msgid "Settlement"
 msgstr "Ausgleich"
 
+<<<<<<< HEAD
 #. Label of a Card Break in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Setup"
 msgstr ""
 
+=======
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #. Label of a Link field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Supplier"
@@ -705,11 +746,11 @@ msgstr "Steuer gesamt"
 msgid "Taxes"
 msgstr "Steuern"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:453
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:456
 msgid "The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 msgstr "Das Format der hochgeladenen Datei ({0}) wird für E-Rechnungen nicht unterstützt. Bitte laden Sie eine gültige E-Rechnungsdatei hoch oder erstellen Sie stattdessen eine reguläre Eingangsrechnung manuell."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:160
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:161
 msgid "The uploaded file does not contain valid XML data."
 msgstr "Die hochgeladene Datei enthält keine gültige XML-Daten."
 
@@ -733,7 +774,7 @@ msgstr "Einheit"
 msgid "Unit Code"
 msgstr "Einheits-Code"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:456
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:459
 msgid "Unsupported file format"
 msgstr "Nicht unterstütztes Dateiformat"
 
@@ -742,6 +783,19 @@ msgstr "Nicht unterstütztes Dateiformat"
 msgid "Upload the <code>.xml</code> or <code>.pdf</code> file provided by your supplier."
 msgstr "Laden Sie die von Ihrem Lieferanten bereitgestellte <code>.xml</code>- oder <code>.pdf</code>-Datei hoch."
 
+<<<<<<< HEAD
+=======
+#. Label of a Section Break field in DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "VAT exemption (e-invoice)"
+msgstr "Umsatzsteuerbefreiung (E-Rechnung)"
+
+#. Label of a Small Text field in DocType 'E Invoice Trade Tax'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_trade_tax/e_invoice_trade_tax.json
+msgid "VAT exemption reason"
+msgstr "Grund für Umsatzsteuerbefreiung"
+
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #. Label of a Check field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Validate Sales Invoice on Save"
@@ -758,13 +812,21 @@ msgid "Validation Details"
 msgstr "Validierungsdetails"
 
 #. Label of a Text field in DocType 'E Invoice Import'
+<<<<<<< HEAD
 #: eu_einvoice/custom_fields.py:191
+=======
+#: eu_einvoice/custom_fields.py:175
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Validation Errors"
 msgstr "Validierungsfehler"
 
 #. Label of a Text field in DocType 'E Invoice Import'
+<<<<<<< HEAD
 #: eu_einvoice/custom_fields.py:201
+=======
+#: eu_einvoice/custom_fields.py:185
+>>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Validation Warnings"
 msgstr "Validierungswarnungen"
@@ -780,19 +842,19 @@ msgstr "{0} ansehen"
 msgid "Warning Message"
 msgstr "Warnung"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:764
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:782
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:753
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:771
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:741
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:759
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:776
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:794
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 
