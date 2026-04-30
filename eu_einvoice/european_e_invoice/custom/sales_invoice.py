@@ -17,7 +17,7 @@ from drafthorse.models.tradelines import LineItem
 from frappe import _
 from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.utils import html2text
-from frappe.utils.data import date_diff, flt, getdate, to_markdown
+from frappe.utils.data import cint, date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
 from eu_einvoice.schematron import get_validation_errors
@@ -959,27 +959,30 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 def get_item_rate(item_tax_template: str | None, taxes: list) -> float | None:
 	"""Resolve the VAT % for this line from the Item Tax Template and the invoice tax rows.
 
-	1) Return the highest non-zero ``tax_rate`` from the template whose ``tax_type`` matches
-	   one of the invoice's ``account_head`` values.
+	1) Return the ``tax_rate`` of the first template row (in template order) whose ``tax_type``
+	   matches one of the invoice's ``account_head`` values. On ERPNext v15 and earlier, only
+	   non-zero rates are considered. From v16 (``not_applicable`` on **Item Tax Template Detail**),
+	   zero rates are included and rows with ``not_applicable`` set are excluded.
 	2) If the template did not match: if there is exactly one *On Net Total* row, use its ``rate``.
 	"""
 	if item_tax_template:
 		tax_template = frappe.get_cached_doc("Item Tax Template", item_tax_template)
 		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
+		has_not_applicable = bool(frappe.get_meta("Item Tax Template Detail").get_field("not_applicable"))
 
-		matching_rates = sorted(
-			(
-				item_tax.tax_rate
-				for item_tax in tax_template.taxes
-				if item_tax.tax_type in applicable_accounts and item_tax.tax_rate
-			),
-			reverse=True,
-		)
-		if matching_rates:
-			return matching_rates[0]
+		def _template_row_matches(item_tax) -> bool:
+			if item_tax.tax_type not in applicable_accounts:
+				return False
+			if has_not_applicable:
+				return not cint(getattr(item_tax, "not_applicable", 0))
+			return bool(item_tax.tax_rate)
+
+		for item_tax in tax_template.taxes:
+			if _template_row_matches(item_tax):
+				return item_tax.tax_rate
 
 	tax_rates = [
-		flt(invoice_tax.rate)
+		invoice_tax.rate
 		for invoice_tax in taxes
 		if invoice_tax.charge_type == "On Net Total" and invoice_tax.rate is not None
 	]
