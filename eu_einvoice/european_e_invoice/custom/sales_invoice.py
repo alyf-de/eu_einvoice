@@ -480,7 +480,7 @@ class EInvoiceGenerator:
 			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
 			li.settlement.trade_tax.rate_applicable_percent = 0
 		else:
-			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes, item.income_account)
+			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes)
 			self.item_tax_rates.add(item_tax_rate)
 			li.settlement.trade_tax.rate_applicable_percent = item_tax_rate
 
@@ -508,8 +508,7 @@ class EInvoiceGenerator:
 		sum_net_amount = sum(
 			line_item.net_amount
 			for line_item in self.invoice.items
-			if get_item_rate(line_item.item_tax_template, self.invoice.taxes, line_item.income_account)
-			== tax_row_vat_percent
+			if get_item_rate(line_item.item_tax_template, self.invoice.taxes) == tax_row_vat_percent
 		)
 		return flt(sum_net_amount, self.invoice.precision("net_total"))
 
@@ -560,20 +559,13 @@ class EInvoiceGenerator:
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
 				else:
-					basis = 0
-					if tax.tax_amount and tax_rate:
-						# Prefer basis derived from tax_amount / rate when exact (no rounding loss).
-						# Use fixed rounding to 2 decimal places as e-invoice is based on 2 decimal places.
-						derived = tax.tax_amount / tax_rate * 100
-						if derived == round(derived, 2):
-							basis = round(derived, 2)
-					if not basis:
-						basis = (
-							self._sum_item_net_matching_on_net_total_rate(tax)
-							or (hasattr(tax, "net_amount") and flt(tax.net_amount))
-							or (hasattr(tax, "custom_net_amount") and flt(tax.custom_net_amount))
-							or 0
-						)
+					basis = (
+						self._sum_item_net_matching_on_net_total_rate(tax)
+						or (hasattr(tax, "net_amount") and flt(tax.net_amount))
+						or (hasattr(tax, "custom_net_amount") and flt(tax.custom_net_amount))
+						or (tax.tax_amount and tax_rate and round(tax.tax_amount / tax_rate * 100, 2))
+						or 0
+					)
 					trade_tax.basis_amount = basis
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
@@ -964,25 +956,16 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 		doc.db_set(field_name, file_doc.file_url)
 
 
-def get_item_rate(
-	item_tax_template: str | None, taxes: list, income_account: str | None = None
-) -> float | None:
+def get_item_rate(item_tax_template: str | None, taxes: list) -> float | None:
 	"""Resolve the VAT % for this line from the Item Tax Template and the invoice tax rows.
 
-	1) If ``income_account`` is set, return the rate from the template row whose ``tax_type`` equals
-	   that account.
-	2) Otherwise return the highest non-zero ``tax_rate`` from the template whose ``tax_type`` matches
+	1) Return the highest non-zero ``tax_rate`` from the template whose ``tax_type`` matches
 	   one of the invoice's ``account_head`` values.
-	3) If the template did not match: if there is exactly one *On Net Total* row, use its ``rate``.
+	2) If the template did not match: if there is exactly one *On Net Total* row, use its ``rate``.
 	"""
 	if item_tax_template:
-		tax_template = frappe.get_doc("Item Tax Template", item_tax_template)
+		tax_template = frappe.get_cached_doc("Item Tax Template", item_tax_template)
 		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
-
-		if income_account:
-			for item_tax in tax_template.taxes:
-				if item_tax.tax_type == income_account:
-					return item_tax.tax_rate
 
 		matching_rates = sorted(
 			(
