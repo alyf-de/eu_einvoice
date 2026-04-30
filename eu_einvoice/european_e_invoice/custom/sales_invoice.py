@@ -480,7 +480,7 @@ class EInvoiceGenerator:
 			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
 			li.settlement.trade_tax.rate_applicable_percent = 0
 		else:
-			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes)
+			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes, item.income_account)
 			self.item_tax_rates.add(item_tax_rate)
 			li.settlement.trade_tax.rate_applicable_percent = item_tax_rate
 
@@ -497,6 +497,21 @@ class EInvoiceGenerator:
 
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
+
+	def _sum_item_net_matching_on_net_total_rate(self, tax) -> float:
+		"""Sum ``net_amount`` for items whose resolved VAT % matches this tax row (multi-rate invoices)."""
+		tax_row_vat_percent = flt(
+			tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0.0
+		)
+		if not tax_row_vat_percent:
+			return 0.0
+		sum_net_amount = sum(
+			line_item.net_amount
+			for line_item in self.invoice.items
+			if get_item_rate(line_item.item_tax_template, self.invoice.taxes, line_item.income_account)
+			== tax_row_vat_percent
+		)
+		return flt(sum_net_amount, self.invoice.precision("net_total"))
 
 	def _add_taxes_and_charges(self):
 		tax_added = False
@@ -544,15 +559,22 @@ class EInvoiceGenerator:
 						# We only have one tax rate on the line items, but it was not specified on the tax row
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
-				elif hasattr(tax, "net_amount"):
-					trade_tax.basis_amount = tax.net_amount
-				elif hasattr(tax, "custom_net_amount"):
-					trade_tax.basis_amount = tax.custom_net_amount
-				elif tax.tax_amount and tax_rate:
-					# We don't know the basis amount for this tax, so we try to calculate it
-					trade_tax.basis_amount = round(tax.tax_amount / tax_rate * 100, 2)
 				else:
-					trade_tax.basis_amount = 0
+					basis = 0
+					if tax.tax_amount and tax_rate:
+						# Prefer basis derived from tax_amount / rate when exact (no rounding loss).
+						# Use fixed rounding to 2 decimal places as e-invoice is based on 2 decimal places.
+						derived = tax.tax_amount / tax_rate * 100
+						if derived == round(derived, 2):
+							basis = round(derived, 2)
+					if not basis:
+						basis = (
+							self._sum_item_net_matching_on_net_total_rate(tax)
+							or (hasattr(tax, "net_amount") and flt(tax.net_amount))
+							or (hasattr(tax, "custom_net_amount") and flt(tax.custom_net_amount))
+							or 0
+						)
+					trade_tax.basis_amount = basis
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
@@ -942,19 +964,42 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 		doc.db_set(field_name, file_doc.file_url)
 
 
-def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
-	"""Get the tax rate for an item from the item tax template and the taxes table."""
+def get_item_rate(
+	item_tax_template: str | None, taxes: list, income_account: str | None = None
+) -> float | None:
+	"""Resolve the VAT % for this line from the Item Tax Template and the invoice tax rows.
+
+	1) If ``income_account`` is set, return the rate from the template row whose ``tax_type`` equals
+	   that account.
+	2) Otherwise return the highest non-zero ``tax_rate`` from the template whose ``tax_type`` matches
+	   one of the invoice's ``account_head`` values.
+	3) If the template did not match: if there is exactly one *On Net Total* row, use its ``rate``.
+	"""
 	if item_tax_template:
-		# match the accounts from the taxes table with the rate from the item tax template
 		tax_template = frappe.get_doc("Item Tax Template", item_tax_template)
 		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
 
-		for item_tax in tax_template.taxes:
-			if item_tax.tax_type in applicable_accounts:
-				return item_tax.tax_rate
+		if income_account:
+			for item_tax in tax_template.taxes:
+				if item_tax.tax_type == income_account:
+					return item_tax.tax_rate
 
-	# if only one tax is on net total, return its rate
-	tax_rates = [invoice_tax.rate for invoice_tax in taxes if invoice_tax.charge_type == "On Net Total"]
+		matching_rates = sorted(
+			(
+				item_tax.tax_rate
+				for item_tax in tax_template.taxes
+				if item_tax.tax_type in applicable_accounts and item_tax.tax_rate
+			),
+			reverse=True,
+		)
+		if matching_rates:
+			return matching_rates[0]
+
+	tax_rates = [
+		flt(invoice_tax.rate)
+		for invoice_tax in taxes
+		if invoice_tax.charge_type == "On Net Total" and invoice_tax.rate is not None
+	]
 	return tax_rates[0] if len(tax_rates) == 1 else None
 
 
