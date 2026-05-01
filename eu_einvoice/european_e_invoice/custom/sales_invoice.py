@@ -538,6 +538,14 @@ class EInvoiceGenerator:
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
+				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+				# Skip rows with 0% tax rate and non-zero tax amount: Assumption here is that if a tax_rate
+				# is not 0% and the tax amount is 0, then the tax is not applicable, as no item with
+				# this tax rate exists and hence it would throw validation errors.
+				# Possible 0% tax rates and their codes can be applied as 0% VAT, does not
+				# create a tax_amount.
+				if tax.tax_amount == 0 and tax_rate != 0:
+					continue
 				trade_tax = ApplicableTradeTax()
 				trade_tax.calculated_amount = tax.tax_amount
 				trade_tax.type_code = "VAT"
@@ -548,7 +556,7 @@ class EInvoiceGenerator:
 						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 					]
 				)
-				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+
 				trade_tax.rate_applicable_percent = tax_rate
 
 				if len(self.invoice.taxes) == 1:
