@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-04-28 15:18+0053\n"
-"PO-Revision-Date: 2026-04-28 15:18+0053\n"
+"POT-Creation-Date: 2026-05-08 09:09+0053\n"
+"PO-Revision-Date: 2026-05-08 09:09+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:805
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:809
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr ""
 
@@ -185,11 +185,11 @@ msgstr ""
 msgid "Calculation Percent"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:836
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:840
 msgid "Cannot create E Invoice."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:850
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:854
 msgid "Cannot validate E Invoice schematron."
 msgstr ""
 
@@ -348,11 +348,11 @@ msgstr ""
 msgid "E Invoice Trade Tax"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1181
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1185
 msgid "E Invoice XML file name pattern failed"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:818
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:822
 msgid "E Invoice is not correct"
 msgstr ""
 
@@ -805,19 +805,25 @@ msgstr ""
 msgid "Warning Message"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:784
+#. Label of the section_break_yldr (Section Break) field in DocType 'E Invoice
+#. Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "XML Settings"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:788
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:773
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:777
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:761
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:765
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:796
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:800
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
 

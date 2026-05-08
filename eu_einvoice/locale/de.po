@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-04-28 15:18+0053\n"
+"POT-Creation-Date: 2026-05-08 09:09+0053\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:805
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:809
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
@@ -187,11 +187,11 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:836
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:840
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:850
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:854
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -350,11 +350,11 @@ msgstr "E-Rechnungs-Einstellungen"
 msgid "E Invoice Trade Tax"
 msgstr "E-Rechnungs-Steuer"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1181
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1185
 msgid "E Invoice XML file name pattern failed"
 msgstr "Namensmuster für E-Rechnungs-XML-Datei fehlgeschlagen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:818
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:822
 msgid "E Invoice is not correct"
 msgstr "E-Rechnung ist nicht korrekt"
 
@@ -807,19 +807,25 @@ msgstr "{0} ansehen"
 msgid "Warning Message"
 msgstr "Warnung"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:784
+#. Label of the section_break_yldr (Section Break) field in DocType 'E Invoice
+#. Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "XML Settings"
+msgstr "XML-Einstellungen"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:788
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:773
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:777
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:761
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:765
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:796
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:800
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 
