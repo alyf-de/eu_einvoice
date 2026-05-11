@@ -48,11 +48,9 @@ vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:v
 @frappe.whitelist()
 def download_xrechnung(invoice_id: str):
 	invoice = frappe.get_doc("Sales Invoice", invoice_id)
-	invoice.check_permission("read")
-	settings = frappe.get_cached_doc("E Invoice Settings")
-	base_name = get_xml_attachment_file_base_name(invoice, settings.auto_name_format_for_xml_file)
-	frappe.local.response.filename = f"{base_name}.xml"
+	base_name = get_xml_attachment_file_base_name(invoice)
 	frappe.local.response.filecontent = get_einvoice(invoice)
+	frappe.local.response.filename = f"{base_name}.xml"
 	frappe.local.response.type = "download"
 
 
@@ -925,8 +923,7 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 			)
 			return
 
-	settings = frappe.get_cached_doc("E Invoice Settings")
-	base_name = get_xml_attachment_file_base_name(doc, settings.auto_name_format_for_xml_file)
+	base_name = get_xml_attachment_file_base_name(doc)
 	file_name = f"{base_name}.xml"
 
 	# Create new File document
@@ -1152,44 +1149,33 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 	return attach_xml(pdf_data, xml_bytes, level)
 
 
-# Naming series treats a dot-separated part that *starts with* ``#`` as the numeric
-# counter (see :func:`frappe.model.naming.parse_naming_series`). XML filenames must
-# not touch **Series**, so each segment is passed through ``str.lstrip("#")`` before
-# parsing-counter-shaped parts become empty and are skipped, without stripping ``#``
-# elsewhere in a segment before :func:`~frappe.core.doctype.file.utils.get_safe_file_name`.
+def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str:
+	"""Filename stem (no `.xml`) for the downloadable XML.
 
-
-def get_xml_attachment_file_base_name(doc, pattern: str | None) -> str:
-	"""Return the file base name without ``.xml``.
-
-	The result is passed through :func:`~frappe.core.doctype.file.utils.get_safe_file_name`
-	(same rules as **File** attachments: ``/``, ``\\``, ``%``, ``?``, ``#`` → ``_``).
-
-	* **Empty** pattern → ``doc.name`` (same as before configurable naming).
-	* Otherwise → split the pattern on ``.`` like a naming series, remove a **leading**
-	  run of ``#`` from each segment (same edge as counter parts in
-	  :func:`frappe.model.naming.parse_naming_series`), then parse the segments with
-	  ``parse_naming_series`` (``MM``, ``YYYY``, ``{fieldname}``, literals, etc.).
-
-	On failure, logs an error and falls back to ``doc.name``.
+	Uses *pattern* when given, otherwise reads *Auto name format for XML file*
+	from **E Invoice Settings**. Falls back to `doc.name` when the pattern is
+	empty or fails to resolve. Result is sanitized via `get_safe_file_name`
+	(same rules as **File** attachments).
 	"""
-	pattern = cstr(pattern or "").strip()
-	if not pattern:
-		return get_safe_file_name(cstr(doc.name))
+	if pattern is None:
+		pattern = frappe.get_single_value("E Invoice Settings", "auto_name_format_for_xml_file")
+	pattern = cstr(pattern).strip()
+	if pattern:
+		try:
+			base = parse_naming_series(pattern, doc=doc, number_generator=_no_series_counter).strip()
+		except Exception:
+			frappe.log_error(
+				title=_("E Invoice XML file name pattern failed"),
+				message=frappe.get_traceback(),
+				reference_doctype=doc.doctype,
+				reference_name=doc.name,
+			)
+			base = ""
+		if base:
+			return get_safe_file_name(base)
+	return get_safe_file_name(doc.name)
 
-	parts = [p.lstrip("#") for p in pattern.split(".")]
-	try:
-		base = parse_naming_series(parts, doc=doc)
-	except Exception:
-		frappe.log_error(
-			title=_("E Invoice XML file name pattern failed"),
-			message=frappe.get_traceback(),
-			reference_doctype=getattr(doc, "doctype", None),
-			reference_name=getattr(doc, "name", None),
-		)
-		return get_safe_file_name(cstr(doc.name))
 
-	base = cstr(base).strip()
-	if not base:
-		return get_safe_file_name(cstr(doc.name))
-	return get_safe_file_name(base)
+def _no_series_counter(_key: str, _digits: int) -> str:
+	"""Disable the series counter so XML naming has no DB side effects."""
+	return ""
