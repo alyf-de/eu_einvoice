@@ -7,13 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2026-02-06 18:35+0053\n"
-"PO-Revision-Date: 2026-02-06 18:35+0053\n"
-=======
-"POT-Creation-Date: 2026-04-21 15:04+0000\n"
-"PO-Revision-Date: 2026-04-21 15:04+0000\n"
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
+"POT-Creation-Date: 2026-05-12 20:15+0000\n"
+"PO-Revision-Date: 2026-05-12 20:15+0000\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"

@@ -7,11 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2026-02-06 18:35+0053\n"
-=======
-"POT-Creation-Date: 2026-04-21 15:04+0000\n"
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
+"POT-Creation-Date: 2026-05-12 20:15+0000\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -29,7 +25,7 @@ msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht un
 #. Label of a Data field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Account Name"
-msgstr ""
+msgstr "Kontoname"
 
 #. Label of a Select field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
@@ -82,7 +78,7 @@ msgstr "XML-Datei automatisch anhängen"
 #. Label of a Data field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "BIC"
-msgstr ""
+msgstr "BIC"
 
 #. Label of a Currency field in DocType 'E Invoice Trade Tax'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_trade_tax/e_invoice_trade_tax.json
@@ -234,7 +230,7 @@ msgstr "Währung"
 #. Label of a Small Text field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Default VAT exemption reason"
-msgstr ""
+msgstr "Standard Grund für die Umsatzsteuerbefreiung"
 
 #. Label of a Tab Break field in DocType 'E Invoice Import'
 #. Label of a Section Break field in DocType 'E Invoice Item'
