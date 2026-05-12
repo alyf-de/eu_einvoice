@@ -1,3 +1,5 @@
+I wonder, can greptile read public repos as context?
+
 ## European e-Invoice
 
 Create and import e-invoices with ERPNext.
