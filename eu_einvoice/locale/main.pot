@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-02-06 18:13+0053\n"
-"PO-Revision-Date: 2026-02-06 18:13+0053\n"
+"POT-Creation-Date: 2026-05-12 20:40+0053\n"
+"PO-Revision-Date: 2026-05-12 20:40+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:785
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:790
 msgid "A document level discount is currently not supported in the e-invoice."
-msgstr ""
-
-#. Label of a Data field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Account Name"
 msgstr ""
 
 #. Label of a Select field in DocType 'E Invoice Settings'
@@ -52,11 +47,6 @@ msgstr ""
 #. Label of a Currency field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Allowance Total"
-msgstr ""
-
-#. Label of a Link field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Amended From"
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:105
@@ -168,11 +158,11 @@ msgstr ""
 msgid "Calculation Percent"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:816
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:821
 msgid "Cannot create E Invoice."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:830
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:835
 msgid "Cannot validate E Invoice schematron."
 msgstr ""
 
@@ -181,28 +171,9 @@ msgstr ""
 msgid "Charge Total"
 msgstr ""
 
-#. Label of a Link in the E-Invoicing Workspace
-#: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
-msgid "Code List"
-msgstr ""
-
 #. Description of a Card Break in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Code Lists are typically public lists of common codes used in data interchange between third parties"
-msgstr ""
-
-#. Label of a Link in the E-Invoicing Workspace
-#: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
-msgid "Common Code"
-msgstr ""
-
-#. Label of a Link field in DocType 'Customer Number At Supplier'
-#. Label of a Link field in DocType 'E Invoice Import'
-#. Label of a Link field in DocType 'Supplier Number At Customer'
-#: eu_einvoice/european_e_invoice/doctype/customer_number_at_supplier/customer_number_at_supplier.json
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-#: eu_einvoice/european_e_invoice/doctype/supplier_number_at_customer/supplier_number_at_customer.json
-msgid "Company"
 msgstr ""
 
 #. Description of the 'Sales Invoice Number Field' (Autocomplete) field in
@@ -213,10 +184,6 @@ msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:211
 msgid "Could not validate E Invoice schematron. See Error Log for details."
-msgstr ""
-
-#: eu_einvoice/european_e_invoice/custom/purchase_order.js:12
-msgid "Create"
 msgstr ""
 
 #. Label of a Button field in DocType 'E Invoice Item'
@@ -239,11 +206,6 @@ msgstr ""
 msgid "Create Supplier Address"
 msgstr ""
 
-#. Label of a Link field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Currency"
-msgstr ""
-
 #. Label of a Data field in DocType 'Customer Number At Supplier'
 #: eu_einvoice/european_e_invoice/doctype/customer_number_at_supplier/customer_number_at_supplier.json
 msgid "Customer Number"
@@ -258,28 +220,6 @@ msgstr ""
 msgid "Customer numbers assigned by the supplier"
 msgstr ""
 
-#. Label of a Tab Break field in DocType 'E Invoice Import'
-#. Label of a Section Break field in DocType 'E Invoice Item'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
-msgid "Delivery"
-msgstr ""
-
-#. Label of a Section Break field in DocType 'E Invoice Payment Term'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_payment_term/e_invoice_payment_term.json
-msgid "Discount"
-msgstr ""
-
-#. Label of a Tab Break field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Document"
-msgstr ""
-
-#. Label of a shortcut in the E-Invoicing Workspace
-#: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
-msgid "Documentation"
-msgstr ""
-
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.js:16
 msgid "Download eInvoice"
 msgstr ""
@@ -287,11 +227,6 @@ msgstr ""
 #. Label of a Date field in DocType 'E Invoice Payment Term'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_payment_term/e_invoice_payment_term.json
 msgid "Due"
-msgstr ""
-
-#. Label of a Date field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Due Date"
 msgstr ""
 
 #. Label of a Currency field in DocType 'E Invoice Import'
@@ -342,7 +277,7 @@ msgstr ""
 msgid "E Invoice Trade Tax"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:798
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:803
 msgid "E Invoice is not correct"
 msgstr ""
 
@@ -375,14 +310,6 @@ msgstr ""
 msgid "Embedded Document"
 msgstr ""
 
-#. Option for the 'Action on Validation Error during Save' (Select) field in
-#. DocType 'E Invoice Settings'
-#. Option for the 'Action on Validation Error during Submit' (Select) field in
-#. DocType 'E Invoice Settings'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
-msgid "Error Message"
-msgstr ""
-
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:50
 msgid "Field '{0}' does not exist on Sales Invoice doctype"
 msgstr ""
@@ -394,42 +321,6 @@ msgstr ""
 #. Label of a Section Break field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "File Section"
-msgstr ""
-
-#. Label of a Currency field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Grand Total"
-msgstr ""
-
-#. Label of a Section Break field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Header"
-msgstr ""
-
-#. Label of a Data field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "IBAN"
-msgstr ""
-
-#. Label of a Data field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Invoice ID"
-msgstr ""
-
-#. Label of a Date field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Issue Date"
-msgstr ""
-
-#. Label of a Link field in DocType 'E Invoice Item'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
-msgid "Item"
-msgstr ""
-
-#. Label of a Table field in DocType 'E Invoice Import'
-#. Label of a Tab Break field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Items"
 msgstr ""
 
 #. Label of a Currency field in DocType 'E Invoice Import'
@@ -446,19 +337,9 @@ msgstr ""
 msgid "Monetary Summation"
 msgstr ""
 
-#. Label of a Currency field in DocType 'E Invoice Item'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
-msgid "Net Rate"
-msgstr ""
-
 #. Label of a shortcut in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "New E Invoice Import"
-msgstr ""
-
-#. Label of a shortcut in the E-Invoicing Workspace
-#: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
-msgid "New Sales Invoice"
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:443
@@ -485,11 +366,6 @@ msgstr ""
 msgid "Payment Means"
 msgstr ""
 
-#. Label of a Table field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Payment Terms"
-msgstr ""
-
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:119
 msgid "Please create or select a supplier before submitting"
 msgstr ""
@@ -506,11 +382,6 @@ msgstr ""
 msgid "Please select a company before submitting"
 msgstr ""
 
-#. Label of a Section Break field in DocType 'E Invoice Item'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
-msgid "Product"
-msgstr ""
-
 #. Label of a Small Text field in DocType 'E Invoice Item'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
 msgid "Product Description"
@@ -521,28 +392,8 @@ msgstr ""
 msgid "Product Name"
 msgstr ""
 
-#. Label of a Read Only field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Profile"
-msgstr ""
-
-#. Linked DocType in E Invoice Import's connections
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Purchase Invoice"
-msgstr ""
-
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:644
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
-msgstr ""
-
-#. Name of a role
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Purchase Manager"
-msgstr ""
-
-#. Label of a Link field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Purchase Order"
 msgstr ""
 
 #. Label of a Link field in DocType 'E Invoice Item'
@@ -550,23 +401,9 @@ msgstr ""
 msgid "Purchase Order Row"
 msgstr ""
 
-#. Name of a role
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Purchase User"
-msgstr ""
-
 #. Label of a Percent field in DocType 'E Invoice Trade Tax'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_trade_tax/e_invoice_trade_tax.json
 msgid "Rate Applicable Percent"
-msgstr ""
-
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:670
-msgid "Row {0}"
-msgstr ""
-
-#. Label of a Section Break field in DocType 'E Invoice Settings'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
-msgid "Sales Invoice"
 msgstr ""
 
 #. Label of a Autocomplete field in DocType 'E Invoice Settings'
@@ -636,21 +473,6 @@ msgstr ""
 msgid "Settlement"
 msgstr ""
 
-#. Label of a Card Break in the E-Invoicing Workspace
-#: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
-msgid "Setup"
-msgstr ""
-
-#. Label of a Link field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Supplier"
-msgstr ""
-
-#. Label of a Link field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Supplier Address"
-msgstr ""
-
 #: eu_einvoice/custom_fields.py:28
 msgid "Supplier Invoice File"
 msgstr ""
@@ -673,35 +495,9 @@ msgstr ""
 msgid "Supplier numbers assigned by the customer"
 msgstr ""
 
-#. Name of a role
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
-msgid "System Manager"
-msgstr ""
-
-#. Label of a Link field in DocType 'E Invoice Trade Tax'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_trade_tax/e_invoice_trade_tax.json
-msgid "Tax Account"
-msgstr ""
-
 #. Label of a Currency field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Tax Basis Total"
-msgstr ""
-
-#. Label of a Percent field in DocType 'E Invoice Item'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
-msgid "Tax Rate"
-msgstr ""
-
-#. Label of a Currency field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Tax Total"
-msgstr ""
-
-#. Label of a Table field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Taxes"
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:453
@@ -712,19 +508,9 @@ msgstr ""
 msgid "The uploaded file does not contain valid XML data."
 msgstr ""
 
-#. Label of a Currency field in DocType 'E Invoice Item'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
-msgid "Total Amount"
-msgstr ""
-
 #. Label of a Currency field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Total Prepaid"
-msgstr ""
-
-#. Label of a Link field in DocType 'E Invoice Item'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
-msgid "UOM"
 msgstr ""
 
 #. Label of a Data field in DocType 'E Invoice Item'
@@ -768,10 +554,6 @@ msgstr ""
 msgid "Validation Warnings"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:75
-msgid "View {0}"
-msgstr ""
-
 #. Option for the 'Action on Validation Error during Save' (Select) field in
 #. DocType 'E Invoice Settings'
 #. Option for the 'Action on Validation Error during Submit' (Select) field in
@@ -780,19 +562,19 @@ msgstr ""
 msgid "Warning Message"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:764
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:769
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:753
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:758
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:741
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:746
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:776
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:781
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
 
