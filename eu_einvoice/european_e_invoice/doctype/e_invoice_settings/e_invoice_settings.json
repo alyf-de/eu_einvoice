@@ -15,6 +15,8 @@
   "section_break_bt120",
   "vat_exemption_reason_text",
   "section_break_yldr",
+  "auto_name_format_for_xml_file",
+  "column_break_vlzj",
   "auto_attach_xml",
   "attach_field_for_xml_file"
  ],
@@ -55,8 +57,10 @@
    "options": "\nWarning Message\nError Message"
   },
   {
+   "bold": 1,
    "fieldname": "section_break_yldr",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "XML Settings"
   },
   {
    "default": "0",
@@ -78,6 +82,16 @@
    "label": "Sales Invoice Number Field"
   },
   {
+   "fieldname": "column_break_vlzj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Pattern for the <b>file name</b> of the XML.  <b>.xml</b> is appended automatically. Leave <b>empty</b> to use the document <b>name</b> (Sales Invoice ID). In case of an error, the document <b>name</b> is used as fallback.\n<br><br>Segments use a <b>dot</b> (<b>.</b>) between literal text and dynamic parts. Example:<br><b>EXAMPLE-.MM.-.{po_no}.-.YYYY</b><ul><li><b>Dates</b>: <b>DD</b>, <b>MM</b>, <b>YYYY</b>, <b>YY</b>, <b>WW</b>, <b>timestamp</b></li><li><b>Fields</b>: <b>Sales Invoice</b> field names in braces, e.g. <b>{po_no}</b></li><li>Other segments are treated as literal text.</li></ul>",
+   "fieldname": "auto_name_format_for_xml_file",
+   "fieldtype": "Data",
+   "label": "Auto Name Format for XML File"
+  },
+  {
    "fieldname": "section_break_bt120",
    "fieldtype": "Section Break",
    "label": "VAT exemption (e-invoice)"
@@ -93,7 +107,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-04-21 12:00:00.000000",
+ "modified": "2026-05-08 11:55:24.180676",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
