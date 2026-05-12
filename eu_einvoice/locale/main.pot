@@ -7,13 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2026-02-06 18:13+0053\n"
-"PO-Revision-Date: 2026-02-06 18:13+0053\n"
-=======
-"POT-Creation-Date: 2026-04-21 15:04+0000\n"
-"PO-Revision-Date: 2026-04-21 15:04+0000\n"
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
+"POT-Creation-Date: 2026-05-12 20:03+0000\n"
+"PO-Revision-Date: 2026-05-12 20:03+0000\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -186,7 +181,6 @@ msgstr ""
 msgid "Charge Total"
 msgstr ""
 
-<<<<<<< HEAD
 #. Label of a Link in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Code List"
@@ -206,9 +200,6 @@ msgstr ""
 #. Label of a Link field in DocType 'E Invoice Import'
 #. Label of a Link field in DocType 'Supplier Number At Customer'
 #: eu_einvoice/european_e_invoice/doctype/customer_number_at_supplier/customer_number_at_supplier.json
-=======
-#. Label of a Link field in DocType 'E Invoice Import'
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 #: eu_einvoice/european_e_invoice/doctype/supplier_number_at_customer/supplier_number_at_customer.json
 msgid "Company"
@@ -253,7 +244,6 @@ msgstr ""
 msgid "Currency"
 msgstr ""
 
-<<<<<<< HEAD
 #. Label of a Data field in DocType 'Customer Number At Supplier'
 #: eu_einvoice/european_e_invoice/doctype/customer_number_at_supplier/customer_number_at_supplier.json
 msgid "Customer Number"
@@ -266,11 +256,11 @@ msgstr ""
 
 #: eu_einvoice/custom_fields.py:121
 msgid "Customer numbers assigned by the supplier"
-=======
+msgstr ""
+
 #. Label of a Small Text field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Default VAT exemption reason"
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 msgstr ""
 
 #. Label of a Tab Break field in DocType 'E Invoice Import'
@@ -326,11 +316,7 @@ msgid "E Invoice Import {0} does not exist"
 msgstr ""
 
 #. Label of a Check field in DocType 'E Invoice Import'
-<<<<<<< HEAD
 #: eu_einvoice/custom_fields.py:181
-=======
-#: eu_einvoice/custom_fields.py:165
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "E Invoice Is Correct"
 msgstr ""
@@ -430,15 +416,12 @@ msgstr ""
 msgid "IBAN"
 msgstr ""
 
-<<<<<<< HEAD
-=======
 #. Description of the 'Default VAT exemption reason' (Small Text) field in
 #. DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty."
 msgstr ""
 
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #. Label of a Data field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Invoice ID"
@@ -479,7 +462,6 @@ msgstr ""
 msgid "Net Rate"
 msgstr ""
 
-<<<<<<< HEAD
 #. Label of a shortcut in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "New E Invoice Import"
@@ -490,10 +472,7 @@ msgstr ""
 msgid "New Sales Invoice"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:443
-=======
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:446
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 msgid "No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
 msgstr ""
 
@@ -563,11 +542,7 @@ msgstr ""
 msgid "Purchase Invoice"
 msgstr ""
 
-<<<<<<< HEAD
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:644
-=======
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:647
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
 msgstr ""
 
@@ -672,14 +647,11 @@ msgstr ""
 msgid "Settlement"
 msgstr ""
 
-<<<<<<< HEAD
 #. Label of a Card Break in the E-Invoicing Workspace
 #: eu_einvoice/european_e_invoice/workspace/e_invoicing/e_invoicing.json
 msgid "Setup"
 msgstr ""
 
-=======
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #. Label of a Link field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Supplier"
@@ -780,8 +752,6 @@ msgstr ""
 msgid "Upload the <code>.xml</code> or <code>.pdf</code> file provided by your supplier."
 msgstr ""
 
-<<<<<<< HEAD
-=======
 #. Label of a Section Break field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "VAT exemption (e-invoice)"
@@ -792,7 +762,6 @@ msgstr ""
 msgid "VAT exemption reason"
 msgstr ""
 
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #. Label of a Check field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Validate Sales Invoice on Save"
@@ -809,21 +778,13 @@ msgid "Validation Details"
 msgstr ""
 
 #. Label of a Text field in DocType 'E Invoice Import'
-<<<<<<< HEAD
 #: eu_einvoice/custom_fields.py:191
-=======
-#: eu_einvoice/custom_fields.py:175
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Validation Errors"
 msgstr ""
 
 #. Label of a Text field in DocType 'E Invoice Import'
-<<<<<<< HEAD
 #: eu_einvoice/custom_fields.py:201
-=======
-#: eu_einvoice/custom_fields.py:185
->>>>>>> cec83b5 (feat: add BT-120 VAT exemption reason (#247))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Validation Warnings"
 msgstr ""
