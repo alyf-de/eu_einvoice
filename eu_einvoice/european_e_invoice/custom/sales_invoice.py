@@ -498,18 +498,21 @@ class EInvoiceGenerator:
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
 
-	def _sum_item_net_matching_on_net_total_rate(self, tax) -> float:
+	def _sum_item_net_matching_on_net_total_rate(self, tax) -> float | None:
 		"""Sum ``net_amount`` for items whose resolved VAT % matches this tax row (multi-rate invoices)."""
 		tax_row_vat_percent = flt(
 			tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0.0
 		)
 		if not tax_row_vat_percent:
 			return 0.0
-		sum_net_amount = sum(
-			line_item.net_amount
-			for line_item in self.invoice.items
-			if get_item_rate(line_item.item_tax_template, self.invoice.taxes) == tax_row_vat_percent
-		)
+		sum_net_amount = 0
+		for line_item in self.invoice.items:
+			item_rate = get_item_rate(line_item.item_tax_template, self.invoice.taxes)
+			if item_rate is None:
+				return None
+			if flt(item_rate) == tax_row_vat_percent:
+				sum_net_amount += line_item.net_amount
+
 		return flt(sum_net_amount, self.invoice.precision("net_total"))
 
 	def _add_taxes_and_charges(self):
