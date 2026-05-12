@@ -15,8 +15,10 @@ from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-from frappe.core.doctype.file.utils import find_file_by_url
+from frappe.core.doctype.file.utils import find_file_by_url, get_safe_file_name
 from frappe.core.utils import html2text
+from frappe.model.naming import parse_naming_series
+from frappe.utils import cstr
 from frappe.utils.data import cint, date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
@@ -45,8 +47,10 @@ vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:v
 
 @frappe.whitelist()
 def download_xrechnung(invoice_id: str):
-	frappe.local.response.filename = f"{invoice_id}.xml"
-	frappe.local.response.filecontent = get_einvoice(invoice_id)
+	invoice = frappe.get_doc("Sales Invoice", invoice_id)
+	base_name = get_xml_attachment_file_base_name(invoice)
+	frappe.local.response.filecontent = get_einvoice(invoice)
+	frappe.local.response.filename = f"{base_name}.xml"
 	frappe.local.response.type = "download"
 
 
@@ -944,7 +948,8 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 			)
 			return
 
-	file_name = f"{doc.name}.xml".replace("/", "-")
+	base_name = get_xml_attachment_file_base_name(doc)
+	file_name = f"{base_name}.xml"
 
 	# Create new File document
 	file_doc = frappe.new_doc("File")
@@ -1184,3 +1189,35 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 
 	xml_bytes = get_einvoice(invoice_id)
 	return attach_xml(pdf_data, xml_bytes, level)
+
+
+def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str:
+	"""Filename stem (no `.xml`) for the downloadable XML.
+
+	Uses *pattern* when given, otherwise reads *Auto name format for XML file*
+	from **E Invoice Settings**. Falls back to `doc.name` when the pattern is
+	empty or fails to resolve. Result is sanitized via `get_safe_file_name`
+	(same rules as **File** attachments).
+	"""
+	if pattern is None:
+		pattern = frappe.get_single_value("E Invoice Settings", "auto_name_format_for_xml_file")
+	pattern = cstr(pattern).strip()
+	if pattern:
+		try:
+			base = parse_naming_series(pattern, doc=doc, number_generator=_no_series_counter).strip()
+		except Exception:
+			frappe.log_error(
+				title=_("E Invoice XML file name pattern failed"),
+				message=frappe.get_traceback(),
+				reference_doctype=doc.doctype,
+				reference_name=doc.name,
+			)
+			base = ""
+		if base:
+			return get_safe_file_name(base)
+	return get_safe_file_name(doc.name)
+
+
+def _no_series_counter(_key: str, _digits: int) -> str:
+	"""Disable the series counter so XML naming has no DB side effects."""
+	return ""
