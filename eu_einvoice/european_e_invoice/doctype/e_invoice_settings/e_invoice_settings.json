@@ -13,6 +13,8 @@
   "error_action_on_submit",
   "sales_invoice_number_field",
   "section_break_yldr",
+  "auto_name_format_for_xml_file",
+  "column_break_vlzj",
   "auto_attach_xml",
   "attach_field_for_xml_file"
  ],
@@ -74,13 +76,23 @@
    "fieldname": "sales_invoice_number_field",
    "fieldtype": "Autocomplete",
    "label": "Sales Invoice Number Field"
+  },
+  {
+   "fieldname": "column_break_vlzj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Pattern for the <b>file name</b> of the XML.  <b>.xml</b> is appended automatically. Leave <b>empty</b> to use the document <b>name</b> (Sales Invoice ID). In case of an error, the document <b>name</b> is used as fallback.\n<br><br>Segments use a <b>dot</b> (<b>.</b>) between literal text and dynamic parts. Example:<br><b>EXAMPLE-.MM.-.{po_no}.-.YYYY</b><ul><li><b>Dates</b>: <b>DD</b>, <b>MM</b>, <b>YYYY</b>, <b>YY</b>, <b>WW</b>, <b>timestamp</b></li><li><b>Fields</b>: <b>Sales Invoice</b> field names in braces, e.g. <b>{po_no}</b></li><li>Other segments are treated as literal text.</li></ul>",
+   "fieldname": "auto_name_format_for_xml_file",
+   "fieldtype": "Data",
+   "label": "Auto Name Format for XML File"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-06 17:52:09.990716",
+ "modified": "2026-05-15 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
