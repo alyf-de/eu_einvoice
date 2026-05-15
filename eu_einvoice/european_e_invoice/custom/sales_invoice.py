@@ -15,7 +15,7 @@ from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-from frappe.core.doctype.file.utils import find_file_by_url, get_safe_file_name
+from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.utils import html2text
 from frappe.model.naming import parse_naming_series
 from frappe.utils import cstr
@@ -1154,7 +1154,7 @@ def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str
 
 	Uses *pattern* when given, otherwise reads *Auto name format for XML file*
 	from **E Invoice Settings**. Falls back to `doc.name` when the pattern is
-	empty or fails to resolve. Result is sanitized via `get_safe_file_name`
+	empty or fails to resolve. Result is sanitized via `_get_safe_file_name`
 	(same rules as **File** attachments).
 	"""
 	if pattern is None:
@@ -1172,8 +1172,13 @@ def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str
 			)
 			base = ""
 		if base:
-			return get_safe_file_name(base)
-	return get_safe_file_name(doc.name)
+			return _get_safe_file_name(base)
+	return _get_safe_file_name(doc.name)
+
+
+def _get_safe_file_name(file_name: str) -> str:
+	"""Local-only; mirrors ``get_safe_file_name`` in Frappe v17+ file utils."""
+	return re.sub(r"[/\\%?#]", "_", file_name)
 
 
 def _no_series_counter(_key: str, _digits: int) -> str:
