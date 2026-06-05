@@ -224,7 +224,7 @@ class EInvoiceImport(Document):
 		if any(validation_warnings):
 			self.validation_warnings += "\n".join(validation_warnings)
 
-	def parse_seller(self, seller: "TradeParty"):
+	def parse_seller(self, seller: TradeParty):
 		self.seller_name = str(seller.name)
 		self.seller_tax_id = (
 			seller.tax_registrations.children[0].id._text if seller.tax_registrations.children else None
@@ -233,13 +233,13 @@ class EInvoiceImport(Document):
 		self.seller_electronic_address_scheme = str(seller.electronic_address.uri_ID._scheme_id)
 		self.parse_address(seller.address, "seller")
 
-	def parse_buyer(self, buyer: "TradeParty"):
+	def parse_buyer(self, buyer: TradeParty):
 		self.buyer_name = str(buyer.name)
 		self.buyer_electronic_address = str(buyer.electronic_address.uri_ID._text)
 		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
 		self.parse_address(buyer.address, "buyer")
 
-	def parse_address(self, address: "PostalTradeAddress", prefix: str) -> _dict:
+	def parse_address(self, address: PostalTradeAddress, prefix: str) -> _dict:
 		country = frappe.db.get_value("Country", {"code": str(address.country_id).lower()}, "name")
 
 		self.set(f"{prefix}_city", str(address.city_name))
@@ -248,7 +248,7 @@ class EInvoiceImport(Document):
 		self.set(f"{prefix}_postcode", str(address.postcode))
 		self.set(f"{prefix}_country", str(country))
 
-	def parse_line_item(self, li: "LineItem"):
+	def parse_line_item(self, li: LineItem):
 		item = self.append("items")
 
 		net_rate = float(li.agreement.net.amount._value)
@@ -275,7 +275,7 @@ class EInvoiceImport(Document):
 		item.tax_rate = flt_or_none(li.settlement.trade_tax.rate_applicable_percent._value)
 		item.total_amount = flt_or_none(li.settlement.monetary_summation.total_amount._value)
 
-	def parse_tax(self, tax: "ApplicableTradeTax"):
+	def parse_tax(self, tax: ApplicableTradeTax):
 		t = self.append("taxes")
 		t.basis_amount = flt_or_none(tax.basis_amount._value)
 		t.rate_applicable_percent = flt_or_none(tax.rate_applicable_percent._value)
@@ -283,7 +283,7 @@ class EInvoiceImport(Document):
 		reason_text = tax.exemption_reason._text
 		t.vat_exemption_reason_text = str(reason_text).strip() if reason_text else None
 
-	def parse_payment_term(self, term: "PaymentTerms"):
+	def parse_payment_term(self, term: PaymentTerms):
 		if not term.partial_amount.children:
 			self.due_date = term.due._value
 			return
@@ -312,7 +312,7 @@ class EInvoiceImport(Document):
 		if term.discount_terms.actual_amount._value:
 			t.discount_actual_amount = float(term.discount_terms.actual_amount._value)
 
-	def parse_monetary_summation(self, summation: "MonetarySummation"):
+	def parse_monetary_summation(self, summation: MonetarySummation):
 		self.line_total = flt_or_none(summation.line_total._value)
 		self.allowance_total = flt_or_none(summation.allowance_total._value)
 		self.charge_total = flt_or_none(summation.charge_total._value)
@@ -325,14 +325,14 @@ class EInvoiceImport(Document):
 		self.total_prepaid = flt_or_none(summation.prepaid_total._value)
 		self.due_payable = flt_or_none(summation.due_amount._value)
 
-	def parse_bank_details(self, payment_means: "PaymentMeans"):
+	def parse_bank_details(self, payment_means: PaymentMeans):
 		self.payee_iban = payment_means.payee_account.iban._text or None
 
 		if EInvoiceProfile(self.profile) >= EInvoiceProfile.EN16931:
 			self.payee_account_name = payment_means.payee_account.account_name._text or None
 			self.payee_bic = payment_means.payee_institution.bic._text or None
 
-	def parse_billing_period(self, period: "BillingSpecifiedPeriod"):
+	def parse_billing_period(self, period: BillingSpecifiedPeriod):
 		self.billing_period_start = period.start._value
 		self.billing_period_end = period.end._value
 
@@ -469,8 +469,8 @@ def relative_url_to_path(url: str) -> Path:
 
 
 @frappe.whitelist()
-def create_purchase_invoice(source_name, target_doc=None):
-	def post_process(source, target: "PurchaseInvoice"):
+def create_purchase_invoice(source_name: str, target_doc: Document | None = None):
+	def post_process(source, target: PurchaseInvoice):
 		target.set_missing_values()
 
 	def process_item_row(source, target, source_parent) -> None:
