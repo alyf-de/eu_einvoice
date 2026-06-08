@@ -395,7 +395,7 @@ msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
 #. Label of the po_detail (Link) field in DocType 'E Invoice Item'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
 msgid "Purchase Order Row"
-msgstr ""
+msgstr "Bestellposition"
 
 #. Label of the rate_applicable_percent (Percent) field in DocType 'E Invoice
 #. Trade Tax'
