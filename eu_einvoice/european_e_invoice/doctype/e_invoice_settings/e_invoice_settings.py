@@ -24,6 +24,7 @@ class EInvoiceSettings(Document):
 		sales_invoice_number_field: DF.Autocomplete | None
 		validate_sales_invoice_on_save: DF.Check
 		validate_sales_invoice_on_submit: DF.Check
+		vat_exemption_reason_text: DF.SmallText | None
 	# end: auto-generated types
 
 	def before_validate(self):

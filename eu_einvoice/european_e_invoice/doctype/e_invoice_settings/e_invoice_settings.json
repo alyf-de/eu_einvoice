@@ -12,6 +12,8 @@
   "error_action_on_save",
   "error_action_on_submit",
   "sales_invoice_number_field",
+  "section_break_bt120",
+  "vat_exemption_reason_text",
   "section_break_yldr",
   "auto_name_format_for_xml_file",
   "column_break_vlzj",
@@ -55,8 +57,10 @@
    "options": "\nWarning Message\nError Message"
   },
   {
+   "bold": 1,
    "fieldname": "section_break_yldr",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "XML Settings"
   },
   {
    "default": "0",
@@ -86,13 +90,24 @@
    "fieldname": "auto_name_format_for_xml_file",
    "fieldtype": "Data",
    "label": "Auto Name Format for XML File"
+  },
+  {
+   "fieldname": "section_break_bt120",
+   "fieldtype": "Section Break",
+   "label": "VAT exemption (e-invoice)"
+  },
+  {
+   "description": "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty.",
+   "fieldname": "vat_exemption_reason_text",
+   "fieldtype": "Small Text",
+   "label": "Default VAT exemption reason"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-05-15 12:00:00.000000",
+ "modified": "2026-05-08 11:55:24.180676",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
