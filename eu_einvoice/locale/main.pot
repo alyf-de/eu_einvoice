@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-06-08 13:47+0053\n"
-"PO-Revision-Date: 2026-06-08 13:47+0053\n"
+"POT-Creation-Date: 2026-06-08 16:32+0053\n"
+"PO-Revision-Date: 2026-06-08 16:32+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:803
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:807
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr ""
 
@@ -61,6 +61,12 @@ msgstr ""
 #. Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Attach Field for XML File"
+msgstr ""
+
+#. Label of the auto_name_format_for_xml_file (Data) field in DocType 'E
+#. Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Auto Name Format for XML File"
 msgstr ""
 
 #. Label of the auto_attach_xml (Check) field in DocType 'E Invoice Settings'
@@ -163,11 +169,11 @@ msgstr ""
 msgid "Calculation Percent"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:834
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:838
 msgid "Cannot create E Invoice."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:848
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:852
 msgid "Cannot validate E Invoice schematron."
 msgstr ""
 
@@ -258,7 +264,11 @@ msgstr ""
 msgid "E Invoice Trade Tax"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:816
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1168
+msgid "E Invoice XML file name pattern failed"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:820
 msgid "E Invoice is not correct"
 msgstr ""
 
@@ -293,11 +303,11 @@ msgstr ""
 msgid "Embedded Document"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:51
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:52
 msgid "Field '{0}' does not exist on Sales Invoice doctype"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:59
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:60
 msgid "Field '{0}' must be of type 'Attach'. Current type: {1}"
 msgstr ""
 
@@ -351,6 +361,14 @@ msgstr ""
 #. Term'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_payment_term/e_invoice_payment_term.json
 msgid "Partial Amount"
+msgstr ""
+
+#. Description of the 'Auto Name Format for XML File' (Data) field in DocType
+#. 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid ""
+"Pattern for the <b>file name</b> of the XML.  <b>.xml</b> is appended automatically. Leave <b>empty</b> to use the document <b>name</b> (Sales Invoice ID). In case of an error, the document <b>name</b> is used as fallback.\n"
+"<br><br>Segments use a <b>dot</b> (<b>.</b>) between literal text and dynamic parts. Example:<br><b>EXAMPLE-.MM.-.{po_no}.-.YYYY</b><ul><li><b>Dates</b>: <b>DD</b>, <b>MM</b>, <b>YYYY</b>, <b>YY</b>, <b>WW</b>, <b>timestamp</b></li><li><b>Fields</b>: <b>Sales Invoice</b> field names in braces, e.g. <b>{po_no}</b></li><li>Other segments are treated as literal text.</li></ul>"
 msgstr ""
 
 #. Label of the payment_means_section (Section Break) field in DocType 'E
@@ -560,19 +578,25 @@ msgstr ""
 msgid "Warning Message"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:782
+#. Label of the section_break_yldr (Section Break) field in DocType 'E Invoice
+#. Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "XML Settings"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:786
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:771
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:775
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:759
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:763
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:794
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:798
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
 
