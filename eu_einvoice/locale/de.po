@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-06-05 10:01+0053\n"
+"POT-Creation-Date: 2026-06-08 16:49+0053\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.13.1\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:803
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:807
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
@@ -64,6 +64,11 @@ msgstr "Eine E-Rechnung mit der gleichen Rechnungs-ID und Lieferanten existiert 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Attach Field for XML File"
 msgstr "Anhangsfeld für XML-Datei"
+
+#. Label of a Data field in DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "Auto Name Format for XML File"
+msgstr "Namensmuster für die XML-Datei"
 
 #. Label of a Check field in DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
@@ -165,11 +170,11 @@ msgstr "Berechneter Betrag"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:834
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:838
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:848
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:852
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -316,7 +321,11 @@ msgstr "E-Rechnungs-Einstellungen"
 msgid "E Invoice Trade Tax"
 msgstr "E-Rechnungs-Steuer"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:816
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1168
+msgid "E Invoice XML file name pattern failed"
+msgstr "Namensmuster für E-Rechnungs-XML-Datei fehlgeschlagen"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:820
 msgid "E Invoice is not correct"
 msgstr "E-Rechnung ist nicht korrekt"
 
@@ -349,11 +358,11 @@ msgstr "Schema der elektronischen Adresse"
 msgid "Embedded Document"
 msgstr "Eingebettetes Dokument"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:51
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:52
 msgid "Field '{0}' does not exist on Sales Invoice doctype"
 msgstr "Feld '{0}' existiert nicht im DocType 'Sales Invoice'"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:59
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:60
 msgid "Field '{0}' must be of type 'Attach'. Current type: {1}"
 msgstr "Feld '{0}' muss vom Typ 'Anhängen' sein. Aktueller Typ: {1}"
 
@@ -446,6 +455,16 @@ msgstr "Nur bei E-Rechnungs-Profil \"XRECHNUNG\" beim Buchen"
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_payment_term/e_invoice_payment_term.json
 msgid "Partial Amount"
 msgstr "Teilbetrag"
+
+#. Description of the 'Auto Name Format for XML File' (Data) field in DocType
+#. 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid ""
+"Pattern for the <b>file name</b> of the XML.  <b>.xml</b> is appended automatically. Leave <b>empty</b> to use the document <b>name</b> (Sales Invoice ID). In case of an error, the document <b>name</b> is used as fallback.\n"
+"<br><br>Segments use a <b>dot</b> (<b>.</b>) between literal text and dynamic parts. Example:<br><b>EXAMPLE-.MM.-.{po_no}.-.YYYY</b><ul><li><b>Dates</b>: <b>DD</b>, <b>MM</b>, <b>YYYY</b>, <b>YY</b>, <b>WW</b>, <b>timestamp</b></li><li><b>Fields</b>: <b>Sales Invoice</b> field names in braces, e.g. <b>{po_no}</b></li><li>Other segments are treated as literal text.</li></ul>"
+msgstr ""
+"Muster für den <b>Dateinamen</b> der XML-Datei. <b>.xml</b> wird automatisch angehängt. <b>Leer lassen</b>, um den Dokumentnamen zu verwenden (ID der Ausgangsrechnung). Bei einem Fehler wird der Dokumentname als Fallback verwendet.\n"
+"<br><br>Literaltext und dynamische Teile werden mit einem <b>Punkt</b> (<b>.</b>) getrennt. Beispiel:<br><b>BEISPIEL-.MM.-.{po_no}.-.YYYY</b><ul><li><b>Datumsangaben</b>: <b>DD</b>, <b>MM</b>, <b>YYYY</b>, <b>YY</b>, <b>WW</b>, <b>timestamp</b></li><li><b>Felder</b>: Feldnamen der <b>Ausgangsrechnung</b> in geschweiften Klammern, z. B. <b>{po_no}</b></li><li>Alle übrigen Abschnitte sind fester Text.</li></ul>"
 
 #. Label of a Section Break field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
@@ -722,19 +741,24 @@ msgstr "Validierungswarnungen"
 msgid "Warning Message"
 msgstr "Warnung"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:782
+#. Label of a Section Break field in DocType 'E Invoice Settings'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
+msgid "XML Settings"
+msgstr "XML-Einstellungen"
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:786
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:771
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:775
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:759
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:763
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:794
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:798
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 
