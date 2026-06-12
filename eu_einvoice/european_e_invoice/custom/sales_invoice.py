@@ -115,6 +115,13 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 	return doc.serialize(schema=get_drafthorse_schema(profile))
 
 
+def get_legacy_embed_attachment(invoice) -> list[str]:
+	"""File URLs from the legacy einvoice_embedded_document field (0 or 1)."""
+	if invoice.einvoice_embedded_document:
+		return [invoice.einvoice_embedded_document]
+	return []
+
+
 class EInvoiceGenerator:
 	"""Map ERPNext entities to a Drafthorse document."""
 
@@ -170,7 +177,7 @@ class EInvoiceGenerator:
 				self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
 		if self.profile >= EInvoiceProfile.EN16931:
-			self._embed_attachment()
+			self._embed_attachments(get_legacy_embed_attachment(self.invoice))
 
 		sales_orders = set()
 		for item in self.invoice.items:
@@ -203,27 +210,21 @@ class EInvoiceGenerator:
 		self._add_payment_terms()
 		self._set_totals()
 
-	def _embed_attachment(self):
-		"""Add the embedded document to the einvoice."""
-		if not self.invoice.einvoice_embedded_document:
-			return
-
-		file = find_file_by_url(self.invoice.einvoice_embedded_document)
-
-		content = None
-		if not file.is_remote_file:
-			file_name = os.path.basename(file.file_url)
-			mime_type = mimetypes.guess_type(file.file_url)[0]
-			content = as_base_64(file.get_content())
-
-		ref_doc = AdditionalReferencedDocument()
-		ref_doc.issuer_assigned_id = file.name
-		if file.is_remote_file:
-			ref_doc.uri_id = file.file_url
-		else:
-			ref_doc.attached_object = (mime_type, file_name, content)
-		ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
-		self.doc.trade.agreement.additional_references.add(ref_doc)
+	def _embed_attachments(self, attachments: list[str]):
+		"""Add embedded documents to the einvoice as CII 916 references."""
+		for file_url in attachments:
+			file = find_file_by_url(file_url)
+			ref_doc = AdditionalReferencedDocument()
+			ref_doc.issuer_assigned_id = file.name
+			if file.is_remote_file:
+				ref_doc.uri_id = file.file_url
+			else:
+				file_name = os.path.basename(file.file_url)
+				mime_type = mimetypes.guess_type(file.file_url)[0]
+				content = as_base_64(file.get_content())
+				ref_doc.attached_object = (mime_type, file_name, content)
+			ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
+			self.doc.trade.agreement.additional_references.add(ref_doc)
 
 	def _set_context(self):
 		"""Set default context according to XRechnung 3.0.2"""

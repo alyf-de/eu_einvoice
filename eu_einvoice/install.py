@@ -52,3 +52,12 @@ def import_code_lists():
 			import_genericode(result["code_list"], result["file"], CODELIST_COLUMNS)
 		finally:
 			frappe.local.task_id = None
+
+
+def before_tests():
+	import frappe
+
+	from eu_einvoice.tests.scaffold import ensure_embed_test_masters
+
+	ensure_embed_test_masters()
+	frappe.db.commit()

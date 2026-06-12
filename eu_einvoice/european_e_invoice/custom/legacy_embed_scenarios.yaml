@@ -1,4 +1,4 @@
-# Unit-test scenarios for EInvoiceGenerator._embed_attachment().
+# Unit-test scenarios for EInvoiceGenerator._embed_attachments().
 # Profile gating lives in create_einvoice — not tested here.
 
 - id: legacy_empty_field
