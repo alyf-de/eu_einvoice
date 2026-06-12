@@ -22,6 +22,9 @@ from frappe.utils import cstr
 from frappe.utils.data import date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
+from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
+	deduplicate_attachment_rows,
+)
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
 from eu_einvoice.utils import EInvoiceProfile, get_drafthorse_schema, get_guideline
@@ -820,6 +823,9 @@ def validate_doc(doc, event):
 			alert=True,
 			indicator="orange",
 		)
+
+	if doc.get("einvoice_attachments"):
+		deduplicate_attachment_rows(doc)
 
 	settings: EInvoiceSettings = frappe.get_single("E Invoice Settings")
 

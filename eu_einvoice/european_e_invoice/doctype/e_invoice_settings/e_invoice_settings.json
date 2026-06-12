@@ -18,7 +18,9 @@
   "auto_name_format_for_xml_file",
   "column_break_vlzj",
   "auto_attach_xml",
-  "attach_field_for_xml_file"
+  "attach_field_for_xml_file",
+  "file_attachments_section",
+  "multi_attachment_embed_enabled"
  ],
  "fields": [
   {
@@ -101,13 +103,27 @@
    "fieldname": "vat_exemption_reason_text",
    "fieldtype": "Small Text",
    "label": "Default VAT exemption reason"
+  },
+  {
+   "bold": 1,
+   "fieldname": "file_attachments_section",
+   "fieldtype": "Section Break",
+   "label": "File Attachments"
+  },
+  {
+   "default": "0",
+   "description": "When enabled, users can add multiple extra files on <b>Sales Invoice</b> to embed as attachments in the e-invoice XML.<br>\nThis adds an additional child table to Sales Invoice and <b>cannot be disabled</b> once enabled.",
+   "fieldname": "multi_attachment_embed_enabled",
+   "fieldtype": "Check",
+   "label": "Enable Multiple Attachment Embedding into Invoice PDF/XML",
+   "read_only_depends_on": "eval:doc.multi_attachment_embed_enabled"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-06-08 17:22:50.000159",
+ "modified": "2026-06-03 12:35:27.828476",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
