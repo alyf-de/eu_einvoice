@@ -1,0 +1,48 @@
+# Unit-test scenarios for EInvoiceGenerator._embed_attachment().
+# Profile gating lives in create_einvoice — not tested here.
+
+- id: legacy_empty_field
+  field_url: ""
+  expect:
+    reference_count: 0
+
+- id: legacy_local_file_916
+  field_url: /files/legacy-annex.png
+  mock_file:
+    name: F-LEGACY-LOCAL
+    file_url: /files/legacy-annex.png
+    is_remote: false
+    content_bytes_b64: iVBORw0KGgoA=
+  expect:
+    reference_count: 1
+    type_code: "916"
+    issuer_assigned_id: F-LEGACY-LOCAL
+    has_attached_object: true
+    filename: legacy-annex.png
+    mime_type: image/png
+
+- id: legacy_remote_file_uri
+  field_url: https://example.com/legacy-annex.pdf
+  mock_file:
+    name: F-LEGACY-REMOTE
+    file_url: https://example.com/legacy-annex.pdf
+    is_remote: true
+  expect:
+    reference_count: 1
+    type_code: "916"
+    issuer_assigned_id: F-LEGACY-REMOTE
+    has_attached_object: false
+    uri_id: https://example.com/legacy-annex.pdf
+
+- id: legacy_remote_api_method_uri
+  field_url: /api/method/frappe.utils.print_format.download_pdf
+  mock_file:
+    name: F-LEGACY-API-REMOTE
+    file_url: /api/method/frappe.utils.print_format.download_pdf
+    is_remote: true
+  expect:
+    reference_count: 1
+    type_code: "916"
+    issuer_assigned_id: F-LEGACY-API-REMOTE
+    has_attached_object: false
+    uri_id: /api/method/frappe.utils.print_format.download_pdf
