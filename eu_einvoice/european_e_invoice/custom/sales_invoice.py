@@ -24,6 +24,7 @@ from frappe.utils.data import date_diff, flt, getdate, to_markdown
 from eu_einvoice.common_codes import CommonCodeRetriever
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	deduplicate_attachment_rows,
+	get_embed_attachments,
 )
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
@@ -118,13 +119,6 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 	return doc.serialize(schema=get_drafthorse_schema(profile))
 
 
-def get_legacy_embed_attachment(invoice) -> list[str]:
-	"""File URLs from the legacy einvoice_embedded_document field (0 or 1)."""
-	if invoice.einvoice_embedded_document:
-		return [invoice.einvoice_embedded_document]
-	return []
-
-
 class EInvoiceGenerator:
 	"""Map ERPNext entities to a Drafthorse document."""
 
@@ -180,7 +174,7 @@ class EInvoiceGenerator:
 				self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
 		if self.profile >= EInvoiceProfile.EN16931:
-			self._embed_attachments(get_legacy_embed_attachment(self.invoice))
+			self._embed_attachments(get_embed_attachments(self.invoice))
 
 		sales_orders = set()
 		for item in self.invoice.items:
