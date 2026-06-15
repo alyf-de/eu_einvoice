@@ -16,6 +16,14 @@ frappe.ui.form.on("E Invoice Settings", {
 		});
 	},
 
+	btn_migrate_attachments_to_table(frm) {
+		frappe.call({
+			method: "eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings.migrate_attachments_to_table",
+			freeze: true,
+			freeze_message: __("Queuing migration..."),
+		});
+	},
+
 	async set_auto_attach_options(frm) {
 		const options = await get_autocomplete_options("Sales Invoice", ["Attach"]);
 		frm.fields_dict.attach_field_for_xml_file.set_data(options);

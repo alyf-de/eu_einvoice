@@ -14,8 +14,10 @@ from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import 
 	assert_embed_attachment_result,
 	load_embed_attachment_scenarios,
 	make_embed_generator,
-	make_sales_invoice_doc as make_embed_test_invoice,
 	mock_file_doc,
+)
+from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import (
+	make_sales_invoice_doc as make_embed_test_invoice,
 )
 from eu_einvoice.european_e_invoice.custom.sales_invoice import as_base_64, validate_doc
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
@@ -101,6 +103,18 @@ class TestDeduplicateAttachmentRows(UnitTestCase):
 
 
 class UnitTestLegacyEmbedAttachment(UnitTestCase):
+	def test_invalid_file_url_on_embed(self):
+		generator = make_embed_generator(make_embed_test_invoice())
+		with patch(
+			"eu_einvoice.european_e_invoice.custom.sales_invoice.find_file_by_url",
+			return_value=None,
+		):
+			with self.assertRaises(frappe.ValidationError) as error:
+				generator._embed_attachments(["/files/missing-annex.png"])
+
+		self.assertIn("/files/missing-annex.png", str(error.exception))
+		self.assertIn("File record", str(error.exception))
+
 	def test_get_legacy_embed_attachment(self):
 		for field_url, expected in (
 			("", []),
@@ -229,6 +243,64 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		super().tearDown()
 		frappe.clear_messages()
 
+	def test_migrate_legacy_field_on_validate(self):
+		self._previous_setting = frappe.db.get_single_value(
+			"E Invoice Settings", "multi_attachment_embed_enabled"
+		)
+		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
+
+		set_multi_attachment_embed_enabled(False)
+		sales_invoice, annex_file = create_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		self.addCleanup(delete_embed_test_annex_file, annex_file.name)
+
+		set_multi_attachment_embed_enabled(True)
+		frappe.clear_messages()
+
+		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+			validate_doc(sales_invoice, "validate")
+
+		self.assertEqual(sales_invoice.einvoice_embedded_document, "")
+		self.assertEqual(len(sales_invoice.einvoice_attachments), 1)
+		self.assertEqual(sales_invoice.einvoice_attachments[0].file, annex_file.name)
+
+		messages = frappe.get_message_log()
+		migrate_messages = [message for message in messages if "moved" in message.message.lower()]
+		self.assertEqual(len(migrate_messages), 1)
+		self.assertEqual(migrate_messages[0].indicator, "orange")
+
+	def test_migrate_legacy_field_keeps_broken_link_on_validate(self):
+		self._previous_setting = frappe.db.get_single_value(
+			"E Invoice Settings", "multi_attachment_embed_enabled"
+		)
+		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
+
+		set_multi_attachment_embed_enabled(True)
+		sales_invoice = ensure_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		broken_url = f"/files/missing-legacy-{frappe.generate_hash(length=8)}.png"
+		sales_invoice.einvoice_embedded_document = broken_url
+		frappe.clear_messages()
+
+		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+			validate_doc(sales_invoice, "validate")
+
+		self.assertEqual(sales_invoice.einvoice_embedded_document, broken_url)
+		self.assertEqual(len(sales_invoice.einvoice_attachments), 0)
+
+		error_logs = frappe.get_all(
+			"Error Log",
+			filters={
+				"reference_doctype": "Sales Invoice",
+				"reference_name": sales_invoice.name,
+				"error": ("like", f"%{broken_url}%"),
+			},
+			fields=["error"],
+		)
+		self.assertEqual(len(error_logs), 1)
+		self.assertIn("left unchanged", error_logs[0].error.lower())
+		self.assertIn(sales_invoice.name, error_logs[0].error)
+
 	def test_validate_doc_deduplicates_attachment_rows(self):
 		doc = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, doc.name)
@@ -331,6 +403,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		)
 		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
 
+		set_multi_attachment_embed_enabled(False)
 		sales_invoice, annex_file = create_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
 		self.addCleanup(delete_embed_test_annex_file, annex_file.name)
@@ -340,10 +413,10 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 			content=LOCAL_ANNEX_PNG_BYTES + b"ignored",
 		)
 		self.addCleanup(delete_embed_test_annex_file, other_annex.name)
+
 		append_attachment_rows(sales_invoice, [{"file": other_annex.name}])
 		sales_invoice.save(ignore_permissions=True)
-
-		set_multi_attachment_embed_enabled(False)
+		sales_invoice.reload()
 
 		generator = build_einvoice_generator(sales_invoice)
 		generator.create_einvoice()

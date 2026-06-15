@@ -25,6 +25,7 @@ from eu_einvoice.common_codes import CommonCodeRetriever
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	deduplicate_attachment_rows,
 	get_embed_attachments,
+	migrate_legacy_embed_to_table,
 )
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
@@ -211,6 +212,14 @@ class EInvoiceGenerator:
 		"""Add embedded documents to the einvoice as CII 916 references."""
 		for file_url in attachments:
 			file = find_file_by_url(file_url)
+			if not file:
+				frappe.throw(
+					_(
+						"Could not embed attachment: no File record found for URL {0}. "
+						"Check that the file exists and is attached to this document."
+					).format(file_url),
+					title=_("Invalid attachment file"),
+				)
 			ref_doc = AdditionalReferencedDocument()
 			ref_doc.issuer_assigned_id = file.name
 			if file.is_remote_file:
@@ -818,10 +827,13 @@ def validate_doc(doc, event):
 			indicator="orange",
 		)
 
+	settings: EInvoiceSettings = frappe.get_single("E Invoice Settings")
+
+	if settings.multi_attachment_embed_enabled:
+		migrate_legacy_embed_to_table(doc)
+
 	if doc.get("einvoice_attachments"):
 		deduplicate_attachment_rows(doc)
-
-	settings: EInvoiceSettings = frappe.get_single("E Invoice Settings")
 
 	if settings.should_validate(doc.docstatus):
 		validate_einvoice(doc)

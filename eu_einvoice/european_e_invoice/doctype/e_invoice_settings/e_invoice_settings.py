@@ -5,6 +5,12 @@ import frappe
 from frappe import _
 from frappe.model.docstatus import DocStatus
 from frappe.model.document import Document
+from frappe.utils.background_jobs import create_job_id, enqueue
+
+from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
+	BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
+	set_legacy_embed_field_lockdown,
+)
 
 
 class EInvoiceSettings(Document):
@@ -52,6 +58,9 @@ class EInvoiceSettings(Document):
 		if self.auto_attach_xml and self.attach_field_for_xml_file:
 			self._validate_attach_field()
 
+	def on_update(self):
+		set_legacy_embed_field_lockdown(bool(self.multi_attachment_embed_enabled))
+
 	def _validate_attach_field(self):
 		"""Validate that the selected attachment field exists and is of type Attach."""
 		# Get Sales Invoice doctype
@@ -92,3 +101,36 @@ class EInvoiceSettings(Document):
 		return (docstatus == DocStatus.submitted() and self.error_action_on_submit) or (
 			docstatus == DocStatus.draft() and self.error_action_on_save
 		)
+
+
+@frappe.whitelist()
+def migrate_attachments_to_table() -> dict[str, str | bool]:
+	"""Enqueue a background job to migrate legacy embed attachments site-wide."""
+	if not frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
+		frappe.throw(_("Enable Multiple Attachment Embedding first."))
+
+	from frappe.utils import get_link_to_form
+
+	namespaced_job_id = create_job_id(BULK_MIGRATE_LEGACY_EMBED_JOB_ID)
+	job = enqueue(
+		"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.bulk_migrate_legacy_embed_attachments",
+		queue="long",
+		timeout=1500,
+		job_id=BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
+		deduplicate=True,
+	)
+
+	if job:
+		frappe.msgprint(
+			_("Migration queued. Track progress in {0}.").format(get_link_to_form("RQ Job", job.id)),
+			indicator="blue",
+		)
+		return {"job_id": job.id, "queued": True}
+
+	frappe.msgprint(
+		_("Migration already queued. Track progress in {0}.").format(
+			get_link_to_form("RQ Job", namespaced_job_id)
+		),
+		indicator="orange",
+	)
+	return {"job_id": namespaced_job_id, "queued": False}

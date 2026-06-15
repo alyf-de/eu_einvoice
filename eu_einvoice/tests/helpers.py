@@ -81,7 +81,9 @@ def ensure_embed_test_sales_invoice() -> frappe.Document:
 	return sales_invoice
 
 
-def create_embed_test_annex_file(*, file_name: str, content: bytes = LOCAL_ANNEX_PNG_BYTES) -> frappe.Document:
+def create_embed_test_annex_file(
+	*, file_name: str, content: bytes = LOCAL_ANNEX_PNG_BYTES
+) -> frappe.Document:
 	register_embed_test_cleanup()
 	file = frappe.get_doc(
 		{

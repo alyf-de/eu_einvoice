@@ -170,9 +170,7 @@ def get_custom_fields():
 				"fieldtype": "Table",
 				"options": "E Invoice Attachment Row",
 				"depends_on": "einvoice_profile",
-				"description": _(
-					"Additional supporting documents to embed in the e-invoice file."
-				),
+				"description": _("Additional supporting documents to embed in the e-invoice file."),
 			},
 			{
 				"fieldname": "einvoice_is_correct",
