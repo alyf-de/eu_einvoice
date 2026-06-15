@@ -22,7 +22,12 @@ from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import 
 from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import (
 	make_sales_invoice_doc as make_embed_test_invoice,
 )
-from eu_einvoice.european_e_invoice.custom.sales_invoice import as_base_64, attach_xml_to_pdf, get_einvoice, validate_doc
+from eu_einvoice.european_e_invoice.custom.sales_invoice import (
+	as_base_64,
+	attach_xml_to_pdf,
+	get_einvoice,
+	validate_doc,
+)
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	get_embed_attachments,
 	get_table_embed_attachments,
@@ -335,9 +340,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 
 		invoice_xml = get_einvoice(sales_invoice.name)
 		expected_annexes = extract_attachment_binary_objects_from_cii_xml(invoice_xml)
-		expected = next(
-			annex for annex in expected_annexes if annex[0] == annex_file.file_name
-		)
+		expected = next(annex for annex in expected_annexes if annex[0] == annex_file.file_name)
 		self.assertTrue(expected[2])
 		self.assertIn(b"-pdf-roundtrip", base64.b64decode(expected[2]))
 
