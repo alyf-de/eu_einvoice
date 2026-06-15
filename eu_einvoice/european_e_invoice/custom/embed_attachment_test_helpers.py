@@ -4,12 +4,14 @@
 from __future__ import annotations
 
 import base64
+import io
 from dataclasses import dataclass
 from pathlib import Path
 
 import frappe
 import yaml
 from drafthorse.models.document import Document
+from lxml import etree
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import EInvoiceGenerator, as_base_64
 from eu_einvoice.utils import EInvoiceProfile
@@ -162,3 +164,31 @@ def assert_embed_attachment_result(
 
 	if expect.uri_id and _element_text(ref.uri_id) != expect.uri_id:
 		raise AssertionError(f"expected URIID {expect.uri_id!r}, got {ref.uri_id!r}")
+
+
+_CII_ATTACHMENT_XPATH = "//ram:AttachmentBinaryObject"
+_CII_NS = {"ram": "urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"}
+
+
+def make_minimal_pdf_bytes() -> bytes:
+	"""Return a tiny valid PDF for hybrid attach_xml_to_pdf tests."""
+	from pypdf import PdfWriter
+
+	writer = PdfWriter()
+	writer.add_blank_page(width=72, height=72)
+	buffer = io.BytesIO()
+	writer.write(buffer)
+	return buffer.getvalue()
+
+
+def extract_attachment_binary_objects_from_cii_xml(
+	xml_bytes: bytes,
+) -> list[tuple[str, str, str]]:
+	"""Return ``(filename, mime_code, base64_payload)`` for each CII annex."""
+	root = etree.fromstring(xml_bytes)
+	attachments: list[tuple[str, str, str]] = []
+
+	for element in root.xpath(_CII_ATTACHMENT_XPATH, namespaces=_CII_NS):
+		attachments.append((element.get("filename") or "", element.get("mimeCode") or "", element.text or ""))
+
+	return attachments

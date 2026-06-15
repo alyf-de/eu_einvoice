@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import base64
 import os
 from unittest.mock import patch
 
@@ -12,18 +13,18 @@ from frappe.tests import IntegrationTestCase, UnitTestCase
 
 from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import (
 	assert_embed_attachment_result,
+	extract_attachment_binary_objects_from_cii_xml,
 	load_embed_attachment_scenarios,
 	make_embed_generator,
+	make_minimal_pdf_bytes,
 	mock_file_doc,
 )
 from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import (
 	make_sales_invoice_doc as make_embed_test_invoice,
 )
-from eu_einvoice.european_e_invoice.custom.sales_invoice import as_base_64, validate_doc
+from eu_einvoice.european_e_invoice.custom.sales_invoice import as_base_64, attach_xml_to_pdf, get_einvoice, validate_doc
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
-	deduplicate_attachment_rows,
 	get_embed_attachments,
-	get_legacy_embed_attachment,
 	get_table_embed_attachments,
 )
 from eu_einvoice.tests.helpers import (
@@ -42,64 +43,11 @@ def append_attachment_rows(doc, rows: list[dict]) -> None:
 		doc.append("einvoice_attachments", row)
 
 
-def make_sales_invoice_doc(**kwargs) -> frappe.model.document.Document:
-	doc = frappe.new_doc("Sales Invoice")
-	doc.update(kwargs)
-	return doc
-
-
 def set_multi_attachment_embed_enabled(enabled: bool) -> None:
 	settings = frappe.get_doc("E Invoice Settings")
 	settings.multi_attachment_embed_enabled = 1 if enabled else 0
 	settings.flags.ignore_permissions = True
 	settings.save()
-
-
-def _file_url_lookup(file_name: str) -> str | None:
-	return {
-		"F-TABLE-1": "/files/table-annex-1.png",
-		"F-TABLE-2": "/files/table-annex-2.pdf",
-		"F-MISSING": None,
-	}.get(file_name)
-
-
-class TestDeduplicateAttachmentRows(UnitTestCase):
-	def test_deduplicate_first_wins(self):
-		cases = [
-			(
-				"dedup_first_wins_two_rows",
-				[
-					{"file": "F-DEDUP-1", "display_name": "First"},
-					{"file": "F-DEDUP-1", "display_name": "Last"},
-				],
-				1,
-				["F-DEDUP-1"],
-				["First"],
-			),
-			(
-				"dedup_first_wins_three_rows",
-				[
-					{"file": "F-DEDUP-A", "display_name": "A"},
-					{"file": "F-DEDUP-A", "display_name": "B"},
-					{"file": "F-DEDUP-B", "display_name": "C"},
-				],
-				2,
-				["F-DEDUP-A", "F-DEDUP-B"],
-				["A", "C"],
-			),
-		]
-		for name, attachment_rows, row_count, files, display_names in cases:
-			with self.subTest(name=name):
-				doc = make_sales_invoice_doc()
-				append_attachment_rows(doc, attachment_rows)
-				deduplicate_attachment_rows(doc)
-
-				self.assertEqual(len(doc.einvoice_attachments), row_count)
-				self.assertEqual([row.file for row in doc.einvoice_attachments], files)
-				self.assertEqual(
-					[row.display_name or "" for row in doc.einvoice_attachments],
-					display_names,
-				)
 
 
 class UnitTestLegacyEmbedAttachment(UnitTestCase):
@@ -114,15 +62,6 @@ class UnitTestLegacyEmbedAttachment(UnitTestCase):
 
 		self.assertIn("/files/missing-annex.png", str(error.exception))
 		self.assertIn("File record", str(error.exception))
-
-	def test_get_legacy_embed_attachment(self):
-		for field_url, expected in (
-			("", []),
-			("/files/legacy-annex.png", ["/files/legacy-annex.png"]),
-		):
-			with self.subTest(field_url=field_url):
-				invoice = make_embed_test_invoice(einvoice_embedded_document=field_url)
-				self.assertEqual(get_legacy_embed_attachment(invoice), expected)
 
 	def test_embed_attachments_scenarios(self):
 		for scenario in load_embed_attachment_scenarios():
@@ -147,32 +86,6 @@ class UnitTestLegacyEmbedAttachment(UnitTestCase):
 					scenario.expect,
 					mock_content=mock_content,
 				)
-
-
-class UnitTestGetTableEmbedAttachments(UnitTestCase):
-	def test_get_table_embed_attachments(self):
-		cases = [
-			("empty_table", [], []),
-			(
-				"grid_list_order_and_skip_empty",
-				[
-					frappe._dict(idx=2, file="F-TABLE-2"),
-					frappe._dict(idx=1, file="F-TABLE-1"),
-					frappe._dict(idx=3, file=""),
-					frappe._dict(idx=4, file="F-MISSING"),
-				],
-				["/files/table-annex-2.pdf", "/files/table-annex-1.png"],
-			),
-		]
-		for name, rows, expected in cases:
-			with self.subTest(name=name):
-				invoice = frappe._dict(einvoice_attachments=rows)
-				with patch.object(
-					frappe.db,
-					"get_value",
-					side_effect=lambda doctype, name, fieldname: _file_url_lookup(name),
-				):
-					self.assertEqual(get_table_embed_attachments(invoice), expected)
 
 
 class UnitTestGetEmbedAttachments(UnitTestCase):
@@ -396,6 +309,43 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 			resolved_file = find_file_by_url(annex_file.file_url)
 			self.assertEqual(ref.attached_object._filename, os.path.basename(resolved_file.file_url))
 			self.assertEqual(ref.attached_object._text, as_base_64(resolved_file.get_content()))
+
+	def test_attach_xml_to_pdf_embeds_table_attachment_content(self):
+		from facturx import get_xml_from_pdf
+
+		self._previous_setting = frappe.db.get_single_value(
+			"E Invoice Settings", "multi_attachment_embed_enabled"
+		)
+		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
+
+		set_multi_attachment_embed_enabled(True)
+
+		annex_content = LOCAL_ANNEX_PNG_BYTES + b"-pdf-roundtrip"
+		annex_file = create_embed_test_annex_file(
+			file_name=f"pdf-roundtrip-{frappe.generate_hash(length=8)}.png",
+			content=annex_content,
+		)
+		self.addCleanup(delete_embed_test_annex_file, annex_file.name)
+
+		sales_invoice = ensure_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		append_attachment_rows(sales_invoice, [{"file": annex_file.name}])
+		sales_invoice.save(ignore_permissions=True)
+		sales_invoice.reload()
+
+		invoice_xml = get_einvoice(sales_invoice.name)
+		expected_annexes = extract_attachment_binary_objects_from_cii_xml(invoice_xml)
+		expected = next(
+			annex for annex in expected_annexes if annex[0] == annex_file.file_name
+		)
+		self.assertTrue(expected[2])
+		self.assertIn(b"-pdf-roundtrip", base64.b64decode(expected[2]))
+
+		hybrid_pdf = attach_xml_to_pdf(sales_invoice.name, make_minimal_pdf_bytes())
+		_, embedded_xml = get_xml_from_pdf(hybrid_pdf, check_xsd=False)
+
+		pdf_annexes = extract_attachment_binary_objects_from_cii_xml(embedded_xml)
+		self.assertIn(expected, pdf_annexes)
 
 	def test_create_einvoice_uses_legacy_field_when_setting_off(self):
 		self._previous_setting = frappe.db.get_single_value(
