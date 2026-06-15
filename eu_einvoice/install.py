@@ -60,4 +60,5 @@ def before_tests():
 	from eu_einvoice.tests.scaffold import ensure_embed_test_masters
 
 	ensure_embed_test_masters()
-	frappe.db.commit()
+	# Shared embed-test masters must persist across per-test transaction rollbacks.
+	frappe.db.commit()  # nosemgrep
