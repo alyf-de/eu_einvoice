@@ -17,11 +17,37 @@ frappe.ui.form.on("E Invoice Settings", {
 	},
 
 	btn_migrate_attachments_to_table(frm) {
-		frappe.call({
-			method: "eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings.migrate_attachments_to_table",
-			freeze: true,
-			freeze_message: __("Queuing migration..."),
+		const dialog = new frappe.ui.Dialog({
+			title: __("Migrate Existing Attachments to Table"),
+			fields: [
+				{
+					fieldtype: "HTML",
+					fieldname: "description",
+					options: __(
+						"Move legacy <b>Embedded Document</b> links into the <b>Embedded Documents</b> table."
+					),
+				},
+				{
+					fieldtype: "Check",
+					fieldname: "include_submitted",
+					label: __("Include submitted Sales Invoices"),
+					default: 0,
+				},
+			],
+			primary_action_label: __("Start migration"),
+			primary_action(values) {
+				dialog.hide();
+				frappe.call({
+					method: "eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings.migrate_attachments_to_table",
+					args: {
+						include_submitted: values.include_submitted ? 1 : 0,
+					},
+					freeze: true,
+					freeze_message: __("Queuing migration..."),
+				});
+			},
 		});
+		dialog.show();
 	},
 
 	async set_auto_attach_options(frm) {

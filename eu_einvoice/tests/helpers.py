@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import atexit
 import base64
+from unittest.mock import patch
 
 import frappe
 from frappe.utils import nowdate
@@ -118,6 +119,10 @@ def create_embed_test_sales_invoice() -> tuple[frappe.Document, frappe.Document]
 def delete_embed_test_sales_invoice(sales_invoice_name: str) -> None:
 	_MANAGED_SALES_INVOICES.discard(sales_invoice_name)
 	if frappe.db.exists("Sales Invoice", sales_invoice_name):
+		doc = frappe.get_doc("Sales Invoice", sales_invoice_name)
+		if doc.docstatus == 1:
+			with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"):
+				doc.cancel()
 		frappe.delete_doc("Sales Invoice", sales_invoice_name, force=True, ignore_permissions=True)
 
 

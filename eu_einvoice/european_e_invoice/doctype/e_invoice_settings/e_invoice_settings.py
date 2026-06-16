@@ -104,12 +104,12 @@ class EInvoiceSettings(Document):
 
 
 @frappe.whitelist()
-def migrate_attachments_to_table() -> dict[str, str | bool]:
+def migrate_attachments_to_table(include_submitted: bool | int = 0) -> dict[str, str | bool]:
 	"""Enqueue a background job to migrate legacy embed attachments site-wide."""
 	if not frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
 		frappe.throw(_("Enable Multiple Attachment Embedding first."))
 
-	from frappe.utils import get_link_to_form
+	from frappe.utils import cint, get_link_to_form
 
 	namespaced_job_id = create_job_id(BULK_MIGRATE_LEGACY_EMBED_JOB_ID)
 	job = enqueue(
@@ -118,6 +118,7 @@ def migrate_attachments_to_table() -> dict[str, str | bool]:
 		timeout=1500,
 		job_id=BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
 		deduplicate=True,
+		include_submitted=cint(include_submitted),
 	)
 
 	if job:

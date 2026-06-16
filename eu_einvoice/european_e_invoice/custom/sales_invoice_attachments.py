@@ -86,20 +86,10 @@ def migrate_legacy_embed_to_table(
 	file_url = invoice.einvoice_embedded_document
 	file = _resolve_embed_file_for_invoice(invoice, file_url)
 	if not file:
-		error_message = _broken_legacy_embed_message(file_url)
-		frappe.log_error(
-			title=_(
-				"Unable to migrate embedded document from legacy field `einvoice_embedded_document` "
-				"to `einvoice_attachments` table for Sales Invoice {0}"
-			).format(invoice.name),
-			message=error_message,
-			reference_doctype=invoice.doctype,
-			reference_name=invoice.name,
-		)
+		_log_broken_legacy_embed(invoice, file_url)
 		return False
 
-	invoice.append("einvoice_attachments", {"file": file.name})
-	invoice.einvoice_embedded_document = ""
+	_persist_legacy_embed_migration_on_save(invoice, file)
 
 	if show_message:
 		frappe.msgprint(
@@ -109,6 +99,47 @@ def migrate_legacy_embed_to_table(
 		)
 
 	return True
+
+
+def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
+	frappe.log_error(
+		title=_(
+			"Unable to migrate embedded document from legacy field `einvoice_embedded_document` "
+			"to `einvoice_attachments` table for Sales Invoice {0}"
+		).format(invoice.name),
+		message=_broken_legacy_embed_message(file_url),
+		reference_doctype=invoice.doctype,
+		reference_name=invoice.name,
+	)
+
+
+def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> None:
+	invoice.append("einvoice_attachments", {"file": file.name})
+	invoice.einvoice_embedded_document = ""
+
+
+def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> None:
+	_insert_attachment_row(invoice, file)
+	frappe.db.set_value(
+		"Sales Invoice",
+		invoice.name,
+		"einvoice_embedded_document",
+		"",
+		update_modified=True,
+	)
+
+
+def _insert_attachment_row(invoice: SalesInvoice, file) -> None:
+	frappe.get_doc(
+		{
+			"doctype": "E Invoice Attachment Row",
+			"parent": invoice.name,
+			"parenttype": invoice.doctype,
+			"parentfield": "einvoice_attachments",
+			"file": file.name,
+			"file_name": file.file_name,
+		}
+	).insert(ignore_permissions=True)
 
 
 def _broken_legacy_embed_message(file_url: str) -> str:
@@ -159,18 +190,23 @@ def set_legacy_embed_field_lockdown(enabled: bool) -> None:
 	frappe.clear_cache(doctype="Sales Invoice")
 
 
-def bulk_migrate_legacy_embed_attachments() -> dict[str, int | list[tuple[str, str]]]:
-	"""Background job: migrate legacy embed field on all Sales Invoices.
+def bulk_migrate_legacy_embed_attachments(
+	include_submitted: bool = False,
+) -> dict[str, int | list[tuple[str, str]]]:
+	"""Background job: migrate legacy embed field on Sales Invoices.
+
+	When *include_submitted* is false, only draft invoices are processed via
+	``save``. When true, submitted invoices are updated with direct child-row
+	inserts and ``db.set_value`` so post-submit restrictions do not block migration.
 
 	Returns counts for migrated, already_migrated (cleared outside this job),
-	broken legacy links (logged via ``migrate_legacy_embed_to_table``), plus
-	unexpected ``errors`` from save failures.
+	broken legacy links, plus unexpected ``errors``.
 	"""
-	invoice_names = frappe.get_all(
-		"Sales Invoice",
-		filters={"einvoice_embedded_document": ("is", "set")},
-		pluck="name",
-	)
+	filters: dict = {"einvoice_embedded_document": ("is", "set")}
+	if not include_submitted:
+		filters["docstatus"] = 0
+
+	invoice_names = frappe.get_all("Sales Invoice", filters=filters, pluck="name")
 
 	migrated = 0
 	already_migrated = 0
@@ -180,19 +216,28 @@ def bulk_migrate_legacy_embed_attachments() -> dict[str, int | list[tuple[str, s
 	for invoice_name in invoice_names:
 		try:
 			invoice = frappe.get_doc("Sales Invoice", invoice_name)
-			if migrate_legacy_embed_to_table(invoice, show_message=False):
-				invoice.flags.ignore_permissions = True
-				invoice.save()
-				frappe.db.commit()
-				migrated += 1  # success
+			legacy_url = invoice.einvoice_embedded_document
+			if not legacy_url:
+				already_migrated += 1
 				continue
 
-			if invoice.einvoice_embedded_document:
-				broken += 1  # broken legacy link
+			file = _resolve_embed_file_for_invoice(invoice, legacy_url)
+			if not file:
+				_log_broken_legacy_embed(invoice, legacy_url)
+				broken += 1
+				continue
+
+			if invoice.docstatus == 1:
+				_persist_legacy_embed_migration_db(invoice, file)
 			else:
-				already_migrated += 1  # legacy field cleared before this job processed the row
+				_persist_legacy_embed_migration_on_save(invoice, file)
+				invoice.flags.ignore_permissions = True
+				invoice.save()
+
+			frappe.db.commit()
+			migrated += 1
 		except Exception as exc:
-			errors.append((invoice_name, cstr(exc)))  # other unexpected errors
+			errors.append((invoice_name, cstr(exc)))
 			frappe.log_error(
 				title=_("Legacy embed migration failed for {0}").format(invoice_name),
 				reference_doctype="Sales Invoice",
