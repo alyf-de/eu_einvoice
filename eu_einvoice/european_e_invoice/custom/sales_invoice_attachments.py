@@ -34,6 +34,14 @@ def get_table_embed_attachments(invoice: SalesInvoice) -> list[str]:
 		file_url = frappe.db.get_value("File", row.file, "file_url")
 		if file_url:
 			urls.append(file_url)
+		else:
+			frappe.throw(
+				_(
+					"Could not embed attachment: no file URL found for File '{0}' (ID {1}). "
+					"Check that the file exists and is attached to this document."
+				).format(row.file_name, row.file),
+				title=_("Invalid attachment file"),
+			)
 	return urls
 
 
@@ -169,8 +177,8 @@ def _resolve_embed_file_for_invoice(invoice: SalesInvoice, file_url: str):
 		},
 		{"file_url": file_url},
 	):
-		for file_data in frappe.get_all("File", filters=filters, fields="*"):
-			file = frappe.get_doc(doctype="File", **file_data)
+		for file_name in frappe.get_all("File", filters=filters, pluck="name"):
+			file = frappe.get_doc("File", file_name)
 			if file.is_downloadable():
 				return file
 

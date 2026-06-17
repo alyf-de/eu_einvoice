@@ -121,6 +121,21 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 		with patch.object(frappe.db, "get_single_value", return_value=1):
 			self.assertEqual(get_embed_attachments(legacy_invoice), [])
 
+	def test_get_table_embed_attachments_raises_when_file_url_missing(self):
+		invoice = make_embed_test_invoice(
+			einvoice_attachments=[frappe._dict(idx=1, file="F-MISSING-URL", file_name="Missing URL")],
+		)
+		with patch(
+			"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.db.get_value",
+			return_value=None,
+		):
+			with self.assertRaises(frappe.ValidationError) as error:
+				get_table_embed_attachments(invoice)
+
+		self.assertIn("Missing URL", str(error.exception))
+		self.assertIn("ID F-MISSING-URL", str(error.exception))
+		self.assertIn("file URL", str(error.exception))
+
 
 class UnitTestCreateEinvoiceEmbedSource(UnitTestCase):
 	def test_table_embed_principles_match_legacy_scenarios(self):
