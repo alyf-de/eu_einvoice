@@ -29,6 +29,21 @@ _MANAGED_FILES: set[str] = set()
 _CLEANUP_REGISTERED = False
 
 
+def set_multi_attachment_embed_enabled(enabled: bool) -> None:
+	settings = frappe.get_doc("E Invoice Settings")
+	settings.multi_attachment_embed_enabled = 1 if enabled else 0
+	settings.flags.ignore_permissions = True
+	settings.save()
+
+
+def assert_single_orange_message(substring: str) -> None:
+	matches = [message for message in frappe.get_message_log() if substring in message.message.lower()]
+	if len(matches) != 1:
+		raise AssertionError(f"expected one msgprint containing {substring!r}, got {len(matches)}")
+	if matches[0].indicator != "orange":
+		raise AssertionError(f"expected orange indicator, got {matches[0].indicator!r}")
+
+
 def register_embed_test_cleanup() -> None:
 	global _CLEANUP_REGISTERED
 	if _CLEANUP_REGISTERED:

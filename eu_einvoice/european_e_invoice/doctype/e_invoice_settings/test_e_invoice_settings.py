@@ -18,17 +18,15 @@ from eu_einvoice.tests.helpers import (
 	delete_embed_test_annex_file,
 	delete_embed_test_sales_invoice,
 	ensure_embed_test_sales_invoice,
+	set_multi_attachment_embed_enabled,
 )
 
 
-def set_multi_attachment_embed_enabled(enabled: bool) -> None:
-	settings = frappe.get_doc("E Invoice Settings")
-	settings.multi_attachment_embed_enabled = 1 if enabled else 0
-	settings.flags.ignore_permissions = True
-	settings.save()
-
-
-def create_invoice_with_legacy_embed(*, submit: bool = False) -> tuple[frappe.Document, frappe.Document]:
+def create_invoice_with_legacy_embed(
+	*,
+	submit: bool = False,
+	cancel: bool = False,
+) -> tuple[frappe.Document, frappe.Document]:
 	sales_invoice = ensure_embed_test_sales_invoice()
 	annex_file = create_embed_test_annex_file(
 		file_name=f"bulk-migrate-{frappe.generate_hash(length=8)}.png",
@@ -43,10 +41,14 @@ def create_invoice_with_legacy_embed(*, submit: bool = False) -> tuple[frappe.Do
 		annex_file.file_url,
 	)
 
-	if submit:
+	if submit or cancel:
 		sales_invoice.reload()
 		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"):
 			sales_invoice.submit()
+
+	if cancel:
+		sales_invoice.reload()
+		sales_invoice.cancel()
 
 	return sales_invoice, annex_file
 
@@ -104,6 +106,24 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 				finally:
 					delete_embed_test_sales_invoice(sales_invoice.name)
 					delete_embed_test_annex_file(annex_file.name)
+
+	def test_bulk_migrate_cancelled_invoice_with_include_submitted(self):
+		set_multi_attachment_embed_enabled(True)
+		sales_invoice, annex_file = create_invoice_with_legacy_embed(submit=True, cancel=True)
+
+		try:
+			result = bulk_migrate_legacy_embed_attachments(include_submitted=True)
+
+			self.assertEqual(result["errors"], [])
+			self.assertEqual(result["migrated"], 1)
+
+			reloaded = frappe.get_doc("Sales Invoice", sales_invoice.name)
+			self.assertEqual(reloaded.einvoice_embedded_document, "")
+			self.assertEqual(len(reloaded.einvoice_attachments), 1)
+			self.assertEqual(reloaded.einvoice_attachments[0].file, annex_file.name)
+		finally:
+			delete_embed_test_sales_invoice(sales_invoice.name)
+			delete_embed_test_annex_file(annex_file.name)
 
 	def test_field_lockdown_on_enable(self):
 		set_legacy_embed_field_lockdown(False)

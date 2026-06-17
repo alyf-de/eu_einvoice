@@ -34,25 +34,20 @@ from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 )
 from eu_einvoice.tests.helpers import (
 	LOCAL_ANNEX_PNG_BYTES,
+	assert_single_orange_message,
 	build_einvoice_generator,
 	create_embed_test_annex_file,
 	create_embed_test_sales_invoice,
 	delete_embed_test_annex_file,
 	delete_embed_test_sales_invoice,
 	ensure_embed_test_sales_invoice,
+	set_multi_attachment_embed_enabled,
 )
 
 
 def append_attachment_rows(doc, rows: list[dict]) -> None:
 	for row in rows:
 		doc.append("einvoice_attachments", row)
-
-
-def set_multi_attachment_embed_enabled(enabled: bool) -> None:
-	settings = frappe.get_doc("E Invoice Settings")
-	settings.multi_attachment_embed_enabled = 1 if enabled else 0
-	settings.flags.ignore_permissions = True
-	settings.save()
 
 
 class UnitTestLegacyEmbedAttachment(UnitTestCase):
@@ -101,25 +96,29 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 			einvoice_attachments=[frappe._dict(idx=1, file="F-TABLE-1")],
 		)
 
-		with patch.object(frappe.db, "get_single_value", return_value=0):
-			self.assertEqual(get_embed_attachments(legacy_invoice), ["/files/legacy.png"])
-			with patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.get_table_embed_attachments",
-				return_value=["/files/table-only.png"],
-			) as table_mock:
-				self.assertEqual(get_embed_attachments(table_invoice), ["/files/legacy.png"])
-				table_mock.assert_not_called()
-
-		with patch.object(frappe.db, "get_single_value", return_value=1):
-			with patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.get_table_embed_attachments",
-				return_value=["/files/table-only.png"],
-			) as table_mock:
-				self.assertEqual(get_embed_attachments(table_invoice), ["/files/table-only.png"])
-				table_mock.assert_called_once_with(table_invoice)
-
-		with patch.object(frappe.db, "get_single_value", return_value=1):
-			self.assertEqual(get_embed_attachments(legacy_invoice), [])
+		for case, setting_enabled, invoice, expected, mock_table_urls in (
+			("legacy_when_off", False, legacy_invoice, ["/files/legacy.png"], None),
+			("table_ignored_when_off", False, table_invoice, ["/files/legacy.png"], None),
+			("table_when_on", True, table_invoice, ["/files/table-only.png"], ["/files/table-only.png"]),
+			("empty_table_when_on", True, legacy_invoice, [], None),
+		):
+			with self.subTest(case=case):
+				with patch.object(frappe.db, "get_single_value", return_value=1 if setting_enabled else 0):
+					if mock_table_urls is not None:
+						with patch(
+							"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.get_table_embed_attachments",
+							return_value=mock_table_urls,
+						) as table_mock:
+							self.assertEqual(get_embed_attachments(invoice), expected)
+							table_mock.assert_called_once_with(invoice)
+					elif setting_enabled:
+						self.assertEqual(get_embed_attachments(invoice), expected)
+					else:
+						with patch(
+							"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.get_table_embed_attachments",
+						) as table_mock:
+							self.assertEqual(get_embed_attachments(invoice), expected)
+							table_mock.assert_not_called()
 
 	def test_get_table_embed_attachments_raises_when_file_url_missing(self):
 		invoice = make_embed_test_invoice(
@@ -137,51 +136,19 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 		self.assertIn("file URL", str(error.exception))
 
 
-class UnitTestCreateEinvoiceEmbedSource(UnitTestCase):
-	def test_table_embed_principles_match_legacy_scenarios(self):
-		for scenario in load_embed_attachment_scenarios():
-			if not scenario.field_url:
-				continue
-			with self.subTest(scenario=scenario.id):
-				invoice = make_embed_test_invoice(
-					einvoice_attachments=[frappe._dict(idx=1, file="F-TABLE-ROW")],
-				)
-				generator = make_embed_generator(invoice)
-				mock_doc = mock_file_doc(scenario.mock_file) if scenario.mock_file else None
-
-				with patch.object(frappe.db, "get_single_value", return_value=1):
-					with patch(
-						"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.db.get_value",
-						return_value=scenario.field_url,
-					):
-						attachments = get_embed_attachments(invoice)
-
-				with patch(
-					"eu_einvoice.european_e_invoice.custom.sales_invoice.find_file_by_url",
-					return_value=mock_doc,
-				) as find_mock:
-					generator._embed_attachments(attachments)
-					find_mock.assert_called_once_with(scenario.field_url)
-
-				mock_content = scenario.mock_file.content if scenario.mock_file else None
-				assert_embed_attachment_result(
-					generator,
-					scenario.expect,
-					mock_content=mock_content,
-				)
-
-
 class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
-	def tearDown(self):
-		super().tearDown()
-		frappe.clear_messages()
-
-	def test_migrate_legacy_field_on_validate(self):
+	def setUp(self):
+		super().setUp()
 		self._previous_setting = frappe.db.get_single_value(
 			"E Invoice Settings", "multi_attachment_embed_enabled"
 		)
-		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
 
+	def tearDown(self):
+		set_multi_attachment_embed_enabled(bool(self._previous_setting))
+		frappe.clear_messages()
+		super().tearDown()
+
+	def test_migrate_legacy_field_on_validate(self):
 		set_multi_attachment_embed_enabled(False)
 		sales_invoice, annex_file = create_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
@@ -196,18 +163,9 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertEqual(sales_invoice.einvoice_embedded_document, "")
 		self.assertEqual(len(sales_invoice.einvoice_attachments), 1)
 		self.assertEqual(sales_invoice.einvoice_attachments[0].file, annex_file.name)
-
-		messages = frappe.get_message_log()
-		migrate_messages = [message for message in messages if "moved" in message.message.lower()]
-		self.assertEqual(len(migrate_messages), 1)
-		self.assertEqual(migrate_messages[0].indicator, "orange")
+		assert_single_orange_message("moved")
 
 	def test_migrate_legacy_field_keeps_broken_link_on_validate(self):
-		self._previous_setting = frappe.db.get_single_value(
-			"E Invoice Settings", "multi_attachment_embed_enabled"
-		)
-		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
-
 		set_multi_attachment_embed_enabled(True)
 		sales_invoice = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
@@ -251,10 +209,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 
 		self.assertEqual(len(doc.einvoice_attachments), 1)
 		self.assertEqual(doc.einvoice_attachments[0].display_name, "First")
-		messages = frappe.get_message_log()
-		dedup_messages = [message for message in messages if "removed" in message.message.lower()]
-		self.assertEqual(len(dedup_messages), 1)
-		self.assertEqual(dedup_messages[0].indicator, "orange")
+		assert_single_orange_message("removed")
 
 	def test_create_einvoice_embeds_legacy_attachment(self):
 		sales_invoice, annex_file = create_embed_test_sales_invoice()
@@ -277,11 +232,39 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertEqual(attached_object._filename, annex_file.file_name)
 		self.assertEqual(attached_object._text, as_base_64(resolved_file.get_content()))
 
-	def test_create_einvoice_embeds_table_attachments_when_enabled(self):
-		self._previous_setting = frappe.db.get_single_value(
-			"E Invoice Settings", "multi_attachment_embed_enabled"
+	def test_get_table_embed_attachments_returns_urls_in_row_order(self):
+		set_multi_attachment_embed_enabled(True)
+
+		annex_one = create_embed_test_annex_file(
+			file_name=f"table-order-1-{frappe.generate_hash(length=8)}.png",
+			content=LOCAL_ANNEX_PNG_BYTES + b"1",
 		)
-		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
+		annex_two = create_embed_test_annex_file(
+			file_name=f"table-order-2-{frappe.generate_hash(length=8)}.png",
+			content=LOCAL_ANNEX_PNG_BYTES + b"2",
+		)
+		self.addCleanup(delete_embed_test_annex_file, annex_one.name)
+		self.addCleanup(delete_embed_test_annex_file, annex_two.name)
+
+		sales_invoice = ensure_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		append_attachment_rows(
+			sales_invoice,
+			[
+				{"file": annex_two.name},
+				{"file": annex_one.name},
+			],
+		)
+		sales_invoice.save(ignore_permissions=True)
+		sales_invoice.reload()
+
+		self.assertEqual(
+			get_table_embed_attachments(sales_invoice),
+			[annex_two.file_url, annex_one.file_url],
+		)
+
+	def test_create_einvoice_embeds_table_attachments_when_enabled(self):
+		set_multi_attachment_embed_enabled(True)
 
 		annex_one = create_embed_test_annex_file(
 			file_name=f"table-embed-1-{frappe.generate_hash(length=8)}.png",
@@ -296,7 +279,6 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 
 		sales_invoice = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
-		sales_invoice.einvoice_embedded_document = annex_one.file_url
 		append_attachment_rows(
 			sales_invoice,
 			[
@@ -306,13 +288,6 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		)
 		sales_invoice.save(ignore_permissions=True)
 		sales_invoice.reload()
-
-		set_multi_attachment_embed_enabled(True)
-
-		self.assertEqual(
-			get_table_embed_attachments(sales_invoice),
-			[annex_two.file_url, annex_one.file_url],
-		)
 
 		generator = build_einvoice_generator(sales_invoice)
 		generator.create_einvoice()
@@ -332,11 +307,6 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 
 	def test_attach_xml_to_pdf_embeds_table_attachment_content(self):
 		from facturx import get_xml_from_pdf
-
-		self._previous_setting = frappe.db.get_single_value(
-			"E Invoice Settings", "multi_attachment_embed_enabled"
-		)
-		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
 
 		set_multi_attachment_embed_enabled(True)
 
@@ -366,11 +336,6 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertIn(expected, pdf_annexes)
 
 	def test_create_einvoice_uses_legacy_field_when_setting_off(self):
-		self._previous_setting = frappe.db.get_single_value(
-			"E Invoice Settings", "multi_attachment_embed_enabled"
-		)
-		self.addCleanup(set_multi_attachment_embed_enabled, bool(self._previous_setting))
-
 		set_multi_attachment_embed_enabled(False)
 		sales_invoice, annex_file = create_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)

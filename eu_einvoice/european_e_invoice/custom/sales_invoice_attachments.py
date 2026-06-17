@@ -235,12 +235,12 @@ def bulk_migrate_legacy_embed_attachments(
 				broken += 1
 				continue
 
-			if invoice.docstatus == 1:
-				_persist_legacy_embed_migration_db(invoice, file)
-			else:
+			if invoice.docstatus == 0:
 				_persist_legacy_embed_migration_on_save(invoice, file)
 				invoice.flags.ignore_permissions = True
 				invoice.save()
+			else:
+				_persist_legacy_embed_migration_db(invoice, file)
 
 			frappe.db.commit()
 			migrated += 1
