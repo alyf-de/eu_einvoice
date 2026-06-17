@@ -139,3 +139,17 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		custom_field.reload()
 		self.assertEqual(custom_field.hidden, 0)
 		self.assertEqual(custom_field.read_only, 0)
+
+	def test_create_custom_fields_respects_legacy_embed_lockdown(self):
+		from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+
+		from eu_einvoice.custom_fields import get_custom_fields
+
+		set_legacy_embed_field_lockdown(False)
+		set_multi_attachment_embed_enabled(True)
+
+		create_custom_fields(get_custom_fields())
+
+		custom_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
+		self.assertEqual(custom_field.hidden, 1)
+		self.assertEqual(custom_field.read_only, 1)

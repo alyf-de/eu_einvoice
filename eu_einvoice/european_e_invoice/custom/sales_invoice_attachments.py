@@ -16,6 +16,13 @@ BULK_MIGRATE_LEGACY_EMBED_JOB_ID = "eu_einvoice.bulk_migrate_legacy_embed_attach
 LEGACY_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_embedded_document"
 
 
+def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[str, int]:
+	"""Custom Field flags for hiding/locking the legacy embed attach field."""
+	if enabled is None:
+		enabled = bool(frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"))
+	return {"hidden": 1 if enabled else 0, "read_only": 1 if enabled else 0}
+
+
 def get_legacy_embed_attachment(invoice: SalesInvoice) -> list[str]:
 	"""File URLs from the legacy ``einvoice_embedded_document`` field (0 or 1)."""
 	if invoice.einvoice_embedded_document:
@@ -191,8 +198,7 @@ def set_legacy_embed_field_lockdown(enabled: bool) -> None:
 		return
 
 	custom_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
-	custom_field.hidden = 1 if enabled else 0
-	custom_field.read_only = 1 if enabled else 0
+	custom_field.update(legacy_embed_field_lockdown_properties(enabled))
 	custom_field.flags.ignore_permissions = True
 	custom_field.save()
 	frappe.clear_cache(doctype="Sales Invoice")

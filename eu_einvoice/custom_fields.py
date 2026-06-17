@@ -1,3 +1,7 @@
+from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
+	legacy_embed_field_lockdown_properties,
+)
+
 from .utils import identity as _
 
 
@@ -162,6 +166,7 @@ def get_custom_fields():
 					"Legacy single-attachment field. Enable Multiple Attachment Embedding "
 					"in E Invoice Settings to use the Embedded Documents table for one or more attachments."
 				),
+				**legacy_embed_field_lockdown_properties(),
 			},
 			{
 				"fieldname": "einvoice_attachments",
