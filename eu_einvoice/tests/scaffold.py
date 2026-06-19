@@ -16,6 +16,7 @@ CUSTOMER_TAX_ID = "DE987654321"
 
 
 def ensure_embed_test_masters() -> None:
+	"""Create shared company, customer, item, and address masters for embed tests."""
 	frappe.set_user("Administrator")
 	ensure_embed_test_company()
 	ensure_embed_test_customer()
@@ -24,6 +25,7 @@ def ensure_embed_test_masters() -> None:
 
 
 def ensure_embed_test_company() -> str:
+	"""Ensure the embed-test **Company** exists and return its name."""
 	if frappe.db.exists("Company", COMPANY_NAME):
 		company = frappe.get_doc("Company", COMPANY_NAME)
 	else:
@@ -48,6 +50,7 @@ def ensure_embed_test_company() -> str:
 
 
 def ensure_embed_test_customer() -> str:
+	"""Ensure the embed-test **Customer** exists and return its name."""
 	if frappe.db.exists("Customer", CUSTOMER_NAME):
 		customer = frappe.get_doc("Customer", CUSTOMER_NAME)
 	else:
@@ -70,6 +73,7 @@ def ensure_embed_test_customer() -> str:
 
 
 def ensure_embed_test_item() -> str:
+	"""Ensure the embed-test **Item** exists and return its code."""
 	if frappe.db.exists("Item", ITEM_CODE):
 		return ITEM_CODE
 
@@ -89,6 +93,7 @@ def ensure_embed_test_item() -> str:
 
 
 def ensure_embed_test_addresses() -> None:
+	"""Ensure billing **Address** rows linked to the embed-test company and customer."""
 	_ensure_linked_address(
 		title=COMPANY_ADDRESS_TITLE,
 		link_doctype="Company",
@@ -102,14 +107,17 @@ def ensure_embed_test_addresses() -> None:
 
 
 def embed_test_company_address() -> str | None:
+	"""Return the embed-test company **Address** name, if it exists."""
 	return frappe.db.get_value("Address", {"address_title": COMPANY_ADDRESS_TITLE}, "name")
 
 
 def embed_test_customer_address() -> str | None:
+	"""Return the embed-test customer **Address** name, if it exists."""
 	return frappe.db.get_value("Address", {"address_title": CUSTOMER_ADDRESS_TITLE}, "name")
 
 
 def _ensure_linked_address(*, title: str, link_doctype: str, link_name: str) -> str:
+	"""Create or return a billing **Address** linked to *link_doctype* / *link_name*."""
 	existing = frappe.db.get_value("Address", {"address_title": title}, "name")
 	if existing:
 		return existing

@@ -47,6 +47,7 @@ class EmbedAttachmentScenario:
 
 
 def load_embed_attachment_scenarios() -> list[EmbedAttachmentScenario]:
+	"""Load YAML-driven ``_embed_attachments`` unit-test scenarios from disk."""
 	raw = yaml.safe_load(_SCENARIOS_PATH.read_text(encoding="utf-8"))
 	scenarios: list[EmbedAttachmentScenario] = []
 
@@ -86,6 +87,7 @@ def load_embed_attachment_scenarios() -> list[EmbedAttachmentScenario]:
 
 
 def make_sales_invoice_doc(**kwargs) -> frappe._dict:
+	"""Return a minimal in-memory **Sales Invoice** dict for unit tests."""
 	return frappe._dict(
 		{
 			"doctype": "Sales Invoice",
@@ -97,6 +99,7 @@ def make_sales_invoice_doc(**kwargs) -> frappe._dict:
 
 
 def make_embed_generator(invoice) -> EInvoiceGenerator:
+	"""Return an ``EInvoiceGenerator`` with an empty Drafthorse document for unit tests."""
 	generator = EInvoiceGenerator(
 		profile=EInvoiceProfile.EN16931,
 		invoice=invoice,
@@ -108,6 +111,7 @@ def make_embed_generator(invoice) -> EInvoiceGenerator:
 
 
 def mock_file_doc(spec: MockFileSpec) -> frappe._dict:
+	"""Return a mock **File**-shaped dict matching *spec*."""
 	return frappe._dict(
 		name=spec.name,
 		file_url=spec.file_url,
@@ -117,6 +121,7 @@ def mock_file_doc(spec: MockFileSpec) -> frappe._dict:
 
 
 def _element_text(value) -> str:
+	"""Return the text content of a Drafthorse XML element wrapper."""
 	if hasattr(value, "_text"):
 		return value._text
 	return str(value)
@@ -128,6 +133,7 @@ def assert_embed_attachment_result(
 	*,
 	mock_content: bytes | None = None,
 ) -> None:
+	"""Assert ARD 916 nodes on *generator* match *expect*."""
 	refs = generator.doc.trade.agreement.additional_references.children
 
 	if len(refs) != expect.reference_count:

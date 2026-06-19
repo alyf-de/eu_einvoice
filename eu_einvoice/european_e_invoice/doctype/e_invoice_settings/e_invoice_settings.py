@@ -59,6 +59,7 @@ class EInvoiceSettings(Document):
 			self._validate_attach_field()
 
 	def on_update(self):
+		"""Apply legacy-field lockdown when ``multi_attachment_embed_enabled`` changes."""
 		set_legacy_embed_field_lockdown(bool(self.multi_attachment_embed_enabled))
 
 	def _validate_attach_field(self):
@@ -108,7 +109,25 @@ def migrate_attachments_to_table(
 	include_submitted: bool | int = 0,
 	remove_broken_links: bool | int = 0,
 ) -> dict[str, str | bool]:
-	"""Enqueue a background job to migrate legacy embed attachments site-wide."""
+	"""Enqueue a background job to migrate legacy embed attachments site-wide.
+
+	Requires **System Manager** and ``multi_attachment_embed_enabled`` on
+	**E Invoice Settings**.
+
+	Args:
+		include_submitted (bool | int, optional): Pass ``1`` to include submitted and
+			cancelled **Sales Invoice** documents.
+		remove_broken_links (bool | int, optional): Pass ``1`` to clear unresolvable
+			legacy URLs instead of skipping them.
+
+	Returns:
+		dict[str, str | bool]: ``job_id`` (RQ Job name) and ``queued`` (``True`` when a
+			new job was enqueued, ``False`` when a deduplicated job is already running).
+
+	Raises:
+		frappe.PermissionError: When the caller is not **System Manager**.
+		frappe.ValidationError: When multi-attachment embedding is disabled.
+	"""
 	frappe.only_for("System Manager")
 
 	if not frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):

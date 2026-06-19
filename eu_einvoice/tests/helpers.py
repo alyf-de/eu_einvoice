@@ -30,6 +30,7 @@ _CLEANUP_REGISTERED = False
 
 
 def set_multi_attachment_embed_enabled(enabled: bool) -> None:
+	"""Toggle ``multi_attachment_embed_enabled`` on **E Invoice Settings**."""
 	settings = frappe.get_doc("E Invoice Settings")
 	settings.multi_attachment_embed_enabled = 1 if enabled else 0
 	settings.flags.ignore_permissions = True
@@ -37,6 +38,7 @@ def set_multi_attachment_embed_enabled(enabled: bool) -> None:
 
 
 def assert_single_orange_message(substring: str) -> None:
+	"""Assert exactly one orange ``msgprint`` in the message log contains *substring*."""
 	matches = [message for message in frappe.get_message_log() if substring in message.message.lower()]
 	if len(matches) != 1:
 		raise AssertionError(f"expected one msgprint containing {substring!r}, got {len(matches)}")
@@ -45,6 +47,7 @@ def assert_single_orange_message(substring: str) -> None:
 
 
 def register_embed_test_cleanup() -> None:
+	"""Register ``atexit`` cleanup for embed-test invoices and files (once per process)."""
 	global _CLEANUP_REGISTERED
 	if _CLEANUP_REGISTERED:
 		return
@@ -53,6 +56,7 @@ def register_embed_test_cleanup() -> None:
 
 
 def remove_managed_embed_test_data() -> None:
+	"""Delete embed-test **Sales Invoice** and **File** rows registered during the test run."""
 	if not getattr(frappe.local, "db", None):
 		return
 
@@ -65,7 +69,7 @@ def remove_managed_embed_test_data() -> None:
 
 
 def ensure_embed_test_sales_invoice() -> frappe.Document:
-	"""Disposable draft **Sales Invoice** valid for `create_einvoice` (EN 16931)."""
+	"""Return a disposable draft **Sales Invoice** valid for ``create_einvoice`` (EN 16931)."""
 	register_embed_test_cleanup()
 	frappe.set_user("Administrator")
 
@@ -100,6 +104,7 @@ def ensure_embed_test_sales_invoice() -> frappe.Document:
 def create_embed_test_annex_file(
 	*, file_name: str, content: bytes = LOCAL_ANNEX_PNG_BYTES
 ) -> frappe.Document:
+	"""Create a disposable **File** row for embed attachment tests."""
 	register_embed_test_cleanup()
 	file = frappe.get_doc(
 		{
@@ -115,13 +120,14 @@ def create_embed_test_annex_file(
 
 
 def delete_embed_test_annex_file(file_name: str) -> None:
+	"""Delete a test **File** row and drop it from managed cleanup tracking."""
 	_MANAGED_FILES.discard(file_name)
 	if frappe.db.exists("File", file_name):
 		frappe.delete_doc("File", file_name, force=True, ignore_permissions=True)
 
 
 def create_embed_test_sales_invoice() -> tuple[frappe.Document, frappe.Document]:
-	"""Disposable draft **Sales Invoice** with a legacy embed annex file."""
+	"""Return a draft **Sales Invoice** with ``einvoice_embedded_document`` set to a test annex."""
 	annex_file_name = f"legacy-create-einvoice-annex-{frappe.generate_hash(length=8)}.png"
 	annex_file = create_embed_test_annex_file(file_name=annex_file_name)
 
@@ -132,6 +138,7 @@ def create_embed_test_sales_invoice() -> tuple[frappe.Document, frappe.Document]
 
 
 def delete_embed_test_sales_invoice(sales_invoice_name: str) -> None:
+	"""Cancel (if submitted) and delete a test **Sales Invoice**."""
 	_MANAGED_SALES_INVOICES.discard(sales_invoice_name)
 	if frappe.db.exists("Sales Invoice", sales_invoice_name):
 		doc = frappe.get_doc("Sales Invoice", sales_invoice_name)
@@ -142,6 +149,7 @@ def delete_embed_test_sales_invoice(sales_invoice_name: str) -> None:
 
 
 def build_einvoice_generator(invoice) -> EInvoiceGenerator:
+	"""Build an ``EInvoiceGenerator`` with addresses and contacts loaded from *invoice*."""
 	seller_address = None
 	if invoice.company_address:
 		seller_address = frappe.get_doc("Address", invoice.company_address)

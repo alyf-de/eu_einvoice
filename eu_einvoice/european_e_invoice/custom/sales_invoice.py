@@ -209,7 +209,14 @@ class EInvoiceGenerator:
 		self._set_totals()
 
 	def _embed_attachments(self, attachments: list[str]):
-		"""Add embedded documents to the einvoice as CII 916 references."""
+		"""Add embedded documents to the e-invoice as CII ARD 916 references.
+
+		Args:
+			attachments (list[str]): ``file_url`` values from ``get_embed_attachments``.
+
+		Raises:
+			frappe.ValidationError: When a URL does not resolve to a **File** row.
+		"""
 		for file_url in attachments:
 			file = find_file_by_url(file_url)
 			if not file:
@@ -774,7 +781,15 @@ def validate_vat_id(vat_id: str) -> str:
 
 
 def validate_doc(doc, event):
-	"""Validate the Sales Invoice form."""
+	"""Validate **Sales Invoice** e-invoice fields on save and submit.
+
+	When ``multi_attachment_embed_enabled`` is on, migrates ``einvoice_embedded_document``
+	to ``einvoice_attachments`` and deduplicates child-table rows before validation.
+
+	Args:
+		doc (SalesInvoice): The invoice being validated.
+		event (str): Frappe document event name (for example ``"validate"``).
+	"""
 	for tax_row in doc.taxes:
 		if tax_row.charge_type == "On Item Quantity":
 			frappe.msgprint(

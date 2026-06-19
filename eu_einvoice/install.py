@@ -55,6 +55,7 @@ def import_code_lists():
 
 
 def before_tests():
+	"""Seed shared embed-test masters before ``bench run-tests --app eu_einvoice``."""
 	import frappe
 
 	from eu_einvoice.tests.scaffold import ensure_embed_test_masters

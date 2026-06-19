@@ -17,21 +17,46 @@ LEGACY_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_embedded_document"
 
 
 def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[str, int]:
-	"""Custom Field flags for hiding/locking the legacy embed attach field."""
+	"""Return ``hidden`` / ``read_only`` flags for the legacy embed custom field.
+
+	Args:
+		enabled (bool, optional): When ``None``, reads
+			``multi_attachment_embed_enabled`` from **E Invoice Settings**.
+
+	Returns:
+		dict[str, int]: ``{"hidden": 0|1, "read_only": 0|1}`` for **Custom Field** updates.
+	"""
 	if enabled is None:
 		enabled = bool(frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"))
 	return {"hidden": 1 if enabled else 0, "read_only": 1 if enabled else 0}
 
 
 def get_legacy_embed_attachment(invoice: SalesInvoice) -> list[str]:
-	"""File URLs from the legacy ``einvoice_embedded_document`` field (0 or 1)."""
+	"""Return file URLs from the legacy ``einvoice_embedded_document`` field.
+
+	Args:
+		invoice (SalesInvoice): Source invoice.
+
+	Returns:
+		list[str]: Zero or one ``file_url`` string.
+	"""
 	if invoice.einvoice_embedded_document:
 		return [invoice.einvoice_embedded_document]
 	return []
 
 
 def get_table_embed_attachments(invoice: SalesInvoice) -> list[str]:
-	"""File URLs from ``einvoice_attachments``."""
+	"""Return file URLs from the ``einvoice_attachments`` child table.
+
+	Args:
+		invoice (SalesInvoice): Source invoice.
+
+	Returns:
+		list[str]: ``file_url`` values in child-table row order.
+
+	Raises:
+		frappe.ValidationError: When a linked **File** row has no ``file_url``.
+	"""
 	rows = invoice.get("einvoice_attachments")
 	if not rows:
 		return []
@@ -53,14 +78,32 @@ def get_table_embed_attachments(invoice: SalesInvoice) -> list[str]:
 
 
 def get_embed_attachments(invoice: SalesInvoice) -> list[str]:
-	"""Resolve attachment file URLs for CII 916 embed (legacy field or attachment table)."""
+	"""Resolve attachment file URLs for CII 916 embed on this invoice.
+
+	Uses ``einvoice_attachments`` when **E Invoice Settings**
+	``multi_attachment_embed_enabled`` is on; otherwise the legacy
+	``einvoice_embedded_document`` field.
+
+	Args:
+		invoice (SalesInvoice): Source invoice.
+
+	Returns:
+		list[str]: ``file_url`` strings passed to ``EInvoiceGenerator._embed_attachments``.
+	"""
 	if frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
 		return get_table_embed_attachments(invoice)
 	return get_legacy_embed_attachment(invoice)
 
 
 def deduplicate_attachment_rows(invoice: SalesInvoice) -> None:
-	"""Collapse duplicate attachment ``file`` links; the first row for each file wins."""
+	"""Collapse duplicate ``file`` links in ``einvoice_attachments``.
+
+	The first row for each **File** link is kept. Shows an orange ``msgprint`` when
+	rows are removed.
+
+	Args:
+		invoice (SalesInvoice): Invoice whose child table may be mutated in place.
+	"""
 	rows = invoice.get("einvoice_attachments")
 	if not rows:
 		return
@@ -91,9 +134,15 @@ def migrate_legacy_embed_to_table(
 ) -> bool:
 	"""Move ``einvoice_embedded_document`` into ``einvoice_attachments`` when multi-embed is on.
 
-	Returns True when the legacy field was migrated. Returns False when there was
-	nothing to migrate or the file link could not be resolved; in the latter case
-	the legacy field is left unchanged and the failure is recorded.
+	Args:
+		invoice (SalesInvoice): Invoice being saved or validated.
+		show_message (bool, optional): When ``True``, show orange ``msgprint`` on success
+			or when the legacy URL cannot be resolved.
+
+	Returns:
+		bool: ``True`` when the legacy field was migrated; ``False`` when there was nothing
+			to migrate or the file link could not be resolved. On failure the legacy field
+			is left unchanged and the failure is logged to **Error Log**.
 	"""
 	if not invoice.einvoice_embedded_document:
 		return False
@@ -126,6 +175,7 @@ def migrate_legacy_embed_to_table(
 
 
 def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
+	"""Write an **Error Log** entry for an unresolvable legacy embed URL."""
 	frappe.log_error(
 		title=_(
 			"Unable to migrate embedded document from legacy field `einvoice_embedded_document` "
@@ -138,11 +188,13 @@ def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
 
 
 def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> None:
+	"""Append a child row and clear ``einvoice_embedded_document`` on an in-memory invoice."""
 	invoice.append("einvoice_attachments", {"file": file.name})
 	invoice.einvoice_embedded_document = ""
 
 
 def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> None:
+	"""Insert a child row and clear the legacy field via ``db.set_value`` (submitted docs)."""
 	_insert_attachment_row(invoice, file)
 	frappe.db.set_value(
 		"Sales Invoice",
@@ -154,6 +206,7 @@ def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> None:
 
 
 def _insert_attachment_row(invoice: SalesInvoice, file) -> None:
+	"""Insert one **E Invoice Attachment Row** linked to *invoice*."""
 	frappe.get_doc(
 		{
 			"doctype": "E Invoice Attachment Row",
@@ -167,6 +220,7 @@ def _insert_attachment_row(invoice: SalesInvoice, file) -> None:
 
 
 def _broken_legacy_embed_message(file_url: str) -> str:
+	"""Return the **Error Log** message body for a skipped broken legacy URL."""
 	return _(
 		"Could not migrate embedded document: no File record found for URL {0}. "
 		"The legacy attachment link was left unchanged."
@@ -174,6 +228,7 @@ def _broken_legacy_embed_message(file_url: str) -> str:
 
 
 def _broken_legacy_embed_removed_message(file_url: str) -> str:
+	"""Return the site log message body when a broken legacy URL is cleared."""
 	return _(
 		"Could not migrate embedded document: no File record found for URL {0}. "
 		"The legacy attachment link was removed."
@@ -181,6 +236,7 @@ def _broken_legacy_embed_removed_message(file_url: str) -> str:
 
 
 def _clear_legacy_embed_field(invoice: SalesInvoice) -> None:
+	"""Clear ``einvoice_embedded_document`` on *invoice* via ``db.set_value``."""
 	frappe.db.set_value(
 		"Sales Invoice",
 		invoice.name,
@@ -196,6 +252,7 @@ def _handle_broken_legacy_embed(
 	*,
 	remove_broken_links: bool,
 ) -> Literal["broken", "removed"]:
+	"""Handle an unresolvable legacy URL during bulk migration."""
 	if remove_broken_links:
 		_clear_legacy_embed_field(invoice)
 
@@ -219,6 +276,7 @@ def _format_bulk_migration_summary(
 	removed: int,
 	errors: list[tuple[str, str]],
 ) -> str:
+	"""Build the user-facing summary string for a bulk migration run."""
 	parts = [_("Migrated {0} Sales Invoice(s).").format(migrated)]
 	if already_migrated:
 		parts.append(_("Already migrated {0}.").format(already_migrated))
@@ -260,7 +318,12 @@ def _resolve_embed_file_for_invoice(invoice: SalesInvoice, file_url: str):
 
 
 def set_legacy_embed_field_lockdown(enabled: bool) -> None:
-	"""Hide and lock the legacy attach field when multi-embed is enabled."""
+	"""Hide and lock ``einvoice_embedded_document`` when multi-embed is enabled.
+
+	Args:
+		enabled (bool): When ``True``, set the legacy **Custom Field** to hidden and
+			read-only; when ``False``, show and unlock it.
+	"""
 	if not frappe.db.exists("Custom Field", LEGACY_EMBED_CUSTOM_FIELD):
 		return
 
@@ -275,17 +338,19 @@ def bulk_migrate_legacy_embed_attachments(
 	include_submitted: bool = False,
 	remove_broken_links: bool = False,
 ) -> dict[str, int | list[tuple[str, str]]]:
-	"""Background job: migrate legacy embed field on Sales Invoices.
+	"""Migrate legacy ``einvoice_embedded_document`` values site-wide (background job).
 
-	When *include_submitted* is false, only draft invoices are processed via
-	``save``. When true, submitted invoices are updated with direct child-row
-	inserts and ``db.set_value`` so post-submit restrictions do not block migration.
+	Args:
+		include_submitted (bool, optional): When ``True``, also update submitted and
+			cancelled invoices via direct DB writes. When ``False``, only draft invoices
+			are migrated through ``save``.
+		remove_broken_links (bool, optional): When ``True``, clear unresolvable legacy
+			URLs instead of skipping them. Removals are logged at site warning level.
 
-	When *remove_broken_links* is true, unresolvable legacy URLs are cleared from
-	``einvoice_embedded_document`` (logged) instead of left unchanged.
-
-	Returns counts for migrated, already_migrated (cleared outside this job),
-	broken legacy links (skipped), removed broken links, plus unexpected ``errors``.
+	Returns:
+		dict: Counts with keys ``migrated``, ``already_migrated``, ``broken``, ``removed``,
+			and ``errors`` (list of ``(invoice_name, message)`` tuples for unexpected
+			exceptions). Publishes a realtime ``msgprint`` summary to the enqueueing user.
 	"""
 	filters: dict = {"einvoice_embedded_document": ("is", "set")}
 	if not include_submitted:
