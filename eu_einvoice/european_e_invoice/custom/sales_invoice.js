@@ -3,6 +3,7 @@ frappe.ui.form.on("Sales Invoice", {
 		if (frm.fields_dict.einvoice_attachments) {
 			frm.set_query("file", "einvoice_attachments", function () {
 				if (frm.is_new()) {
+					// No saved invoice name yet — files can only attach after save, so match nothing.
 					return { filters: { name: ["in", []] } };
 				}
 				return {
