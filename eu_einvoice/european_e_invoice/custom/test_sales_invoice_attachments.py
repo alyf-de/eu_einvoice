@@ -192,6 +192,12 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertIn("left unchanged", error_logs[0].error.lower())
 		self.assertIn(sales_invoice.name, error_logs[0].error)
 
+		assert_single_orange_message(broken_url)
+		warning = next(message for message in frappe.get_message_log() if broken_url in message.message)
+		self.assertIn("einvoice_embedded_document", warning.message)
+		self.assertIn("System Manager", warning.message)
+		self.assertIn("E Invoice Settings", warning.message)
+
 	def test_validate_doc_deduplicates_attachment_rows(self):
 		doc = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, doc.name)

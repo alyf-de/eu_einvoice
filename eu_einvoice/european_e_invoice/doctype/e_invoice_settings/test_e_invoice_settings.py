@@ -10,6 +10,7 @@ from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	LEGACY_EMBED_CUSTOM_FIELD,
+	_format_bulk_migration_summary,
 	bulk_migrate_legacy_embed_attachments,
 	set_legacy_embed_field_lockdown,
 )
@@ -218,6 +219,21 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 				for call in mock_logger.return_value.warning.call_args_list
 			)
 		)
+
+	def test_bulk_migration_summary_segments(self):
+		summary = _format_bulk_migration_summary(
+			migrated=2,
+			already_migrated=1,
+			broken=3,
+			removed=1,
+			errors=[("SINV-ERR", "boom")],
+		)
+
+		self.assertIn("Migrated 2", summary)
+		self.assertIn("Already migrated 1", summary)
+		self.assertIn("Broken file links (skipped): 3", summary)
+		self.assertIn("Broken file links (removed): 1", summary)
+		self.assertIn("Errors: 1", summary)
 
 	def test_field_lockdown_on_enable(self):
 		set_legacy_embed_field_lockdown(False)

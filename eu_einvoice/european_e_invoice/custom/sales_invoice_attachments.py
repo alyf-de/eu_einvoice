@@ -100,20 +100,29 @@ def migrate_legacy_embed_to_table(
 
 	file_url = invoice.einvoice_embedded_document
 	file = _resolve_embed_file_for_invoice(invoice, file_url)
-	if not file:
+	if file:
+		_persist_legacy_embed_migration_on_save(invoice, file)
+		if show_message:
+			frappe.msgprint(
+				_("The legacy embedded document was moved to the Embedded Documents table."),
+				alert=True,
+				indicator="orange",
+			)
+		return True
+
+	else:
 		_log_broken_legacy_embed(invoice, file_url)
+		if show_message:
+			frappe.msgprint(
+				_(
+					"Could not migrate Embedded Document ({0}): no File record found for URL {1}. "
+					"The link was left unchanged. Ask a System Manager to run "
+					"Migrate attachments to table on E Invoice Settings."
+				).format("einvoice_embedded_document", file_url),
+				alert=True,
+				indicator="orange",
+			)
 		return False
-
-	_persist_legacy_embed_migration_on_save(invoice, file)
-
-	if show_message:
-		frappe.msgprint(
-			_("The legacy embedded document was moved to the Embedded Documents table."),
-			alert=True,
-			indicator="orange",
-		)
-
-	return True
 
 
 def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
@@ -126,15 +135,6 @@ def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
 		reference_doctype=invoice.doctype,
 		reference_name=invoice.name,
 	)
-
-
-def _log_removed_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
-	title = _(
-		"Removed broken legacy embedded document link from field `einvoice_embedded_document` "
-		"for Sales Invoice {0}"
-	).format(invoice.name)
-	message = _broken_legacy_embed_removed_message(file_url)
-	frappe.logger("eu_einvoice", allow_site=True).warning("%s — %s", title, message)
 
 
 def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> None:
