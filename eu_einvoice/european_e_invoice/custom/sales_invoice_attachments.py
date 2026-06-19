@@ -181,18 +181,13 @@ def _broken_legacy_embed_removed_message(file_url: str) -> str:
 
 
 def _clear_legacy_embed_field(invoice: SalesInvoice) -> None:
-	if invoice.docstatus == 0:
-		invoice.einvoice_embedded_document = ""
-		invoice.flags.ignore_permissions = True
-		invoice.save()
-	else:
-		frappe.db.set_value(
-			"Sales Invoice",
-			invoice.name,
-			"einvoice_embedded_document",
-			"",
-			update_modified=True,
-		)
+	frappe.db.set_value(
+		"Sales Invoice",
+		invoice.name,
+		"einvoice_embedded_document",
+		"",
+		update_modified=True,
+	)
 
 
 def _handle_broken_legacy_embed(
