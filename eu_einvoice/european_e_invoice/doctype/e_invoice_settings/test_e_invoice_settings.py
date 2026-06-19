@@ -26,20 +26,30 @@ def create_invoice_with_legacy_embed(
 	*,
 	submit: bool = False,
 	cancel: bool = False,
-) -> tuple[frappe.Document, frappe.Document]:
+	broken_url: str | None = None,
+) -> tuple[frappe.Document, frappe.Document | None]:
 	sales_invoice = ensure_embed_test_sales_invoice()
-	annex_file = create_embed_test_annex_file(
-		file_name=f"bulk-migrate-{frappe.generate_hash(length=8)}.png",
-	)
-	annex_file.attached_to_doctype = "Sales Invoice"
-	annex_file.attached_to_name = sales_invoice.name
-	annex_file.save(ignore_permissions=True)
-	frappe.db.set_value(
-		"Sales Invoice",
-		sales_invoice.name,
-		"einvoice_embedded_document",
-		annex_file.file_url,
-	)
+	if broken_url:
+		frappe.db.set_value(
+			"Sales Invoice",
+			sales_invoice.name,
+			"einvoice_embedded_document",
+			broken_url,
+		)
+		annex_file = None
+	else:
+		annex_file = create_embed_test_annex_file(
+			file_name=f"bulk-migrate-{frappe.generate_hash(length=8)}.png",
+		)
+		annex_file.attached_to_doctype = "Sales Invoice"
+		annex_file.attached_to_name = sales_invoice.name
+		annex_file.save(ignore_permissions=True)
+		frappe.db.set_value(
+			"Sales Invoice",
+			sales_invoice.name,
+			"einvoice_embedded_document",
+			annex_file.file_url,
+		)
 
 	if submit or cancel:
 		sales_invoice.reload()
@@ -124,6 +134,90 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		finally:
 			delete_embed_test_sales_invoice(sales_invoice.name)
 			delete_embed_test_annex_file(annex_file.name)
+
+	def test_bulk_migrate_skips_broken_legacy_link(self):
+		set_multi_attachment_embed_enabled(True)
+		broken_url = f"/files/missing-legacy-{frappe.generate_hash(length=8)}.png"
+		sales_invoice, _ = create_invoice_with_legacy_embed(broken_url=broken_url)
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		legacy_embed_count = len(
+			frappe.get_all(
+				"Sales Invoice",
+				filters={"einvoice_embedded_document": ("is", "set")},
+			)
+		)
+
+		result = bulk_migrate_legacy_embed_attachments(remove_broken_links=False)
+
+		self.assertEqual(result["errors"], [])
+		self.assertEqual(result["migrated"], 0)
+		self.assertEqual(result["broken"], legacy_embed_count)
+		self.assertEqual(result.get("removed", 0), 0)
+		self.assertEqual(
+			frappe.db.get_value(
+				"Sales Invoice",
+				sales_invoice.name,
+				"einvoice_embedded_document",
+			),
+			broken_url,
+		)
+		error_logs = frappe.get_all(
+			"Error Log",
+			filters={
+				"reference_doctype": "Sales Invoice",
+				"reference_name": sales_invoice.name,
+				"error": ("like", f"%{broken_url}%"),
+			},
+			fields=["error"],
+		)
+		self.assertEqual(len(error_logs), 1)
+		self.assertIn("left unchanged", error_logs[0].error.lower())
+
+	def test_bulk_migrate_removes_broken_legacy_link(self):
+		set_multi_attachment_embed_enabled(True)
+		broken_url = f"/files/missing-legacy-{frappe.generate_hash(length=8)}.png"
+		sales_invoice, _ = create_invoice_with_legacy_embed(broken_url=broken_url)
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		legacy_embed_count = len(
+			frappe.get_all(
+				"Sales Invoice",
+				filters={"einvoice_embedded_document": ("is", "set")},
+			)
+		)
+
+		with patch(
+			"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.logger"
+		) as mock_logger:
+			result = bulk_migrate_legacy_embed_attachments(remove_broken_links=True)
+
+		self.assertEqual(result["errors"], [])
+		self.assertEqual(result["migrated"], 0)
+		self.assertEqual(result["removed"], legacy_embed_count)
+		self.assertEqual(result["broken"], 0)
+		self.assertEqual(
+			frappe.db.get_value(
+				"Sales Invoice",
+				sales_invoice.name,
+				"einvoice_embedded_document",
+			),
+			"",
+		)
+		error_logs = frappe.get_all(
+			"Error Log",
+			filters={
+				"reference_doctype": "Sales Invoice",
+				"reference_name": sales_invoice.name,
+				"error": ("like", f"%{broken_url}%"),
+			},
+		)
+		self.assertEqual(error_logs, [])
+		self.assertEqual(mock_logger.return_value.warning.call_count, legacy_embed_count)
+		self.assertTrue(
+			any(
+				broken_url in str(call.args) and "removed" in str(call.args).lower()
+				for call in mock_logger.return_value.warning.call_args_list
+			)
+		)
 
 	def test_field_lockdown_on_enable(self):
 		set_legacy_embed_field_lockdown(False)

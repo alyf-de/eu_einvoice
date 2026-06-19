@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_bulk_edit": 1,
  "allow_rename": 1,
  "creation": "2025-09-05 12:02:26.455512",
  "doctype": "DocType",
@@ -126,7 +127,7 @@
   },
   {
    "depends_on": "eval:doc.multi_attachment_embed_enabled",
-   "description": "Migrates files linked in the legacy field <b>einvoice_embedded_document</b> to the new attachment table.",
+   "description": "Migrates files linked in the legacy field <b>einvoice_embedded_document</b> to the <b>Embedded Documents</b> table. Opens a dialog where you can include submitted and cancelled <b>Sales Invoice</b> documents and choose whether unresolvable legacy file links are skipped (left unchanged, logged) or removed from the field.",
    "fieldname": "btn_migrate_attachments_to_table",
    "fieldtype": "Button",
    "label": "Migrate Existing Attachments to Table"
@@ -136,7 +137,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-06-15 16:47:38.804771",
+ "modified": "2026-06-19 14:22:36.663548",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",

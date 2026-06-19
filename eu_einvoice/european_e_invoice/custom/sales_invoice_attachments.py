@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import frappe
 from frappe import _
@@ -128,6 +128,15 @@ def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
 	)
 
 
+def _log_removed_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
+	title = _(
+		"Removed broken legacy embedded document link from field `einvoice_embedded_document` "
+		"for Sales Invoice {0}"
+	).format(invoice.name)
+	message = _broken_legacy_embed_removed_message(file_url)
+	frappe.logger("eu_einvoice", allow_site=True).warning("%s — %s", title, message)
+
+
 def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> None:
 	invoice.append("einvoice_attachments", {"file": file.name})
 	invoice.einvoice_embedded_document = ""
@@ -162,6 +171,69 @@ def _broken_legacy_embed_message(file_url: str) -> str:
 		"Could not migrate embedded document: no File record found for URL {0}. "
 		"The legacy attachment link was left unchanged."
 	).format(file_url)
+
+
+def _broken_legacy_embed_removed_message(file_url: str) -> str:
+	return _(
+		"Could not migrate embedded document: no File record found for URL {0}. "
+		"The legacy attachment link was removed."
+	).format(file_url)
+
+
+def _clear_legacy_embed_field(invoice: SalesInvoice) -> None:
+	if invoice.docstatus == 0:
+		invoice.einvoice_embedded_document = ""
+		invoice.flags.ignore_permissions = True
+		invoice.save()
+	else:
+		frappe.db.set_value(
+			"Sales Invoice",
+			invoice.name,
+			"einvoice_embedded_document",
+			"",
+			update_modified=True,
+		)
+
+
+def _handle_broken_legacy_embed(
+	invoice: SalesInvoice,
+	file_url: str,
+	*,
+	remove_broken_links: bool,
+) -> Literal["broken", "removed"]:
+	if remove_broken_links:
+		_clear_legacy_embed_field(invoice)
+
+		title = _(
+			"Removed broken legacy embedded document link from field `einvoice_embedded_document` "
+			"for Sales Invoice {0}"
+		).format(invoice.name)
+		message = _broken_legacy_embed_removed_message(file_url)
+		frappe.logger("eu_einvoice", allow_site=True).warning("%s — %s", title, message)
+		return "removed"
+	else:
+		_log_broken_legacy_embed(invoice, file_url)
+		return "broken"
+
+
+def _format_bulk_migration_summary(
+	*,
+	migrated: int,
+	already_migrated: int,
+	broken: int,
+	removed: int,
+	errors: list[tuple[str, str]],
+) -> str:
+	parts = [_("Migrated {0} Sales Invoice(s).").format(migrated)]
+	if already_migrated:
+		parts.append(_("Already migrated {0}.").format(already_migrated))
+	if broken:
+		parts.append(_("Broken file links (skipped): {0}.").format(broken))
+	if removed:
+		parts.append(_("Broken file links (removed): {0}.").format(removed))
+	if errors:
+		parts.append(_("Errors: {0}.").format(len(errors)))
+	return " ".join(parts)
 
 
 def _resolve_embed_file_for_invoice(invoice: SalesInvoice, file_url: str):
@@ -206,6 +278,7 @@ def set_legacy_embed_field_lockdown(enabled: bool) -> None:
 
 def bulk_migrate_legacy_embed_attachments(
 	include_submitted: bool = False,
+	remove_broken_links: bool = False,
 ) -> dict[str, int | list[tuple[str, str]]]:
 	"""Background job: migrate legacy embed field on Sales Invoices.
 
@@ -213,8 +286,11 @@ def bulk_migrate_legacy_embed_attachments(
 	``save``. When true, submitted invoices are updated with direct child-row
 	inserts and ``db.set_value`` so post-submit restrictions do not block migration.
 
+	When *remove_broken_links* is true, unresolvable legacy URLs are cleared from
+	``einvoice_embedded_document`` (logged) instead of left unchanged.
+
 	Returns counts for migrated, already_migrated (cleared outside this job),
-	broken legacy links, plus unexpected ``errors``.
+	broken legacy links (skipped), removed broken links, plus unexpected ``errors``.
 	"""
 	filters: dict = {"einvoice_embedded_document": ("is", "set")}
 	if not include_submitted:
@@ -225,6 +301,7 @@ def bulk_migrate_legacy_embed_attachments(
 	migrated = 0
 	already_migrated = 0
 	broken = 0
+	removed = 0
 	errors: list[tuple[str, str]] = []
 
 	for invoice_name in invoice_names:
@@ -235,21 +312,31 @@ def bulk_migrate_legacy_embed_attachments(
 				already_migrated += 1
 				continue
 
+			persisted = False
 			file = _resolve_embed_file_for_invoice(invoice, legacy_url)
 			if not file:
-				_log_broken_legacy_embed(invoice, legacy_url)
-				broken += 1
-				continue
-
-			if invoice.docstatus == 0:
-				_persist_legacy_embed_migration_on_save(invoice, file)
-				invoice.flags.ignore_permissions = True
-				invoice.save()
+				outcome = _handle_broken_legacy_embed(
+					invoice, legacy_url, remove_broken_links=remove_broken_links
+				)
+				if outcome == "removed":
+					removed += 1
+					persisted = True
+				else:
+					broken += 1
 			else:
-				_persist_legacy_embed_migration_db(invoice, file)
+				if invoice.docstatus == 0:
+					_persist_legacy_embed_migration_on_save(invoice, file)
+					invoice.flags.ignore_permissions = True
+					invoice.save()
+				else:
+					_persist_legacy_embed_migration_db(invoice, file)
 
-			frappe.db.commit()
-			migrated += 1
+				migrated += 1
+				persisted = True
+
+			if persisted:
+				# Per-invoice commit in bulk worker; partial progress survives later failures.
+				frappe.db.commit()  # nosemgrep
 		except Exception as exc:
 			errors.append((invoice_name, cstr(exc)))
 			frappe.log_error(
@@ -259,15 +346,19 @@ def bulk_migrate_legacy_embed_attachments(
 				message=cstr(exc),
 			)
 
-	summary = _("Migrated {0} Sales Invoice(s). Already migrated {1}. Failed {2}.").format(
-		migrated, already_migrated, broken + len(errors)
+	summary = _format_bulk_migration_summary(
+		migrated=migrated,
+		already_migrated=already_migrated,
+		broken=broken,
+		removed=removed,
+		errors=errors,
 	)
 	frappe.publish_realtime(
 		"msgprint",
 		{
 			"message": summary,
 			"alert": True,
-			"indicator": "green" if not broken and not errors else "orange",
+			"indicator": "green" if not broken and not removed and not errors else "orange",
 		},
 		user=frappe.session.user,
 	)
@@ -276,5 +367,6 @@ def bulk_migrate_legacy_embed_attachments(
 		"migrated": migrated,
 		"already_migrated": already_migrated,
 		"broken": broken,
+		"removed": removed,
 		"errors": errors,
 	}

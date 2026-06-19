@@ -103,8 +103,11 @@ class EInvoiceSettings(Document):
 		)
 
 
-@frappe.whitelist()
-def migrate_attachments_to_table(include_submitted: bool | int = 0) -> dict[str, str | bool]:
+@frappe.whitelist(methods=["POST"])
+def migrate_attachments_to_table(
+	include_submitted: bool | int = 0,
+	remove_broken_links: bool | int = 0,
+) -> dict[str, str | bool]:
 	"""Enqueue a background job to migrate legacy embed attachments site-wide."""
 	frappe.only_for("System Manager")
 
@@ -121,6 +124,7 @@ def migrate_attachments_to_table(include_submitted: bool | int = 0) -> dict[str,
 		job_id=BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
 		deduplicate=True,
 		include_submitted=cint(include_submitted),
+		remove_broken_links=cint(remove_broken_links),
 	)
 
 	if job:

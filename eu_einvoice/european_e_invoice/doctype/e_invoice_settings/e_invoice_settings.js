@@ -30,7 +30,16 @@ frappe.ui.form.on("E Invoice Settings", {
 				{
 					fieldtype: "Check",
 					fieldname: "include_submitted",
-					label: __("Include submitted Sales Invoices"),
+					label: __("Include submitted and cancelled Sales Invoices"),
+					default: 0,
+				},
+				{
+					fieldtype: "Check",
+					fieldname: "remove_broken_links",
+					label: __("Remove broken legacy file links"),
+					description: __(
+						"Clear unresolvable links from the legacy field instead of leaving them unchanged. Each removal is logged."
+					),
 					default: 0,
 				},
 			],
@@ -41,6 +50,7 @@ frappe.ui.form.on("E Invoice Settings", {
 					method: "eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings.migrate_attachments_to_table",
 					args: {
 						include_submitted: values.include_submitted ? 1 : 0,
+						remove_broken_links: values.remove_broken_links ? 1 : 0,
 					},
 					freeze: true,
 					freeze_message: __("Queuing migration..."),
