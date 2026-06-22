@@ -111,7 +111,6 @@ jobs:
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
           bench --site test_site install-app eu_einvoice
-          bench --site test_site execute frappe.utils.install.complete_setup_wizard
           bench build
         env:
           CI: 'Yes'
