@@ -19,6 +19,7 @@ from eu_einvoice.tests.scaffold import (
 	ITEM_CODE,
 	embed_test_company_address,
 	embed_test_customer_address,
+	ensure_embed_test_masters_committed,
 )
 from eu_einvoice.utils import EInvoiceProfile
 
@@ -72,6 +73,7 @@ def ensure_embed_test_sales_invoice() -> frappe.Document:
 	"""Return a disposable draft **Sales Invoice** valid for ``create_einvoice`` (EN 16931)."""
 	register_embed_test_cleanup()
 	frappe.set_user("Administrator")
+	ensure_embed_test_masters_committed()
 
 	company = COMPANY_NAME
 	sales_invoice = frappe.new_doc("Sales Invoice")

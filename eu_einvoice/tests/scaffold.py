@@ -14,11 +14,37 @@ CUSTOMER_ADDRESS_TITLE = "_Einvoice Embed Test Customer Address"
 COMPANY_TAX_ID = "DE123456789"
 CUSTOMER_TAX_ID = "DE987654321"
 
+_MASTERS_COMMITTED = False
+
+
+def ensure_erpnext_test_prerequisites() -> None:
+	"""Run setup wizard when ERPNext presets are missing (e.g. lightmode CI)."""
+	if "erpnext" not in frappe.get_installed_apps() or frappe.is_setup_complete():
+		return
+
+	from frappe.utils.install import complete_setup_wizard
+
+	complete_setup_wizard()
+
+
+def ensure_embed_test_masters_committed() -> None:
+	"""Create embed-test masters and commit once so they survive per-test rollbacks."""
+	global _MASTERS_COMMITTED
+
+	ensure_embed_test_masters()
+	if _MASTERS_COMMITTED:
+		return
+
+	frappe.db.commit()  # nosemgrep
+	_MASTERS_COMMITTED = True
+
 
 def ensure_embed_test_masters() -> None:
 	"""Create shared company, customer, item, and address masters for embed tests."""
 	frappe.set_user("Administrator")
+	ensure_erpnext_test_prerequisites()
 	ensure_embed_test_company()
+	ensure_embed_test_fiscal_year()
 	ensure_embed_test_customer()
 	ensure_embed_test_item()
 	ensure_embed_test_addresses()
@@ -47,6 +73,37 @@ def ensure_embed_test_company() -> str:
 		frappe.db.set_value("Company", COMPANY_NAME, "tax_id", COMPANY_TAX_ID)
 
 	return COMPANY_NAME
+
+
+def ensure_embed_test_fiscal_year() -> None:
+	"""Ensure a **Fiscal Year** covers today for the embed-test company."""
+	from erpnext.accounts.utils import get_fiscal_years
+	from frappe.utils import getdate, nowdate
+
+	posting_date = getdate(nowdate())
+	if get_fiscal_years(posting_date, company=COMPANY_NAME, raise_on_missing=False):
+		return
+
+	year = posting_date.year
+	fiscal_year_name = str(year)
+
+	if frappe.db.exists("Fiscal Year", fiscal_year_name):
+		fiscal_year = frappe.get_doc("Fiscal Year", fiscal_year_name)
+		if fiscal_year.disabled:
+			fiscal_year.disabled = 0
+		if not any(row.company == COMPANY_NAME for row in fiscal_year.companies):
+			fiscal_year.append("companies", {"company": COMPANY_NAME})
+		fiscal_year.save(ignore_permissions=True)
+		return
+
+	frappe.get_doc(
+		{
+			"doctype": "Fiscal Year",
+			"year": fiscal_year_name,
+			"year_start_date": f"{year}-01-01",
+			"year_end_date": f"{year}-12-31",
+		}
+	).insert(ignore_permissions=True)
 
 
 def ensure_embed_test_customer() -> str:

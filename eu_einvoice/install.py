@@ -56,10 +56,6 @@ def import_code_lists():
 
 def before_tests():
 	"""Seed shared embed-test masters before ``bench run-tests --app eu_einvoice``."""
-	import frappe
+	from eu_einvoice.tests.scaffold import ensure_embed_test_masters_committed
 
-	from eu_einvoice.tests.scaffold import ensure_embed_test_masters
-
-	ensure_embed_test_masters()
-	# Shared embed-test masters must persist across per-test transaction rollbacks.
-	frappe.db.commit()  # nosemgrep
+	ensure_embed_test_masters_committed()
