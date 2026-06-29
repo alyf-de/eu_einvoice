@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 BULK_MIGRATE_LEGACY_EMBED_JOB_ID = "eu_einvoice.bulk_migrate_legacy_embed_attachments"
 LEGACY_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_embedded_document"
+LEGACY_EMBED_FIELD = "einvoice_embedded_document"
 
 
 def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[str, int]:
@@ -299,7 +300,9 @@ def _resolve_embed_file_for_invoice(invoice: SalesInvoice, file_url: str):
 
 	Migration must move *this* invoice's legacy attach into *this* invoice's
 	child table, so we prefer a **File** attached to the invoice and only then
-	fall back to the site-wide URL lookup.
+	fall back to the site-wide URL lookup. When submit sync creates a second
+	**File** row for the same URL, prefer the row linked via the legacy attach
+	field, then the oldest match.
 	"""
 	for filters in (
 		{
@@ -309,10 +312,17 @@ def _resolve_embed_file_for_invoice(invoice: SalesInvoice, file_url: str):
 		},
 		{"file_url": file_url},
 	):
-		for file_name in frappe.get_all("File", filters=filters, pluck="name"):
+		candidates = []
+		for file_name in frappe.get_all("File", filters=filters, pluck="name", order_by="creation asc"):
 			file = frappe.get_doc("File", file_name)
 			if file.is_downloadable():
-				return file
+				candidates.append(file)
+
+		if candidates:
+			for file in candidates:
+				if file.attached_to_field == LEGACY_EMBED_FIELD:
+					return file
+			return candidates[0]
 
 	return None
 

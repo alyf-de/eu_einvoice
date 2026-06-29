@@ -44,6 +44,7 @@ def create_invoice_with_legacy_embed(
 		)
 		annex_file.attached_to_doctype = "Sales Invoice"
 		annex_file.attached_to_name = sales_invoice.name
+		annex_file.attached_to_field = "einvoice_embedded_document"
 		annex_file.save(ignore_permissions=True)
 		frappe.db.set_value(
 			"Sales Invoice",
@@ -110,7 +111,10 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 					if expect_migrated:
 						self.assertEqual(reloaded.einvoice_embedded_document, "")
 						self.assertEqual(len(reloaded.einvoice_attachments), 1)
-						self.assertEqual(reloaded.einvoice_attachments[0].file, annex_file.name)
+						migrated_file = frappe.db.get_value(
+							"File", reloaded.einvoice_attachments[0].file, "file_url"
+						)
+						self.assertEqual(migrated_file, annex_file.file_url)
 					else:
 						self.assertEqual(reloaded.einvoice_embedded_document, annex_file.file_url)
 						self.assertEqual(len(reloaded.einvoice_attachments), 0)
@@ -131,7 +135,8 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 			reloaded = frappe.get_doc("Sales Invoice", sales_invoice.name)
 			self.assertEqual(reloaded.einvoice_embedded_document, "")
 			self.assertEqual(len(reloaded.einvoice_attachments), 1)
-			self.assertEqual(reloaded.einvoice_attachments[0].file, annex_file.name)
+			migrated_file = frappe.db.get_value("File", reloaded.einvoice_attachments[0].file, "file_url")
+			self.assertEqual(migrated_file, annex_file.file_url)
 		finally:
 			delete_embed_test_sales_invoice(sales_invoice.name)
 			delete_embed_test_annex_file(annex_file.name)

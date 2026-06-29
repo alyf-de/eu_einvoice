@@ -22,9 +22,26 @@ def ensure_erpnext_test_prerequisites() -> None:
 	if "erpnext" not in frappe.get_installed_apps() or frappe.is_setup_complete():
 		return
 
-	from frappe.utils.install import complete_setup_wizard
+	from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
+	from frappe.utils import getdate, today
 
-	complete_setup_wizard()
+	year = getdate(today()).year
+	setup_complete(
+		{
+			"language": "English",
+			"email": "test@erpnext.com",
+			"full_name": "Test User",
+			"password": "test",
+			"country": "United States",
+			"timezone": "America/New_York",
+			"currency": "USD",
+			"company_name": "_Test Company",
+			"company_abbr": "TC",
+			"fy_start_date": f"{year}-01-01",
+			"fy_end_date": f"{year}-12-31",
+			"chart_of_accounts": "Standard",
+		}
+	)
 
 
 def ensure_embed_test_masters_committed() -> None:
