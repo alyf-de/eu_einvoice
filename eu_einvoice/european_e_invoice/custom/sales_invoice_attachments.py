@@ -3,18 +3,33 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
 
 import frappe
 from frappe import _
+from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.utils import cstr
 
 if TYPE_CHECKING:
 	from erpnext.accounts.doctype.sales_invoice.sales_invoice import SalesInvoice
 
+	from eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings import (
+		EInvoiceSettings,
+	)
+
 BULK_MIGRATE_LEGACY_EMBED_JOB_ID = "eu_einvoice.bulk_migrate_legacy_embed_attachments"
 LEGACY_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_embedded_document"
 LEGACY_EMBED_FIELD = "einvoice_embedded_document"
+
+
+@dataclass(frozen=True)
+class EmbedAttachment:
+	"""One embedded document resolved for CII ARD 916."""
+
+	file: str
+	file_name: str
 
 
 def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[str, int]:
@@ -32,54 +47,54 @@ def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[
 	return {"hidden": 1 if enabled else 0, "read_only": 1 if enabled else 0}
 
 
-def get_legacy_embed_attachment(invoice: SalesInvoice) -> list[str]:
-	"""Return file URLs from the legacy ``einvoice_embedded_document`` field.
+def _get_legacy_embed_attachment(invoice: SalesInvoice) -> list[EmbedAttachment]:
+	"""Return embedded documents from the legacy ``einvoice_embedded_document`` field.
 
 	Args:
 		invoice (SalesInvoice): Source invoice.
 
 	Returns:
-		list[str]: Zero or one ``file_url`` string.
-	"""
-	if invoice.einvoice_embedded_document:
-		return [invoice.einvoice_embedded_document]
-	return []
-
-
-def get_table_embed_attachments(invoice: SalesInvoice) -> list[str]:
-	"""Return file URLs from the ``einvoice_attachments`` child table.
-
-	Args:
-		invoice (SalesInvoice): Source invoice.
-
-	Returns:
-		list[str]: ``file_url`` values in child-table row order.
+		list[EmbedAttachment]: Zero or one resolved attachment.
 
 	Raises:
-		frappe.ValidationError: When a linked **File** row has no ``file_url``.
+		frappe.ValidationError: When the legacy URL does not resolve to a **File** row.
+	"""
+	if not invoice.einvoice_embedded_document:
+		return []
+
+	file = find_file_by_url(invoice.einvoice_embedded_document)
+	if not file:
+		frappe.throw(
+			_(
+				"Could not embed attachment: no File record found for URL {0}. "
+				"Check that the file exists and is attached to this document."
+			).format(invoice.einvoice_embedded_document),
+			title=_("Invalid attachment file"),
+		)
+	return [EmbedAttachment(file=file.name, file_name=file.file_name)]
+
+
+def _get_table_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
+	"""Return embedded documents from the ``einvoice_attachments`` child table.
+
+	Args:
+		invoice (SalesInvoice): Source invoice.
+
+	Returns:
+		list[EmbedAttachment]: Attachments in child-table row order.
 	"""
 	rows = invoice.get("einvoice_attachments")
 	if not rows:
 		return []
 
-	urls = []
+	attachments = []
 	for row in rows:
-		file_url = frappe.db.get_value("File", row.file, "file_url")
-		if file_url:
-			urls.append(file_url)
-		else:
-			frappe.throw(
-				_(
-					"Could not embed attachment: no file URL found for File '{0}' (ID {1}). "
-					"Check that the file exists and is attached to this document."
-				).format(row.file_name, row.file),
-				title=_("Invalid attachment file"),
-			)
-	return urls
+		attachments.append(EmbedAttachment(file=row.file, file_name=row.file_name))
+	return attachments
 
 
-def get_embed_attachments(invoice: SalesInvoice) -> list[str]:
-	"""Resolve attachment file URLs for CII 916 embed on this invoice.
+def get_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
+	"""Resolve embedded documents for CII 916 embed on this invoice.
 
 	Uses ``einvoice_attachments`` when **E Invoice Settings**
 	``multi_attachment_embed_enabled`` is on; otherwise the legacy
@@ -89,43 +104,97 @@ def get_embed_attachments(invoice: SalesInvoice) -> list[str]:
 		invoice (SalesInvoice): Source invoice.
 
 	Returns:
-		list[str]: ``file_url`` strings passed to ``EInvoiceGenerator._embed_attachments``.
+		list[EmbedAttachment]: Attachments passed to ``EInvoiceGenerator._embed_attachments``.
 	"""
 	if frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
-		return get_table_embed_attachments(invoice)
-	return get_legacy_embed_attachment(invoice)
+		return _get_table_embed_attachments(invoice)
+	return _get_legacy_embed_attachment(invoice)
 
 
-def deduplicate_attachment_rows(invoice: SalesInvoice) -> None:
-	"""Collapse duplicate ``file`` links in ``einvoice_attachments``.
-
-	The first row for each **File** link is kept. Shows an orange ``msgprint`` when
-	rows are removed.
+def validate_attachments(attachments: list[EmbedAttachment]) -> None:
+	"""Validate resolved embed attachments before CII 916 generation.
 
 	Args:
-		invoice (SalesInvoice): Invoice whose child table may be mutated in place.
+		attachments (list[EmbedAttachment]): Attachments from ``get_embed_attachments``.
+
+	Raises:
+		frappe.ValidationError: When embed filenames are not unique (BR-DE-22) or a
+			linked **File** row does not exist.
+	"""
+	seen_filenames: set[str] = set()
+	for attachment in attachments:
+		if attachment.file_name in seen_filenames:
+			frappe.throw(
+				_(
+					"Embedded Documents use duplicate filename {0}. Each annex must have a unique filename."
+				).format(attachment.file_name),
+				title=_("Duplicate attachment filename"),
+			)
+		seen_filenames.add(attachment.file_name)
+
+		if not frappe.db.exists("File", attachment.file):
+			frappe.throw(
+				_(
+					"Could not embed attachment: no File record found for '{0}' (ID {1}). "
+					"Check that the file exists and is attached to this document."
+				).format(attachment.file_name, attachment.file),
+				title=_("Invalid attachment file"),
+			)
+
+
+def validate_einvoice_attachment_rows(invoice: SalesInvoice, settings: EInvoiceSettings) -> None:
+	"""Validate **Embedded Documents** rows for duplicate filenames and content.
+
+	Duplicate embed filenames (BR-DE-22) raise or warn according to **E Invoice
+	Settings** ``error_action_on_save`` / ``error_action_on_submit``. Duplicate
+	``content_hash`` values always produce an orange ``msgprint`` (user-error hint).
+
+	Args:
+		invoice (SalesInvoice): Invoice whose ``einvoice_attachments`` are checked.
+		settings (EInvoiceSettings): **E Invoice Settings** single for error action.
 	"""
 	rows = invoice.get("einvoice_attachments")
 	if not rows:
 		return
 
-	seen_files: set[str] = set()
-	unique_rows = []
-	for row in rows:
-		if row.file in seen_files:
-			continue
-		seen_files.add(row.file)
-		unique_rows.append(row)
+	filename_rows: dict[str, list] = defaultdict(list)
+	hash_groups: dict[str, list] = defaultdict(list)
 
-	if len(unique_rows) < len(rows):
-		invoice.set("einvoice_attachments", unique_rows)
-		frappe.msgprint(
-			_("{0} duplicate attachment row(s) were removed. The first row for each file was kept.").format(
-				len(rows) - len(unique_rows)
-			),
-			alert=True,
-			indicator="orange",
-		)
+	for row in rows:
+		filename_rows[row.file_name].append(row)
+		content_hash = frappe.db.get_value("File", row.file, "content_hash")
+		if content_hash:
+			hash_groups[content_hash].append(row)
+
+	# Check for duplicate filenames
+	duplicate_filename_groups = [group for group in filename_rows.values() if len(group) > 1]
+	if duplicate_filename_groups and settings.should_show_message(invoice.docstatus):
+		group_labels = []
+		for group in duplicate_filename_groups:
+			filename = group[0].file_name
+			row_refs = ", ".join(_("row #{0}").format(row.idx) for row in group)
+			group_labels.append(f"{row_refs} ({filename})")
+		message = _(
+			"Embedded Documents {0} use the same filename. Each annex must have a unique filename."
+		).format("; ".join(group_labels))
+		title = _("Duplicate attachment filename")
+		if settings.should_raise_exception(invoice.docstatus):
+			frappe.throw(message, title=title)
+		frappe.msgprint(message, title=title, alert=True, indicator="orange")
+
+	# Check for duplicate content hashes
+	for dup_rows in hash_groups.values():
+		if len(dup_rows) > 1:
+			row_labels = []
+			for row in dup_rows:
+				row_labels.append(_("row #{0} ({1})").format(row.idx, row.file_name))
+			frappe.msgprint(
+				_(
+					"Embedded Documents {0} contain identical file content. Consider removing duplicate rows."
+				).format(", ".join(row_labels)),
+				alert=True,
+				indicator="orange",
+			)
 
 
 def migrate_legacy_embed_to_table(
@@ -190,7 +259,7 @@ def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
 
 def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> None:
 	"""Append a child row and clear ``einvoice_embedded_document`` on an in-memory invoice."""
-	invoice.append("einvoice_attachments", {"file": file.name})
+	invoice.append("einvoice_attachments", {"file": file.name, "file_name": file.file_name})
 	invoice.einvoice_embedded_document = ""
 
 
