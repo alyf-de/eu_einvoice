@@ -68,9 +68,12 @@ class TestHeaderTradeTaxDeduplication(FrappeTestCase):
 	(EN 16931 rule BR-30, CII-SR-045)."""
 
 	def _make_generator(self):
-		"""Return a bare EInvoiceGenerator instance with just a Document attached."""
+		"""Return a bare EInvoiceGenerator with the state that create_einvoice()
+		initialises, matching the runtime lifecycle."""
 		generator = EInvoiceGenerator.__new__(EInvoiceGenerator)
 		generator.doc = Document()
+		generator._header_trade_tax_index = {}
+		generator._header_trade_tax_seen_amounts = {}
 		return generator
 
 	def _make_tax(self, *, type_code="VAT", category="S", rate=19.0, basis=100.0, calc=19.0):
@@ -140,3 +143,30 @@ class TestHeaderTradeTaxDeduplication(FrappeTestCase):
 		taxes = self._header_taxes(gen)
 		self.assertEqual(len(taxes), 1)
 		self.assertAlmostEqual(taxes[0].basis_amount._value, 100.0)
+
+	def test_duplicate_after_aggregation_is_still_dropped(self):
+		"""Sequence [100, 50, 100] under the same key must yield basis=150
+		(not 250) — the third entry duplicates the first and must not be
+		summed in a second time even though the accumulator already reads 150."""
+		gen = self._make_generator()
+		gen._merge_or_add_header_trade_tax(self._make_tax(basis=100.0, calc=19.0))
+		gen._merge_or_add_header_trade_tax(self._make_tax(basis=50.0, calc=9.5))
+		gen._merge_or_add_header_trade_tax(self._make_tax(basis=100.0, calc=19.0))
+		taxes = self._header_taxes(gen)
+		self.assertEqual(len(taxes), 1)
+		self.assertAlmostEqual(taxes[0].basis_amount._value, 150.0)
+		self.assertAlmostEqual(taxes[0].calculated_amount._value, 28.5)
+
+	def test_state_isolation_between_generators(self):
+		"""Two generators must not share header trade tax state, matching the
+		reset performed by create_einvoice() on each call."""
+		gen_a = self._make_generator()
+		gen_a._merge_or_add_header_trade_tax(self._make_tax(basis=100.0, calc=19.0))
+
+		gen_b = self._make_generator()
+		gen_b._merge_or_add_header_trade_tax(self._make_tax(basis=200.0, calc=38.0))
+
+		taxes_b = self._header_taxes(gen_b)
+		self.assertEqual(len(taxes_b), 1)
+		self.assertAlmostEqual(taxes_b[0].basis_amount._value, 200.0)
+		self.assertEqual(len(self._header_taxes(gen_a)), 1)

@@ -140,6 +140,11 @@ class EInvoiceGenerator:
 	def create_einvoice(self):
 		"""Create the einvoice document as a Python object."""
 		self.doc = Document()
+		# Per-document header ApplicableTradeTax index used by
+		# `_merge_or_add_header_trade_tax`. Reset alongside `self.doc` so the
+		# helper never merges into orphaned elements from a previous call.
+		self._header_trade_tax_index = {}
+		self._header_trade_tax_seen_amounts = {}
 		self.vat_exemption_reason_text = str(
 			frappe.db.get_single_value("E Invoice Settings", "vat_exemption_reason_text") or ""
 		).strip()
@@ -520,10 +525,14 @@ class EInvoiceGenerator:
 
 		Behaviour:
 		    * First occurrence of a key → added to `trade_tax` collection and indexed.
-		    * Later occurrence with basis+calc identical → dropped (pure duplicate).
-		    * Later occurrence with different basis or calc → basis+calc summed into
+		    * Later occurrence with (basis_amount, calculated_amount) pair already
+		      seen for this key → dropped (pure duplicate).
+		    * Later occurrence with new (basis, calc) pair → basis+calc summed into
 		      the existing entry, so the resulting Header value equals the sum of
 		      individual invoice tax rows sharing that (category, rate).
+
+		The seen-pair set is tracked per key so mixed sequences of duplicates and
+		genuinely distinct rows aggregate correctly regardless of order.
 		"""
 
 		def _val(field):
@@ -540,26 +549,27 @@ class EInvoiceGenerator:
 			_val(trade_tax.category_code) or "",
 			float(_val(trade_tax.rate_applicable_percent) or 0),
 		)
-
-		if not hasattr(self, "_header_trade_tax_index"):
-			self._header_trade_tax_index = {}
+		new_basis = float(_val(trade_tax.basis_amount) or 0)
+		new_calc = float(_val(trade_tax.calculated_amount) or 0)
+		# Round to 2 dp for stable duplicate detection across currency-level precision
+		amounts = (round(new_basis, 2), round(new_calc, 2))
 
 		existing = self._header_trade_tax_index.get(key)
 		if existing is None:
 			self._header_trade_tax_index[key] = trade_tax
+			self._header_trade_tax_seen_amounts[key] = {amounts}
 			self.doc.trade.settlement.trade_tax.add(trade_tax)
 			return
 
-		existing_basis = float(_val(existing.basis_amount) or 0)
-		new_basis = float(_val(trade_tax.basis_amount) or 0)
-		existing_calc = float(_val(existing.calculated_amount) or 0)
-		new_calc = float(_val(trade_tax.calculated_amount) or 0)
-
-		# Identical duplicate → nothing to do
-		if abs(existing_basis - new_basis) < 0.01 and abs(existing_calc - new_calc) < 0.01:
+		seen = self._header_trade_tax_seen_amounts[key]
+		if amounts in seen:
+			# Already accounted for by an earlier row with the same amounts
 			return
 
-		# Genuine aggregation → sum into the existing element
+		# Genuinely new (basis, calc) under an existing key → aggregate into existing
+		seen.add(amounts)
+		existing_basis = float(_val(existing.basis_amount) or 0)
+		existing_calc = float(_val(existing.calculated_amount) or 0)
 		existing.basis_amount = existing_basis + new_basis
 		existing.calculated_amount = existing_calc + new_calc
 
