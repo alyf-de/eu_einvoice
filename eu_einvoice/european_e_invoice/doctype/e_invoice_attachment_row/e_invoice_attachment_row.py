@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import frappe
 from frappe.model.document import Document
 
 
@@ -24,3 +25,11 @@ class EInvoiceAttachmentRow(Document):
 	# end: auto-generated types
 
 	pass
+
+
+def on_doctype_update():
+	frappe.db.add_unique(
+		"E Invoice Attachment Row",
+		["parent", "file_name"],
+		constraint_name="unique_parent_file_name",
+	)
