@@ -32,6 +32,48 @@ class EmbedAttachment:
 	file_name: str
 
 
+def _first_duplicate_embed_filename(rows) -> tuple | None:
+	"""Return the first pair of rows that share a normalized embed filename.
+
+	Normalization matches typical MariaDB ``utf8mb4_unicode_ci`` unique-index behaviour,
+	which is case-insensitive.
+	"""
+	seen_filenames: dict[str, object] = {}
+	for row in rows:
+		normalized_filename = cstr(row.file_name).lower()
+		if normalized_filename in seen_filenames:
+			return seen_filenames[normalized_filename], row
+		seen_filenames[normalized_filename] = row
+	return None
+
+
+def _format_duplicate_embed_filename_message(first_row, duplicate_row) -> str:
+	"""Build the user-facing message for one duplicate embed filename pair."""
+	filename = first_row.file_name
+	row_refs = ", ".join(_("row #{0}").format(row.idx) for row in (first_row, duplicate_row))
+	return _("Embedded Documents {0} use the same filename. Each annex must have a unique filename.").format(
+		f"{row_refs} ({filename})"
+	)
+
+
+DUPLICATE_EMBED_FILENAME_TITLE = _("Duplicate attachment filename")
+
+
+def _raise_duplicate_embed_filename(first_row, duplicate_row) -> None:
+	"""Raise the shared duplicate embed filename validation error."""
+	frappe.throw(
+		_format_duplicate_embed_filename_message(first_row, duplicate_row),
+		title=DUPLICATE_EMBED_FILENAME_TITLE,
+	)
+
+
+def _validate_duplicate_embed_filenames(rows) -> None:
+	"""Raise on the first duplicate embed filename in *rows*, if any."""
+	duplicates = _first_duplicate_embed_filename(rows)
+	if duplicates:
+		_raise_duplicate_embed_filename(*duplicates)
+
+
 def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[str, int]:
 	"""Return ``hidden`` / ``read_only`` flags for the legacy embed custom field.
 
@@ -77,19 +119,36 @@ def _get_legacy_embed_attachment(invoice: SalesInvoice) -> list[EmbedAttachment]
 def _get_table_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
 	"""Return embedded documents from the ``einvoice_attachments`` child table.
 
+	Validates duplicate filenames (BR-DE-22) and linked **File** rows before returning.
+
 	Args:
 		invoice (SalesInvoice): Source invoice.
 
 	Returns:
 		list[EmbedAttachment]: Attachments in child-table row order.
+
+	Raises:
+		frappe.ValidationError: When embed filenames are not unique or a **File** row
+			does not exist.
 	"""
-	rows = invoice.get("einvoice_attachments")
+	rows = list(invoice.get("einvoice_attachments") or [])
 	if not rows:
 		return []
 
+	_validate_duplicate_embed_filenames(rows)
+
 	attachments = []
 	for row in rows:
-		attachments.append(EmbedAttachment(file=row.file, file_name=row.file_name))
+		if not frappe.db.exists("File", row.file):
+			frappe.throw(
+				_(
+					"Could not embed attachment: no File record found for '{0}' (ID {1}). "
+					"Check that the file exists and is attached to this document."
+				).format(row.file_name, row.file),
+				title=_("Invalid attachment file"),
+			)
+		else:
+			attachments.append(EmbedAttachment(file=row.file, file_name=row.file_name))
 	return attachments
 
 
@@ -111,43 +170,20 @@ def get_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
 	return _get_legacy_embed_attachment(invoice)
 
 
-def validate_attachments(attachments: list[EmbedAttachment]) -> None:
-	"""Validate resolved embed attachments before CII 916 generation.
-
-	Args:
-		attachments (list[EmbedAttachment]): Attachments from ``get_embed_attachments``.
-
-	Raises:
-		frappe.ValidationError: When embed filenames are not unique (BR-DE-22) or a
-			linked **File** row does not exist.
-	"""
-	seen_filenames: set[str] = set()
-	for attachment in attachments:
-		if attachment.file_name in seen_filenames:
-			frappe.throw(
-				_(
-					"Embedded Documents use duplicate filename {0}. Each annex must have a unique filename."
-				).format(attachment.file_name),
-				title=_("Duplicate attachment filename"),
-			)
-		seen_filenames.add(attachment.file_name)
-
-		if not frappe.db.exists("File", attachment.file):
-			frappe.throw(
-				_(
-					"Could not embed attachment: no File record found for '{0}' (ID {1}). "
-					"Check that the file exists and is attached to this document."
-				).format(attachment.file_name, attachment.file),
-				title=_("Invalid attachment file"),
-			)
-
-
 def validate_einvoice_attachment_rows(invoice: SalesInvoice, settings: EInvoiceSettings) -> None:
 	"""Validate **Embedded Documents** rows for duplicate filenames and content.
 
-	Duplicate embed filenames (BR-DE-22) raise or warn according to **E Invoice
-	Settings** ``error_action_on_save`` / ``error_action_on_submit``. Duplicate
-	``content_hash`` values always produce an orange ``msgprint`` (user-error hint).
+	Duplicate embed filenames (BR-DE-22) are detected case-insensitively
+	(``str.lower()``), matching the DB unique index collation.
+
+	On save/submit, duplicate-filename validation runs only when
+	``settings.should_show_message`` is true — i.e. when **E Invoice Settings**
+	has ``error_action_on_save`` or ``error_action_on_submit`` set. When no error
+	action is configured, save proceeds without this check; the DB constraint and
+	XML output path still enforce uniqueness. When the check runs, duplicates
+	always block save with a specific message (no warn-only path).
+
+	Duplicate ``content_hash`` values always produce an orange ``msgprint`` hint.
 
 	Args:
 		invoice (SalesInvoice): Invoice whose ``einvoice_attachments`` are checked.
@@ -157,32 +193,18 @@ def validate_einvoice_attachment_rows(invoice: SalesInvoice, settings: EInvoiceS
 	if not rows:
 		return
 
-	filename_rows: dict[str, list] = defaultdict(list)
+	# Check for duplicate file names (BR-DE-22)
+	if settings.should_show_message(invoice.docstatus):
+		_validate_duplicate_embed_filenames(rows)
+
+	# Check for duplicate content hashes
 	hash_groups: dict[str, list] = defaultdict(list)
 
 	for row in rows:
-		filename_rows[row.file_name].append(row)
 		content_hash = frappe.db.get_value("File", row.file, "content_hash")
 		if content_hash:
 			hash_groups[content_hash].append(row)
 
-	# Check for duplicate filenames
-	duplicate_filename_groups = [group for group in filename_rows.values() if len(group) > 1]
-	if duplicate_filename_groups and settings.should_show_message(invoice.docstatus):
-		group_labels = []
-		for group in duplicate_filename_groups:
-			filename = group[0].file_name
-			row_refs = ", ".join(_("row #{0}").format(row.idx) for row in group)
-			group_labels.append(f"{row_refs} ({filename})")
-		message = _(
-			"Embedded Documents {0} use the same filename. Each annex must have a unique filename."
-		).format("; ".join(group_labels))
-		title = _("Duplicate attachment filename")
-		if settings.should_raise_exception(invoice.docstatus):
-			frappe.throw(message, title=title)
-		frappe.msgprint(message, title=title, alert=True, indicator="orange")
-
-	# Check for duplicate content hashes
 	for dup_rows in hash_groups.values():
 		if len(dup_rows) > 1:
 			row_labels = []

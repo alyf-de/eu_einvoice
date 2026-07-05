@@ -24,7 +24,6 @@ from eu_einvoice.common_codes import CommonCodeRetriever
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	get_embed_attachments,
 	migrate_legacy_embed_to_table,
-	validate_attachments,
 	validate_einvoice_attachment_rows,
 )
 from eu_einvoice.schematron import get_validation_errors
@@ -216,20 +215,18 @@ class EInvoiceGenerator:
 				are not unique (BR-DE-22).
 		"""
 		attachments = get_embed_attachments(self.invoice)
-		if attachments:
-			validate_attachments(attachments)
-			for attachment in attachments:
-				file = frappe.get_doc("File", attachment.file)
-				ref_doc = AdditionalReferencedDocument()
-				ref_doc.issuer_assigned_id = file.name
-				if file.is_remote_file:
-					ref_doc.uri_id = file.file_url
-				else:
-					mime_type = mimetypes.guess_type(attachment.file_name)[0]
-					content = as_base_64(file.get_content())
-					ref_doc.attached_object = (mime_type, attachment.file_name, content)
-				ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
-				self.doc.trade.agreement.additional_references.add(ref_doc)
+		for attachment in attachments:
+			file = frappe.get_doc("File", attachment.file)
+			ref_doc = AdditionalReferencedDocument()
+			ref_doc.issuer_assigned_id = file.name
+			if file.is_remote_file:
+				ref_doc.uri_id = file.file_url
+			else:
+				mime_type = mimetypes.guess_type(attachment.file_name)[0]
+				content = as_base_64(file.get_content())
+				ref_doc.attached_object = (mime_type, attachment.file_name, content)
+			ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
+			self.doc.trade.agreement.additional_references.add(ref_doc)
 
 	def _set_context(self):
 		"""Set default context according to XRechnung 3.0.2"""

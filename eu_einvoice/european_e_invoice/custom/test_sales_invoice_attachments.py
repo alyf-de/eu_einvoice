@@ -33,7 +33,6 @@ from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	EmbedAttachment,
 	_get_table_embed_attachments,
 	get_embed_attachments,
-	validate_attachments,
 	validate_einvoice_attachment_rows,
 )
 from eu_einvoice.tests.helpers import (
@@ -71,34 +70,36 @@ def run_embed_with_attachments(generator, attachments: list[EmbedAttachment]) ->
 		generator._embed_attachments()
 
 
-class UnitTestValidateAttachments(UnitTestCase):
+class UnitTestGetTableEmbedAttachmentsValidation(UnitTestCase):
 	def test_raises_when_file_missing(self):
-		with patch(
-			"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.db.exists",
-			return_value=False,
-		):
+		invoice = make_embed_test_invoice(
+			einvoice_attachments=[frappe._dict(idx=1, file="F-MISSING", file_name="missing-annex.png")],
+		)
+		with patch.object(frappe.db, "exists", return_value=False):
 			with self.assertRaises(frappe.ValidationError) as error:
-				validate_attachments([EmbedAttachment(file="F-MISSING", file_name="missing-annex.png")])
+				_get_table_embed_attachments(invoice)
 
 		self.assertIn("missing-annex.png", str(error.exception))
 		self.assertIn("F-MISSING", str(error.exception))
 		self.assertIn("File record", str(error.exception))
 
 	def test_raises_on_duplicate_filename(self):
-		attachments = [
-			EmbedAttachment(file="F-1", file_name="same.pdf"),
-			EmbedAttachment(file="F-2", file_name="same.pdf"),
-		]
+		for file_names in (("same.pdf", "same.pdf"), ("doc.pdf", "Doc.pdf")):
+			with self.subTest(file_names=file_names):
+				invoice = make_embed_test_invoice(
+					einvoice_attachments=[
+						frappe._dict(idx=1, file="F-1", file_name=file_names[0]),
+						frappe._dict(idx=2, file="F-2", file_name=file_names[1]),
+					],
+				)
+				with patch.object(frappe.db, "exists", return_value=True):
+					with self.assertRaises(frappe.ValidationError) as error:
+						_get_table_embed_attachments(invoice)
 
-		with patch(
-			"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.db.exists",
-			return_value=True,
-		):
-			with self.assertRaises(frappe.ValidationError) as error:
-				validate_attachments(attachments)
-
-		self.assertIn("same.pdf", str(error.exception))
-		self.assertIn("unique filename", str(error.exception).lower())
+				self.assertIn("unique filename", str(error.exception).lower())
+				self.assertIn("row #1", str(error.exception))
+				self.assertIn("row #2", str(error.exception))
+				self.assertIn("same filename", str(error.exception).lower())
 
 
 class UnitTestLegacyEmbedAttachment(UnitTestCase):
@@ -183,13 +184,9 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 		invoice = make_embed_test_invoice(
 			einvoice_attachments=[frappe._dict(idx=1, file="F-MISSING", file_name="Missing File")],
 		)
-		attachments = _get_table_embed_attachments(invoice)
-		with patch(
-			"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.db.exists",
-			return_value=False,
-		):
+		with patch.object(frappe.db, "exists", return_value=False):
 			with self.assertRaises(frappe.ValidationError) as error:
-				validate_attachments(attachments)
+				_get_table_embed_attachments(invoice)
 
 		self.assertIn("Missing File", str(error.exception))
 		self.assertIn("ID F-MISSING", str(error.exception))
@@ -235,45 +232,52 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 		self.assertIn("beta.png", warning_message)
 
 	def test_duplicate_embed_filename_raises_when_error_action(self):
+		for file_names in (("same.pdf", "same.pdf"), ("doc.pdf", "Doc.pdf")):
+			with self.subTest(file_names=file_names):
+				invoice = make_embed_test_invoice(
+					einvoice_attachments=[
+						frappe._dict(idx=1, file="F-1", file_name=file_names[0], display_name=None),
+						frappe._dict(idx=2, file="F-2", file_name=file_names[1], display_name=None),
+					],
+				)
+				settings = frappe._dict(should_show_message=lambda docstatus: True)
+
+				with self.assertRaises(frappe.ValidationError) as error:
+					validate_einvoice_attachment_rows(invoice, settings)
+
+				self.assertIn("unique filename", str(error.exception).lower())
+				self.assertIn("row #1", str(error.exception))
+				self.assertIn("row #2", str(error.exception))
+
+	def test_duplicate_embed_filename_skipped_when_error_action_disabled(self):
 		invoice = make_embed_test_invoice(
 			einvoice_attachments=[
 				frappe._dict(idx=1, file="F-1", file_name="same.pdf", display_name=None),
 				frappe._dict(idx=2, file="F-2", file_name="same.pdf", display_name=None),
 			],
 		)
-		settings = frappe._dict(
-			should_raise_exception=lambda docstatus: True,
-			should_show_message=lambda docstatus: True,
-		)
-
-		with self.assertRaises(frappe.ValidationError) as error:
-			validate_einvoice_attachment_rows(invoice, settings)
-
-		self.assertIn("same.pdf", str(error.exception))
-		self.assertIn("unique filename", str(error.exception).lower())
-
-	def test_duplicate_embed_filename_warns_without_blocking(self):
-		invoice = make_embed_test_invoice(
-			einvoice_attachments=[
-				frappe._dict(idx=1, file="F-1", file_name="same.pdf", display_name=None),
-				frappe._dict(idx=2, file="F-2", file_name="same.pdf", display_name=None),
-			],
-		)
-		settings = frappe._dict(
-			should_raise_exception=lambda docstatus: False,
-			should_show_message=lambda docstatus: True,
-		)
+		settings = frappe._dict(should_show_message=lambda docstatus: False)
 		frappe.clear_messages()
 
 		validate_einvoice_attachment_rows(invoice, settings)
 
-		filename_warnings = [
-			message
-			for message in frappe.get_message_log()
-			if message.indicator == "orange" and "unique filename" in message.message.lower()
-		]
-		self.assertEqual(len(filename_warnings), 1)
-		self.assertIn("same.pdf", filename_warnings[0].message)
+		self.assertFalse(
+			[message for message in frappe.get_message_log() if "unique filename" in message.message.lower()]
+		)
+
+	def test_duplicate_empty_embed_filename_raises_when_error_action(self):
+		invoice = make_embed_test_invoice(
+			einvoice_attachments=[
+				frappe._dict(idx=1, file="F-1", file_name="", display_name=None),
+				frappe._dict(idx=2, file="F-2", file_name="", display_name=None),
+			],
+		)
+		settings = frappe._dict(should_show_message=lambda docstatus: True)
+
+		with self.assertRaises(frappe.ValidationError) as error:
+			validate_einvoice_attachment_rows(invoice, settings)
+
+		self.assertIn("unique filename", str(error.exception).lower())
 
 	def test_embed_attachments_distinct_916_properties_for_shared_file_url(self):
 		"""BR-52 + BR-DE-22: one ARD 916 per row; distinct IssuerAssignedID and @filename."""
