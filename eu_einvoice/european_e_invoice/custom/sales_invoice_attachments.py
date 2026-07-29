@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 BULK_MIGRATE_LEGACY_EMBED_JOB_ID = "eu_einvoice.bulk_migrate_legacy_embed_attachments"
 LEGACY_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_embedded_document"
-LEGACY_EMBED_FIELD = "einvoice_embedded_document"
+TABLE_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_attachments"
 
 
 @dataclass(frozen=True)
@@ -56,14 +56,11 @@ def _format_duplicate_embed_filename_message(first_row, duplicate_row) -> str:
 	)
 
 
-DUPLICATE_EMBED_FILENAME_TITLE = _("Duplicate attachment filename")
-
-
 def _raise_duplicate_embed_filename(first_row, duplicate_row) -> None:
 	"""Raise the shared duplicate embed filename validation error."""
 	frappe.throw(
 		_format_duplicate_embed_filename_message(first_row, duplicate_row),
-		title=DUPLICATE_EMBED_FILENAME_TITLE,
+		title=_("Duplicate attachment filename"),
 	)
 
 
@@ -74,8 +71,17 @@ def _validate_duplicate_embed_filenames(rows) -> None:
 		_raise_duplicate_embed_filename(*duplicates)
 
 
+def _multi_attachment_embed_enabled(enabled: bool | None = None) -> bool:
+	"""Resolve multi-embed enabled flag from *enabled* or **E Invoice Settings**."""
+	if enabled is None:
+		return bool(frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"))
+	return bool(enabled)
+
+
 def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[str, int]:
 	"""Return ``hidden`` / ``read_only`` flags for the legacy embed custom field.
+
+	When multi-embed is on, the legacy attach field is hidden and read-only.
 
 	Args:
 		enabled (bool, optional): When ``None``, reads
@@ -84,9 +90,25 @@ def legacy_embed_field_lockdown_properties(enabled: bool | None = None) -> dict[
 	Returns:
 		dict[str, int]: ``{"hidden": 0|1, "read_only": 0|1}`` for **Custom Field** updates.
 	"""
-	if enabled is None:
-		enabled = bool(frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"))
+	enabled = _multi_attachment_embed_enabled(enabled)
 	return {"hidden": 1 if enabled else 0, "read_only": 1 if enabled else 0}
+
+
+def table_embed_field_visibility_properties(enabled: bool | None = None) -> dict[str, int]:
+	"""Return ``hidden`` flag for the **Embedded Documents** table custom field.
+
+	When multi-embed is off, the table is hidden so only the legacy attach field shows.
+	When multi-embed is on, the table is visible (legacy is locked down separately).
+
+	Args:
+		enabled (bool, optional): When ``None``, reads
+			``multi_attachment_embed_enabled`` from **E Invoice Settings**.
+
+	Returns:
+		dict[str, int]: ``{"hidden": 0|1}`` for **Custom Field** updates.
+	"""
+	enabled = _multi_attachment_embed_enabled(enabled)
+	return {"hidden": 0 if enabled else 1, "read_only": 0 if enabled else 1}
 
 
 def _get_legacy_embed_attachment(invoice: SalesInvoice) -> list[EmbedAttachment]:
@@ -411,28 +433,50 @@ def _resolve_embed_file_for_invoice(invoice: SalesInvoice, file_url: str):
 
 		if candidates:
 			for file in candidates:
-				if file.attached_to_field == LEGACY_EMBED_FIELD:
+				if file.attached_to_field == "einvoice_embedded_document":
 					return file
 			return candidates[0]
 
 	return None
 
 
-def set_legacy_embed_field_lockdown(enabled: bool) -> None:
-	"""Hide and lock ``einvoice_embedded_document`` when multi-embed is enabled.
+def _update_sales_invoice_custom_field(custom_field_name: str, properties: dict[str, int]) -> None:
+	"""Update *properties* on a **Sales Invoice** **Custom Field** when it exists.
 
-	Args:
-		enabled (bool): When ``True``, set the legacy **Custom Field** to hidden and
-			read-only; when ``False``, show and unlock it.
+	No-op when the field is missing (e.g. **E Invoice Settings** ``on_update`` during
+	``init_singles``, which runs before ``after_install`` creates custom fields).
 	"""
-	if not frappe.db.exists("Custom Field", LEGACY_EMBED_CUSTOM_FIELD):
+	if not frappe.db.exists("Custom Field", custom_field_name):
 		return
 
-	custom_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
-	custom_field.update(legacy_embed_field_lockdown_properties(enabled))
+	custom_field = frappe.get_doc("Custom Field", custom_field_name)
+	custom_field.update(properties)
 	custom_field.flags.ignore_permissions = True
 	custom_field.save()
+
+
+def set_embed_attachment_field_exclusivity(enabled: bool) -> None:
+	"""Apply exclusive Desk visibility for legacy attach vs **Embedded Documents** table.
+
+	When *enabled* is ``True``, hide and lock the legacy field and show the table.
+	When ``False``, show and unlock the legacy field and hide the table.
+
+	Args:
+		enabled (bool): Value of ``multi_attachment_embed_enabled``.
+	"""
+	_update_sales_invoice_custom_field(
+		LEGACY_EMBED_CUSTOM_FIELD, legacy_embed_field_lockdown_properties(enabled)
+	)
+	_update_sales_invoice_custom_field(
+		TABLE_EMBED_CUSTOM_FIELD, table_embed_field_visibility_properties(enabled)
+	)
 	frappe.clear_cache(doctype="Sales Invoice")
+
+
+def sync_embed_attachment_field_exclusivity() -> None:
+	"""Apply current ``multi_attachment_embed_enabled`` to legacy vs table field visibility."""
+	enabled = _multi_attachment_embed_enabled()
+	set_embed_attachment_field_exclusivity(enabled)
 
 
 def bulk_migrate_legacy_embed_attachments(

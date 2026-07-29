@@ -9,7 +9,7 @@ from frappe.utils.background_jobs import create_job_id, enqueue
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
-	set_legacy_embed_field_lockdown,
+	set_embed_attachment_field_exclusivity,
 )
 
 
@@ -59,8 +59,8 @@ class EInvoiceSettings(Document):
 			self._validate_attach_field()
 
 	def on_update(self):
-		"""Apply legacy-field lockdown when ``multi_attachment_embed_enabled`` changes."""
-		set_legacy_embed_field_lockdown(bool(self.multi_attachment_embed_enabled))
+		"""Apply exclusive legacy / table field visibility when the setting changes."""
+		set_embed_attachment_field_exclusivity(bool(self.multi_attachment_embed_enabled))
 
 	def _validate_attach_field(self):
 		"""Validate that the selected attachment field exists and is of type Attach."""

@@ -1,5 +1,6 @@
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	legacy_embed_field_lockdown_properties,
+	table_embed_field_visibility_properties,
 )
 
 from .utils import identity as _
@@ -176,6 +177,7 @@ def get_custom_fields():
 				"options": "E Invoice Attachment Row",
 				"depends_on": "einvoice_profile",
 				"description": _("Additional supporting documents to embed in the e-invoice file."),
+				**table_embed_field_visibility_properties(),
 			},
 			{
 				"fieldname": "einvoice_is_correct",

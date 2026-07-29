@@ -10,9 +10,10 @@ from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	LEGACY_EMBED_CUSTOM_FIELD,
+	TABLE_EMBED_CUSTOM_FIELD,
 	_format_bulk_migration_summary,
 	bulk_migrate_legacy_embed_attachments,
-	set_legacy_embed_field_lockdown,
+	set_embed_attachment_field_exclusivity,
 )
 from eu_einvoice.tests.helpers import (
 	create_embed_test_annex_file,
@@ -71,22 +72,33 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		self._previous_setting = frappe.db.get_single_value(
 			"E Invoice Settings", "multi_attachment_embed_enabled"
 		)
-		self._previous_custom_field = frappe.db.get_value(
+		self._previous_legacy_field = frappe.db.get_value(
 			"Custom Field",
 			LEGACY_EMBED_CUSTOM_FIELD,
 			["hidden", "read_only"],
 			as_dict=True,
 		)
+		self._previous_table_field = frappe.db.get_value(
+			"Custom Field",
+			TABLE_EMBED_CUSTOM_FIELD,
+			["hidden"],
+			as_dict=True,
+		)
 
 	def tearDown(self):
 		set_multi_attachment_embed_enabled(bool(self._previous_setting))
-		if self._previous_custom_field:
+		if self._previous_legacy_field:
 			custom_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
-			custom_field.hidden = self._previous_custom_field.hidden
-			custom_field.read_only = self._previous_custom_field.read_only
+			custom_field.hidden = self._previous_legacy_field.hidden
+			custom_field.read_only = self._previous_legacy_field.read_only
 			custom_field.flags.ignore_permissions = True
 			custom_field.save()
-			frappe.clear_cache(doctype="Sales Invoice")
+		if self._previous_table_field:
+			custom_field = frappe.get_doc("Custom Field", TABLE_EMBED_CUSTOM_FIELD)
+			custom_field.hidden = self._previous_table_field.hidden
+			custom_field.flags.ignore_permissions = True
+			custom_field.save()
+		frappe.clear_cache(doctype="Sales Invoice")
 		super().tearDown()
 
 	def test_bulk_migrate_include_submitted_matrix(self):
@@ -240,31 +252,51 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		self.assertIn("Broken file links (removed): 1", summary)
 		self.assertIn("Errors: 1", summary)
 
-	def test_field_lockdown_on_enable(self):
-		set_legacy_embed_field_lockdown(False)
+	def test_field_exclusivity_on_enable(self):
+		set_embed_attachment_field_exclusivity(False)
 
 		set_multi_attachment_embed_enabled(True)
 
-		custom_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
-		self.assertEqual(custom_field.hidden, 1)
-		self.assertEqual(custom_field.read_only, 1)
+		legacy_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
+		self.assertEqual(legacy_field.hidden, 1)
+		self.assertEqual(legacy_field.read_only, 1)
+		table_field = frappe.get_doc("Custom Field", TABLE_EMBED_CUSTOM_FIELD)
+		self.assertEqual(table_field.hidden, 0)
 
 		set_multi_attachment_embed_enabled(False)
 
-		custom_field.reload()
-		self.assertEqual(custom_field.hidden, 0)
-		self.assertEqual(custom_field.read_only, 0)
+		legacy_field.reload()
+		self.assertEqual(legacy_field.hidden, 0)
+		self.assertEqual(legacy_field.read_only, 0)
+		table_field.reload()
+		self.assertEqual(table_field.hidden, 1)
 
-	def test_create_custom_fields_respects_legacy_embed_lockdown(self):
+	def test_create_custom_fields_respects_embed_field_exclusivity(self):
 		from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 		from eu_einvoice.custom_fields import get_custom_fields
 
-		set_legacy_embed_field_lockdown(False)
+		set_embed_attachment_field_exclusivity(False)
 		set_multi_attachment_embed_enabled(True)
 
 		create_custom_fields(get_custom_fields())
 
-		custom_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
-		self.assertEqual(custom_field.hidden, 1)
-		self.assertEqual(custom_field.read_only, 1)
+		legacy_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
+		self.assertEqual(legacy_field.hidden, 1)
+		self.assertEqual(legacy_field.read_only, 1)
+		table_field = frappe.get_doc("Custom Field", TABLE_EMBED_CUSTOM_FIELD)
+		self.assertEqual(table_field.hidden, 0)
+
+	def test_after_migrate_syncs_embed_field_exclusivity(self):
+		from eu_einvoice.install import after_migrate
+
+		set_embed_attachment_field_exclusivity(False)
+		frappe.db.set_single_value("E Invoice Settings", "multi_attachment_embed_enabled", 1)
+
+		after_migrate()
+
+		legacy_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
+		self.assertEqual(legacy_field.hidden, 1)
+		self.assertEqual(legacy_field.read_only, 1)
+		table_field = frappe.get_doc("Custom Field", TABLE_EMBED_CUSTOM_FIELD)
+		self.assertEqual(table_field.hidden, 0)
