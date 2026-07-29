@@ -837,8 +837,8 @@ def validate_doc(doc, event):
 	if settings.multi_attachment_embed_enabled:
 		migrate_legacy_embed_to_table(doc)
 
-	if doc.get("einvoice_attachments"):
-		validate_einvoice_attachment_rows(doc, settings)
+		if doc.get("einvoice_attachments"):
+			validate_einvoice_attachment_rows(doc, settings)
 
 	if settings.should_validate(doc.docstatus):
 		validate_einvoice(doc)
