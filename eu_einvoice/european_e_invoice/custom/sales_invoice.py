@@ -223,7 +223,9 @@ class EInvoiceGenerator:
 				ref_doc.uri_id = file.file_url
 			else:
 				mime_type = mimetypes.guess_type(attachment.file_name)[0]
-				content = as_base_64(file.get_content())
+				# encodings=[] keeps binary payloads as bytes. Default File.get_content()
+				# may decode small files via windows-1252 and corrupt PNG/PDF bytes.
+				content = as_base_64(file.get_content(encodings=[]))
 				ref_doc.attached_object = (mime_type, attachment.file_name, content)
 			ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
 			self.doc.trade.agreement.additional_references.add(ref_doc)

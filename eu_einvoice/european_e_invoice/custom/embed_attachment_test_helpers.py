@@ -116,7 +116,7 @@ def mock_file_doc(spec: MockFileSpec) -> frappe._dict:
 		name=spec.name,
 		file_url=spec.file_url,
 		is_remote_file=spec.is_remote,
-		get_content=lambda content=spec.content: content,
+		get_content=lambda *args, content=spec.content, **kwargs: content,
 	)
 
 

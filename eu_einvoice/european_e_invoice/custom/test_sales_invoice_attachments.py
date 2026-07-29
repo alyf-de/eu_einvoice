@@ -425,18 +425,17 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		generator = build_einvoice_generator(sales_invoice)
 		generator.create_einvoice()
 
-		resolved_file = find_file_by_url(annex_file.file_url)
 		refs = generator.doc.trade.agreement.additional_references.children
 		self.assertEqual(len(refs), 1)
 
 		ref = refs[0]
 		self.assertEqual(str(ref.type_code), "916")
-		self.assertEqual(ref.issuer_assigned_id._text, resolved_file.name)
+		self.assertEqual(ref.issuer_assigned_id._text, annex_file.name)
 
 		attached_object = ref.attached_object
 		self.assertEqual(attached_object._mime_code, "image/png")
 		self.assertEqual(attached_object._filename, annex_file.file_name)
-		self.assertEqual(attached_object._text, as_base_64(resolved_file.get_content()))
+		self.assertEqual(attached_object._text, as_base_64(annex_file.get_content(encodings=[])))
 
 	def test_get_table_embed_attachments_returns_rows_in_order(self):
 		set_multi_attachment_embed_enabled(True)
@@ -512,7 +511,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		for ref, annex_file in zip(refs, (annex_two, annex_one), strict=True):
 			resolved_file = find_file_by_url(annex_file.file_url)
 			self.assertEqual(ref.attached_object._filename, annex_file.file_name)
-			self.assertEqual(ref.attached_object._text, as_base_64(resolved_file.get_content()))
+			self.assertEqual(ref.attached_object._text, as_base_64(resolved_file.get_content(encodings=[])))
 
 	def test_attach_xml_to_pdf_embeds_table_attachment_content(self):
 		from facturx import get_xml_from_pdf

@@ -543,6 +543,7 @@ def bulk_migrate_legacy_embed_attachments(
 				# Per-invoice commit in bulk worker; partial progress survives later failures.
 				frappe.db.commit()  # nosemgrep
 		except Exception as exc:
+			frappe.db.rollback()
 			errors.append((invoice_name, cstr(exc)))
 			frappe.log_error(
 				title=_("Legacy embed migration failed for {0}").format(invoice_name),

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from contextlib import ExitStack
 from unittest.mock import patch
 
 import frappe
@@ -56,7 +57,11 @@ def create_invoice_with_legacy_embed(
 
 	if submit or cancel:
 		sales_invoice.reload()
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"):
+		with ExitStack() as stack:
+			stack.enter_context(patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"))
+			if "pdf_on_submit" in frappe.get_installed_apps():
+				# Avoid site PDF attach (wkhtmltopdf) when submitting fixtures for bulk migrate.
+				stack.enter_context(patch("pdf_on_submit.attach_pdf.execute"))
 			sales_invoice.submit()
 
 	if cancel:
@@ -236,6 +241,66 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 				for call in mock_logger.return_value.warning.call_args_list
 			)
 		)
+
+	def test_bulk_migrate_rolls_back_partial_db_persist(self):
+		"""Failed clear after child insert must not leave an orphaned attachment row."""
+		set_multi_attachment_embed_enabled(True)
+		fail_invoice, fail_file = create_invoice_with_legacy_embed(submit=True)
+		ok_invoice, ok_file = create_invoice_with_legacy_embed(submit=True)
+
+		def _cleanup_committed_fixture(sales_invoice_name: str, annex_file_name: str) -> None:
+			delete_embed_test_sales_invoice(sales_invoice_name)
+			delete_embed_test_annex_file(annex_file_name)
+			frappe.db.commit()  # nosemgrep
+
+		self.addCleanup(_cleanup_committed_fixture, fail_invoice.name, fail_file.name)
+		self.addCleanup(_cleanup_committed_fixture, ok_invoice.name, ok_file.name)
+		# Persist fixtures so the migrate except-path rollback cannot undo them.
+		frappe.db.commit()  # nosemgrep
+
+		real_get_all = frappe.get_all
+		real_set_value = frappe.db.set_value
+
+		def get_all(doctype, *args, **kwargs):
+			filters = kwargs.get("filters")
+			if doctype == "Sales Invoice" and kwargs.get("pluck") == "name" and isinstance(filters, dict):
+				if "einvoice_embedded_document" in filters:
+					return [fail_invoice.name, ok_invoice.name]
+			return real_get_all(doctype, *args, **kwargs)
+
+		def set_value(doctype, docname=None, fieldname=None, value=None, *args, **kwargs):
+			if (
+				doctype == "Sales Invoice"
+				and docname == fail_invoice.name
+				and fieldname == "einvoice_embedded_document"
+				and value == ""
+			):
+				raise RuntimeError("simulated lock while clearing legacy embed")
+			return real_set_value(doctype, docname, fieldname, value, *args, **kwargs)
+
+		with (
+			patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.get_all",
+				side_effect=get_all,
+			),
+			patch.object(frappe.db, "set_value", side_effect=set_value),
+		):
+			result = bulk_migrate_legacy_embed_attachments(include_submitted=True)
+
+		self.assertEqual(result["migrated"], 1)
+		self.assertEqual(len(result["errors"]), 1)
+		self.assertEqual(result["errors"][0][0], fail_invoice.name)
+
+		fail_reloaded = frappe.get_doc("Sales Invoice", fail_invoice.name)
+		self.assertEqual(fail_reloaded.einvoice_embedded_document, fail_file.file_url)
+		self.assertEqual(
+			frappe.db.count("E Invoice Attachment Row", {"parent": fail_invoice.name}),
+			0,
+		)
+
+		ok_reloaded = frappe.get_doc("Sales Invoice", ok_invoice.name)
+		self.assertEqual(ok_reloaded.einvoice_embedded_document, "")
+		self.assertEqual(len(ok_reloaded.einvoice_attachments), 1)
 
 	def test_bulk_migration_summary_segments(self):
 		summary = _format_bulk_migration_summary(

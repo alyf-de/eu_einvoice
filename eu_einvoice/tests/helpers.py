@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import atexit
 import base64
+from contextlib import ExitStack
 from unittest.mock import patch
 
 import frappe
@@ -131,9 +132,15 @@ def delete_embed_test_annex_file(file_name: str) -> None:
 def create_embed_test_sales_invoice() -> tuple[frappe.Document, frappe.Document]:
 	"""Return a draft **Sales Invoice** with ``einvoice_embedded_document`` set to a test annex."""
 	annex_file_name = f"legacy-create-einvoice-annex-{frappe.generate_hash(length=8)}.png"
-	annex_file = create_embed_test_annex_file(file_name=annex_file_name)
+	# Unique bytes avoid Frappe content-hash collisions with leftover public files.
+	annex_content = LOCAL_ANNEX_PNG_BYTES + frappe.generate_hash(length=8).encode()
+	annex_file = create_embed_test_annex_file(file_name=annex_file_name, content=annex_content)
 
 	sales_invoice = ensure_embed_test_sales_invoice()
+	annex_file.attached_to_doctype = "Sales Invoice"
+	annex_file.attached_to_name = sales_invoice.name
+	annex_file.attached_to_field = "einvoice_embedded_document"
+	annex_file.save(ignore_permissions=True)
 	sales_invoice.einvoice_embedded_document = annex_file.file_url
 	sales_invoice.save(ignore_permissions=True)
 	return sales_invoice, annex_file
@@ -145,7 +152,10 @@ def delete_embed_test_sales_invoice(sales_invoice_name: str) -> None:
 	if frappe.db.exists("Sales Invoice", sales_invoice_name):
 		doc = frappe.get_doc("Sales Invoice", sales_invoice_name)
 		if doc.docstatus == 1:
-			with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"):
+			with ExitStack() as stack:
+				stack.enter_context(patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"))
+				if "pdf_on_submit" in frappe.get_installed_apps():
+					stack.enter_context(patch("pdf_on_submit.attach_pdf.execute"))
 				doc.cancel()
 		frappe.delete_doc("Sales Invoice", sales_invoice_name, force=True, ignore_permissions=True)
 
