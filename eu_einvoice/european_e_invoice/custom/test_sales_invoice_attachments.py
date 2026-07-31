@@ -38,6 +38,7 @@ from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 from eu_einvoice.tests.helpers import (
 	LOCAL_ANNEX_PNG_BYTES,
 	assert_single_orange_message,
+	attach_embed_test_annex_file_to_sales_invoice,
 	build_einvoice_generator,
 	create_embed_test_annex_file,
 	create_embed_test_sales_invoice,
@@ -73,9 +74,10 @@ def run_embed_with_attachments(generator, attachments: list[EmbedAttachment]) ->
 class UnitTestGetTableEmbedAttachmentsValidation(UnitTestCase):
 	def test_raises_when_file_missing(self):
 		invoice = make_embed_test_invoice(
+			name="SINV-UNIT-MISSING",
 			einvoice_attachments=[frappe._dict(idx=1, file="F-MISSING", file_name="missing-annex.png")],
 		)
-		with patch.object(frappe.db, "exists", return_value=False):
+		with patch.object(frappe.db, "get_value", return_value=None):
 			with self.assertRaises(frappe.ValidationError) as error:
 				_get_table_embed_attachments(invoice)
 
@@ -83,16 +85,38 @@ class UnitTestGetTableEmbedAttachmentsValidation(UnitTestCase):
 		self.assertIn("F-MISSING", str(error.exception))
 		self.assertIn("File record", str(error.exception))
 
+	def test_raises_when_file_not_attached_to_invoice(self):
+		invoice = make_embed_test_invoice(
+			name="SINV-UNIT-FOREIGN",
+			einvoice_attachments=[frappe._dict(idx=1, file="F-FOREIGN", file_name="foreign-annex.png")],
+		)
+		with patch.object(
+			frappe.db,
+			"get_value",
+			return_value=("Sales Invoice", "SINV-OTHER"),
+		):
+			with self.assertRaises(frappe.ValidationError) as error:
+				_get_table_embed_attachments(invoice)
+
+		self.assertIn("foreign-annex.png", str(error.exception))
+		self.assertIn("F-FOREIGN", str(error.exception))
+		self.assertIn("attached to this document", str(error.exception).lower())
+
 	def test_raises_on_duplicate_filename(self):
 		for file_names in (("same.pdf", "same.pdf"), ("doc.pdf", "Doc.pdf")):
 			with self.subTest(file_names=file_names):
 				invoice = make_embed_test_invoice(
+					name="SINV-UNIT-DUP",
 					einvoice_attachments=[
 						frappe._dict(idx=1, file="F-1", file_name=file_names[0]),
 						frappe._dict(idx=2, file="F-2", file_name=file_names[1]),
 					],
 				)
-				with patch.object(frappe.db, "exists", return_value=True):
+				with patch.object(
+					frappe.db,
+					"get_value",
+					return_value=("Sales Invoice", "SINV-UNIT-DUP"),
+				):
 					with self.assertRaises(frappe.ValidationError) as error:
 						_get_table_embed_attachments(invoice)
 
@@ -190,9 +214,10 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 
 	def test_get_table_embed_attachments_raises_when_file_missing(self):
 		invoice = make_embed_test_invoice(
+			name="SINV-UNIT-MISSING-2",
 			einvoice_attachments=[frappe._dict(idx=1, file="F-MISSING", file_name="Missing File")],
 		)
-		with patch.object(frappe.db, "exists", return_value=False):
+		with patch.object(frappe.db, "get_value", return_value=None):
 			with self.assertRaises(frappe.ValidationError) as error:
 				_get_table_embed_attachments(invoice)
 
@@ -205,6 +230,7 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 	def test_duplicate_content_hash_shows_orange_warning(self):
 		"""Identical ``content_hash`` across rows is a warn-only user-error hint."""
 		invoice = make_embed_test_invoice(
+			name="SINV-UNIT-HASH",
 			einvoice_attachments=[
 				frappe._dict(idx=1, file="F-DUP-A", file_name="alpha.png", display_name=None),
 				frappe._dict(idx=2, file="F-DUP-B", file_name="beta.png", display_name=None),
@@ -213,6 +239,8 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 		file_names = {"F-DUP-A": "alpha.png", "F-DUP-B": "beta.png"}
 
 		def mock_get_value(doctype, name=None, fieldname=None, *args, **kwargs):
+			if doctype == "File" and isinstance(fieldname, tuple):
+				return ("Sales Invoice", "SINV-UNIT-HASH")
 			if doctype == "File" and fieldname == "content_hash":
 				return "shared-content-hash"
 			if doctype == "File" and fieldname == "file_name":
@@ -243,6 +271,7 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 		for file_names in (("same.pdf", "same.pdf"), ("doc.pdf", "Doc.pdf")):
 			with self.subTest(file_names=file_names):
 				invoice = make_embed_test_invoice(
+					name="SINV-UNIT-VALIDATE-DUP",
 					einvoice_attachments=[
 						frappe._dict(idx=1, file="F-1", file_name=file_names[0], display_name=None),
 						frappe._dict(idx=2, file="F-2", file_name=file_names[1], display_name=None),
@@ -256,6 +285,27 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 				self.assertIn("unique filename", str(error.exception).lower())
 				self.assertIn("row #1", str(error.exception))
 				self.assertIn("row #2", str(error.exception))
+
+	def test_foreign_embed_file_raises(self):
+		invoice = make_embed_test_invoice(
+			name="SINV-UNIT-VALIDATE-FOREIGN",
+			einvoice_attachments=[
+				frappe._dict(idx=1, file="F-FOREIGN", file_name="foreign.pdf", display_name=None),
+			],
+		)
+		settings = frappe._dict()
+
+		def mock_get_value(doctype, name=None, fieldname=None, *args, **kwargs):
+			if doctype == "File" and name == "F-FOREIGN":
+				return ("Sales Invoice", "SINV-OTHER")
+			return None
+
+		with patch.object(frappe.db, "get_value", side_effect=mock_get_value):
+			with self.assertRaises(frappe.ValidationError) as error:
+				validate_einvoice_attachment_rows(invoice, settings)
+
+		self.assertIn("foreign.pdf", str(error.exception))
+		self.assertIn("attached to this document", str(error.exception).lower())
 
 	def test_duplicate_empty_embed_filename_raises(self):
 		invoice = make_embed_test_invoice(
@@ -438,6 +488,8 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 
 		sales_invoice = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		attach_embed_test_annex_file_to_sales_invoice(annex_one, sales_invoice)
+		attach_embed_test_annex_file_to_sales_invoice(annex_two, sales_invoice)
 		append_attachment_rows(
 			sales_invoice,
 			[
@@ -456,6 +508,31 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 			],
 		)
 
+	def test_validate_doc_blocks_foreign_embed_file(self):
+		set_multi_attachment_embed_enabled(True)
+		sales_invoice = ensure_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+
+		foreign_annex = create_embed_test_annex_file(
+			file_name=f"foreign-annex-{frappe.generate_hash(length=8)}.png",
+			content=LOCAL_ANNEX_PNG_BYTES + b"foreign",
+		)
+		other_invoice = ensure_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, other_invoice.name)
+		self.addCleanup(delete_embed_test_annex_file, foreign_annex.name)
+		attach_embed_test_annex_file_to_sales_invoice(foreign_annex, other_invoice)
+
+		append_attachment_rows(
+			sales_invoice, [{"file": foreign_annex.name, "file_name": foreign_annex.file_name}]
+		)
+		frappe.clear_messages()
+
+		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+			with self.assertRaises(frappe.ValidationError) as error:
+				validate_doc(sales_invoice, "validate")
+
+		self.assertIn("attached to this document", str(error.exception).lower())
+
 	def test_create_einvoice_embeds_table_attachments_when_enabled(self):
 		set_multi_attachment_embed_enabled(True)
 
@@ -472,6 +549,8 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 
 		sales_invoice = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		attach_embed_test_annex_file_to_sales_invoice(annex_one, sales_invoice)
+		attach_embed_test_annex_file_to_sales_invoice(annex_two, sales_invoice)
 		append_attachment_rows(
 			sales_invoice,
 			[
@@ -512,6 +591,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 
 		sales_invoice = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		attach_embed_test_annex_file_to_sales_invoice(annex_file, sales_invoice)
 		append_attachment_rows(sales_invoice, [{"file": annex_file.name}])
 		sales_invoice.save(ignore_permissions=True)
 		sales_invoice.reload()

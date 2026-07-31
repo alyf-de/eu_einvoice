@@ -132,6 +132,15 @@ def create_embed_test_annex_file(
 	return file
 
 
+def attach_embed_test_annex_file_to_sales_invoice(
+	annex_file: frappe.Document, sales_invoice: frappe.Document
+) -> None:
+	"""Link a test annex **File** to *sales_invoice* for table-embed validation."""
+	annex_file.attached_to_doctype = sales_invoice.doctype
+	annex_file.attached_to_name = sales_invoice.name
+	annex_file.save(ignore_permissions=True)
+
+
 def delete_embed_test_annex_file(file_name: str) -> None:
 	"""Delete a test **File** row and drop it from managed cleanup tracking."""
 	_MANAGED_FILES.discard(file_name)

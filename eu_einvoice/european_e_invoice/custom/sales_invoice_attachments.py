@@ -74,6 +74,32 @@ def _validate_duplicate_embed_filenames(rows) -> None:
 		_raise_duplicate_embed_filename(*duplicates)
 
 
+def _raise_invalid_embed_file(display_name: str, file_id: str) -> None:
+	"""Raise when a table annex **File** row is missing or not on *invoice*."""
+	frappe.throw(
+		_(
+			"Could not embed attachment: no File record found for '{0}' (ID {1}). "
+			"Check that the file exists and is attached to this document."
+		).format(display_name, file_id),
+		title=_("Invalid attachment file"),
+	)
+
+
+def _validate_embed_file_attached_to_invoice(invoice: SalesInvoice, file_id: str, display_name: str) -> None:
+	"""Raise when *file_id* is missing or not attached to *invoice*."""
+	attached_to = frappe.db.get_value(
+		"File",
+		file_id,
+		("attached_to_doctype", "attached_to_name"),
+	)
+	if not attached_to:
+		_raise_invalid_embed_file(display_name, file_id)
+
+	attached_to_doctype, attached_to_name = attached_to
+	if attached_to_doctype != invoice.doctype or attached_to_name != invoice.name:
+		_raise_invalid_embed_file(display_name, file_id)
+
+
 def _multi_attachment_embed_enabled(enabled: bool | None = None) -> bool:
 	"""Resolve multi-embed enabled flag from *enabled* or **E Invoice Settings**."""
 	if enabled is None:
@@ -144,7 +170,8 @@ def _get_legacy_embed_attachment(invoice: SalesInvoice) -> list[EmbedAttachment]
 def _get_table_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
 	"""Return embedded documents from the ``einvoice_attachments`` child table.
 
-	Validates duplicate filenames (BR-DE-22) and linked **File** rows before returning.
+	Validates duplicate filenames (BR-DE-22), invoice attachment ownership, and linked
+	**File** rows before returning.
 
 	Args:
 		invoice (SalesInvoice): Source invoice.
@@ -153,8 +180,8 @@ def _get_table_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]
 		list[EmbedAttachment]: Attachments in child-table row order.
 
 	Raises:
-		frappe.ValidationError: When embed filenames are not unique or a **File** row
-			does not exist.
+		frappe.ValidationError: When embed filenames are not unique, a **File** row
+			does not exist, or the **File** is not attached to *invoice*.
 	"""
 	rows = list(invoice.get("einvoice_attachments") or [])
 	if not rows:
@@ -164,16 +191,8 @@ def _get_table_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]
 
 	attachments = []
 	for row in rows:
-		if not frappe.db.exists("File", row.file):
-			frappe.throw(
-				_(
-					"Could not embed attachment: no File record found for '{0}' (ID {1}). "
-					"Check that the file exists and is attached to this document."
-				).format(row.file_name, row.file),
-				title=_("Invalid attachment file"),
-			)
-		else:
-			attachments.append(EmbedAttachment(file=row.file, file_name=row.file_name))
+		_validate_embed_file_attached_to_invoice(invoice, row.file, row.file_name)
+		attachments.append(EmbedAttachment(file=row.file, file_name=row.file_name))
 	return attachments
 
 
@@ -208,11 +227,15 @@ def get_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
 
 
 def validate_einvoice_attachment_rows(invoice: SalesInvoice, settings: EInvoiceSettings) -> None:
-	"""Validate **Embedded Documents** rows for duplicate filenames and content.
+	"""Validate **Embedded Documents** rows for duplicate filenames, attachment ownership, and content.
 
 	Duplicate embed filenames (BR-DE-22) are detected case-insensitively
 	(``str.lower()``), matching the DB unique index collation, and always block
 	save regardless of **E Invoice Settings** error-action configuration.
+
+	Each row's **File** must be attached to *invoice* (``attached_to_doctype`` /
+	``attached_to_name``). This mirrors the Desk Link query and blocks API/import
+	paths that reference arbitrary **File** ids.
 
 	Duplicate ``content_hash`` values always produce an orange ``msgprint`` hint.
 
@@ -226,6 +249,9 @@ def validate_einvoice_attachment_rows(invoice: SalesInvoice, settings: EInvoiceS
 		return
 
 	_validate_duplicate_embed_filenames(rows)
+
+	for row in rows:
+		_validate_embed_file_attached_to_invoice(invoice, row.file, row.file_name)
 
 	# Check for duplicate content hashes
 	hash_groups: dict[str, list] = defaultdict(list)
