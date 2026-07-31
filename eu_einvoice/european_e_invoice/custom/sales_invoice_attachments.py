@@ -308,7 +308,7 @@ def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> None
 
 
 def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> None:
-	"""Insert a child row and clear the legacy field via ``db.set_value`` (submitted docs)."""
+	"""Insert a child row and clear the legacy field via ``db.set_value``."""
 	_insert_attachment_row(invoice, file)
 	frappe.db.set_value(
 		"Sales Invoice",
@@ -485,10 +485,12 @@ def bulk_migrate_legacy_embed_attachments(
 ) -> dict[str, int | list[tuple[str, str]]]:
 	"""Migrate legacy ``einvoice_embedded_document`` values site-wide (background job).
 
+	All successful migrations (draft, submitted, or cancelled) persist via direct DB
+	writes so unrelated **Sales Invoice** validation cannot block the job.
+
 	Args:
-		include_submitted (bool, optional): When ``True``, also update submitted and
-			cancelled invoices via direct DB writes. When ``False``, only draft invoices
-			are migrated through ``save``.
+		include_submitted (bool, optional): When ``True``, also migrate submitted and
+			cancelled invoices. When ``False``, only draft invoices are migrated.
 		remove_broken_links (bool, optional): When ``True``, clear unresolvable legacy
 			URLs instead of skipping them. Removals are logged at site warning level.
 
@@ -529,13 +531,7 @@ def bulk_migrate_legacy_embed_attachments(
 				else:
 					broken += 1
 			else:
-				if invoice.docstatus == 0:
-					_persist_legacy_embed_migration_on_save(invoice, file)
-					invoice.flags.ignore_permissions = True
-					invoice.save()
-				else:
-					_persist_legacy_embed_migration_db(invoice, file)
-
+				_persist_legacy_embed_migration_db(invoice, file)
 				migrated += 1
 				persisted = True
 
