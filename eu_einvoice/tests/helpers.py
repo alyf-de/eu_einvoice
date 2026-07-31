@@ -32,11 +32,21 @@ _CLEANUP_REGISTERED = False
 
 
 def set_multi_attachment_embed_enabled(enabled: bool) -> None:
-	"""Toggle ``multi_attachment_embed_enabled`` on **E Invoice Settings**."""
-	settings = frappe.get_doc("E Invoice Settings")
-	settings.multi_attachment_embed_enabled = 1 if enabled else 0
-	settings.flags.ignore_permissions = True
-	settings.save()
+	"""Toggle ``multi_attachment_embed_enabled`` on **E Invoice Settings**.
+
+	Uses ``set_single_value`` so tests do not enqueue the production auto-migration job
+	from ``EInvoiceSettings.on_update``.
+	"""
+	from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
+		set_embed_attachment_field_exclusivity,
+	)
+
+	frappe.db.set_single_value(
+		"E Invoice Settings",
+		"multi_attachment_embed_enabled",
+		1 if enabled else 0,
+	)
+	set_embed_attachment_field_exclusivity(bool(enabled))
 
 
 def assert_single_orange_message(substring: str) -> None:

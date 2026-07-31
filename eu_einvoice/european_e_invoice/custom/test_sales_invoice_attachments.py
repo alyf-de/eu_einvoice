@@ -145,7 +145,7 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 	def test_get_embed_attachments_branches_on_setting(self):
 		legacy_invoice = make_embed_test_invoice(einvoice_embedded_document="/files/legacy.png")
 		table_invoice = make_embed_test_invoice(
-			einvoice_embedded_document="/files/legacy.png",
+			einvoice_embedded_document="",
 			einvoice_attachments=[frappe._dict(idx=1, file="F-TABLE-1", file_name="table-only.png")],
 		)
 		legacy_result = [EmbedAttachment(file="F-LEGACY", file_name="legacy.png")]
@@ -155,7 +155,6 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 			("legacy_when_off", False, legacy_invoice, legacy_result, "legacy"),
 			("table_ignored_when_off", False, table_invoice, legacy_result, "legacy"),
 			("table_when_on", True, table_invoice, table_result, "table"),
-			("empty_table_when_on", True, legacy_invoice, [], "table"),
 		):
 			with self.subTest(case=case):
 				with patch.object(frappe.db, "get_single_value", return_value=1 if setting_enabled else 0):
@@ -179,6 +178,15 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 							self.assertEqual(get_embed_attachments(invoice), expected)
 							legacy_mock.assert_called_once_with(invoice)
 							table_mock.assert_not_called()
+
+	def test_get_embed_attachments_raises_when_legacy_unmigrated_and_setting_on(self):
+		legacy_invoice = make_embed_test_invoice(einvoice_embedded_document="/files/legacy.png")
+		with patch.object(frappe.db, "get_single_value", return_value=1):
+			with self.assertRaises(frappe.ValidationError) as error:
+				get_embed_attachments(legacy_invoice)
+
+		self.assertIn("not been migrated", str(error.exception))
+		self.assertIn("E Invoice Settings", str(error.exception))
 
 	def test_get_table_embed_attachments_raises_when_file_missing(self):
 		invoice = make_embed_test_invoice(

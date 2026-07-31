@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-07-29 11:05+0053\n"
-"PO-Revision-Date: 2026-07-29 11:05+0053\n"
+"POT-Creation-Date: 2026-07-31 11:42+0053\n"
+"PO-Revision-Date: 2026-07-31 11:42+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:819
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:821
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr ""
 
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Allowance Total"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:396
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:418
 msgid "Already migrated {0}."
 msgstr ""
 
@@ -119,11 +119,11 @@ msgstr ""
 msgid "Billing Period Start"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:400
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:422
 msgid "Broken file links (removed): {0}."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:398
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:420
 msgid "Broken file links (skipped): {0}."
 msgstr ""
 
@@ -185,11 +185,11 @@ msgstr ""
 msgid "Calculation Percent"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:856
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:858
 msgid "Cannot create E Invoice."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:870
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:872
 msgid "Cannot validate E Invoice schematron."
 msgstr ""
 
@@ -198,7 +198,7 @@ msgstr ""
 msgid "Charge Total"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:31
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:25
 msgid "Clear unresolvable links from the legacy field instead of leaving them unchanged. Each removal is logged."
 msgstr ""
 
@@ -208,23 +208,23 @@ msgstr ""
 msgid "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:166
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:169
 msgid "Could not embed attachment: no File record found for '{0}' (ID {1}). Check that the file exists and is attached to this document."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:132
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:135
 msgid "Could not embed attachment: no File record found for URL {0}. Check that the file exists and is attached to this document."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:280
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:288
 msgid "Could not migrate Embedded Document ({0}): no File record found for URL {1}. The link was left unchanged. Ask a System Manager to run Migrate attachments to table on E Invoice Settings."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:338
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:360
 msgid "Could not migrate embedded document: no File record found for URL {0}. The legacy attachment link was left unchanged."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:346
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:368
 msgid "Could not migrate embedded document: no File record found for URL {0}. The legacy attachment link was removed."
 msgstr ""
 
@@ -258,7 +258,7 @@ msgstr ""
 msgid "Due Payable"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:63
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:66
 msgid "Duplicate attachment filename"
 msgstr ""
 
@@ -313,11 +313,11 @@ msgstr ""
 msgid "E Invoice Trade Tax"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1184
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1186
 msgid "E Invoice XML file name pattern failed"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:838
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:840
 msgid "E Invoice is not correct"
 msgstr ""
 
@@ -356,15 +356,15 @@ msgstr ""
 msgid "Embedded Documents"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:236
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:244
 msgid "Embedded Documents {0} contain identical file content. Consider removing duplicate rows."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:54
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:57
 msgid "Embedded Documents {0} use the same filename. Each annex must have a unique filename."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:122
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:120
 msgid "Enable Multiple Attachment Embedding first."
 msgstr ""
 
@@ -374,15 +374,15 @@ msgstr ""
 msgid "Enable Multiple Attachment Embedding into Invoice PDF/XML"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:402
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:424
 msgid "Errors: {0}."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:63
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:66
 msgid "Field '{0}' does not exist on Sales Invoice doctype"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:71
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:74
 msgid "Field '{0}' must be of type 'Attach'. Current type: {1}"
 msgstr ""
 
@@ -404,12 +404,8 @@ msgstr ""
 msgid "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:24
-msgid "Include submitted and cancelled Sales Invoices"
-msgstr ""
-
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:136
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:170
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:139
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:173
 msgid "Invalid attachment file"
 msgstr ""
 
@@ -418,8 +414,16 @@ msgstr ""
 msgid "Invoice ID"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:548
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:617
 msgid "Legacy embed migration failed for {0}"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:628
+msgid "Legacy embed migration in progress: {0} of {1} invoices processed."
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:204
+msgid "Legacy embed not migrated"
 msgstr ""
 
 #: eu_einvoice/custom_fields.py:166
@@ -442,21 +446,21 @@ msgstr ""
 msgid "Migrate Existing Attachments to Table"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:394
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:416
 msgid "Migrated {0} Sales Invoice(s)."
 msgstr ""
 
 #. Description of the 'Migrate Existing Attachments to Table' (Button) field in
 #. DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
-msgid "Migrates files linked in the legacy field <b>einvoice_embedded_document</b> to the <b>Embedded Documents</b> table. Opens a dialog where you can include submitted and cancelled <b>Sales Invoice</b> documents and choose whether unresolvable legacy file links are skipped (left unchanged, logged) or removed from the field."
+msgid "Migrates files linked in the legacy field <b>einvoice_embedded_document</b> to the <b>Embedded Documents</b> table. Opens a dialog where you can choose whether unresolvable legacy file links are skipped (left unchanged, logged) or removed from the field."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:145
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:544
 msgid "Migration already queued. Track progress in {0}."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:139
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:538
 msgid "Migration queued. Track progress in {0}."
 msgstr ""
 
@@ -467,7 +471,7 @@ msgid "Monetary Summation"
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:17
-msgid "Move legacy <b>Embedded Document</b> links into the <b>Embedded Documents</b> table."
+msgid "Move legacy <b>Embedded Document</b> links into the <b>Embedded Documents</b> table for all Sales Invoices."
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:446
@@ -550,7 +554,7 @@ msgstr ""
 msgid "Purchase Order Row"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:47
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:40
 msgid "Queuing migration..."
 msgstr ""
 
@@ -560,11 +564,11 @@ msgstr ""
 msgid "Rate Applicable Percent"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:30
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:24
 msgid "Remove broken legacy file links"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:373
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:395
 msgid "Removed broken legacy embedded document link from field `einvoice_embedded_document` for Sales Invoice {0}"
 msgstr ""
 
@@ -645,7 +649,7 @@ msgstr ""
 msgid "Settlement"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:37
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:31
 msgid "Start migration"
 msgstr ""
 
@@ -658,11 +662,15 @@ msgstr ""
 msgid "Tax Basis Total"
 msgstr ""
 
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:199
+msgid "The Embedded Document has not been migrated to the Embedded Documents table yet. Wait for the background migration to finish or ask a System Manager to run Migrate attachments to table on {0}."
+msgstr ""
+
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:456
 msgid "The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:270
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:278
 msgid "The legacy embedded document was moved to the Embedded Documents table."
 msgstr ""
 
@@ -675,7 +683,7 @@ msgstr ""
 msgid "Total Prepaid"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:294
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:302
 msgid "Unable to migrate embedded document from legacy field `einvoice_embedded_document` to `einvoice_attachments` table for Sales Invoice {0}"
 msgstr ""
 
@@ -748,7 +756,7 @@ msgstr ""
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid ""
 "When enabled, users can add multiple extra files on <b>Sales Invoice</b> to embed as attachments in the e-invoice XML.<br>\n"
-"This adds an additional child table to Sales Invoice and <b>cannot be disabled</b> once enabled."
+"This adds an additional child table to Sales Invoice and <b>cannot be disabled</b> once enabled. Saving the setting enqueues a migration job that migrates all legacy embedded documents into the new table. "
 msgstr ""
 
 #. Label of the section_break_yldr (Section Break) field in DocType 'E Invoice
@@ -757,27 +765,31 @@ msgstr ""
 msgid "XML Settings"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:53
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:56
 msgid "row #{0}"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:234
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:242
 msgid "row #{0} ({1})"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:798
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:648
+msgid "{0} Migration finished."
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:800
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:787
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:789
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:775
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:777
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:810
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:812
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
 

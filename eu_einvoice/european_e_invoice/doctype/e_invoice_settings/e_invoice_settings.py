@@ -5,10 +5,10 @@ import frappe
 from frappe import _
 from frappe.model.docstatus import DocStatus
 from frappe.model.document import Document
-from frappe.utils.background_jobs import create_job_id, enqueue
+from frappe.utils import cint
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
-	BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
+	queue_bulk_migrate_legacy_embed_attachments,
 	set_embed_attachment_field_exclusivity,
 )
 
@@ -59,8 +59,11 @@ class EInvoiceSettings(Document):
 			self._validate_attach_field()
 
 	def on_update(self):
-		"""Apply exclusive legacy / table field visibility when the setting changes."""
-		set_embed_attachment_field_exclusivity(bool(self.multi_attachment_embed_enabled))
+		"""Apply field exclusivity and queue legacy migration when multi-embed is enabled."""
+		enabled = bool(self.multi_attachment_embed_enabled)
+		set_embed_attachment_field_exclusivity(enabled)
+		if self.has_value_changed("multi_attachment_embed_enabled") and enabled:
+			queue_bulk_migrate_legacy_embed_attachments(enqueue_after_commit=True)
 
 	def _validate_attach_field(self):
 		"""Validate that the selected attachment field exists and is of type Attach."""
@@ -105,18 +108,13 @@ class EInvoiceSettings(Document):
 
 
 @frappe.whitelist(methods=["POST"])
-def migrate_attachments_to_table(
-	include_submitted: bool | int = 0,
-	remove_broken_links: bool | int = 0,
-) -> dict[str, str | bool]:
+def migrate_attachments_to_table(remove_broken_links: bool | int = 0) -> dict[str, str | bool]:
 	"""Enqueue a background job to migrate legacy embed attachments site-wide.
 
 	Requires **System Manager** and ``multi_attachment_embed_enabled`` on
 	**E Invoice Settings**.
 
 	Args:
-		include_submitted (bool | int, optional): Pass ``1`` to include submitted and
-			cancelled **Sales Invoice** documents.
 		remove_broken_links (bool | int, optional): Pass ``1`` to clear unresolvable
 			legacy URLs instead of skipping them.
 
@@ -133,30 +131,6 @@ def migrate_attachments_to_table(
 	if not frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
 		frappe.throw(_("Enable Multiple Attachment Embedding first."))
 
-	from frappe.utils import cint, get_link_to_form
-
-	namespaced_job_id = create_job_id(BULK_MIGRATE_LEGACY_EMBED_JOB_ID)
-	job = enqueue(
-		"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.bulk_migrate_legacy_embed_attachments",
-		queue="long",
-		timeout=1500,
-		job_id=BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
-		deduplicate=True,
-		include_submitted=cint(include_submitted),
+	return queue_bulk_migrate_legacy_embed_attachments(
 		remove_broken_links=cint(remove_broken_links),
 	)
-
-	if job:
-		frappe.msgprint(
-			_("Migration queued. Track progress in {0}.").format(get_link_to_form("RQ Job", job.id)),
-			indicator="blue",
-		)
-		return {"job_id": job.id, "queued": True}
-
-	frappe.msgprint(
-		_("Migration already queued. Track progress in {0}.").format(
-			get_link_to_form("RQ Job", namespaced_job_id)
-		),
-		indicator="orange",
-	)
-	return {"job_id": namespaced_job_id, "queued": False}

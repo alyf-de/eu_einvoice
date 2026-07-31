@@ -107,35 +107,26 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		frappe.clear_cache(doctype="Sales Invoice")
 		super().tearDown()
 
-	def test_bulk_migrate_include_submitted_matrix(self):
+	def test_bulk_migrate_migrates_all_docstatuses(self):
 		set_multi_attachment_embed_enabled(True)
 
-		for submit, include_submitted, expect_migrated in (
-			(False, False, True),
-			(False, True, True),
-			(True, False, False),
-			(True, True, True),
-		):
-			with self.subTest(submit=submit, include_submitted=include_submitted):
+		for submit in (False, True):
+			with self.subTest(submit=submit):
 				sales_invoice, annex_file = create_invoice_with_legacy_embed(submit=submit)
 
 				try:
-					result = bulk_migrate_legacy_embed_attachments(include_submitted=include_submitted)
+					result = bulk_migrate_legacy_embed_attachments()
 
 					self.assertEqual(result["errors"], [])
-					self.assertEqual(result["migrated"], 1 if expect_migrated else 0)
+					self.assertEqual(result["migrated"], 1)
 
 					reloaded = frappe.get_doc("Sales Invoice", sales_invoice.name)
-					if expect_migrated:
-						self.assertEqual(reloaded.einvoice_embedded_document, "")
-						self.assertEqual(len(reloaded.einvoice_attachments), 1)
-						migrated_file = frappe.db.get_value(
-							"File", reloaded.einvoice_attachments[0].file, "file_url"
-						)
-						self.assertEqual(migrated_file, annex_file.file_url)
-					else:
-						self.assertEqual(reloaded.einvoice_embedded_document, annex_file.file_url)
-						self.assertEqual(len(reloaded.einvoice_attachments), 0)
+					self.assertEqual(reloaded.einvoice_embedded_document, "")
+					self.assertEqual(len(reloaded.einvoice_attachments), 1)
+					migrated_file = frappe.db.get_value(
+						"File", reloaded.einvoice_attachments[0].file, "file_url"
+					)
+					self.assertEqual(migrated_file, annex_file.file_url)
 				finally:
 					delete_embed_test_sales_invoice(sales_invoice.name)
 					delete_embed_test_annex_file(annex_file.name)
@@ -152,7 +143,7 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		second_annex_file.save(ignore_permissions=True)
 
 		try:
-			result = bulk_migrate_legacy_embed_attachments(include_submitted=True)
+			result = bulk_migrate_legacy_embed_attachments()
 			self.assertEqual(result["errors"], [])
 			self.assertEqual(result["migrated"], 1)
 
@@ -182,12 +173,12 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 			delete_embed_test_annex_file(annex_file.name)
 			delete_embed_test_annex_file(second_annex_file.name)
 
-	def test_bulk_migrate_cancelled_invoice_with_include_submitted(self):
+	def test_bulk_migrate_cancelled_invoice(self):
 		set_multi_attachment_embed_enabled(True)
 		sales_invoice, annex_file = create_invoice_with_legacy_embed(submit=True, cancel=True)
 
 		try:
-			result = bulk_migrate_legacy_embed_attachments(include_submitted=True)
+			result = bulk_migrate_legacy_embed_attachments()
 
 			self.assertEqual(result["errors"], [])
 			self.assertEqual(result["migrated"], 1)
@@ -328,7 +319,7 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 			),
 			patch.object(frappe.db, "set_value", side_effect=set_value),
 		):
-			result = bulk_migrate_legacy_embed_attachments(include_submitted=True)
+			result = bulk_migrate_legacy_embed_attachments()
 
 		self.assertEqual(result["migrated"], 1)
 		self.assertEqual(len(result["errors"]), 1)
@@ -408,3 +399,33 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		self.assertEqual(legacy_field.read_only, 1)
 		table_field = frappe.get_doc("Custom Field", TABLE_EMBED_CUSTOM_FIELD)
 		self.assertEqual(table_field.hidden, 0)
+
+	def test_on_update_queues_bulk_migration_when_multi_embed_enabled(self):
+		settings = frappe.get_single("E Invoice Settings")
+		settings.multi_attachment_embed_enabled = 0
+		settings.save(ignore_permissions=True)
+
+		with patch(
+			"eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings.queue_bulk_migrate_legacy_embed_attachments"
+		) as queue_mock:
+			settings.multi_attachment_embed_enabled = 1
+			settings.save(ignore_permissions=True)
+
+		queue_mock.assert_called_once_with(enqueue_after_commit=True)
+
+	def test_bulk_migration_publishes_progress_and_completion(self):
+		set_multi_attachment_embed_enabled(True)
+		sales_invoice, annex_file = create_invoice_with_legacy_embed(submit=True)
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		self.addCleanup(delete_embed_test_annex_file, annex_file.name)
+
+		with patch(
+			"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.publish_realtime"
+		) as publish_mock:
+			result = bulk_migrate_legacy_embed_attachments(notify_user="test@example.com")
+
+		self.assertEqual(result["migrated"], 1)
+		self.assertGreaterEqual(publish_mock.call_count, 1)
+		completion_call = publish_mock.call_args_list[-1]
+		self.assertIn("Migration finished", completion_call.args[1]["message"])
+		self.assertEqual(completion_call.kwargs["user"], "test@example.com")

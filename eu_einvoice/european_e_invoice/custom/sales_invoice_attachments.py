@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import time
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Literal
@@ -10,7 +11,8 @@ from typing import TYPE_CHECKING, Literal
 import frappe
 from frappe import _
 from frappe.core.doctype.file.utils import find_file_by_url
-from frappe.utils import cstr
+from frappe.utils import cint, cstr, get_link_to_form
+from frappe.utils.background_jobs import create_job_id, enqueue
 
 if TYPE_CHECKING:
 	from erpnext.accounts.doctype.sales_invoice.sales_invoice import SalesInvoice
@@ -20,6 +22,7 @@ if TYPE_CHECKING:
 	)
 
 BULK_MIGRATE_LEGACY_EMBED_JOB_ID = "eu_einvoice.bulk_migrate_legacy_embed_attachments"
+BULK_MIGRATE_PROGRESS_INTERVAL_SECONDS = 10
 LEGACY_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_embedded_document"
 TABLE_EMBED_CUSTOM_FIELD = "Sales Invoice-einvoice_attachments"
 
@@ -186,8 +189,20 @@ def get_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
 
 	Returns:
 		list[EmbedAttachment]: Attachments passed to ``EInvoiceGenerator._embed_attachments``.
+
+	Raises:
+		frappe.ValidationError: When multi-embed is on but the legacy attach field is still set.
 	"""
 	if frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
+		if invoice.einvoice_embedded_document:
+			frappe.throw(
+				_(
+					"The Embedded Document has not been migrated to the Embedded Documents table yet. "
+					"Wait for the background migration to finish or ask a System Manager to run "
+					"Migrate attachments to table on {0}."
+				).format(get_link_to_form("E Invoice Settings", "E Invoice Settings")),
+				title=_("Legacy embed not migrated"),
+			)
 		return _get_table_embed_attachments(invoice)
 	return _get_legacy_embed_attachment(invoice)
 
@@ -486,9 +501,57 @@ def sync_embed_attachment_field_exclusivity() -> None:
 	set_embed_attachment_field_exclusivity(enabled)
 
 
-def bulk_migrate_legacy_embed_attachments(
-	include_submitted: bool = False,
+def queue_bulk_migrate_legacy_embed_attachments(
+	*,
 	remove_broken_links: bool = False,
+	enqueue_after_commit: bool = False,
+	user: str | None = None,
+) -> dict[str, str | bool]:
+	"""Enqueue site-wide legacy embed migration and notify the requesting user.
+
+	Args:
+		remove_broken_links (bool, optional): Clear unresolvable legacy URLs instead of
+			skipping them.
+		enqueue_after_commit (bool, optional): Defer enqueue until the current transaction
+			commits (used when enabling multi-embed on **E Invoice Settings** save).
+		user (str, optional): User to receive queue / progress / completion ``msgprint``
+			messages. Defaults to ``frappe.session.user``.
+
+	Returns:
+		dict[str, str | bool]: ``job_id`` and ``queued`` (``False`` when deduplicated).
+	"""
+	notify_user = user or frappe.session.user
+	namespaced_job_id = create_job_id(BULK_MIGRATE_LEGACY_EMBED_JOB_ID)
+	job = enqueue(
+		"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.bulk_migrate_legacy_embed_attachments",
+		queue="long",
+		timeout=1500,
+		job_id=BULK_MIGRATE_LEGACY_EMBED_JOB_ID,
+		deduplicate=True,
+		enqueue_after_commit=enqueue_after_commit,
+		remove_broken_links=cint(remove_broken_links),
+		notify_user=notify_user,
+	)
+
+	if job:
+		frappe.msgprint(
+			_("Migration queued. Track progress in {0}.").format(get_link_to_form("RQ Job", job.id)),
+			indicator="blue",
+		)
+		return {"job_id": job.id, "queued": True}
+
+	frappe.msgprint(
+		_("Migration already queued. Track progress in {0}.").format(
+			get_link_to_form("RQ Job", namespaced_job_id)
+		),
+		indicator="orange",
+	)
+	return {"job_id": namespaced_job_id, "queued": False}
+
+
+def bulk_migrate_legacy_embed_attachments(
+	remove_broken_links: bool = False,
+	notify_user: str | None = None,
 ) -> dict[str, int | list[tuple[str, str]]]:
 	"""Migrate legacy ``einvoice_embedded_document`` values site-wide (background job).
 
@@ -496,29 +559,31 @@ def bulk_migrate_legacy_embed_attachments(
 	writes so unrelated **Sales Invoice** validation cannot block the job.
 
 	Args:
-		include_submitted (bool, optional): When ``True``, also migrate submitted and
-			cancelled invoices. When ``False``, only draft invoices are migrated.
 		remove_broken_links (bool, optional): When ``True``, clear unresolvable legacy
 			URLs instead of skipping them. Removals are logged at site warning level.
+		notify_user (str, optional): User to receive progress and completion ``msgprint``
+			messages via realtime events.
 
 	Returns:
 		dict: Counts with keys ``migrated``, ``already_migrated``, ``broken``, ``removed``,
 			and ``errors`` (list of ``(invoice_name, message)`` tuples for unexpected
-			exceptions). Publishes a realtime ``msgprint`` summary to the enqueueing user.
+			exceptions). Publishes realtime ``msgprint`` updates to *notify_user* when set.
 	"""
-	filters: dict = {"einvoice_embedded_document": ("is", "set")}
-	if not include_submitted:
-		filters["docstatus"] = 0
-
-	invoice_names = frappe.get_all("Sales Invoice", filters=filters, pluck="name")
+	invoice_names = frappe.get_all(
+		"Sales Invoice",
+		filters={"einvoice_embedded_document": ("is", "set")},
+		pluck="name",
+	)
+	total = len(invoice_names)
 
 	migrated = 0
 	already_migrated = 0
 	broken = 0
 	removed = 0
 	errors: list[tuple[str, str]] = []
+	last_progress_at = time.monotonic()
 
-	for invoice_name in invoice_names:
+	for processed, invoice_name in enumerate(invoice_names, start=1):
 		try:
 			invoice = frappe.get_doc("Sales Invoice", invoice_name)
 			legacy_url = invoice.einvoice_embedded_document
@@ -554,6 +619,21 @@ def bulk_migrate_legacy_embed_attachments(
 				reference_name=invoice_name,
 			)
 
+		if notify_user:
+			now = time.monotonic()
+			if now - last_progress_at >= BULK_MIGRATE_PROGRESS_INTERVAL_SECONDS:
+				frappe.publish_realtime(
+					"msgprint",
+					{
+						"message": _(
+							"Legacy embed migration in progress: {0} of {1} invoices processed."
+						).format(processed, total),
+						"indicator": "blue",
+					},
+					user=notify_user,
+				)
+				last_progress_at = now
+
 	summary = _format_bulk_migration_summary(
 		migrated=migrated,
 		already_migrated=already_migrated,
@@ -561,15 +641,15 @@ def bulk_migrate_legacy_embed_attachments(
 		removed=removed,
 		errors=errors,
 	)
-	frappe.publish_realtime(
-		"msgprint",
-		{
-			"message": summary,
-			"alert": True,
-			"indicator": "green" if not broken and not removed and not errors else "orange",
-		},
-		user=frappe.session.user,
-	)
+	if notify_user:
+		frappe.publish_realtime(
+			"msgprint",
+			{
+				"message": _("{0} Migration finished.").format(summary),
+				"indicator": "green" if not broken and not removed and not errors else "orange",
+			},
+			user=notify_user,
+		)
 
 	return {
 		"migrated": migrated,
