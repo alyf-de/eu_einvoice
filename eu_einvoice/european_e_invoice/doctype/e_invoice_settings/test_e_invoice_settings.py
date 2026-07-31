@@ -13,6 +13,7 @@ from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	LEGACY_EMBED_CUSTOM_FIELD,
 	TABLE_EMBED_CUSTOM_FIELD,
 	_format_bulk_migration_summary,
+	_insert_attachment_row,
 	bulk_migrate_legacy_embed_attachments,
 	set_embed_attachment_field_exclusivity,
 )
@@ -138,6 +139,48 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 				finally:
 					delete_embed_test_sales_invoice(sales_invoice.name)
 					delete_embed_test_annex_file(annex_file.name)
+
+	def test_bulk_migrate_assigns_child_row_idx(self):
+		"""Direct child inserts must set ``idx`` so Desk grid order is stable."""
+		set_multi_attachment_embed_enabled(True)
+		sales_invoice, annex_file = create_invoice_with_legacy_embed(submit=True)
+		second_annex_file = create_embed_test_annex_file(
+			file_name=f"bulk-migrate-second-{frappe.generate_hash(length=8)}.png",
+		)
+		second_annex_file.attached_to_doctype = "Sales Invoice"
+		second_annex_file.attached_to_name = sales_invoice.name
+		second_annex_file.save(ignore_permissions=True)
+
+		try:
+			result = bulk_migrate_legacy_embed_attachments(include_submitted=True)
+			self.assertEqual(result["errors"], [])
+			self.assertEqual(result["migrated"], 1)
+
+			rows = frappe.get_all(
+				"E Invoice Attachment Row",
+				filters={"parent": sales_invoice.name},
+				fields=["idx", "file"],
+				order_by="idx asc",
+			)
+			self.assertEqual(len(rows), 1)
+			self.assertEqual(rows[0].idx, 1)
+			self.assertEqual(rows[0].file, annex_file.name)
+
+			_insert_attachment_row(sales_invoice, second_annex_file)
+
+			rows = frappe.get_all(
+				"E Invoice Attachment Row",
+				filters={"parent": sales_invoice.name},
+				fields=["idx", "file"],
+				order_by="idx asc",
+			)
+			self.assertEqual(len(rows), 2)
+			self.assertEqual([row.idx for row in rows], [1, 2])
+			self.assertEqual(rows[1].file, second_annex_file.name)
+		finally:
+			delete_embed_test_sales_invoice(sales_invoice.name)
+			delete_embed_test_annex_file(annex_file.name)
+			delete_embed_test_annex_file(second_annex_file.name)
 
 	def test_bulk_migrate_cancelled_invoice_with_include_submitted(self):
 		set_multi_attachment_embed_enabled(True)

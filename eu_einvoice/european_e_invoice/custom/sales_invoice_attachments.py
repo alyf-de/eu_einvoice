@@ -312,6 +312,19 @@ def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> None:
 	)
 
 
+def _next_attachment_row_idx(invoice: SalesInvoice) -> int:
+	"""Return the next ``idx`` for a new **E Invoice Attachment Row** on *invoice*."""
+	current_max = frappe.db.sql(
+		"""
+		select coalesce(max(idx), 0)
+		from `tabE Invoice Attachment Row`
+		where parent=%s and parenttype=%s and parentfield=%s
+		""",
+		(invoice.name, invoice.doctype, "einvoice_attachments"),
+	)[0][0]
+	return int(current_max) + 1
+
+
 def _insert_attachment_row(invoice: SalesInvoice, file) -> None:
 	"""Insert one **E Invoice Attachment Row** linked to *invoice*."""
 	frappe.get_doc(
@@ -320,6 +333,7 @@ def _insert_attachment_row(invoice: SalesInvoice, file) -> None:
 			"parent": invoice.name,
 			"parenttype": invoice.doctype,
 			"parentfield": "einvoice_attachments",
+			"idx": _next_attachment_row_idx(invoice),
 			"file": file.name,
 			"file_name": file.file_name,
 		}
