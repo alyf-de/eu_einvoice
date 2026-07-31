@@ -552,7 +552,6 @@ def bulk_migrate_legacy_embed_attachments(
 				title=_("Legacy embed migration failed for {0}").format(invoice_name),
 				reference_doctype="Sales Invoice",
 				reference_name=invoice_name,
-				message=cstr(exc),
 			)
 
 	summary = _format_bulk_migration_summary(
