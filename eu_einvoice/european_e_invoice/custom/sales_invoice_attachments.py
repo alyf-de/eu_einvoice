@@ -196,28 +196,21 @@ def validate_einvoice_attachment_rows(invoice: SalesInvoice, settings: EInvoiceS
 	"""Validate **Embedded Documents** rows for duplicate filenames and content.
 
 	Duplicate embed filenames (BR-DE-22) are detected case-insensitively
-	(``str.lower()``), matching the DB unique index collation.
-
-	On save/submit, duplicate-filename validation runs only when
-	``settings.should_show_message`` is true — i.e. when **E Invoice Settings**
-	has ``error_action_on_save`` or ``error_action_on_submit`` set. When no error
-	action is configured, save proceeds without this check; the DB constraint and
-	XML output path still enforce uniqueness. When the check runs, duplicates
-	always block save with a specific message (no warn-only path).
+	(``str.lower()``), matching the DB unique index collation, and always block
+	save regardless of **E Invoice Settings** error-action configuration.
 
 	Duplicate ``content_hash`` values always produce an orange ``msgprint`` hint.
 
 	Args:
 		invoice (SalesInvoice): Invoice whose ``einvoice_attachments`` are checked.
-		settings (EInvoiceSettings): **E Invoice Settings** single for error action.
+		settings (EInvoiceSettings): **E Invoice Settings** single (reserved for
+			call-site compatibility; duplicate-filename checks do not use error actions).
 	"""
 	rows = invoice.get("einvoice_attachments")
 	if not rows:
 		return
 
-	# Check for duplicate file names (BR-DE-22)
-	if settings.should_show_message(invoice.docstatus):
-		_validate_duplicate_embed_filenames(rows)
+	_validate_duplicate_embed_filenames(rows)
 
 	# Check for duplicate content hashes
 	hash_groups: dict[str, list] = defaultdict(list)

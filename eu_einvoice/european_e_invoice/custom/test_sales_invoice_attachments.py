@@ -231,7 +231,7 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 		self.assertIn("alpha.png", warning_message)
 		self.assertIn("beta.png", warning_message)
 
-	def test_duplicate_embed_filename_raises_when_error_action(self):
+	def test_duplicate_embed_filename_raises(self):
 		for file_names in (("same.pdf", "same.pdf"), ("doc.pdf", "Doc.pdf")):
 			with self.subTest(file_names=file_names):
 				invoice = make_embed_test_invoice(
@@ -240,7 +240,7 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 						frappe._dict(idx=2, file="F-2", file_name=file_names[1], display_name=None),
 					],
 				)
-				settings = frappe._dict(should_show_message=lambda docstatus: True)
+				settings = frappe._dict()
 
 				with self.assertRaises(frappe.ValidationError) as error:
 					validate_einvoice_attachment_rows(invoice, settings)
@@ -249,30 +249,14 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 				self.assertIn("row #1", str(error.exception))
 				self.assertIn("row #2", str(error.exception))
 
-	def test_duplicate_embed_filename_skipped_when_error_action_disabled(self):
-		invoice = make_embed_test_invoice(
-			einvoice_attachments=[
-				frappe._dict(idx=1, file="F-1", file_name="same.pdf", display_name=None),
-				frappe._dict(idx=2, file="F-2", file_name="same.pdf", display_name=None),
-			],
-		)
-		settings = frappe._dict(should_show_message=lambda docstatus: False)
-		frappe.clear_messages()
-
-		validate_einvoice_attachment_rows(invoice, settings)
-
-		self.assertFalse(
-			[message for message in frappe.get_message_log() if "unique filename" in message.message.lower()]
-		)
-
-	def test_duplicate_empty_embed_filename_raises_when_error_action(self):
+	def test_duplicate_empty_embed_filename_raises(self):
 		invoice = make_embed_test_invoice(
 			einvoice_attachments=[
 				frappe._dict(idx=1, file="F-1", file_name="", display_name=None),
 				frappe._dict(idx=2, file="F-2", file_name="", display_name=None),
 			],
 		)
-		settings = frappe._dict(should_show_message=lambda docstatus: True)
+		settings = frappe._dict()
 
 		with self.assertRaises(frappe.ValidationError) as error:
 			validate_einvoice_attachment_rows(invoice, settings)
@@ -379,25 +363,18 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertIn("System Manager", warning.message)
 		self.assertIn("E Invoice Settings", warning.message)
 
-	def test_validate_doc_blocks_duplicate_embed_filenames_when_error_action(self):
+	def test_validate_doc_blocks_duplicate_embed_filenames(self):
 		set_multi_attachment_embed_enabled(True)
 		doc = ensure_embed_test_sales_invoice()
 		self.addCleanup(delete_embed_test_sales_invoice, doc.name)
 
 		settings = frappe.get_doc("E Invoice Settings")
-		previous_validate = settings.validate_sales_invoice_on_save
 		previous_action = settings.error_action_on_save
-		settings.validate_sales_invoice_on_save = 1
-		settings.error_action_on_save = "Error Message"
+		settings.error_action_on_save = ""
 		settings.save(ignore_permissions=True)
 		self.addCleanup(
 			lambda: frappe.get_doc("E Invoice Settings")
-			.update(
-				{
-					"validate_sales_invoice_on_save": previous_validate,
-					"error_action_on_save": previous_action,
-				}
-			)
+			.update({"error_action_on_save": previous_action})
 			.save(ignore_permissions=True)
 		)
 
