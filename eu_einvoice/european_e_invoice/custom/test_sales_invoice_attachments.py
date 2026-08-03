@@ -212,6 +212,26 @@ class UnitTestGetEmbedAttachments(UnitTestCase):
 		self.assertIn("not been migrated", str(error.exception))
 		self.assertIn("E Invoice Settings", str(error.exception))
 
+	def test_get_embed_attachments_uses_table_when_legacy_set_and_table_has_rows(self):
+		invoice = make_embed_test_invoice(
+			einvoice_embedded_document="/files/legacy.png",
+			einvoice_attachments=[frappe._dict(idx=1, file="F-TABLE-1", file_name="table-only.png")],
+		)
+		table_result = [EmbedAttachment(file="F-TABLE-1", file_name="table-only.png")]
+		with (
+			patch.object(frappe.db, "get_single_value", return_value=1),
+			patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments._get_table_embed_attachments",
+				return_value=table_result,
+			) as table_mock,
+			patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments._get_legacy_embed_attachment",
+			) as legacy_mock,
+		):
+			self.assertEqual(get_embed_attachments(invoice), table_result)
+			table_mock.assert_called_once_with(invoice)
+			legacy_mock.assert_not_called()
+
 	def test_get_table_embed_attachments_raises_when_file_missing(self):
 		invoice = make_embed_test_invoice(
 			name="SINV-UNIT-MISSING-2",
@@ -420,6 +440,48 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertIn("einvoice_embedded_document", warning.message)
 		self.assertIn("System Manager", warning.message)
 		self.assertIn("E Invoice Settings", warning.message)
+
+	def test_migrate_legacy_field_clears_broken_link_when_table_has_rows(self):
+		set_multi_attachment_embed_enabled(True)
+		sales_invoice = ensure_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+
+		annex_file_name = f"table-annex-{frappe.generate_hash(length=8)}.png"
+		annex_content = LOCAL_ANNEX_PNG_BYTES + frappe.generate_hash(length=8).encode()
+		annex_file = create_embed_test_annex_file(file_name=annex_file_name, content=annex_content)
+		self.addCleanup(delete_embed_test_annex_file, annex_file.name)
+		attach_embed_test_annex_file_to_sales_invoice(annex_file, sales_invoice)
+		sales_invoice.append(
+			"einvoice_attachments",
+			{"file": annex_file.name, "file_name": annex_file.file_name},
+		)
+
+		broken_url = f"/files/missing-legacy-{frappe.generate_hash(length=8)}.png"
+		sales_invoice.einvoice_embedded_document = broken_url
+		frappe.clear_messages()
+
+		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+			validate_doc(sales_invoice, "validate")
+
+		self.assertEqual(sales_invoice.einvoice_embedded_document, "")
+		self.assertEqual(len(sales_invoice.einvoice_attachments), 1)
+		self.assertEqual(sales_invoice.einvoice_attachments[0].file, annex_file.name)
+
+		error_logs = frappe.get_all(
+			"Error Log",
+			filters={
+				"reference_doctype": "Sales Invoice",
+				"reference_name": sales_invoice.name,
+				"error": ("like", f"%{broken_url}%"),
+			},
+			fields=["error"],
+		)
+		self.assertEqual(len(error_logs), 1)
+		self.assertIn("was removed", error_logs[0].error.lower())
+
+		assert_single_orange_message(broken_url)
+		warning = next(message for message in frappe.get_message_log() if broken_url in message.message)
+		self.assertIn("already has rows", warning.message)
 
 	def test_migrate_legacy_field_treats_cross_invoice_url_as_broken(self):
 		set_multi_attachment_embed_enabled(True)

@@ -210,10 +210,13 @@ def get_embed_attachments(invoice: SalesInvoice) -> list[EmbedAttachment]:
 		list[EmbedAttachment]: Attachments passed to ``EInvoiceGenerator._embed_attachments``.
 
 	Raises:
-		frappe.ValidationError: When multi-embed is on but the legacy attach field is still set.
+		frappe.ValidationError: When multi-embed is on, the legacy attach field is still set,
+			and ``einvoice_attachments`` is empty (migration pending or unmigratable URL with
+			no table annexes yet).
 	"""
 	if frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
-		if invoice.einvoice_embedded_document:
+		# Prefer table annexes once present; only block when legacy is still the sole source.
+		if invoice.einvoice_embedded_document and not invoice.get("einvoice_attachments"):
 			frappe.throw(
 				_(
 					"The Embedded Document has not been migrated to the Embedded Documents table yet. "
@@ -289,8 +292,10 @@ def migrate_legacy_embed_to_table(
 
 	Returns:
 		bool: ``True`` when the legacy field was migrated; ``False`` when there was nothing
-			to migrate or the file link could not be resolved. On failure the legacy field
-			is left unchanged and the failure is logged to **Error Log**.
+			to migrate or the file link could not be resolved. On an unresolvable URL the
+			legacy field is left unchanged when the table is empty (logged to **Error Log**);
+			when ``einvoice_attachments`` already has rows, the broken link is cleared so
+			table annexes can be used for embed.
 	"""
 	if not invoice.einvoice_embedded_document:
 		return False
@@ -307,6 +312,19 @@ def migrate_legacy_embed_to_table(
 			)
 		return True
 
+	table_has_rows = bool(invoice.get("einvoice_attachments"))
+	if table_has_rows:
+		invoice.einvoice_embedded_document = ""
+		_log_broken_legacy_embed(invoice, file_url, removed=True)
+		if show_message:
+			frappe.msgprint(
+				_(
+					"Could not migrate Embedded Document ({0}): no File record found for URL {1}. "
+					"The link was removed because the Embedded Documents table already has rows."
+				).format("einvoice_embedded_document", file_url),
+				alert=True,
+				indicator="orange",
+			)
 	else:
 		_log_broken_legacy_embed(invoice, file_url)
 		if show_message:
@@ -319,17 +337,20 @@ def migrate_legacy_embed_to_table(
 				alert=True,
 				indicator="orange",
 			)
-		return False
+	return False
 
 
-def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str) -> None:
+def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str, *, removed: bool = False) -> None:
 	"""Write an **Error Log** entry for an unresolvable legacy embed URL."""
+	message = (
+		_broken_legacy_embed_removed_message(file_url) if removed else _broken_legacy_embed_message(file_url)
+	)
 	frappe.log_error(
 		title=_(
 			"Unable to migrate embedded document from legacy field `einvoice_embedded_document` "
 			"to `einvoice_attachments` table for Sales Invoice {0}"
 		).format(invoice.name),
-		message=_broken_legacy_embed_message(file_url),
+		message=message,
 		reference_doctype=invoice.doctype,
 		reference_name=invoice.name,
 	)
