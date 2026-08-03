@@ -460,32 +460,30 @@ def _resolve_embed_file_for_invoice(invoice: SalesInvoice, file_url: str):
 	``file_url`` (re-uploads, copies, stale rows), it can pick the wrong one.
 
 	Migration must move *this* invoice's legacy attach into *this* invoice's
-	child table, so we prefer a **File** attached to the invoice and only then
-	fall back to the site-wide URL lookup. When submit sync creates a second
-	**File** row for the same URL, prefer the row linked via the legacy attach
-	field, then the oldest match.
+	child table, so we only consider **File** rows attached to *invoice*. When
+	submit sync creates a second **File** row for the same URL, prefer the row
+	linked via the legacy attach field, then the oldest match.
 	"""
-	for filters in (
-		{
+	candidates = []
+	for file_name in frappe.get_all(
+		"File",
+		filters={
 			"file_url": file_url,
 			"attached_to_doctype": invoice.doctype,
 			"attached_to_name": invoice.name,
 		},
-		{"file_url": file_url},
+		pluck="name",
+		order_by="creation asc",
 	):
-		candidates = []
-		for file_name in frappe.get_all("File", filters=filters, pluck="name", order_by="creation asc"):
-			file = frappe.get_doc("File", file_name)
-			if file.is_downloadable():
-				candidates.append(file)
+		file = frappe.get_doc("File", file_name)
+		if file.is_downloadable():
+			candidates.append(file)
 
-		if candidates:
-			for file in candidates:
-				if file.attached_to_field == "einvoice_embedded_document":
-					return file
-			return candidates[0]
-
-	return None
+	if candidates:
+		for file in candidates:
+			if file.attached_to_field == "einvoice_embedded_document":
+				return file
+		return candidates[0]
 
 
 def _update_sales_invoice_custom_field(custom_field_name: str, properties: dict[str, int]) -> None:

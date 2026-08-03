@@ -421,6 +421,29 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertIn("System Manager", warning.message)
 		self.assertIn("E Invoice Settings", warning.message)
 
+	def test_migrate_legacy_field_treats_cross_invoice_url_as_broken(self):
+		set_multi_attachment_embed_enabled(True)
+		invoice_a = ensure_embed_test_sales_invoice()
+		invoice_b = ensure_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, invoice_a.name)
+		self.addCleanup(delete_embed_test_sales_invoice, invoice_b.name)
+
+		annex_file_name = f"cross-invoice-legacy-{frappe.generate_hash(length=8)}.png"
+		annex_content = LOCAL_ANNEX_PNG_BYTES + frappe.generate_hash(length=8).encode()
+		annex_file = create_embed_test_annex_file(file_name=annex_file_name, content=annex_content)
+		self.addCleanup(delete_embed_test_annex_file, annex_file.name)
+		attach_embed_test_annex_file_to_sales_invoice(annex_file, invoice_b)
+
+		invoice_a.einvoice_embedded_document = annex_file.file_url
+		frappe.clear_messages()
+
+		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+			validate_doc(invoice_a, "validate")
+
+		self.assertEqual(invoice_a.einvoice_embedded_document, annex_file.file_url)
+		self.assertEqual(len(invoice_a.einvoice_attachments), 0)
+		assert_single_orange_message(annex_file.file_url)
+
 	def test_validate_doc_blocks_duplicate_embed_filenames(self):
 		set_multi_attachment_embed_enabled(True)
 		doc = ensure_embed_test_sales_invoice()
