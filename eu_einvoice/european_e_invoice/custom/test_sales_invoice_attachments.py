@@ -408,6 +408,30 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		self.assertEqual(sales_invoice.einvoice_attachments[0].file, annex_file.name)
 		assert_single_orange_message("moved")
 
+	def test_migrate_legacy_field_skips_duplicate_when_row_exists(self):
+		"""Clear legacy without appending when the File is already in the table."""
+		set_multi_attachment_embed_enabled(False)
+		sales_invoice, annex_file = create_embed_test_sales_invoice()
+		self.addCleanup(delete_embed_test_sales_invoice, sales_invoice.name)
+		self.addCleanup(delete_embed_test_annex_file, annex_file.name)
+
+		sales_invoice.append(
+			"einvoice_attachments",
+			{"file": annex_file.name, "file_name": annex_file.file_name},
+		)
+		self.assertEqual(sales_invoice.einvoice_embedded_document, annex_file.file_url)
+
+		set_multi_attachment_embed_enabled(True)
+		frappe.clear_messages()
+
+		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+			validate_doc(sales_invoice, "validate")
+
+		self.assertEqual(sales_invoice.einvoice_embedded_document, "")
+		self.assertEqual(len(sales_invoice.einvoice_attachments), 1)
+		self.assertEqual(sales_invoice.einvoice_attachments[0].file, annex_file.name)
+		self.assertEqual(frappe.get_message_log(), [])
+
 	def test_migrate_legacy_field_keeps_broken_link_on_validate(self):
 		set_multi_attachment_embed_enabled(True)
 		sales_invoice = ensure_embed_test_sales_invoice()

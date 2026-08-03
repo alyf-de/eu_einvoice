@@ -303,8 +303,8 @@ def migrate_legacy_embed_to_table(
 	file_url = invoice.einvoice_embedded_document
 	file = _resolve_embed_file_for_invoice(invoice, file_url)
 	if file:
-		_persist_legacy_embed_migration_on_save(invoice, file)
-		if show_message:
+		appended = _persist_legacy_embed_migration_on_save(invoice, file)
+		if show_message and appended:
 			frappe.msgprint(
 				_("The legacy embedded document was moved to the Embedded Documents table."),
 				alert=True,
@@ -356,15 +356,37 @@ def _log_broken_legacy_embed(invoice: SalesInvoice, file_url: str, *, removed: b
 	)
 
 
-def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> None:
-	"""Append a child row and clear ``einvoice_embedded_document`` on an in-memory invoice."""
-	invoice.append("einvoice_attachments", {"file": file.name, "file_name": file.file_name})
+def _persist_legacy_embed_migration_on_save(invoice: SalesInvoice, file) -> bool:
+	"""Ensure child row for *file* and clear legacy on an in-memory invoice; return if appended."""
+	appended = False
+	if not any(row.file == file.name for row in invoice.get("einvoice_attachments") or []):
+		invoice.append("einvoice_attachments", {"file": file.name, "file_name": file.file_name})
+		appended = True
 	invoice.einvoice_embedded_document = ""
+	return appended
 
 
-def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> None:
-	"""Insert a child row and clear the legacy field via ``db.set_value``."""
-	_insert_attachment_row(invoice, file)
+def _file_already_in_attachments(invoice: SalesInvoice, file_name: str) -> bool:
+	"""Return whether *invoice* already has an ``einvoice_attachments`` row for *file_name*."""
+	return bool(
+		frappe.db.exists(
+			"E Invoice Attachment Row",
+			{
+				"parent": invoice.name,
+				"parenttype": invoice.doctype,
+				"parentfield": "einvoice_attachments",
+				"file": file_name,
+			},
+		)
+	)
+
+
+def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> bool:
+	"""Ensure child row for *file* and clear legacy; return whether a row was inserted."""
+	inserted = False
+	if not _file_already_in_attachments(invoice, file.name):
+		_insert_attachment_row(invoice, file)
+		inserted = True
 	frappe.db.set_value(
 		"Sales Invoice",
 		invoice.name,
@@ -372,6 +394,7 @@ def _persist_legacy_embed_migration_db(invoice: SalesInvoice, file) -> None:
 		"",
 		update_modified=True,
 	)
+	return inserted
 
 
 def _next_attachment_row_idx(invoice: SalesInvoice) -> int:
@@ -648,8 +671,11 @@ def bulk_migrate_legacy_embed_attachments(
 				else:
 					broken += 1
 			else:
-				_persist_legacy_embed_migration_db(invoice, file)
-				migrated += 1
+				inserted = _persist_legacy_embed_migration_db(invoice, file)
+				if inserted:
+					migrated += 1
+				else:
+					already_migrated += 1
 				persisted = True
 
 			if persisted:

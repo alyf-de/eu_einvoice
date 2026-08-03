@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-07-31 11:42+0053\n"
+"POT-Creation-Date: 2026-08-03 10:28+0053\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -55,7 +55,7 @@ msgstr "Vereinbarung"
 msgid "Allowance Total"
 msgstr "Abschläge gesamt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:418
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:488
 msgid "Already migrated {0}."
 msgstr "Bereits migriert {0}."
 
@@ -121,11 +121,11 @@ msgstr "Leistungszeitraum Ende"
 msgid "Billing Period Start"
 msgstr "Leistungszeitraum Start"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:422
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:492
 msgid "Broken file links (removed): {0}."
 msgstr "Defekte Dateilinks (entfernt): {0}."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:420
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:490
 msgid "Broken file links (skipped): {0}."
 msgstr "Defekte Dateilinks (übersprungen): {0}."
 
@@ -210,23 +210,27 @@ msgstr "Nicht auflösbare Links im Legacy-Feld löschen statt unverändert zu la
 msgid "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>."
 msgstr "Konfigurieren Sie dies, wenn Sie benutzerdefinierte Rechnungsnummern in einem anderen Feld als <code>name</code> speichern."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:169
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:80
 msgid "Could not embed attachment: no File record found for '{0}' (ID {1}). Check that the file exists and is attached to this document."
 msgstr "Anhang konnte nicht eingebettet werden: Kein Datei-Datensatz für '{0}' (ID {1}) gefunden. Prüfen Sie bitte, ob die Datei existiert und an dieses Dokument angehängt ist."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:135
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:161
 msgid "Could not embed attachment: no File record found for URL {0}. Check that the file exists and is attached to this document."
 msgstr "Anhang konnte nicht eingebettet werden: Kein Datei-Datensatz für URL {0} gefunden. Prüfen Sie, ob die Datei existiert und an dieses Dokument angehängt ist."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:288
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:332
 msgid "Could not migrate Embedded Document ({0}): no File record found for URL {1}. The link was left unchanged. Ask a System Manager to run Migrate attachments to table on E Invoice Settings."
 msgstr "Eingebettetes Dokument ({0}) konnte nicht migriert werden: Kein Datei-Datensatz für URL {1} gefunden. Der Link wurde unverändert gelassen. Bitten Sie einen System Manager, in den E-Rechnungs-Einstellungen „Vorhandene Anhänge in Tabelle migrieren“ auszuführen."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:360
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:321
+msgid "Could not migrate Embedded Document ({0}): no File record found for URL {1}. The link was removed because the Embedded Documents table already has rows."
+msgstr "Eingebettetes Dokument ({0}) konnte nicht migriert werden: Kein Datei-Datensatz für URL {1} gefunden. Der Link wurde entfernt, weil die Tabelle Eingebettete Dokumente bereits Zeilen enthält."
+
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:430
 msgid "Could not migrate embedded document: no File record found for URL {0}. The legacy attachment link was left unchanged."
 msgstr "Eingebettetes Dokument konnte nicht migriert werden: Kein Datei-Datensatz für URL {0} gefunden. Der alte Anhangslink wurde unverändert gelassen."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:368
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:438
 msgid "Could not migrate embedded document: no File record found for URL {0}. The legacy attachment link was removed."
 msgstr "Eingebettetes Dokument konnte nicht migriert werden: Kein Datei-Datensatz für URL {0} gefunden. Der alte Anhangslink wurde entfernt."
 
@@ -358,7 +362,7 @@ msgstr "Eingebettetes Dokument"
 msgid "Embedded Documents"
 msgstr "Eingebettete Dokumente"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:244
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:273
 msgid "Embedded Documents {0} contain identical file content. Consider removing duplicate rows."
 msgstr "Eingebettete Dokumente {0} enthalten identischen Dateiinhalt. Erwägen Sie, doppelte Zeilen zu entfernen."
 
@@ -376,7 +380,7 @@ msgstr "Aktivieren Sie zuerst die Einbettung mehrerer Anhänge."
 msgid "Enable Multiple Attachment Embedding into Invoice PDF/XML"
 msgstr "Einbettung mehrerer Anhänge in Rechnungs-PDF/XML aktivieren"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:424
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:494
 msgid "Errors: {0}."
 msgstr "Fehler: {0}."
 
@@ -406,8 +410,8 @@ msgstr "Datei-Abschnitt"
 msgid "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty."
 msgstr "Wenn ausgefüllt, wird der Text als BT-120 (<code>ram:ExemptionReason</code>) in der Steueraufschlüsselung geschrieben, sobald ein Befreiungsgrundcode ausgegeben wird. Bleibt das Feld leer, wird BT-120 im XML nicht gesetzt."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:139
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:173
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:84
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:165
 msgid "Invalid attachment file"
 msgstr "Ungültige Anhangsdatei"
 
@@ -416,15 +420,15 @@ msgstr "Ungültige Anhangsdatei"
 msgid "Invoice ID"
 msgstr "Rechnungs-ID"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:617
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:688
 msgid "Legacy embed migration failed for {0}"
 msgstr "Migration des alten Anhangs für {0} fehlgeschlagen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:628
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:699
 msgid "Legacy embed migration in progress: {0} of {1} invoices processed."
 msgstr "Migration der Legacy-Anhänge läuft: {0} von {1} Ausgangsrechnungen verarbeitet."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:204
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:226
 msgid "Legacy embed not migrated"
 msgstr "Legacy-Anhang nicht migriert"
 
@@ -448,7 +452,7 @@ msgstr "Mit {0} verknüpfen"
 msgid "Migrate Existing Attachments to Table"
 msgstr "Vorhandene Anhänge in Tabelle migrieren"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:416
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:486
 msgid "Migrated {0} Sales Invoice(s)."
 msgstr "{0} Ausgangsrechnung(en) migriert."
 
@@ -458,11 +462,11 @@ msgstr "{0} Ausgangsrechnung(en) migriert."
 msgid "Migrates files linked in the legacy field <b>einvoice_embedded_document</b> to the <b>Embedded Documents</b> table. Opens a dialog where you can choose whether unresolvable legacy file links are skipped (left unchanged, logged) or removed from the field."
 msgstr "Migriert in <b>einvoice_embedded_document</b> verknüpfte Dateien in die Tabelle <b>Eingebettete Dokumente</b>. Öffnet einen Dialog, in dem festgelegt wird, ob nicht auflösbare Legacy-Dateilinks übersprungen (unverändert gelassen, protokolliert) oder aus dem Feld entfernt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:544
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:612
 msgid "Migration already queued. Track progress in {0}."
 msgstr "Migration bereits eingereiht. Fortschritt verfolgen in {0}."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:538
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:606
 msgid "Migration queued. Track progress in {0}."
 msgstr "Migration eingereiht. Fortschritt verfolgen in {0}."
 
@@ -572,7 +576,7 @@ msgstr "Anwendbarer Prozentsatz"
 msgid "Remove broken legacy file links"
 msgstr "Defekte Legacy-Dateilinks entfernen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:395
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:465
 msgid "Removed broken legacy embedded document link from field `einvoice_embedded_document` for Sales Invoice {0}"
 msgstr "Defekter Legacy-Link zum eingebetteten Dokument aus Feld `einvoice_embedded_document` für Ausgangsrechnung {0} entfernt"
 
@@ -666,7 +670,7 @@ msgstr "Lieferantenrechnungsdatei"
 msgid "Tax Basis Total"
 msgstr "Steuerbasis gesamt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:199
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:221
 msgid "The Embedded Document has not been migrated to the Embedded Documents table yet. Wait for the background migration to finish or ask a System Manager to run Migrate attachments to table on {0}."
 msgstr "Das eingebettete Dokument wurde noch nicht in die Tabelle Eingebettete Dokumente migriert. Warten Sie, bis die Hintergrundmigration abgeschlossen ist, oder bitten Sie einen System Manager, unter {0} „Vorhandene Anhänge in Tabelle migrieren“ auszuführen."
 
@@ -674,7 +678,7 @@ msgstr "Das eingebettete Dokument wurde noch nicht in die Tabelle Eingebettete D
 msgid "The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 msgstr "Das Format der hochgeladenen Datei ({0}) wird für E-Rechnungen nicht unterstützt. Bitte laden Sie eine gültige E-Rechnungsdatei hoch oder erstellen Sie stattdessen eine reguläre Eingangsrechnung manuell."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:278
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:309
 msgid "The legacy embedded document was moved to the Embedded Documents table."
 msgstr "Das eingebettete Legacy-Dokument wurde in die Tabelle Eingebettete Dokumente verschoben."
 
@@ -687,7 +691,7 @@ msgstr "Die hochgeladene Datei enthält keine gültige XML-Daten."
 msgid "Total Prepaid"
 msgstr "Vorausbezahlt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:302
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:349
 msgid "Unable to migrate embedded document from legacy field `einvoice_embedded_document` to `einvoice_attachments` table for Sales Invoice {0}"
 msgstr "Eingebettetes Dokument konnte nicht vom Legacy-Feld `einvoice_embedded_document` in die Tabelle `einvoice_attachments` für Ausgangsrechnung {0} migriert werden"
 
@@ -774,11 +778,11 @@ msgstr "XML-Einstellungen"
 msgid "row #{0}"
 msgstr "Zeile #{0}"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:242
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:271
 msgid "row #{0} ({1})"
 msgstr "Zeile #{0} ({1})"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:648
+#: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:719
 msgid "{0} Migration finished."
 msgstr "{0} Migration abgeschlossen."
 

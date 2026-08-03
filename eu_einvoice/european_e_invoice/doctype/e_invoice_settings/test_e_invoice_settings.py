@@ -173,6 +173,40 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 			delete_embed_test_annex_file(annex_file.name)
 			delete_embed_test_annex_file(second_annex_file.name)
 
+	def test_bulk_migrate_idempotent_when_row_already_exists(self):
+		"""Clear legacy without inserting when the File is already in the table."""
+		set_multi_attachment_embed_enabled(True)
+		sales_invoice, annex_file = create_invoice_with_legacy_embed(submit=True)
+		_insert_attachment_row(sales_invoice, annex_file)
+
+		real_get_all = frappe.get_all
+
+		def get_all(doctype, *args, **kwargs):
+			filters = kwargs.get("filters")
+			if doctype == "Sales Invoice" and kwargs.get("pluck") == "name" and isinstance(filters, dict):
+				if "einvoice_embedded_document" in filters:
+					return [sales_invoice.name]
+			return real_get_all(doctype, *args, **kwargs)
+
+		try:
+			with patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice_attachments.frappe.get_all",
+				side_effect=get_all,
+			):
+				result = bulk_migrate_legacy_embed_attachments()
+
+			self.assertEqual(result["errors"], [])
+			self.assertEqual(result["migrated"], 0)
+			self.assertEqual(result["already_migrated"], 1)
+
+			reloaded = frappe.get_doc("Sales Invoice", sales_invoice.name)
+			self.assertEqual(reloaded.einvoice_embedded_document, "")
+			self.assertEqual(len(reloaded.einvoice_attachments), 1)
+			self.assertEqual(reloaded.einvoice_attachments[0].file, annex_file.name)
+		finally:
+			delete_embed_test_sales_invoice(sales_invoice.name)
+			delete_embed_test_annex_file(annex_file.name)
+
 	def test_bulk_migrate_cancelled_invoice(self):
 		set_multi_attachment_embed_enabled(True)
 		sales_invoice, annex_file = create_invoice_with_legacy_embed(submit=True, cancel=True)
