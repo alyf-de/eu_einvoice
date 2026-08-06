@@ -17,6 +17,7 @@ frappe.ui.form.on("Sales Invoice", {
 	},
 	refresh: function (frm) {
 		frm.trigger("add_einvoice_button");
+		frm.trigger("toggle_einvoice_attachment_add_row");
 		frm.trigger("setup_einvoice_attachment_grid_attach_button");
 
 		if (!frm.is_dirty() && !frm.doc.einvoice_is_correct && frm.doc.einvoice_profile) {
@@ -36,6 +37,13 @@ frappe.ui.form.on("Sales Invoice", {
 				"_blank"
 			);
 		});
+	},
+	toggle_einvoice_attachment_add_row(frm) {
+		if (!frm.fields_dict.einvoice_attachments) {
+			return;
+		}
+		// Files can only attach after save — hide Add Row on new docs to avoid unusable rows.
+		frm.set_df_property("einvoice_attachments", "cannot_add_rows", frm.is_new());
 	},
 	setup_einvoice_attachment_grid_attach_button(frm) {
 		const table_field = frm.fields_dict.einvoice_attachments;
