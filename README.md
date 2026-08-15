@@ -2,15 +2,13 @@
 
 Create and import e-invoices with ERPNext.
 
-In particular, this app supports reading and writing electronic invoices according to the UN/CEFACT Cross-Industry-Invoice (CII) standard in the following profiles:
+This app converts between ERPNext and UN/CEFACT Cross-Industry-Invoice (CII) XML in the BASIC, EN 16931, EXTENDED, and XRECHNUNG profiles. All profiles except "XRECHNUNG" can be embedded in a PDF file (ZUGFeRD / Factur-X). UBL invoices and Peppol transport are out of scope.
 
-- BASIC
-- EN 16931
-- EXTENDED
-- XRECHNUNG
+## Documentation
 
-All profiles except for "XRECHNUNG" can be embedded in a PDF file, known as ZUGFeRD or Factur-X.
+User documentation lives under [`eu_einvoice/docs/`](eu_einvoice/docs). [Compendium](https://github.com/alyf-de/compendium) serves these files in Desk at `/app/docs` when that app is installed.
 
+<<<<<<< HEAD
 <a href="https://www.zugferd-community.net/de/alyf_gmbh" target="_blank">
     <img src="img/member_partner_quer_klein.jpg" alt="We are a ZUGFeRD Community Member Partner" width="250"/>
 </a >
@@ -18,6 +16,15 @@ All profiles except for "XRECHNUNG" can be embedded in a PDF file, known as ZUGF
 ---
 
 This app cannot currently read or write UBL invoices. It also does not provide any special way of sending or receiving e-invoices (e.g. Peppol). Instead, it focuses on the conversion between ERPNext's internal data model and the XML format of the above standards.
+=======
+You can also read the Markdown files in this repository:
+
+- [Overview](eu_einvoice/docs/en/eu_einvoice/index.md)
+- [Setup](eu_einvoice/docs/en/eu_einvoice/setup.md)
+- [Sales Invoice](eu_einvoice/docs/en/eu_einvoice/sales-invoice.md)
+- [Purchase Invoice](eu_einvoice/docs/en/eu_einvoice/purchase-invoice.md)
+- [Custom logic](eu_einvoice/docs/en/eu_einvoice/custom-logic.md)
+>>>>>>> 1294096 (docs: move to compendium (#269))
 
 ## Installation
 
@@ -31,6 +38,7 @@ bench install-app eu_einvoice
 
 Please use a branch (`MAJOR_VERSION`) that matches the major version of ERPNext you are using. For example, `version-14` or `version-15`. If you are a developer contributing new features, you'll want to use the `develop` branch instead.
 
+<<<<<<< HEAD
 ## Setup
 
 ### Code Lists
@@ -379,6 +387,8 @@ You can upload an XML invoice file to https://www.itb.ec.europa.eu/invoice/uploa
 
 E-invoices according to the "XRECHNUNG" profile can be validated at https://erechnungsvalidator.service-bw.de.
 
+=======
+>>>>>>> 1294096 (docs: move to compendium (#269))
 ## Contributing
 
 This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
@@ -408,7 +418,7 @@ This app can use GitHub Actions for CI. The following workflows are configured:
 
     Used to create and parse XML invoices.
 
-- [factur-x](https://pypi.org/project/factur-x/) by Alexis de Lattre, released unser a BSD License
+- [factur-x](https://pypi.org/project/factur-x/) by Alexis de Lattre, released under a BSD License
 
     Used to extract XML data from PDF files, and to create PDF files with embedded XML.
 
