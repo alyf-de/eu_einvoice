@@ -15,6 +15,9 @@ dependencies = [
     "lxml>=6.1.0,<7.0.0",
 ]
 
+[project.urls]
+Repository = "https://github.com/alyf-de/eu_einvoice.git"
+
 [build-system]
 requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
