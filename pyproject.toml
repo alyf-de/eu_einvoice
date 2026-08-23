@@ -18,6 +18,9 @@ dependencies = [
 [project.urls]
 Repository = "https://github.com/alyf-de/eu_einvoice.git"
 
+[tool.compendium]
+docs_branch = "version-16-hotfix"
+
 [build-system]
 requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
