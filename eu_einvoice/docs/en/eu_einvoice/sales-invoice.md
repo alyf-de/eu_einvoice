@@ -95,7 +95,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Discount Date
 - Sales Taxes and Charges
     - The _Charge Type_ "Actual" is used as logistics or service charges. It is only supported by the eInvoice profiles "EXTENDED" and "XRECHNUNG". If you want to add VAT for the service charge, add a _Charge Type_ "On Previous Row Amount" or "On Previous Row Total" immediately after the service charge.
-    - For _Charge Type_ "On Net Total", the taxable amount is calculated as `tax_amount / rate * 100`, if the rate is available in the tax row or in the corresponding Account [1].
+    - For _Charge Type_ "On Net Total", use a single tax line. This is currently the only reliable way to get a correctly calculated taxable amount. Invoices with mixed tax rates tend to produce rounding errors. This also happens if one of the tax lines has a 0-amount [1].
     - The _Charge Type_ "On Item Quantity" is not supported.
 - Total
 - Net Total
@@ -106,7 +106,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
 - Embedded Document
     This attachment field can be used to embed an additional supporting document into the e-invoice (XML-)file. For example, a time report in PDF format.
 
-[1] The correct taxable amount is only available starting from ERPNext v16. For earlier versions the app currently has to approximate it, which comes with a small error margin.
+[1] If there is more than one tax line, the app approximates the taxable amount as `tax_amount / rate * 100`. It uses the rate from the tax row or from the corresponding Account. The correct taxable amount is only available starting from ERPNext v16. For earlier versions this approximation has a small error margin.
 
 The actual delivery date is set to the latest posting date of the linked **Delivery Notes**, if available. Otherwise, it is set to the invoice's _To Date_ or _Posting Date_ (in that order of priority).
 
