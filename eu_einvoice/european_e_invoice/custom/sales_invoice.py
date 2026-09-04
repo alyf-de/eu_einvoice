@@ -151,6 +151,11 @@ class EInvoiceGenerator:
 	def create_einvoice(self):
 		"""Create the einvoice document as a Python object."""
 		self.doc = Document()
+		# Per-document header ApplicableTradeTax index used by
+		# `_merge_or_add_header_trade_tax`. Reset alongside `self.doc` so the
+		# helper never merges into orphaned elements from a previous call.
+		self._header_trade_tax_index = {}
+		self._header_trade_tax_seen_amounts = {}
 		self.vat_exemption_reason_text = str(
 			frappe.db.get_single_value("E Invoice Settings", "vat_exemption_reason_text") or ""
 		).strip()
@@ -513,6 +518,72 @@ class EInvoiceGenerator:
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
 
+	def _merge_or_add_header_trade_tax(self, trade_tax):
+		"""Add ApplicableTradeTax to the header, merging with an existing entry that
+		shares the same (type_code, category_code, rate_applicable_percent) tuple.
+
+		EN 16931 rule BR-30 (and CII-SR-045 / BR-CO-18) require that per unique
+		combination of VAT category code and VAT rate there is exactly ONE
+		ApplicableTradeTax element in ApplicableHeaderTradeSettlement.
+
+		Some ERPNext configurations produce multiple Sales Invoice tax rows that
+		collapse to the same (category, rate) tuple in the XML — most commonly when
+		an Item Tax Template covers both output and input tax accounts (e.g. the
+		default `19 % - PO` template shipped by erpnext_germany). Without merging,
+		the generated XML contains N identical <ram:ApplicableTradeTax> blocks and
+		the TaxTotalAmount / GrandTotalAmount computed by validators becomes N× the
+		correct value.
+
+		Behaviour:
+		    * First occurrence of a key → added to `trade_tax` collection and indexed.
+		    * Later occurrence with (basis_amount, calculated_amount) pair already
+		      seen for this key → dropped (pure duplicate).
+		    * Later occurrence with new (basis, calc) pair → basis+calc summed into
+		      the existing entry, so the resulting Header value equals the sum of
+		      individual invoice tax rows sharing that (category, rate).
+
+		The seen-pair set is tracked per key so mixed sequences of duplicates and
+		genuinely distinct rows aggregate correctly regardless of order.
+		"""
+
+		def _val(field):
+			if field is None:
+				return None
+			# drafthorse DecimalElement exposes ._value, StringElement uses ._text
+			v = getattr(field, "_value", None)
+			if v is not None:
+				return v
+			return getattr(field, "_text", None)
+
+		key = (
+			_val(trade_tax.type_code) or "",
+			_val(trade_tax.category_code) or "",
+			float(_val(trade_tax.rate_applicable_percent) or 0),
+		)
+		new_basis = float(_val(trade_tax.basis_amount) or 0)
+		new_calc = float(_val(trade_tax.calculated_amount) or 0)
+		# Round to 2 dp for stable duplicate detection across currency-level precision
+		amounts = (round(new_basis, 2), round(new_calc, 2))
+
+		existing = self._header_trade_tax_index.get(key)
+		if existing is None:
+			self._header_trade_tax_index[key] = trade_tax
+			self._header_trade_tax_seen_amounts[key] = {amounts}
+			self.doc.trade.settlement.trade_tax.add(trade_tax)
+			return
+
+		seen = self._header_trade_tax_seen_amounts[key]
+		if amounts in seen:
+			# Already accounted for by an earlier row with the same amounts
+			return
+
+		# Genuinely new (basis, calc) under an existing key → aggregate into existing
+		seen.add(amounts)
+		existing_basis = float(_val(existing.basis_amount) or 0)
+		existing_calc = float(_val(existing.calculated_amount) or 0)
+		existing.basis_amount = existing_basis + new_basis
+		existing.calculated_amount = existing_calc + new_calc
+
 	def _add_taxes_and_charges(self):
 		tax_added = False
 		for i, tax in enumerate(self.invoice.taxes):
@@ -569,7 +640,7 @@ class EInvoiceGenerator:
 				else:
 					trade_tax.basis_amount = 0
 
-				self.doc.trade.settlement.trade_tax.add(trade_tax)
+				self._merge_or_add_header_trade_tax(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Amount":
 				trade_tax = ApplicableTradeTax()
@@ -591,7 +662,7 @@ class EInvoiceGenerator:
 						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 					]
 				)
-				self.doc.trade.settlement.trade_tax.add(trade_tax)
+				self._merge_or_add_header_trade_tax(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Total":
 				trade_tax = ApplicableTradeTax()
@@ -613,7 +684,7 @@ class EInvoiceGenerator:
 						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 					]
 				)
-				self.doc.trade.settlement.trade_tax.add(trade_tax)
+				self._merge_or_add_header_trade_tax(trade_tax)
 				tax_added = True
 
 		return tax_added
