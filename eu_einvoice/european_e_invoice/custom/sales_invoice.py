@@ -38,11 +38,22 @@ if TYPE_CHECKING:
 	from eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings import EInvoiceSettings
 
 uom_codes = CommonCodeRetriever(
-	["urn:xoev-de:kosit:codeliste:rec20_3", "urn:xoev-de:kosit:codeliste:rec21_3"], "C62"
+	[
+		"urn:xoev-de:kosit:codeliste:rec20",
+		"urn:xoev-de:kosit:codeliste:rec21",
+		"urn:cef.eu:names:identifier:Unit",
+	],
+	"C62",
 )
-payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
-duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
-vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:vatex_1"], "vatex-eu-ae")
+payment_means_codes = CommonCodeRetriever(
+	["urn:xoev-de:xrechnung:codeliste:untdid.4461", "urn:cef.eu:names:identifier:Payment"], "ZZZ"
+)
+duty_tax_fee_category_codes = CommonCodeRetriever(
+	["urn:xoev-de:kosit:codeliste:untdid.5305", "urn:cef.eu:names:identifier:5305"], "S"
+)
+vat_exemption_reason_codes = CommonCodeRetriever(
+	["urn:xoev-de:kosit:codeliste:vatex", "urn:cef.eu:names:identifier:VATEX"], "vatex-eu-ae"
+)
 
 
 @frappe.whitelist()
