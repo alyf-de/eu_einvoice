@@ -6,6 +6,7 @@ from erpnext.edi.doctype.code_list.code_list_import import (
 	parse_genericode_content,
 )
 from erpnext.edi.doctype.common_code.common_code import import_genericode
+from frappe import _
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 from .custom_fields import get_custom_fields
@@ -26,7 +27,10 @@ def make_custom_fields():
 
 def import_code_lists():
 	"""Import the bundled EN 16931 code lists as Code List and Common Code records."""
-	for path in sorted(CODELIST_DIR.glob("*.gc")):
+	paths = sorted(CODELIST_DIR.glob("*.gc"))
+	for i, path in enumerate(paths, start=1):
+		frappe.publish_progress(i / len(paths) * 100, title=_("Importing Code Lists"), description=path.stem)
+
 		content = path.read_bytes()
 		# Code Lists are named after their CanonicalVersionUri, so this skips
 		# already imported versions and picks up newly bundled ones.
@@ -40,4 +44,11 @@ def import_code_lists():
 			content=content,
 			file_name=path.name,
 		)
-		import_genericode(result["code_list"], result["file"], CODELIST_COLUMNS)
+		# import_genericode reports its own progress from 0 to 100 % per code list, which
+		# resets the dialog above for every file. A task id routes those events to a task
+		# room that nobody listens to, leaving one continuous progress bar.
+		frappe.local.task_id = "eu_einvoice_code_list_import"
+		try:
+			import_genericode(result["code_list"], result["file"], CODELIST_COLUMNS)
+		finally:
+			frappe.local.task_id = None
