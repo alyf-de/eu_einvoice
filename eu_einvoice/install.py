@@ -16,8 +16,12 @@ CODELIST_COLUMNS = {"code": "Code", "title": "Name", "description": "Remark"}
 
 
 def after_install():
-	create_custom_fields(get_custom_fields())
+	make_custom_fields()
 	import_code_lists()
+
+
+def make_custom_fields():
+	create_custom_fields(get_custom_fields())
 
 
 def import_code_lists():
