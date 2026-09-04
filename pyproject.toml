@@ -65,5 +65,5 @@ indent-style = "tab"
 docstring-code-format = true
 
 [tool.bench.frappe-dependencies]
-frappe = ">=15.47.0,<16.0.0"
-erpnext = ">=15.45.0,<16.0.0"
+frappe = ">=15.117.0,<16.0.0"
+erpnext = ">=15.121.1,<16.0.0"
