@@ -5,6 +5,15 @@ frappe.ui.form.on("E Invoice Settings", {
 	refresh(frm) {
 		frm.trigger("set_invoice_number_field_options");
 		frm.trigger("set_auto_attach_options");
+		frm.add_custom_button(__("Import Code Lists"), () => frm.trigger("import_code_lists"));
+	},
+
+	async import_code_lists(frm) {
+		await frm.call("import_code_lists");
+		frappe.show_alert({
+			message: __("Import of code lists queued. This may take a few minutes."),
+			indicator: "green",
+		});
 	},
 
 	async set_auto_attach_options(frm) {
