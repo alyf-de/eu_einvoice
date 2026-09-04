@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gc:CodeList xmlns:gc="http://docs.oasis-open.org/codelist/ns/genericode/1.0/" xmlns="">
+  <Annotation>
+    <AppInfo>
+      <ext:info xmlns:ext="urn:cef.eu:codelist:gc-annotation">This is a Digital Building Blocks for Europe Code List.
+
+This file was automatically generated.
+Do NOT edit!</ext:info>
+    </AppInfo>
+  </Annotation>
+  <Identification>
+    <ShortName>EAS</ShortName>
+    <Version>2026-05-15</Version>
+    <CanonicalUri>urn:cef.eu:names:identifier:EAS</CanonicalUri>
+    <CanonicalVersionUri>urn:cef.eu:names:identifier:EAS-2026-05-15</CanonicalVersionUri>
+  </Identification>
+  <ColumnSet>
+    <Column Id="Code" Use="required">
+      <ShortName>Unique code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Name" Use="required">
+      <ShortName>Meaning of the code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Key Id="CodeKey">
+      <ShortName>Unique code</ShortName>
+      <ColumnRef Ref="Code" />
+    </Key>
+  </ColumnSet>
+  <SimpleCodeList>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0002</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>System Information et Repertoire des Entreprise et des Etablissements: SIRENE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0007</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Organisationsnummer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0009</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SIRET-CODE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0037</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>LY-tunnus</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0060</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Data Universal Numbering System (D-U-N-S Number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0088</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EAN Location Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0096</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The Danish Business Authority - P-number (DK:P)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0097</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FTI - Ediforum Italia, (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0106</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vereniging van Kamers van Koophandel en Fabrieken in Nederland (Association of
+Chambers of Commerce and Industry in the Netherlands), Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0130</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Directorates of the European Commission</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0135</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SIA Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0142</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SECETI Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0147</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard Company Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0151</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Australian Business Number (ABN) Scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0154</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Identification number of economic subjects: (ICO)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0158</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Identification number of economic subject (ICO) Act on State Statistics of 29 November 2001, § 27</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0170</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Teikoku Company Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0177</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Odette International Limited</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0183</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Numéro d'identification suisse des enterprises (IDE), Swiss Unique Business Identification Number (UIDB)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0184</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DIGSTORG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0188</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Corporate Number of The Social Security and Tax Number System</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0190</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dutch Originator's Identification Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0191</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Centre of Registers and Information Systems of the Ministry of Justice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0192</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Enhetsregisteret ved Bronnoysundregisterne</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0193</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UBL.BE party identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0194</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>KOIOS Open Technical Dictionary</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0195</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Singapore UEN identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0196</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Kennitala - Iceland legal id for individuals and legal entities</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0198</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ERSTORG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0199</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Global legal entity identifier (GLEIF)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0200</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Legal entity code (Lithuania)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0201</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Codice Univoco Unità Organizzativa iPA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0202</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Indirizzo di Posta Elettronica Certificata</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0203</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>eDelivery Network Participant identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0204</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Leitweg-ID</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0205</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CODDEST</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0208</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Numero d'entreprise / ondernemingsnummer / Unternehmensnummer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0209</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GS1 identification keys</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0210</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CODICE FISCALE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0211</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>PARTITA IVA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0212</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Finnish Organization Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0213</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Finnish Organization Value Add Tax Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0215</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Net service ID</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0216</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OVTcode</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0217</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The Netherlands Chamber of Commerce and Industry establishment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0218</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Unified registration number (Latvia)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0221</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The registered number of the qualified invoice issuer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0225</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FRCTC ELECTRONIC ADDRESS</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0230</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National e-Invoicing Framework</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0235</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UAE Tax Identification Number (TIN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0240</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Register of legal persons (in French : Répertoire des personnes morales)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0242</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OpenPeppol Service Provider Identification Scheme (SPIS)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0244</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax Identification (Tax ID), Nigeria</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0245</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax identification number (DIČ, Slovakia)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0246</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>German Electronic Business Address</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0248</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Oman Value Added Tax Identification Number (VATIN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9910</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hungary VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9913</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Business Registers Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9914</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Österreichische Umsatzsteuer-Identifikationsnummer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9915</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Österreichisches Verwaltungs bzw.
+Organisationskennzeichen</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9918</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SOCIETY FOR WORLDWIDE INTERBANK FINANCIAL, TELECOMMUNICATION S.W.I.F.T</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9919</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Kennziffer des Unternehmensregisters</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9920</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Agencia Española de Administración Tributaria</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9922</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Andorra VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9923</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Albania VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9924</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bosnia and Herzegovina VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9925</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Belgium VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9926</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bulgaria VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9927</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Switzerland VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9928</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cyprus VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9929</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Czech Republic VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9930</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Germany VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9931</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Estonia VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9932</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>United Kingdom VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9933</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Greece VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9934</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Croatia VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9935</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ireland VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9936</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Liechtenstein VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9937</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lithuania VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9938</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Luxemburg VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9939</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Latvia VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9940</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Monaco VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9941</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Montenegro VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9942</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Macedonia, the former Yugoslav Republic of VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9943</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Malta VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9944</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Netherlands VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9945</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Poland VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9946</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Portugal VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9947</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Romania VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9948</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Serbia VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9949</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Slovenia VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9950</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Slovakia VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9951</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>San Marino VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9952</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Turkey VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9953</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Holy See (Vatican City State) VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9957</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>French VAT number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>9959</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Employer Identification Number (EIN, USA)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>O.F.T.P. (ODETTE File Transfer Protocol)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>X.400 address for mail text</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>AS2 exchange</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>File Transfer Protocol</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Electronic mail (SMPT)</SimpleValue>
+      </Value>
+    </Row>
+  </SimpleCodeList>
+</gc:CodeList>

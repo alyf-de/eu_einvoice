@@ -5,7 +5,7 @@ eu_einvoice.patches.delete_custom_numbers_fields #1
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
-execute:from eu_einvoice.install import after_install; after_install() # 17
+execute:from eu_einvoice.install import make_custom_fields; make_custom_fields() # 18
 eu_einvoice.patches.set_profile_in_sales_invoice # 3
 eu_einvoice.patches.set_profile_in_import
 eu_einvoice.patches.set_default_settings
