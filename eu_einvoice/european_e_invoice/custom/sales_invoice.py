@@ -959,23 +959,33 @@ def get_item_rate(item_tax_template: str | None, taxes: list) -> float | None:
 	   (`not_applicable`) exists on **Item Tax Template Detail** (ERPNext v16 / v15 via
 	   frappe/erpnext#54687), skip those rows and allow a genuine 0% rate. Otherwise only
 	   non-zero ``tax_rate`` rows are considered (legacy templates that list unused taxes at 0%).
-	2) If the template did not match: if there is exactly one *On Net Total* row, use its ``rate``.
+	2) If every matching row was skipped, the template states that none of the invoice's taxes
+	   apply to this line, so the rate is 0.
+	3) If no template row matched at all: if there is exactly one *On Net Total* row, use its
+	   ``rate``.
 	"""
 	if item_tax_template:
 		tax_template = frappe.get_cached_doc("Item Tax Template", item_tax_template)
 		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
 		has_not_applicable = bool(frappe.get_meta("Item Tax Template Detail").get_field("not_applicable"))
+		matched_but_skipped = False
 
-		def _template_row_matches(item_tax) -> bool:
-			if item_tax.tax_type not in applicable_accounts:
-				return False
+		def _is_applicable(item_tax) -> bool:
 			if has_not_applicable:
-				return not cint(getattr(item_tax, "not_applicable", 0))
+				return not cint(item_tax.get("not_applicable"))
+			# Legacy templates list unused taxes at 0%, so a 0% row cannot be told apart
+			# from a genuine 0% rate.
 			return bool(item_tax.tax_rate)
 
 		for item_tax in tax_template.taxes:
-			if _template_row_matches(item_tax):
+			if item_tax.tax_type not in applicable_accounts:
+				continue
+			if _is_applicable(item_tax):
 				return item_tax.tax_rate
+			matched_but_skipped = True
+
+		if matched_but_skipped:
+			return 0.0
 
 	tax_rates = [
 		invoice_tax.rate

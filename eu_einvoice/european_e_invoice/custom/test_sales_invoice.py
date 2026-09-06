@@ -51,6 +51,40 @@ class TestGetItemRate(FrappeTestCase):
 		):
 			self.assertEqual(get_item_rate("7 %", self._taxes()), 7)
 
+	def test_all_matching_rows_not_applicable_returns_zero(self):
+		"""The template says no invoice tax applies, so the line is 0% - not the fallback rate."""
+		template = self._template([{"tax_type": "VAT 19%", "tax_rate": 0, "not_applicable": 1}])
+		meta = MagicMock()
+		meta.get_field.return_value = MagicMock()
+		taxes = [frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19)]
+		with (
+			patch("frappe.get_cached_doc", return_value=template),
+			patch("frappe.get_meta", return_value=meta),
+		):
+			self.assertEqual(get_item_rate("Exempt", taxes), 0)
+
+	def test_all_matching_rows_zero_rated_returns_zero_without_not_applicable_field(self):
+		template = self._template([{"tax_type": "VAT 19%", "tax_rate": 0}])
+		meta = MagicMock()
+		meta.get_field.return_value = None
+		taxes = [frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19)]
+		with (
+			patch("frappe.get_cached_doc", return_value=template),
+			patch("frappe.get_meta", return_value=meta),
+		):
+			self.assertEqual(get_item_rate("Exempt", taxes), 0)
+
+	def test_falls_back_to_single_tax_row_when_template_does_not_match(self):
+		template = self._template([{"tax_type": "VAT 5%", "tax_rate": 5}])
+		meta = MagicMock()
+		meta.get_field.return_value = None
+		taxes = [frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19)]
+		with (
+			patch("frappe.get_cached_doc", return_value=template),
+			patch("frappe.get_meta", return_value=meta),
+		):
+			self.assertEqual(get_item_rate("5 %", taxes), 19)
+
 
 class TestXmlAttachmentNaming(FrappeTestCase):
 	def test_auto_name_format_from_e_invoice_settings(self):
