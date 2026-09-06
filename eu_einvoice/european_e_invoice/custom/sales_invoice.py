@@ -529,8 +529,9 @@ class EInvoiceGenerator:
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
 				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
-				# No line used this rate (tax amount stays 0). Keep true 0% VAT rows.
-				if tax.tax_amount == 0 and tax_rate != 0:
+				if tax.tax_amount == 0 and tax_rate != 0 and tax_rate not in self.item_tax_rates:
+					# No line item uses this rate, so there is nothing to declare for it.
+					# True 0% rows are kept, as are rates used by a line with a net amount of 0.
 					continue
 				trade_tax = ApplicableTradeTax()
 				trade_tax.calculated_amount = tax.tax_amount
