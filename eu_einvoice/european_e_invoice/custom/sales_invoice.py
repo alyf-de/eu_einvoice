@@ -556,11 +556,9 @@ class EInvoiceGenerator:
 				else:
 					# Prefer ERPNext tax-row net_amount (frappe/erpnext#54687). hasattr is always
 					# true once the field exists, so use flt() and fall back when still 0.
-					basis = flt(getattr(tax, "net_amount", None)) or flt(
-						getattr(tax, "custom_net_amount", None)
-					)
+					basis = flt(tax.get("net_amount")) or flt(tax.get("custom_net_amount"))
 					if not basis and tax.tax_amount and tax_rate:
-						basis = round(tax.tax_amount / tax_rate * 100, 2)
+						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
 					trade_tax.basis_amount = basis
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
@@ -988,11 +986,7 @@ def get_item_rate(item_tax_template: str | None, taxes: list) -> float | None:
 		if matched_but_skipped:
 			return 0.0
 
-	tax_rates = [
-		invoice_tax.rate
-		for invoice_tax in taxes
-		if invoice_tax.charge_type == "On Net Total" and invoice_tax.rate is not None
-	]
+	tax_rates = [invoice_tax.rate for invoice_tax in taxes if invoice_tax.charge_type == "On Net Total"]
 	return tax_rates[0] if len(tax_rates) == 1 else None
 
 
