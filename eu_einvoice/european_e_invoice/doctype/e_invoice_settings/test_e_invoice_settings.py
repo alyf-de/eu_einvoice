@@ -420,20 +420,6 @@ class IntegrationTestEInvoiceSettings(IntegrationTestCase):
 		table_field = frappe.get_doc("Custom Field", TABLE_EMBED_CUSTOM_FIELD)
 		self.assertEqual(table_field.hidden, 0)
 
-	def test_after_migrate_syncs_embed_field_exclusivity(self):
-		from eu_einvoice.install import after_migrate
-
-		set_embed_attachment_field_exclusivity(False)
-		frappe.db.set_single_value("E Invoice Settings", "multi_attachment_embed_enabled", 1)
-
-		after_migrate()
-
-		legacy_field = frappe.get_doc("Custom Field", LEGACY_EMBED_CUSTOM_FIELD)
-		self.assertEqual(legacy_field.hidden, 1)
-		self.assertEqual(legacy_field.read_only, 1)
-		table_field = frappe.get_doc("Custom Field", TABLE_EMBED_CUSTOM_FIELD)
-		self.assertEqual(table_field.hidden, 0)
-
 	def test_on_update_queues_bulk_migration_when_multi_embed_enabled(self):
 		settings = frappe.get_single("E Invoice Settings")
 		settings.multi_attachment_embed_enabled = 0

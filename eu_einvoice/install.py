@@ -9,10 +9,6 @@ from erpnext.edi.doctype.common_code.common_code import import_genericode
 from frappe import _
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
-from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
-	sync_embed_attachment_field_exclusivity,
-)
-
 from .custom_fields import get_custom_fields
 
 CODELIST_DIR = Path(__file__).parent / "codelist"
@@ -56,11 +52,6 @@ def import_code_lists():
 			import_genericode(result["code_list"], result["file"], CODELIST_COLUMNS)
 		finally:
 			frappe.local.task_id = None
-
-
-def after_migrate():
-	"""Resync exclusive embed-field visibility after migrate."""
-	sync_embed_attachment_field_exclusivity()
 
 
 def before_tests():
