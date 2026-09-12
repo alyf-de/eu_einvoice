@@ -175,7 +175,7 @@ doc_events = {
 # Testing
 # -------
 
-# before_tests = "eu_einvoice.install.before_tests"
+before_tests = "eu_einvoice.install.before_tests"
 
 # Overriding Methods
 # ------------------------------

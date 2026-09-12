@@ -52,3 +52,10 @@ def import_code_lists():
 			import_genericode(result["code_list"], result["file"], CODELIST_COLUMNS)
 		finally:
 			frappe.local.task_id = None
+
+
+def before_tests():
+	"""Seed shared embed-test masters before ``bench run-tests --app eu_einvoice``."""
+	from eu_einvoice.tests.scaffold import ensure_embed_test_masters_committed
+
+	ensure_embed_test_masters_committed()
