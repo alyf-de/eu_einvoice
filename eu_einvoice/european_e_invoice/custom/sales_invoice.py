@@ -19,7 +19,7 @@ from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.utils import html2text
 from frappe.model.naming import parse_naming_series
 from frappe.utils import cstr
-from frappe.utils.data import date_diff, flt, getdate, to_markdown
+from frappe.utils.data import cint, date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
 from eu_einvoice.schematron import get_validation_errors
@@ -528,6 +528,11 @@ class EInvoiceGenerator:
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
+				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+				if tax.tax_amount == 0 and tax_rate != 0 and tax_rate not in self.item_tax_rates:
+					# No line item uses this rate, so there is nothing to declare for it.
+					# True 0% rows are kept, as are rates used by a line with a net amount of 0.
+					continue
 				trade_tax = ApplicableTradeTax()
 				trade_tax.calculated_amount = tax.tax_amount
 				trade_tax.type_code = "VAT"
@@ -538,7 +543,7 @@ class EInvoiceGenerator:
 						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 					]
 				)
-				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+
 				trade_tax.rate_applicable_percent = tax_rate
 
 				if len(self.invoice.taxes) == 1:
@@ -548,15 +553,13 @@ class EInvoiceGenerator:
 						# We only have one tax rate on the line items, but it was not specified on the tax row
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
-				elif hasattr(tax, "net_amount"):
-					trade_tax.basis_amount = tax.net_amount
-				elif hasattr(tax, "custom_net_amount"):
-					trade_tax.basis_amount = tax.custom_net_amount
-				elif tax.tax_amount and tax_rate:
-					# We don't know the basis amount for this tax, so we try to calculate it
-					trade_tax.basis_amount = round(tax.tax_amount / tax_rate * 100, 2)
 				else:
-					trade_tax.basis_amount = 0
+					# Prefer ERPNext tax-row net_amount (frappe/erpnext#54687). hasattr is always
+					# true once the field exists, so use flt() and fall back when still 0.
+					basis = flt(tax.get("net_amount")) or flt(tax.get("custom_net_amount"))
+					if not basis and tax.tax_amount and tax_rate:
+						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
+					trade_tax.basis_amount = basis
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
@@ -947,18 +950,42 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 		doc.db_set(field_name, file_doc.file_url)
 
 
-def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
-	"""Get the tax rate for an item from the item tax template and the taxes table."""
+def get_item_rate(item_tax_template: str | None, taxes: list) -> float | None:
+	"""Resolve the VAT % for this line from the Item Tax Template and the invoice tax rows.
+
+	1) Return the ``tax_rate`` of the first template row (in template order) whose ``tax_type``
+	   matches one of the invoice's ``account_head`` values. When *Not Applicable*
+	   (`not_applicable`) exists on **Item Tax Template Detail** (ERPNext v16 / v15 via
+	   frappe/erpnext#54687), skip those rows and allow a genuine 0% rate. Otherwise only
+	   non-zero ``tax_rate`` rows are considered (legacy templates that list unused taxes at 0%).
+	2) If every matching row was skipped, the template states that none of the invoice's taxes
+	   apply to this line, so the rate is 0.
+	3) If no template row matched at all: if there is exactly one *On Net Total* row, use its
+	   ``rate``.
+	"""
 	if item_tax_template:
-		# match the accounts from the taxes table with the rate from the item tax template
-		tax_template = frappe.get_doc("Item Tax Template", item_tax_template)
+		tax_template = frappe.get_cached_doc("Item Tax Template", item_tax_template)
 		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
+		has_not_applicable = bool(frappe.get_meta("Item Tax Template Detail").get_field("not_applicable"))
+		matched_but_skipped = False
+
+		def _is_applicable(item_tax) -> bool:
+			if has_not_applicable:
+				return not cint(item_tax.get("not_applicable"))
+			# Legacy templates list unused taxes at 0%, so a 0% row cannot be told apart
+			# from a genuine 0% rate.
+			return bool(item_tax.tax_rate)
 
 		for item_tax in tax_template.taxes:
-			if item_tax.tax_type in applicable_accounts:
+			if item_tax.tax_type not in applicable_accounts:
+				continue
+			if _is_applicable(item_tax):
 				return item_tax.tax_rate
+			matched_but_skipped = True
 
-	# if only one tax is on net total, return its rate
+		if matched_but_skipped:
+			return 0.0
+
 	tax_rates = [invoice_tax.rate for invoice_tax in taxes if invoice_tax.charge_type == "On Net Total"]
 	return tax_rates[0] if len(tax_rates) == 1 else None
 
