@@ -1,12 +1,16 @@
 from unittest.mock import MagicMock, patch
 
 import frappe
+from drafthorse.models.document import Document
 from frappe.tests.utils import FrappeTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
+	EInvoiceGenerator,
+	duty_tax_fee_category_codes,
 	get_item_rate,
 	get_xml_attachment_file_base_name,
 )
+from eu_einvoice.utils import EInvoiceProfile
 
 
 class TestGetItemRate(FrappeTestCase):
@@ -84,6 +88,59 @@ class TestGetItemRate(FrappeTestCase):
 			patch("frappe.get_meta", return_value=meta),
 		):
 			self.assertEqual(get_item_rate("5 %", taxes), 19)
+
+
+class TestApplicableTradeTaxes(FrappeTestCase):
+	def test_multi_tax_invoice_groups_and_basis_amounts(self):
+		"""Unused tax rows are dropped, the basis comes from net_amount before any fallback."""
+		invoice = frappe._dict(
+			net_total=1000,
+			tax_category=None,
+			taxes_and_charges=None,
+			precision=lambda fieldname: 2,
+			taxes=[
+				# basis from the ERPNext tax row net_amount
+				frappe._dict(
+					account_head="_Test VAT 19",
+					charge_type="On Net Total",
+					rate=19,
+					tax_amount=19,
+					net_amount=100,
+				),
+				# basis from the custom field of older ERPNext versions
+				frappe._dict(
+					account_head="_Test VAT 7",
+					charge_type="On Net Total",
+					rate=7,
+					tax_amount=7,
+					custom_net_amount=100,
+				),
+				# net_amount exists as a field, but is empty, so it is calculated as well
+				frappe._dict(
+					account_head="_Test VAT 10",
+					charge_type="On Net Total",
+					rate=10,
+					tax_amount=10,
+					net_amount=0,
+				),
+				# no net amount known, so it is calculated from tax amount and rate
+				frappe._dict(account_head="_Test VAT 5", charge_type="On Net Total", rate=5, tax_amount=0.5),
+				# no tax amount, but a line item uses this rate (net amount 0), so it is kept
+				frappe._dict(account_head="_Test VAT 3", charge_type="On Net Total", rate=3, tax_amount=0),
+				# no tax amount and no line item uses this rate, so there is nothing to declare
+				frappe._dict(account_head="_Test VAT 2", charge_type="On Net Total", rate=2, tax_amount=0),
+			],
+		)
+		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
+		generator.doc = Document()
+		generator.item_tax_rates = {19, 7, 10, 5, 3}
+
+		with patch.object(duty_tax_fee_category_codes, "get", return_value="S"):
+			self.assertTrue(generator._add_taxes_and_charges())
+
+		trade_taxes = generator.doc.trade.settlement.trade_tax.children
+		self.assertEqual([t.rate_applicable_percent._value for t in trade_taxes], [19, 7, 10, 5, 3])
+		self.assertEqual([t.basis_amount._value for t in trade_taxes], [100, 100, 100, 10, 0])
 
 
 class TestXmlAttachmentNaming(FrappeTestCase):
