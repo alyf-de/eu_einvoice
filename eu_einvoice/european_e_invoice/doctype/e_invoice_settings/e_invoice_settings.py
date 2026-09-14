@@ -5,6 +5,12 @@ import frappe
 from frappe import _
 from frappe.model.docstatus import DocStatus
 from frappe.model.document import Document
+from frappe.utils import cint
+
+from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
+	queue_bulk_migrate_legacy_embed_attachments,
+	set_embed_attachment_field_exclusivity,
+)
 
 
 class EInvoiceSettings(Document):
@@ -21,6 +27,7 @@ class EInvoiceSettings(Document):
 		auto_name_format_for_xml_file: DF.Data | None
 		error_action_on_save: DF.Literal["", "Warning Message", "Error Message"]
 		error_action_on_submit: DF.Literal["", "Warning Message", "Error Message"]
+		multi_attachment_embed_enabled: DF.Check
 		sales_invoice_number_field: DF.Autocomplete | None
 		validate_sales_invoice_on_save: DF.Check
 		validate_sales_invoice_on_submit: DF.Check
@@ -50,6 +57,13 @@ class EInvoiceSettings(Document):
 		# Only validate field if both auto-attach is enabled AND a field is specified
 		if self.auto_attach_xml and self.attach_field_for_xml_file:
 			self._validate_attach_field()
+
+	def on_update(self):
+		"""Apply field exclusivity and queue legacy migration when multi-embed is enabled."""
+		enabled = bool(self.multi_attachment_embed_enabled)
+		set_embed_attachment_field_exclusivity(enabled)
+		if self.has_value_changed("multi_attachment_embed_enabled") and enabled:
+			queue_bulk_migrate_legacy_embed_attachments(enqueue_after_commit=True)
 
 	def _validate_attach_field(self):
 		"""Validate that the selected attachment field exists and is of type Attach."""
@@ -91,3 +105,32 @@ class EInvoiceSettings(Document):
 		return (docstatus == DocStatus.submitted() and self.error_action_on_submit) or (
 			docstatus == DocStatus.draft() and self.error_action_on_save
 		)
+
+
+@frappe.whitelist(methods=["POST"])
+def migrate_attachments_to_table(remove_broken_links: bool | int = 0) -> dict[str, str | bool]:
+	"""Enqueue a background job to migrate legacy embed attachments site-wide.
+
+	Requires **System Manager** and ``multi_attachment_embed_enabled`` on
+	**E Invoice Settings**.
+
+	Args:
+		remove_broken_links (bool | int, optional): Pass ``1`` to clear unresolvable
+			legacy URLs instead of skipping them.
+
+	Returns:
+		dict[str, str | bool]: ``job_id`` (RQ Job name) and ``queued`` (``True`` when a
+			new job was enqueued, ``False`` when a deduplicated job is already running).
+
+	Raises:
+		frappe.PermissionError: When the caller is not **System Manager**.
+		frappe.ValidationError: When multi-attachment embedding is disabled.
+	"""
+	frappe.only_for("System Manager")
+
+	if not frappe.db.get_single_value("E Invoice Settings", "multi_attachment_embed_enabled"):
+		frappe.throw(_("Enable Multiple Attachment Embedding first."))
+
+	return queue_bulk_migrate_legacy_embed_attachments(
+		remove_broken_links=cint(remove_broken_links),
+	)
