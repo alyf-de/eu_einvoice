@@ -15,13 +15,17 @@ from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.utils import html2text
 from frappe.model.naming import parse_naming_series
 from frappe.utils import cstr
 from frappe.utils.data import cint, date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
+from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
+	get_embed_attachments,
+	migrate_legacy_embed_to_table,
+	validate_einvoice_attachment_rows,
+)
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
 from eu_einvoice.utils import EInvoiceProfile, get_drafthorse_schema, get_guideline
@@ -170,7 +174,7 @@ class EInvoiceGenerator:
 				self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
 		if self.profile >= EInvoiceProfile.EN16931:
-			self._embed_attachment()
+			self._embed_attachments()
 
 		sales_orders = set()
 		for item in self.invoice.items:
@@ -203,27 +207,28 @@ class EInvoiceGenerator:
 		self._add_payment_terms()
 		self._set_totals()
 
-	def _embed_attachment(self):
-		"""Add the embedded document to the einvoice."""
-		if not self.invoice.einvoice_embedded_document:
-			return
+	def _embed_attachments(self):
+		"""Add embedded documents to the e-invoice as CII ARD 916 references.
 
-		file = find_file_by_url(self.invoice.einvoice_embedded_document)
-
-		content = None
-		if not file.is_remote_file:
-			file_name = os.path.basename(file.file_url)
-			mime_type = mimetypes.guess_type(file.file_url)[0]
-			content = as_base_64(file.get_content())
-
-		ref_doc = AdditionalReferencedDocument()
-		ref_doc.issuer_assigned_id = file.name
-		if file.is_remote_file:
-			ref_doc.uri_id = file.file_url
-		else:
-			ref_doc.attached_object = (mime_type, file_name, content)
-		ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
-		self.doc.trade.agreement.additional_references.add(ref_doc)
+		Raises:
+			frappe.ValidationError: When a **File** row is missing or embed filenames
+				are not unique (BR-DE-22).
+		"""
+		attachments = get_embed_attachments(self.invoice)
+		for attachment in attachments:
+			file = frappe.get_doc("File", attachment.file)
+			ref_doc = AdditionalReferencedDocument()
+			ref_doc.issuer_assigned_id = file.name
+			if file.is_remote_file:
+				ref_doc.uri_id = file.file_url
+			else:
+				mime_type = mimetypes.guess_type(attachment.file_name)[0]
+				# encodings=[] keeps binary payloads as bytes. Default File.get_content()
+				# may decode small files via windows-1252 and corrupt PNG/PDF bytes.
+				content = as_base_64(file.get_content(encodings=[]))
+				ref_doc.attached_object = (mime_type, attachment.file_name, content)
+			ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
+			self.doc.trade.agreement.additional_references.add(ref_doc)
 
 	def _set_context(self):
 		"""Set default context according to XRechnung 3.0.2"""
@@ -770,7 +775,16 @@ def validate_vat_id(vat_id: str) -> str:
 
 
 def validate_doc(doc, event):
-	"""Validate the Sales Invoice form."""
+	"""Validate **Sales Invoice** e-invoice fields on save and submit.
+
+	When ``multi_attachment_embed_enabled`` is on, migrates ``einvoice_embedded_document``
+	to ``einvoice_attachments`` and validates child-table rows (unique filenames,
+	duplicate-content warning) before e-invoice validation.
+
+	Args:
+		doc (SalesInvoice): The invoice being validated.
+		event (str): Frappe document event name (for example ``"validate"``).
+	"""
 	for tax_row in doc.taxes:
 		if tax_row.charge_type == "On Item Quantity":
 			frappe.msgprint(
@@ -824,6 +838,12 @@ def validate_doc(doc, event):
 		)
 
 	settings: EInvoiceSettings = frappe.get_single("E Invoice Settings")
+
+	if settings.multi_attachment_embed_enabled:
+		migrate_legacy_embed_to_table(doc)
+
+		if doc.get("einvoice_attachments"):
+			validate_einvoice_attachment_rows(doc, settings)
 
 	if settings.should_validate(doc.docstatus):
 		validate_einvoice(doc)
@@ -1086,7 +1106,6 @@ def download_pdf(
 
 def _get_icc_profile_path() -> str:
 	"""Get the path to the ICC profile used by Ghostscript."""
-	import os
 	import re
 	import subprocess
 
@@ -1120,7 +1139,6 @@ def _get_icc_profile_path() -> str:
 
 def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 	"""Convert the PDF data to PDF/A-3 using Ghostscript."""
-	import os
 	import subprocess
 
 	cwd = None
