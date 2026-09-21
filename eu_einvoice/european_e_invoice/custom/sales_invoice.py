@@ -480,24 +480,16 @@ class EInvoiceGenerator:
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 			]
 		)
-		if li.settlement.trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
-			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
+		category_code = li.settlement.trade_tax.category_code._text
+		if category_code in ("AE", "E", "G", "K", "Z"):
+			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05 (rate 0.00; see EN 16931 tax code guidance)
 			li.settlement.trade_tax.rate_applicable_percent = 0
-		else:
+		elif category_code != "O":
 			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes)
 			self.item_tax_rates.add(item_tax_rate)
 			li.settlement.trade_tax.rate_applicable_percent = item_tax_rate
-
-		if li.settlement.trade_tax.rate_applicable_percent._value == 0:
-			li.settlement.trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
-				[
-					("Item Tax Template", item.item_tax_template),
-					("Account", item.income_account),
-					("Tax Category", self.invoice.tax_category),
-					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-				]
-			).upper()
-			self._set_optional_vat_exemption_reason_text(li.settlement.trade_tax)
+		# else BR-O-05: category O must not contain BT-152 (omit rate entirely, not even 0)
+		# BT-120/BT-121 (exemption reason) belong only on the document-level VAT breakdown (BG-23).
 
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
@@ -544,12 +536,18 @@ class EInvoiceGenerator:
 					]
 				)
 
-				trade_tax.rate_applicable_percent = tax_rate
+				# BR-48: VAT category rate is not required when the category is "Not subject to VAT"
+				if trade_tax.category_code._text != "O":
+					trade_tax.rate_applicable_percent = tax_rate
 
 				if len(self.invoice.taxes) == 1:
 					# We only have one tax, so we can use the net total as basis amount
 					trade_tax.basis_amount = self.invoice.net_total
-					if len(self.item_tax_rates) == 1 and tax_rate == 0:
+					if (
+						trade_tax.category_code._text != "O"
+						and len(self.item_tax_rates) == 1
+						and tax_rate == 0
+					):
 						# We only have one tax rate on the line items, but it was not specified on the tax row
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
@@ -560,6 +558,15 @@ class EInvoiceGenerator:
 					if not basis and tax.tax_amount and tax_rate:
 						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
 					trade_tax.basis_amount = basis
+
+				self._set_document_vat_exemption_reason(
+					trade_tax,
+					[
+						("Account", tax.account_head),
+						("Tax Category", self.invoice.tax_category),
+						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+					],
+				)
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
@@ -621,16 +628,32 @@ class EInvoiceGenerator:
 			]
 		)
 		trade_tax.basis_amount = self.invoice.net_total
-		trade_tax.rate_applicable_percent = 0
+		# BR-48: VAT category rate is not required when the category is "Not subject to VAT"
+		if trade_tax.category_code._text != "O":
+			trade_tax.rate_applicable_percent = 0
 		trade_tax.calculated_amount = 0
-		trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
+		self._set_document_vat_exemption_reason(
+			trade_tax,
 			[
 				("Tax Category", self.invoice.tax_category),
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-			]
-		).upper()
-		self._set_optional_vat_exemption_reason_text(trade_tax)
+			],
+		)
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
+
+	def _set_document_vat_exemption_reason(
+		self, trade_tax: ApplicableTradeTax, lookup: list[tuple[str, str | None]]
+	) -> None:
+		"""Set BT-120/BT-121 on the document-level VAT breakdown (BG-23) when required.
+
+		Per EN 16931 tax code guidance, the exemption reason is only stated for document
+		level totals. Required for AE, E, G, K, O (BR-*-10); forbidden for S and Z (BR-S-10, BR-Z-10).
+		"""
+		if trade_tax.category_code._text not in ("AE", "E", "G", "K", "O"):
+			return
+
+		trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(lookup).upper()
+		self._set_optional_vat_exemption_reason_text(trade_tax)
 
 	def _set_optional_vat_exemption_reason_text(self, trade_tax: ApplicableTradeTax) -> None:
 		if self.vat_exemption_reason_text:
