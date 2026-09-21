@@ -783,6 +783,7 @@ def validate_doc(doc, event):
 
 		if (
 			tax_row.charge_type == "Actual"
+			and doc.einvoice_profile
 			and EInvoiceProfile(doc.einvoice_profile) < EInvoiceProfile.EXTENDED
 		):
 			frappe.msgprint(
