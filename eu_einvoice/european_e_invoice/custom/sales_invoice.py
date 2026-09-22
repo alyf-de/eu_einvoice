@@ -518,7 +518,6 @@ class EInvoiceGenerator:
 						# Add applied VAT for the service charge (BR-FXEXT-S-08)
 						service_charge_tax = AppliedTradeTax()
 						service_charge_tax.type_code = "VAT"
-						service_charge_tax.rate_applicable_percent = vat_line.rate
 						service_charge_tax.category_code = duty_tax_fee_category_codes.get(
 							[
 								("Account", vat_line.account_head),
@@ -526,6 +525,9 @@ class EInvoiceGenerator:
 								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 							]
 						)
+						if service_charge_tax.category_code._text != "O":
+							# BR-O-07: category O must not contain a VAT rate
+							service_charge_tax.rate_applicable_percent = vat_line.rate
 						service_charge.trade_tax.add(service_charge_tax)
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
@@ -581,7 +583,6 @@ class EInvoiceGenerator:
 			elif tax.charge_type == "On Previous Row Amount":
 				trade_tax = ApplicableTradeTax()
 				trade_tax.basis_amount = self.invoice.taxes[i - 1].tax_amount
-				trade_tax.rate_applicable_percent = tax.rate
 				trade_tax.calculated_amount = tax.tax_amount
 
 				if self.invoice.taxes[i - 1].charge_type == "Actual":
@@ -597,13 +598,13 @@ class EInvoiceGenerator:
 					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 				]
 				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+				self._set_header_vat_category_rate(trade_tax, tax.rate)
 				self._set_document_vat_exemption_reason(trade_tax, lookup)
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Total":
 				trade_tax = ApplicableTradeTax()
 				trade_tax.basis_amount = self.invoice.taxes[i - 1].total
-				trade_tax.rate_applicable_percent = tax.rate
 				trade_tax.calculated_amount = tax.tax_amount
 
 				if self.invoice.taxes[i - 1].charge_type == "Actual":
@@ -619,6 +620,7 @@ class EInvoiceGenerator:
 					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 				]
 				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+				self._set_header_vat_category_rate(trade_tax, tax.rate)
 				self._set_document_vat_exemption_reason(trade_tax, lookup)
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
