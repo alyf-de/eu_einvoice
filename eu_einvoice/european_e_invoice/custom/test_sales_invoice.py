@@ -165,23 +165,26 @@ class TestVatExemptionReason(FrappeTestCase):
 class TestNotSubjectToVatInvoice(FrappeTestCase):
 	"""Generate and validate a real Sales Invoice with VAT category "O" (not subject to VAT)."""
 
-	def setUp(self):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
 		tax_category = frappe.get_doc(doctype="Tax Category", title="_Test Not Subject to VAT").insert()
-		self.tax_category = tax_category.name
+		cls.tax_category = tax_category.name
 		item_tax_template = frappe.get_doc(
 			doctype="Item Tax Template",
 			title="_Test Not Subject to VAT",
 			company="_Test Company",
 			taxes=[{"tax_type": "_Test Account VAT - _TC", "tax_rate": 0}],
 		).insert()
-		self.item_tax_template = item_tax_template.name
+		cls.item_tax_template = item_tax_template.name
 
 		# The category comes from the Tax Category, the exemption reason only from the line's
 		# Item Tax Template. So the VAT breakdown must pick it up from the line items.
-		self._map_code(duty_tax_fee_category_codes, "O", "Tax Category", self.tax_category)
-		self._map_code(vat_exemption_reason_codes, "vatex-eu-o", "Item Tax Template", self.item_tax_template)
+		cls._map_code(duty_tax_fee_category_codes, "O", "Tax Category", cls.tax_category)
+		cls._map_code(vat_exemption_reason_codes, "vatex-eu-o", "Item Tax Template", cls.item_tax_template)
 
-	def _map_code(self, retriever, code: str, doctype: str, name: str):
+	@staticmethod
+	def _map_code(retriever, code: str, doctype: str, name: str):
 		code_list = retriever.code_lists[0]
 		if not frappe.db.exists("Code List", code_list):
 			frappe.get_doc(doctype="Code List", __newname=code_list, title=code_list).insert()
@@ -247,6 +250,30 @@ class TestNotSubjectToVatInvoice(FrappeTestCase):
 			errors, _warnings = get_validation_errors(xml.decode(), validation_profile)
 			vat_errors = [error for error in errors if re.search(VAT_RULES, error)]
 			self.assertEqual(vat_errors, [])
+
+	def test_tax_account_exemption_reason_wins_over_line(self):
+		"""The tax row's own Account mapping is more specific than a reason from a line item."""
+		account = frappe.get_doc(
+			doctype="Account",
+			account_name="_Test Not Subject to VAT",
+			parent_account="Duties and Taxes - _TC",
+			company="_Test Company",
+			account_type="Tax",
+		).insert()
+		self._map_code(vat_exemption_reason_codes, "vatex-eu-g", "Account", account.name)
+
+		invoice = create_sales_invoice(do_not_save=True, rate=100)
+		invoice.tax_category = self.tax_category
+		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.append(
+			"taxes",
+			{"charge_type": "On Net Total", "account_head": account.name, "description": "VAT", "rate": 0},
+		)
+		invoice.insert()
+
+		root = ET.fromstring(get_einvoice(invoice))
+		header_tax = root.find(".//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax", NAMESPACES)
+		self.assertEqual(header_tax.findtext("ram:ExemptionReasonCode", namespaces=NAMESPACES), "VATEX-EU-G")
 
 
 class TestApplicableTradeTaxes(FrappeTestCase):

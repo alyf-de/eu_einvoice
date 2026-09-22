@@ -652,9 +652,14 @@ class EInvoiceGenerator:
 		if category_code not in EXEMPT_VAT_CATEGORIES:
 			return
 
-		exemption_reason_code = self.line_exemption_reason_codes.get(
-			category_code
-		) or vat_exemption_reason_codes.get(lookup)
+		# Most specific first: the breakdown's own tax account, then the line items,
+		# then the invoice-wide records and the default.
+		tax_account_records = [record for record in lookup if record[0] == "Account"]
+		exemption_reason_code = (
+			vat_exemption_reason_codes.get_code(tax_account_records)
+			or self.line_exemption_reason_codes.get(category_code)
+			or vat_exemption_reason_codes.get(lookup)
+		)
 		trade_tax.exemption_reason_code = exemption_reason_code.upper()
 		self._set_optional_vat_exemption_reason_text(trade_tax)
 
