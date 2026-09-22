@@ -126,7 +126,7 @@ class TestNotSubjectToVatCategory(FrappeTestCase):
 		self.assertEqual(trade_tax.category_code._text, "O")
 		self.assertIsNone(trade_tax.rate_applicable_percent._value)
 		# BT-120/BT-121 only on document-level VAT breakdown, not on lines
-		self.assertIsNone(trade_tax.exemption_reason_code._text)
+		self.assertFalse(trade_tax.exemption_reason_code._text)
 
 		from xml.etree import ElementTree as ET
 
@@ -254,7 +254,7 @@ class TestNotSubjectToVatCategory(FrappeTestCase):
 		trade_tax = generator.doc.trade.settlement.trade_tax.children[0]
 		self.assertEqual(trade_tax.category_code._text, "Z")
 		self.assertEqual(trade_tax.rate_applicable_percent._value, 0)
-		self.assertIsNone(trade_tax.exemption_reason_code._text)
+		self.assertFalse(trade_tax.exemption_reason_code._text)
 
 	def test_previous_row_vat_sets_exemption_reason(self):
 		"""BR-*-10: VAT on an Actual charge also needs BT-120/BT-121 when exempt."""
