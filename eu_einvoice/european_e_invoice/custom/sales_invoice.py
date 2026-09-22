@@ -58,6 +58,14 @@ duty_tax_fee_category_codes = CommonCodeRetriever(
 vat_exemption_reason_codes = CommonCodeRetriever(
 	["urn:xoev-de:kosit:codeliste:vatex", "urn:cef.eu:names:identifier:VATEX"], "vatex-eu-ae"
 )
+<<<<<<< HEAD
+=======
+payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
+duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
+vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:vatex_1"], "vatex-eu-ae")
+# VAT categories that need an exemption reason on the VAT breakdown (BR-AE-10, BR-E-10, ...)
+EXEMPT_VAT_CATEGORIES = ("AE", "E", "G", "K", "O")
+>>>>>>> 5c32d92 (feat: Not subject to VAT (#286))
 
 
 @frappe.whitelist()
@@ -145,6 +153,8 @@ class EInvoiceGenerator:
 		self.buyer_contact = buyer_contact
 		self.doc = None
 		self.item_tax_rates = set()
+		# VAT category code -> exemption reason code, collected from the line items
+		self.line_exemption_reason_codes = {}
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -488,32 +498,30 @@ class EInvoiceGenerator:
 				li.delivery.delivery_note.issue_date_time = getdate(posting_date)
 
 		li.settlement.trade_tax.type_code = "VAT"
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(
-			[
-				("Item Tax Template", item.item_tax_template),
-				("Account", item.income_account),
-				("Tax Category", self.invoice.tax_category),
-				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-			]
-		)
-		if li.settlement.trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
-			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
+		lookup = [
+			("Item Tax Template", item.item_tax_template),
+			("Account", item.income_account),
+			("Tax Category", self.invoice.tax_category),
+			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+		]
+		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+		category_code = li.settlement.trade_tax.category_code._text
+		if category_code in EXEMPT_VAT_CATEGORIES:
+			# Only the line knows Item Tax Template and income Account; the rest is looked up again
+			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.
+			exemption_reason_code = vat_exemption_reason_codes.get_code(lookup[:2])
+			if exemption_reason_code:
+				self.line_exemption_reason_codes.setdefault(category_code, exemption_reason_code)
+
+		if category_code in ("AE", "E", "G", "K", "Z"):
+			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05 (rate 0.00; see EN 16931 tax code guidance)
 			li.settlement.trade_tax.rate_applicable_percent = 0
-		else:
+		elif category_code != "O":
 			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes)
 			self.item_tax_rates.add(item_tax_rate)
 			li.settlement.trade_tax.rate_applicable_percent = item_tax_rate
-
-		if li.settlement.trade_tax.rate_applicable_percent._value == 0:
-			li.settlement.trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
-				[
-					("Item Tax Template", item.item_tax_template),
-					("Account", item.income_account),
-					("Tax Category", self.invoice.tax_category),
-					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-				]
-			).upper()
-			self._set_optional_vat_exemption_reason_text(li.settlement.trade_tax)
+		# else BR-O-05: category O must not contain BT-152 (omit rate entirely, not even 0)
+		# BT-120/BT-121 (exemption reason) belong only on the document-level VAT breakdown (BG-23).
 
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
@@ -521,6 +529,11 @@ class EInvoiceGenerator:
 	def _add_taxes_and_charges(self):
 		tax_added = False
 		for i, tax in enumerate(self.invoice.taxes):
+			lookup = [
+				("Account", tax.account_head),
+				("Tax Category", self.invoice.tax_category),
+				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+			]
 			if tax.charge_type == "Actual" and self.profile >= EInvoiceProfile.EXTENDED:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
@@ -532,7 +545,6 @@ class EInvoiceGenerator:
 						# Add applied VAT for the service charge (BR-FXEXT-S-08)
 						service_charge_tax = AppliedTradeTax()
 						service_charge_tax.type_code = "VAT"
-						service_charge_tax.rate_applicable_percent = vat_line.rate
 						service_charge_tax.category_code = duty_tax_fee_category_codes.get(
 							[
 								("Account", vat_line.account_head),
@@ -540,6 +552,9 @@ class EInvoiceGenerator:
 								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 							]
 						)
+						if service_charge_tax.category_code._text != "O":
+							# BR-O-07: category O must not contain a VAT rate
+							service_charge_tax.rate_applicable_percent = vat_line.rate
 						service_charge.trade_tax.add(service_charge_tax)
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
@@ -552,20 +567,18 @@ class EInvoiceGenerator:
 				trade_tax = ApplicableTradeTax()
 				trade_tax.calculated_amount = tax.tax_amount
 				trade_tax.type_code = "VAT"
-				trade_tax.category_code = duty_tax_fee_category_codes.get(
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					]
-				)
+				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
 
-				trade_tax.rate_applicable_percent = tax_rate
+				self._set_header_vat_category_rate(trade_tax, tax_rate)
 
 				if len(self.invoice.taxes) == 1:
 					# We only have one tax, so we can use the net total as basis amount
 					trade_tax.basis_amount = self.invoice.net_total
-					if len(self.item_tax_rates) == 1 and tax_rate == 0:
+					if (
+						trade_tax.category_code._text != "O"
+						and len(self.item_tax_rates) == 1
+						and tax_rate == 0
+					):
 						# We only have one tax rate on the line items, but it was not specified on the tax row
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
@@ -577,12 +590,13 @@ class EInvoiceGenerator:
 						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
 					trade_tax.basis_amount = basis
 
+				self._set_document_vat_exemption_reason(trade_tax, lookup)
+
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Amount":
 				trade_tax = ApplicableTradeTax()
 				trade_tax.basis_amount = self.invoice.taxes[i - 1].tax_amount
-				trade_tax.rate_applicable_percent = tax.rate
 				trade_tax.calculated_amount = tax.tax_amount
 
 				if self.invoice.taxes[i - 1].charge_type == "Actual":
@@ -592,19 +606,14 @@ class EInvoiceGenerator:
 					# A tax or duty applied on and in addition to existing duties and taxes.
 					trade_tax.type_code = "SUR"
 
-				trade_tax.category_code = duty_tax_fee_category_codes.get(
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					]
-				)
+				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+				self._set_header_vat_category_rate(trade_tax, tax.rate)
+				self._set_document_vat_exemption_reason(trade_tax, lookup)
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Total":
 				trade_tax = ApplicableTradeTax()
 				trade_tax.basis_amount = self.invoice.taxes[i - 1].total
-				trade_tax.rate_applicable_percent = tax.rate
 				trade_tax.calculated_amount = tax.tax_amount
 
 				if self.invoice.taxes[i - 1].charge_type == "Actual":
@@ -614,13 +623,9 @@ class EInvoiceGenerator:
 					# A tax or duty applied on and in addition to existing duties and taxes.
 					trade_tax.type_code = "SUR"
 
-				trade_tax.category_code = duty_tax_fee_category_codes.get(
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					]
-				)
+				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+				self._set_header_vat_category_rate(trade_tax, tax.rate)
+				self._set_document_vat_exemption_reason(trade_tax, lookup)
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 
@@ -637,16 +642,48 @@ class EInvoiceGenerator:
 			]
 		)
 		trade_tax.basis_amount = self.invoice.net_total
-		trade_tax.rate_applicable_percent = 0
+		self._set_header_vat_category_rate(trade_tax, 0)
 		trade_tax.calculated_amount = 0
-		trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
+		self._set_document_vat_exemption_reason(
+			trade_tax,
 			[
 				("Tax Category", self.invoice.tax_category),
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-			]
-		).upper()
-		self._set_optional_vat_exemption_reason_text(trade_tax)
+			],
+		)
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
+
+	def _set_header_vat_category_rate(self, trade_tax: ApplicableTradeTax, rate: float) -> None:
+		"""Set BT-119 on the document-level VAT breakdown (BG-23).
+
+		EN 16931 BR-48 allows omitting the rate for category O. XRechnung BR-DE-14
+		requires RateApplicablePercent on every header ApplicableTradeTax, so O uses 0.00.
+		"""
+		if trade_tax.category_code._text != "O" or self.profile == EInvoiceProfile.XRECHNUNG:
+			trade_tax.rate_applicable_percent = rate
+
+	def _set_document_vat_exemption_reason(
+		self, trade_tax: ApplicableTradeTax, lookup: list[tuple[str, str | None]]
+	) -> None:
+		"""Set BT-120/BT-121 on the document-level VAT breakdown (BG-23) when required.
+
+		Per EN 16931 tax code guidance, the exemption reason is only stated for document
+		level totals. Required for AE, E, G, K, O (BR-*-10); forbidden for S and Z (BR-S-10, BR-Z-10).
+		"""
+		category_code = trade_tax.category_code._text
+		if category_code not in EXEMPT_VAT_CATEGORIES:
+			return
+
+		# Most specific first: the breakdown's own tax account, then the line items,
+		# then the invoice-wide records and the default.
+		tax_account_records = [record for record in lookup if record[0] == "Account"]
+		exemption_reason_code = (
+			vat_exemption_reason_codes.get_code(tax_account_records)
+			or self.line_exemption_reason_codes.get(category_code)
+			or vat_exemption_reason_codes.get(lookup)
+		)
+		trade_tax.exemption_reason_code = exemption_reason_code.upper()
+		self._set_optional_vat_exemption_reason_text(trade_tax)
 
 	def _set_optional_vat_exemption_reason_text(self, trade_tax: ApplicableTradeTax) -> None:
 		if self.vat_exemption_reason_text:
