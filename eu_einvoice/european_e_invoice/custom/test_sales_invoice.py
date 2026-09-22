@@ -5,6 +5,7 @@ from xml.etree import ElementTree as ET
 import frappe
 from drafthorse.models.document import Document
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
+from frappe.tests import IntegrationTestCase
 from frappe.tests.utils import FrappeTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
@@ -100,7 +101,7 @@ class TestGetItemRate(FrappeTestCase):
 			self.assertEqual(get_item_rate("5 %", taxes), 19)
 
 
-class TestVatExemptionReason(FrappeTestCase):
+class TestVatExemptionReason(IntegrationTestCase):
 	def test_empty_header_tax_skips_exemption_for_zero_rated(self):
 		"""BR-Z-10: zero-rated VAT breakdown must not have an exemption reason."""
 		invoice = frappe._dict(tax_category=None, taxes_and_charges=None, net_total=100)
@@ -162,7 +163,7 @@ class TestVatExemptionReason(FrappeTestCase):
 				self.assertEqual(trade_tax.exemption_reason_code._text, "VATEX-EU-79-C")
 
 
-class TestNotSubjectToVatInvoice(FrappeTestCase):
+class TestNotSubjectToVatInvoice(IntegrationTestCase):
 	"""Generate and validate a real Sales Invoice with VAT category "O" (not subject to VAT)."""
 
 	@classmethod
