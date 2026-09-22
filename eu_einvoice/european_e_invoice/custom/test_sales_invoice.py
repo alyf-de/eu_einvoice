@@ -1,17 +1,26 @@
+import re
 from unittest.mock import MagicMock, patch
 from xml.etree import ElementTree as ET
 
 import frappe
 from drafthorse.models.document import Document
+from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from frappe.tests.utils import FrappeTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	EInvoiceGenerator,
 	duty_tax_fee_category_codes,
+	get_einvoice,
 	get_item_rate,
 	get_xml_attachment_file_base_name,
+	vat_exemption_reason_codes,
 )
+from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile
+
+NAMESPACES = {"ram": "urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"}
+# Schematron rules about VAT categories, rates and exemption reasons
+VAT_RULES = r"BR-(O|E|AE|G|IC|Z|S)-\d+|BR-4[5-9]|BR-DE-14|BR-CO-17"
 
 
 class TestGetItemRate(FrappeTestCase):
@@ -91,156 +100,7 @@ class TestGetItemRate(FrappeTestCase):
 			self.assertEqual(get_item_rate("5 %", taxes), 19)
 
 
-class TestNotSubjectToVatCategory(FrappeTestCase):
-	def test_line_item_omits_vat_rate_for_category_o(self):
-		"""BR-O-05: category O lines must not contain BT-152 (not even 0)."""
-		invoice = frappe._dict(
-			tax_category=None,
-			taxes_and_charges=None,
-			taxes=[],
-		)
-		item = frappe._dict(
-			idx=1,
-			item_name="Out of scope",
-			item_code="O-1",
-			customer_item_code=None,
-			description="",
-			net_rate=100,
-			qty=1,
-			uom="Nos",
-			delivery_note=None,
-			item_tax_template=None,
-			income_account="_Test Account",
-			net_amount=100,
-			precision=lambda fieldname: 2,
-		)
-		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
-		generator.doc = Document()
-
-		with (
-			patch.object(duty_tax_fee_category_codes, "get", return_value="O"),
-			patch("eu_einvoice.european_e_invoice.custom.sales_invoice.uom_codes.get", return_value="C62"),
-		):
-			generator._add_line_item(item)
-
-		trade_tax = generator.doc.trade.items.children[0].settlement.trade_tax
-		self.assertEqual(trade_tax.category_code._text, "O")
-		self.assertIsNone(trade_tax.rate_applicable_percent._value)
-		# BT-120/BT-121 only on document-level VAT breakdown, not on lines
-		self.assertFalse(trade_tax.exemption_reason_code._text)
-
-		xml = ET.tostring(trade_tax.to_etree(), encoding="unicode")
-		self.assertNotIn("RateApplicablePercent", xml)
-		self.assertNotIn("ExemptionReason", xml)
-
-	def test_empty_header_tax_omits_vat_rate_for_category_o(self):
-		"""BR-48 / BR-O-10: EN 16931 header O omits rate and carries the exemption reason."""
-		invoice = frappe._dict(tax_category=None, taxes_and_charges=None, net_total=100)
-		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
-		generator.doc = Document()
-
-		with (
-			patch.object(duty_tax_fee_category_codes, "get", return_value="O"),
-			patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice.vat_exemption_reason_codes.get",
-				return_value="vatex-eu-o",
-			),
-		):
-			generator._add_empty_tax()
-
-		trade_tax = generator.doc.trade.settlement.trade_tax.children[0]
-		self.assertEqual(trade_tax.category_code._text, "O")
-		self.assertIsNone(trade_tax.rate_applicable_percent._value)
-		self.assertEqual(trade_tax.exemption_reason_code._text, "VATEX-EU-O")
-
-	def test_xrechnung_empty_header_tax_includes_vat_rate_for_category_o(self):
-		"""BR-DE-14: XRechnung header ApplicableTradeTax always requires BT-119."""
-		invoice = frappe._dict(tax_category=None, taxes_and_charges=None, net_total=100)
-		generator = EInvoiceGenerator(EInvoiceProfile.XRECHNUNG, invoice, None, None)
-		generator.doc = Document()
-
-		with (
-			patch.object(duty_tax_fee_category_codes, "get", return_value="O"),
-			patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice.vat_exemption_reason_codes.get",
-				return_value="vatex-eu-o",
-			),
-		):
-			generator._add_empty_tax()
-
-		trade_tax = generator.doc.trade.settlement.trade_tax.children[0]
-		self.assertEqual(trade_tax.category_code._text, "O")
-		self.assertEqual(trade_tax.rate_applicable_percent._value, 0)
-		self.assertEqual(trade_tax.exemption_reason_code._text, "VATEX-EU-O")
-
-	def test_on_net_total_header_omits_vat_rate_for_category_o(self):
-		"""BR-48: EN 16931 VAT breakdown for O omits BT-119."""
-		invoice = frappe._dict(
-			net_total=100,
-			tax_category=None,
-			taxes_and_charges=None,
-			precision=lambda fieldname: 2,
-			taxes=[
-				frappe._dict(
-					account_head="_Test Out of Scope",
-					charge_type="On Net Total",
-					rate=0,
-					tax_amount=0,
-					net_amount=100,
-				)
-			],
-		)
-		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
-		generator.doc = Document()
-		generator.item_tax_rates = set()
-
-		with (
-			patch.object(duty_tax_fee_category_codes, "get", return_value="O"),
-			patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice.vat_exemption_reason_codes.get",
-				return_value="vatex-eu-o",
-			),
-		):
-			self.assertTrue(generator._add_taxes_and_charges())
-
-		trade_tax = generator.doc.trade.settlement.trade_tax.children[0]
-		self.assertEqual(trade_tax.category_code._text, "O")
-		self.assertIsNone(trade_tax.rate_applicable_percent._value)
-
-	def test_xrechnung_on_net_total_header_includes_vat_rate_for_category_o(self):
-		"""BR-DE-14: XRechnung VAT breakdown for O still sets BT-119 to 0.00."""
-		invoice = frappe._dict(
-			net_total=100,
-			tax_category=None,
-			taxes_and_charges=None,
-			precision=lambda fieldname: 2,
-			taxes=[
-				frappe._dict(
-					account_head="_Test Out of Scope",
-					charge_type="On Net Total",
-					rate=0,
-					tax_amount=0,
-					net_amount=100,
-				)
-			],
-		)
-		generator = EInvoiceGenerator(EInvoiceProfile.XRECHNUNG, invoice, None, None)
-		generator.doc = Document()
-		generator.item_tax_rates = set()
-
-		with (
-			patch.object(duty_tax_fee_category_codes, "get", return_value="O"),
-			patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice.vat_exemption_reason_codes.get",
-				return_value="vatex-eu-o",
-			),
-		):
-			self.assertTrue(generator._add_taxes_and_charges())
-
-		trade_tax = generator.doc.trade.settlement.trade_tax.children[0]
-		self.assertEqual(trade_tax.category_code._text, "O")
-		self.assertEqual(trade_tax.rate_applicable_percent._value, 0)
-
+class TestVatExemptionReason(FrappeTestCase):
 	def test_empty_header_tax_skips_exemption_for_zero_rated(self):
 		"""BR-Z-10: zero-rated VAT breakdown must not have an exemption reason."""
 		invoice = frappe._dict(tax_category=None, taxes_and_charges=None, net_total=100)
@@ -300,6 +160,93 @@ class TestNotSubjectToVatCategory(FrappeTestCase):
 				self.assertEqual(trade_tax.category_code._text, "E")
 				self.assertEqual(trade_tax.basis_amount._value, getattr(previous, previous_field))
 				self.assertEqual(trade_tax.exemption_reason_code._text, "VATEX-EU-79-C")
+
+
+class TestNotSubjectToVatInvoice(FrappeTestCase):
+	"""Generate and validate a real Sales Invoice with VAT category "O" (not subject to VAT)."""
+
+	def setUp(self):
+		tax_category = frappe.get_doc(doctype="Tax Category", title="_Test Not Subject to VAT").insert()
+		self.tax_category = tax_category.name
+		item_tax_template = frappe.get_doc(
+			doctype="Item Tax Template",
+			title="_Test Not Subject to VAT",
+			company="_Test Company",
+			taxes=[{"tax_type": "_Test Account VAT - _TC", "tax_rate": 0}],
+		).insert()
+		self.item_tax_template = item_tax_template.name
+
+		# The category comes from the Tax Category, the exemption reason only from the line's
+		# Item Tax Template. So the VAT breakdown must pick it up from the line items.
+		self._map_code(duty_tax_fee_category_codes, "O", "Tax Category", self.tax_category)
+		self._map_code(vat_exemption_reason_codes, "vatex-eu-o", "Item Tax Template", self.item_tax_template)
+
+	def _map_code(self, retriever, code: str, doctype: str, name: str):
+		code_list = retriever.code_lists[0]
+		if not frappe.db.exists("Code List", code_list):
+			frappe.get_doc(doctype="Code List", __newname=code_list, title=code_list).insert()
+
+		frappe.get_doc(
+			doctype="Common Code",
+			code_list=code_list,
+			title=code,
+			common_code=code,
+			applies_to=[{"link_doctype": doctype, "link_name": name}],
+		).insert()
+
+	def test_einvoice_for_category_o(self):
+		for profile in (EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
+			for with_tax_row in (False, True):
+				with self.subTest(profile=profile, with_tax_row=with_tax_row):
+					self._check_einvoice(profile, with_tax_row)
+
+	def _check_einvoice(self, profile: EInvoiceProfile, with_tax_row: bool):
+		invoice = create_sales_invoice(do_not_save=True, rate=100)
+		invoice.einvoice_profile = profile.value
+		invoice.tax_category = self.tax_category
+		invoice.items[0].item_tax_template = self.item_tax_template
+		if with_tax_row:
+			invoice.append(
+				"taxes",
+				{
+					"charge_type": "On Net Total",
+					"account_head": "_Test Account VAT - _TC",
+					"description": "VAT",
+					"rate": 0,
+				},
+			)
+		invoice.insert()
+
+		xml = get_einvoice(invoice)
+
+		root = ET.fromstring(xml)
+		line_tax = root.find(".//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax", NAMESPACES)
+		self.assertEqual(line_tax.findtext("ram:CategoryCode", namespaces=NAMESPACES), "O")
+		# BR-O-05: no VAT rate on the line, not even 0
+		self.assertIsNone(line_tax.find("ram:RateApplicablePercent", NAMESPACES))
+		# The exemption reason belongs on the VAT breakdown only
+		self.assertIsNone(line_tax.find("ram:ExemptionReasonCode", NAMESPACES))
+
+		header_taxes = root.findall(
+			".//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax", NAMESPACES
+		)
+		self.assertEqual(len(header_taxes), 1)
+		header_tax = header_taxes[0]
+		self.assertEqual(header_tax.findtext("ram:CategoryCode", namespaces=NAMESPACES), "O")
+		self.assertEqual(header_tax.findtext("ram:ExemptionReasonCode", namespaces=NAMESPACES), "VATEX-EU-O")
+		# BR-48 allows to omit the rate for category O, but XRechnung requires it (BR-DE-14)
+		header_rate = header_tax.find("ram:RateApplicablePercent", NAMESPACES)
+		if profile == EInvoiceProfile.XRECHNUNG:
+			self.assertEqual(float(header_rate.text), 0)
+		else:
+			self.assertIsNone(header_rate)
+
+		# The test company is not set up completely, so only check the VAT rules.
+		# XRechnung builds on EN 16931, so check against both.
+		for validation_profile in {profile, EInvoiceProfile.EN16931}:
+			errors, _warnings = get_validation_errors(xml.decode(), validation_profile)
+			vat_errors = [error for error in errors if re.search(VAT_RULES, error)]
+			self.assertEqual(vat_errors, [])
 
 
 class TestApplicableTradeTaxes(FrappeTestCase):
