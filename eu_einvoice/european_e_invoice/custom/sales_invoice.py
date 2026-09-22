@@ -58,14 +58,8 @@ duty_tax_fee_category_codes = CommonCodeRetriever(
 vat_exemption_reason_codes = CommonCodeRetriever(
 	["urn:xoev-de:kosit:codeliste:vatex", "urn:cef.eu:names:identifier:VATEX"], "vatex-eu-ae"
 )
-<<<<<<< HEAD
-=======
-payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
-duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
-vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:vatex_1"], "vatex-eu-ae")
 # VAT categories that need an exemption reason on the VAT breakdown (BR-AE-10, BR-E-10, ...)
 EXEMPT_VAT_CATEGORIES = ("AE", "E", "G", "K", "O")
->>>>>>> 5c32d92 (feat: Not subject to VAT (#286))
 
 
 @frappe.whitelist()
