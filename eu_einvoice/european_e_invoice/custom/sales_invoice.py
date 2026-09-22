@@ -43,6 +43,8 @@ uom_codes = CommonCodeRetriever(
 payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
 duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
 vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:vatex_1"], "vatex-eu-ae")
+# VAT categories that need an exemption reason on the VAT breakdown (BR-AE-10, BR-E-10, ...)
+EXEMPT_VAT_CATEGORIES = ("AE", "E", "G", "K", "O")
 
 
 @frappe.whitelist()
@@ -130,6 +132,8 @@ class EInvoiceGenerator:
 		self.buyer_contact = buyer_contact
 		self.doc = None
 		self.item_tax_rates = set()
+		# VAT category code -> exemption reason code, collected from the line items
+		self.line_exemption_reason_codes = {}
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -472,15 +476,21 @@ class EInvoiceGenerator:
 				li.delivery.delivery_note.issue_date_time = getdate(posting_date)
 
 		li.settlement.trade_tax.type_code = "VAT"
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(
-			[
-				("Item Tax Template", item.item_tax_template),
-				("Account", item.income_account),
-				("Tax Category", self.invoice.tax_category),
-				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-			]
-		)
+		lookup = [
+			("Item Tax Template", item.item_tax_template),
+			("Account", item.income_account),
+			("Tax Category", self.invoice.tax_category),
+			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+		]
+		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
 		category_code = li.settlement.trade_tax.category_code._text
+		if category_code in EXEMPT_VAT_CATEGORIES:
+			# Only the line knows Item Tax Template and income Account; the rest is looked up again
+			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.
+			exemption_reason_code = vat_exemption_reason_codes.get_code(lookup[:2])
+			if exemption_reason_code:
+				self.line_exemption_reason_codes.setdefault(category_code, exemption_reason_code)
+
 		if category_code in ("AE", "E", "G", "K", "Z"):
 			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05 (rate 0.00; see EN 16931 tax code guidance)
 			li.settlement.trade_tax.rate_applicable_percent = 0
@@ -654,10 +664,14 @@ class EInvoiceGenerator:
 		Per EN 16931 tax code guidance, the exemption reason is only stated for document
 		level totals. Required for AE, E, G, K, O (BR-*-10); forbidden for S and Z (BR-S-10, BR-Z-10).
 		"""
-		if trade_tax.category_code._text not in ("AE", "E", "G", "K", "O"):
+		category_code = trade_tax.category_code._text
+		if category_code not in EXEMPT_VAT_CATEGORIES:
 			return
 
-		trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(lookup).upper()
+		exemption_reason_code = self.line_exemption_reason_codes.get(
+			category_code
+		) or vat_exemption_reason_codes.get(lookup)
+		trade_tax.exemption_reason_code = exemption_reason_code.upper()
 		self._set_optional_vat_exemption_reason_text(trade_tax)
 
 	def _set_optional_vat_exemption_reason_text(self, trade_tax: ApplicableTradeTax) -> None:
