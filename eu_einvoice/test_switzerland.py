@@ -1,9 +1,9 @@
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.switzerland import is_valid_swiss_vat_id
 
 
-class TestSwitzerland(FrappeTestCase):
+class TestSwitzerland(IntegrationTestCase):
 	def test_validate_swiss_vat(self):
 		self.assertTrue(is_valid_swiss_vat_id("CHE-116.281.710 MWST"))  # True (Nestlé)
 		self.assertTrue(is_valid_swiss_vat_id("CHE-101.654.423 TVA"))  # True (Swisscom)

@@ -6,7 +6,6 @@ import frappe
 from drafthorse.models.document import Document
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from frappe.tests import IntegrationTestCase
-from frappe.tests.utils import FrappeTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	EInvoiceGenerator,
@@ -24,7 +23,7 @@ NAMESPACES = {"ram": "urn:un:unece:uncefact:data:standard:ReusableAggregateBusin
 VAT_RULES = r"BR-(O|E|AE|G|IC|Z|S)-\d+|BR-4[5-9]|BR-DE-14|BR-CO-17"
 
 
-class TestGetItemRate(FrappeTestCase):
+class TestGetItemRate(IntegrationTestCase):
 	def _taxes(self):
 		return [
 			frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=0),
@@ -277,7 +276,7 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		self.assertEqual(header_tax.findtext("ram:ExemptionReasonCode", namespaces=NAMESPACES), "VATEX-EU-G")
 
 
-class TestApplicableTradeTaxes(FrappeTestCase):
+class TestApplicableTradeTaxes(IntegrationTestCase):
 	def test_multi_tax_invoice_groups_and_basis_amounts(self):
 		"""Unused tax rows are dropped, the basis comes from net_amount before any fallback."""
 		invoice = frappe._dict(
@@ -330,7 +329,7 @@ class TestApplicableTradeTaxes(FrappeTestCase):
 		self.assertEqual([t.basis_amount._value for t in trade_taxes], [100, 100, 100, 10, 0])
 
 
-class TestXmlAttachmentNaming(FrappeTestCase):
+class TestXmlAttachmentNaming(IntegrationTestCase):
 	def test_auto_name_format_from_e_invoice_settings(self):
 		doc = frappe._dict(name="SINV-00001", po_no="PO-42", doctype="Sales Invoice")
 		field = "auto_name_format_for_xml_file"
