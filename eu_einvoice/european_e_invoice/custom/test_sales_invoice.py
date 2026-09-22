@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock, patch
+from xml.etree import ElementTree as ET
 
 import frappe
 from drafthorse.models.document import Document
@@ -127,8 +128,6 @@ class TestNotSubjectToVatCategory(FrappeTestCase):
 		self.assertIsNone(trade_tax.rate_applicable_percent._value)
 		# BT-120/BT-121 only on document-level VAT breakdown, not on lines
 		self.assertFalse(trade_tax.exemption_reason_code._text)
-
-		from xml.etree import ElementTree as ET
 
 		xml = ET.tostring(trade_tax.to_etree(), encoding="unicode")
 		self.assertNotIn("RateApplicablePercent", xml)

@@ -507,6 +507,11 @@ class EInvoiceGenerator:
 	def _add_taxes_and_charges(self):
 		tax_added = False
 		for i, tax in enumerate(self.invoice.taxes):
+			lookup = [
+				("Account", tax.account_head),
+				("Tax Category", self.invoice.tax_category),
+				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+			]
 			if tax.charge_type == "Actual" and self.profile >= EInvoiceProfile.EXTENDED:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
@@ -540,13 +545,7 @@ class EInvoiceGenerator:
 				trade_tax = ApplicableTradeTax()
 				trade_tax.calculated_amount = tax.tax_amount
 				trade_tax.type_code = "VAT"
-				trade_tax.category_code = duty_tax_fee_category_codes.get(
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					]
-				)
+				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
 
 				self._set_header_vat_category_rate(trade_tax, tax_rate)
 
@@ -569,14 +568,7 @@ class EInvoiceGenerator:
 						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
 					trade_tax.basis_amount = basis
 
-				self._set_document_vat_exemption_reason(
-					trade_tax,
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					],
-				)
+				self._set_document_vat_exemption_reason(trade_tax, lookup)
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
@@ -592,11 +584,6 @@ class EInvoiceGenerator:
 					# A tax or duty applied on and in addition to existing duties and taxes.
 					trade_tax.type_code = "SUR"
 
-				lookup = [
-					("Account", tax.account_head),
-					("Tax Category", self.invoice.tax_category),
-					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-				]
 				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
 				self._set_header_vat_category_rate(trade_tax, tax.rate)
 				self._set_document_vat_exemption_reason(trade_tax, lookup)
@@ -614,11 +601,6 @@ class EInvoiceGenerator:
 					# A tax or duty applied on and in addition to existing duties and taxes.
 					trade_tax.type_code = "SUR"
 
-				lookup = [
-					("Account", tax.account_head),
-					("Tax Category", self.invoice.tax_category),
-					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-				]
 				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
 				self._set_header_vat_category_rate(trade_tax, tax.rate)
 				self._set_document_vat_exemption_reason(trade_tax, lookup)
