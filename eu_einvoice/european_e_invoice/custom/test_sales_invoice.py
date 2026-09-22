@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import frappe
 from drafthorse.models.document import Document
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	EInvoiceGenerator,
@@ -13,7 +13,7 @@ from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 from eu_einvoice.utils import EInvoiceProfile
 
 
-class TestGetItemRate(FrappeTestCase):
+class TestGetItemRate(IntegrationTestCase):
 	def _taxes(self):
 		return [
 			frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=0),
@@ -90,7 +90,7 @@ class TestGetItemRate(FrappeTestCase):
 			self.assertEqual(get_item_rate("5 %", taxes), 19)
 
 
-class TestApplicableTradeTaxes(FrappeTestCase):
+class TestApplicableTradeTaxes(IntegrationTestCase):
 	def test_multi_tax_invoice_groups_and_basis_amounts(self):
 		"""Unused tax rows are dropped, the basis comes from net_amount before any fallback."""
 		invoice = frappe._dict(
@@ -143,7 +143,7 @@ class TestApplicableTradeTaxes(FrappeTestCase):
 		self.assertEqual([t.basis_amount._value for t in trade_taxes], [100, 100, 100, 10, 0])
 
 
-class TestXmlAttachmentNaming(FrappeTestCase):
+class TestXmlAttachmentNaming(IntegrationTestCase):
 	def test_auto_name_format_from_e_invoice_settings(self):
 		doc = frappe._dict(name="SINV-00001", po_no="PO-42", doctype="Sales Invoice")
 		field = "auto_name_format_for_xml_file"
