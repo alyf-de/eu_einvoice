@@ -361,13 +361,15 @@ class EInvoiceImport(Document):
 				continue
 
 			if row.unit_code:
-				rec20_3 = get_docnames_for("urn:xoev-de:kosit:codeliste:rec20_3", "UOM", row.unit_code)
-				if rec20_3:
-					row.uom = rec20_3[0]
-				else:
-					rec21_3 = get_docnames_for("urn:xoev-de:kosit:codeliste:rec21_3", "UOM", row.unit_code)
-					if rec21_3:
-						row.uom = rec21_3[0]
+				for code_list in (
+					"urn:xoev-de:kosit:codeliste:rec20",
+					"urn:xoev-de:kosit:codeliste:rec21",
+					"urn:cef.eu:names:identifier:Unit",
+				):
+					docnames = get_docnames_for(code_list, "UOM", row.unit_code)
+					if docnames:
+						row.uom = docnames[0]
+						break
 			elif row.item:
 				stock_uom, purchase_uom = frappe.db.get_value("Item", row.item, ["stock_uom", "purchase_uom"])
 				row.uom = purchase_uom or stock_uom
