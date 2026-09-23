@@ -15,10 +15,7 @@ from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-<<<<<<< HEAD
-from frappe.core.doctype.file.utils import find_file_by_url, get_safe_file_name
-=======
->>>>>>> 0218e95 (feat(attachments): multi-annex embed for Sales Invoice (part 1) (#263))
+from frappe.core.doctype.file.utils import get_safe_file_name
 from frappe.core.utils import html2text
 from frappe.model.naming import parse_naming_series
 from frappe.utils import cstr

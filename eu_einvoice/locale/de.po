@@ -7,11 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-<<<<<<< HEAD
-"POT-Creation-Date: 2026-05-12 20:23+0053\n"
-=======
 "POT-Creation-Date: 2026-08-03 10:28+0053\n"
->>>>>>> 0218e95 (feat(attachments): multi-annex embed for Sales Invoice (part 1) (#263))
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -414,17 +410,10 @@ msgstr "Datei-Abschnitt"
 msgid "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty."
 msgstr "Wenn ausgefüllt, wird der Text als BT-120 (<code>ram:ExemptionReason</code>) in der Steueraufschlüsselung geschrieben, sobald ein Befreiungsgrundcode ausgegeben wird. Bleibt das Feld leer, wird BT-120 im XML nicht gesetzt."
 
-<<<<<<< HEAD
-=======
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:84
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:165
 msgid "Invalid attachment file"
 msgstr "Ungültige Anhangsdatei"
-
-#. Label of the id (Data) field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Invoice ID"
-msgstr "Rechnungs-ID"
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:688
 msgid "Legacy embed migration failed for {0}"
@@ -442,7 +431,6 @@ msgstr "Legacy-Anhang nicht migriert"
 msgid "Legacy single-attachment field. Enable Multiple Attachment Embedding in E Invoice Settings to use the Embedded Documents table for one or more attachments."
 msgstr "Altes Einzelanhang-Feld. Aktivieren Sie in den E-Rechnungs-Einstellungen die Einbettung mehrerer Anhänge, um die Tabelle Eingebettete Dokumente für einen oder mehrere Anhänge zu nutzen."
 
->>>>>>> 0218e95 (feat(attachments): multi-annex embed for Sales Invoice (part 1) (#263))
 #. Label of the line_total (Currency) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Line Total"
