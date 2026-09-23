@@ -9,6 +9,7 @@ from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	duty_tax_fee_category_codes,
 	get_item_rate,
 	get_xml_attachment_file_base_name,
+	validate_doc,
 )
 from eu_einvoice.utils import EInvoiceProfile
 
@@ -191,3 +192,23 @@ class TestXmlAttachmentNaming(FrappeTestCase):
 		doc = frappe._dict(name="SINV-00001", po_no="A/B", doctype="Sales Invoice")
 		base = get_xml_attachment_file_base_name(doc, pattern="{po_no}")
 		self.assertEqual(base, "A_B")
+
+
+class TestValidateDoc(FrappeTestCase):
+	def test_validate_doc_with_empty_profile(self):
+		for profile in ("", None):
+			with self.subTest(einvoice_profile=profile):
+				doc = frappe._dict(
+					name="SINV-00001",
+					einvoice_profile=profile,
+					taxes=[frappe._dict(idx=1, charge_type="Actual")],
+					einvoice_is_correct=1,
+					validation_errors="Old error",
+					validation_warnings="Old warning",
+				)
+
+				validate_doc(doc, "validate")
+
+				self.assertEqual(doc.einvoice_is_correct, 0)
+				self.assertEqual(doc.validation_errors, "")
+				self.assertEqual(doc.validation_warnings, "")
