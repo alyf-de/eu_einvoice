@@ -26,7 +26,7 @@ required_apps = ["frappe/erpnext"]
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/eu_einvoice/css/eu_einvoice.css"
-app_include_js = "/assets/eu_einvoice/js/utils.js"
+app_include_js = ["/assets/eu_einvoice/js/utils.js", "/assets/eu_einvoice/js/queries.js"]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/eu_einvoice/css/eu_einvoice.css"
@@ -46,6 +46,9 @@ app_include_js = "/assets/eu_einvoice/js/utils.js"
 doctype_js = {
 	"Purchase Order": "european_e_invoice/custom/purchase_order.js",
 	"Sales Invoice": "european_e_invoice/custom/sales_invoice.js",
+	"Company": "european_e_invoice/custom/company.js",
+	"Customer": "european_e_invoice/custom/customer.js",
+	"Supplier": "european_e_invoice/custom/supplier.js",
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -144,6 +147,7 @@ after_install = "eu_einvoice.install.after_install"
 doc_events = {
 	"Sales Invoice": {
 		"validate": "eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc",
+		"on_submit": "eu_einvoice.european_e_invoice.custom.sales_invoice.attach_xml_on_submit",
 	}
 }
 
@@ -242,3 +246,8 @@ export_python_type_annotations = True
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+
+# Translation
+# ------------
+# List of apps whose translatable strings should be excluded from this app's translations.
+ignore_translatable_strings_from = ["frappe", "erpnext"]

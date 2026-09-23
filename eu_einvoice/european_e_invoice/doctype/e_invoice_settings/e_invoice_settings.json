@@ -10,7 +10,15 @@
   "validate_sales_invoice_on_submit",
   "column_break_rnbc",
   "error_action_on_save",
-  "error_action_on_submit"
+  "error_action_on_submit",
+  "sales_invoice_number_field",
+  "section_break_bt120",
+  "vat_exemption_reason_text",
+  "section_break_yldr",
+  "auto_name_format_for_xml_file",
+  "column_break_vlzj",
+  "auto_attach_xml",
+  "attach_field_for_xml_file"
  ],
  "fields": [
   {
@@ -47,13 +55,59 @@
    "fieldtype": "Select",
    "label": "Action on Validation Error during Submit",
    "options": "\nWarning Message\nError Message"
+  },
+  {
+   "bold": 1,
+   "fieldname": "section_break_yldr",
+   "fieldtype": "Section Break",
+   "label": "XML Settings"
+  },
+  {
+   "default": "0",
+   "description": "On submit, only for E Invoice Profile \"XRECHNUNG\"",
+   "fieldname": "auto_attach_xml",
+   "fieldtype": "Check",
+   "label": "Auto-attach XML File"
+  },
+  {
+   "depends_on": "eval:doc.auto_attach_xml",
+   "fieldname": "attach_field_for_xml_file",
+   "fieldtype": "Autocomplete",
+   "label": "Attach Field for XML File"
+  },
+  {
+   "description": "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>.",
+   "fieldname": "sales_invoice_number_field",
+   "fieldtype": "Autocomplete",
+   "label": "Sales Invoice Number Field"
+  },
+  {
+   "fieldname": "column_break_vlzj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Pattern for the <b>file name</b> of the XML.  <b>.xml</b> is appended automatically. Leave <b>empty</b> to use the document <b>name</b> (Sales Invoice ID). In case of an error, the document <b>name</b> is used as fallback.\n<br><br>Segments use a <b>dot</b> (<b>.</b>) between literal text and dynamic parts. Example:<br><b>EXAMPLE-.MM.-.{po_no}.-.YYYY</b><ul><li><b>Dates</b>: <b>DD</b>, <b>MM</b>, <b>YYYY</b>, <b>YY</b>, <b>WW</b>, <b>timestamp</b></li><li><b>Fields</b>: <b>Sales Invoice</b> field names in braces, e.g. <b>{po_no}</b></li><li>Other segments are treated as literal text.</li></ul>",
+   "fieldname": "auto_name_format_for_xml_file",
+   "fieldtype": "Data",
+   "label": "Auto Name Format for XML File"
+  },
+  {
+   "fieldname": "section_break_bt120",
+   "fieldtype": "Section Break",
+   "label": "VAT exemption (e-invoice)"
+  },
+  {
+   "description": "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty.",
+   "fieldname": "vat_exemption_reason_text",
+   "fieldtype": "Small Text",
+   "label": "Default VAT exemption reason"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-09-18 19:27:08.732100",
+ "modified": "2026-05-08 11:55:24.180676",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",

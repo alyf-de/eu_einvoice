@@ -1,0 +1,97 @@
+{
+ "app": "eu_einvoice",
+ "creation": "2025-11-28 16:19:17.238331",
+ "docstatus": 0,
+ "doctype": "Workspace Sidebar",
+ "header_icon": "code-xml",
+ "idx": 0,
+ "items": [
+  {
+   "child": 1,
+   "collapsible": 1,
+   "icon": "import",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "E Invoice Import",
+   "link_to": "E Invoice Import",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "receipt-euro",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Sales Invoice",
+   "link_to": "Sales Invoice",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "settings",
+   "indent": 1,
+   "keep_closed": 1,
+   "label": "Settings",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Section Break"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Code List",
+   "link_to": "Code List",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Common Code",
+   "link_to": "Common Code",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "E Invoice Settings",
+   "link_to": "E Invoice Settings",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "book-open-text",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Documentation",
+   "link_type": "URL",
+   "show_arrow": 0,
+   "type": "Link",
+   "url": "https://github.com/alyf-de/eu_einvoice/blob/develop/README.md#setup"
+  }
+ ],
+ "modified": "2026-01-20 14:51:44.603621",
+ "modified_by": "Administrator",
+ "module": "European e-Invoice",
+ "name": "E-Invoicing",
+ "owner": "Administrator",
+ "standard": 1,
+ "title": "E-Invoicing"
+}

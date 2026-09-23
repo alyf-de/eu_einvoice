@@ -1,0 +1,22 @@
+{
+ "app": "eu_einvoice",
+ "creation": "2025-11-28 16:19:17.073848",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon": "receipt-euro",
+ "icon_type": "Link",
+ "idx": 0,
+ "label": "E-Invoicing",
+ "link_to": "E-Invoicing",
+ "link_type": "Workspace Sidebar",
+ "logo_url": "/assets/eu_einvoice/img/logo.png",
+ "modified": "2026-01-20 15:16:27.259067",
+ "modified_by": "Administrator",
+ "name": "E-Invoicing",
+ "owner": "Administrator",
+ "restrict_removal": 0,
+ "roles": [],
+ "sidebar": "",
+ "standard": 1
+}

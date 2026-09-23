@@ -4,7 +4,7 @@ import mimetypes
 import os
 import re
 from base64 import b64encode
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Literal
 
 import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
@@ -15,12 +15,15 @@ from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-from frappe.core.doctype.file.utils import find_file_by_url
+from frappe.core.doctype.file.utils import find_file_by_url, get_safe_file_name
 from frappe.core.utils import html2text
-from frappe.utils.data import date_diff, flt, getdate, to_markdown
+from frappe.model.naming import parse_naming_series
+from frappe.utils import cstr
+from frappe.utils.data import cint, date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
 from eu_einvoice.schematron import get_validation_errors
+from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
 from eu_einvoice.utils import EInvoiceProfile, get_drafthorse_schema, get_guideline
 
 if TYPE_CHECKING:
@@ -30,21 +33,35 @@ if TYPE_CHECKING:
 	from erpnext.setup.doctype.company.company import Company
 	from frappe.contacts.doctype.address.address import Address
 	from frappe.contacts.doctype.contact.contact import Contact
+	from frappe.model.document import Document as FrappeDocument
 
 	from eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings import EInvoiceSettings
 
 uom_codes = CommonCodeRetriever(
-	["urn:xoev-de:kosit:codeliste:rec20_3", "urn:xoev-de:kosit:codeliste:rec21_3"], "C62"
+	[
+		"urn:xoev-de:kosit:codeliste:rec20",
+		"urn:xoev-de:kosit:codeliste:rec21",
+		"urn:cef.eu:names:identifier:Unit",
+	],
+	"C62",
 )
-payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
-duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
-vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:vatex_1"], "vatex-eu-ae")
+payment_means_codes = CommonCodeRetriever(
+	["urn:xoev-de:xrechnung:codeliste:untdid.4461", "urn:cef.eu:names:identifier:Payment"], "ZZZ"
+)
+duty_tax_fee_category_codes = CommonCodeRetriever(
+	["urn:xoev-de:kosit:codeliste:untdid.5305", "urn:cef.eu:names:identifier:5305"], "S"
+)
+vat_exemption_reason_codes = CommonCodeRetriever(
+	["urn:xoev-de:kosit:codeliste:vatex", "urn:cef.eu:names:identifier:VATEX"], "vatex-eu-ae"
+)
 
 
 @frappe.whitelist()
 def download_xrechnung(invoice_id: str):
-	frappe.local.response.filename = f"{invoice_id}.xml"
-	frappe.local.response.filecontent = get_einvoice(invoice_id)
+	invoice = frappe.get_doc("Sales Invoice", invoice_id)
+	base_name = get_xml_attachment_file_base_name(invoice)
+	frappe.local.response.filecontent = get_einvoice(invoice)
+	frappe.local.response.filename = f"{base_name}.xml"
 	frappe.local.response.type = "download"
 
 
@@ -125,6 +142,7 @@ class EInvoiceGenerator:
 		self.doc = None
 		self.item_tax_rates = set()
 		self.delivery_dates = []
+		self.vat_exemption_reason_text = ""
 
 	def get_einvoice(self) -> Document | None:
 		"""Return the einvoice document as a Python object."""
@@ -133,6 +151,9 @@ class EInvoiceGenerator:
 	def create_einvoice(self):
 		"""Create the einvoice document as a Python object."""
 		self.doc = Document()
+		self.vat_exemption_reason_text = str(
+			frappe.db.get_single_value("E Invoice Settings", "vat_exemption_reason_text") or ""
+		).strip()
 
 		self._set_context()
 		self._set_header()
@@ -210,7 +231,14 @@ class EInvoiceGenerator:
 		self.doc.context.guideline_parameter.id = get_guideline(self.profile)
 
 	def _set_header(self):
-		self.doc.header.id = self.invoice.name
+		sales_invoice_number_field = frappe.db.get_single_value(
+			"E Invoice Settings", "sales_invoice_number_field"
+		)
+
+		if sales_invoice_number_field and (invoice_number := self.invoice.get(sales_invoice_number_field)):
+			self.doc.header.id = invoice_number
+		else:
+			self.doc.header.id = self.invoice.name
 
 		# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred1001.htm
 		if self.invoice.is_return:
@@ -264,7 +292,10 @@ class EInvoiceGenerator:
 		self._set_seller_address()
 
 	def _set_seller_id(self):
-		for row in self.customer.supplier_numbers:
+		supplier_numbers = getattr(self.customer, "supplier_numbers", None)
+		if not supplier_numbers:
+			return
+		for row in supplier_numbers:
 			if row.company == self.invoice.company and row.supplier_number:
 				self.doc.trade.agreement.seller.id = row.supplier_number
 				break
@@ -299,6 +330,13 @@ class EInvoiceGenerator:
 		).upper()
 
 	def _set_seller_electronic_address(self):
+		if self.company.electronic_address_scheme and self.company.electronic_address:
+			self.doc.trade.agreement.seller.electronic_address.uri_ID = (
+				frappe.db.get_value("Common Code", self.company.electronic_address_scheme, "common_code"),
+				self.company.electronic_address,
+			)
+			return
+
 		if self.seller_contact and self.seller_contact.email_id:
 			electronic_address = self.seller_contact.email_id
 		else:
@@ -336,23 +374,36 @@ class EInvoiceGenerator:
 		if self.profile > EInvoiceProfile.BASIC:
 			self._set_buyer_contact()
 
+		self._set_buyer_electronic_address()
+		self._set_buyer_tax_id()
+
+	def _set_buyer_electronic_address(self):
+		if self.customer.electronic_address_scheme and self.customer.electronic_address:
+			self.doc.trade.agreement.buyer.electronic_address.uri_ID = (
+				frappe.db.get_value("Common Code", self.customer.electronic_address_scheme, "common_code"),
+				self.customer.electronic_address,
+			)
+			return
+
 		if self.invoice.contact_email:
 			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.invoice.contact_email)
-		elif self.buyer_address.email_id:
+		elif self.buyer_address and self.buyer_address.email_id:
 			self.doc.trade.agreement.buyer.electronic_address.uri_ID = ("EM", self.buyer_address.email_id)
-
-		self._set_buyer_tax_id()
 
 	def _set_buyer_tax_id(self):
 		if not self.invoice.tax_id:
 			return
 
-		try:
-			customer_tax_id = validate_vat_id(self.invoice.tax_id.strip())
+		if is_valid_swiss_vat_id(self.invoice.tax_id):
+			customer_tax_id = normalize_swiss_vat_id(self.invoice.tax_id)
 			customer_vat_scheme = "VA"
-		except ValueError:
-			customer_tax_id = self.invoice.tax_id.strip()
-			customer_vat_scheme = "FC"
+		else:
+			try:
+				customer_tax_id = validate_vat_id(self.invoice.tax_id.strip())
+				customer_vat_scheme = "VA"
+			except ValueError:
+				customer_tax_id = self.invoice.tax_id.strip()
+				customer_vat_scheme = "FC"
 
 		self.doc.trade.agreement.buyer.tax_registrations.add(
 			TaxRegistration(
@@ -376,6 +427,9 @@ class EInvoiceGenerator:
 		if not self.shipping_address:
 			return
 
+		self.doc.trade.delivery.ship_to.name = (
+			self.shipping_address.address_title or self.invoice.customer_name
+		)
 		self.doc.trade.delivery.ship_to.address.line_one = self.shipping_address.address_line1
 		self.doc.trade.delivery.ship_to.address.line_two = self.shipping_address.address_line2
 		self.doc.trade.delivery.ship_to.address.postcode = self.shipping_address.pincode
@@ -385,18 +439,18 @@ class EInvoiceGenerator:
 		).upper()
 
 	def _set_buyer_contact(self):
-		buyer_contact_phone = self.invoice.contact_mobile
 		if self.buyer_contact:
 			self.doc.trade.agreement.buyer.contact.person_name = self.buyer_contact.full_name
 			if self.buyer_contact.department:
 				self.doc.trade.agreement.buyer.contact.department_name = self.buyer_contact.department
-			if self.buyer_contact.phone:
-				buyer_contact_phone = self.buyer_contact.phone
-			if self.invoice.contact_email:
-				self.doc.trade.agreement.buyer.contact.email.address = self.invoice.contact_email
+			if self.buyer_contact.email_id:
+				self.doc.trade.agreement.buyer.contact.email.address = self.buyer_contact.email_id
 
-		if buyer_contact_phone and self.profile >= EInvoiceProfile.EN16931:
-			self.doc.trade.agreement.buyer.contact.telephone.number = buyer_contact_phone
+			if self.profile >= EInvoiceProfile.EN16931:
+				if self.buyer_contact.phone:
+					self.doc.trade.agreement.buyer.contact.telephone.number = self.buyer_contact.phone
+				elif self.buyer_contact.mobile_no:
+					self.doc.trade.agreement.buyer.contact.telephone.number = self.buyer_contact.mobile_no
 
 	def _add_line_item(self, item: SalesInvoiceItem):
 		li = LineItem()
@@ -454,6 +508,7 @@ class EInvoiceGenerator:
 					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 				]
 			).upper()
+			self._set_optional_vat_exemption_reason_text(li.settlement.trade_tax)
 
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
@@ -484,6 +539,11 @@ class EInvoiceGenerator:
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
+				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+				if tax.tax_amount == 0 and tax_rate != 0 and tax_rate not in self.item_tax_rates:
+					# No line item uses this rate, so there is nothing to declare for it.
+					# True 0% rows are kept, as are rates used by a line with a net amount of 0.
+					continue
 				trade_tax = ApplicableTradeTax()
 				trade_tax.calculated_amount = tax.tax_amount
 				trade_tax.type_code = "VAT"
@@ -494,7 +554,7 @@ class EInvoiceGenerator:
 						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 					]
 				)
-				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+
 				trade_tax.rate_applicable_percent = tax_rate
 
 				if len(self.invoice.taxes) == 1:
@@ -504,15 +564,13 @@ class EInvoiceGenerator:
 						# We only have one tax rate on the line items, but it was not specified on the tax row
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
-				elif hasattr(tax, "net_amount"):
-					trade_tax.basis_amount = tax.net_amount
-				elif hasattr(tax, "custom_net_amount"):
-					trade_tax.basis_amount = tax.custom_net_amount
-				elif tax.tax_amount and tax_rate:
-					# We don't know the basis amount for this tax, so we try to calculate it
-					trade_tax.basis_amount = round(tax.tax_amount / tax_rate * 100, 2)
 				else:
-					trade_tax.basis_amount = 0
+					# Prefer ERPNext tax-row net_amount (frappe/erpnext#54687). hasattr is always
+					# true once the field exists, so use flt() and fall back when still 0.
+					basis = flt(tax.get("net_amount")) or flt(tax.get("custom_net_amount"))
+					if not basis and tax.tax_amount and tax_rate:
+						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
+					trade_tax.basis_amount = basis
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
@@ -582,7 +640,12 @@ class EInvoiceGenerator:
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 			]
 		).upper()
+		self._set_optional_vat_exemption_reason_text(trade_tax)
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
+
+	def _set_optional_vat_exemption_reason_text(self, trade_tax: ApplicableTradeTax) -> None:
+		if self.vat_exemption_reason_text:
+			trade_tax.exemption_reason = self.vat_exemption_reason_text
 
 	def _add_delivery_date(self):
 		if self.delivery_dates:
@@ -689,7 +752,7 @@ class EInvoiceGenerator:
 		self.doc.trade.settlement.monetary_summation.due_amount = flt(self.invoice.outstanding_amount, 2)
 
 
-def validate_vat_id(vat_id: str) -> tuple[str, str]:
+def validate_vat_id(vat_id: str) -> str:
 	COUNTRY_CODE_REGEX = r"^[A-Z]{2}$"
 	VAT_NUMBER_REGEX = r"^[0-9A-Za-z\+\*\.]{2,12}$"
 
@@ -782,9 +845,13 @@ def validate_einvoice(doc: SalesInvoice):
 		return
 
 	try:
-		xml_string = get_einvoice(doc).decode()
+		xml_bytes = get_einvoice(doc)
+		doc._einvoice_xml_bytes = xml_bytes
+		xml_string = xml_bytes.decode()
 	except Exception:
-		doc.validation_errors = _("Cannot create E Invoice.")
+		msg = _("Cannot create E Invoice.")
+		doc.validation_errors = msg
+		frappe.log_error(msg, reference_doctype=doc.doctype, reference_name=doc.name)
 		return
 
 	try:
@@ -796,7 +863,9 @@ def validate_einvoice(doc: SalesInvoice):
 			validation_errors += basic_errors
 			warnings += basic_warnings
 	except Exception:
-		doc.validation_errors = _("Cannot validate E Invoice schematron.")
+		msg = _("Cannot validate E Invoice schematron.")
+		doc.validation_errors = msg
+		frappe.log_error(msg, reference_doctype=doc.doctype, reference_name=doc.name)
 		return
 
 	if any(validation_errors):
@@ -808,18 +877,126 @@ def validate_einvoice(doc: SalesInvoice):
 		doc.validation_warnings += "\n".join(warnings)
 
 
-def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
-	"""Get the tax rate for an item from the item tax template and the taxes table."""
+def attach_xml_on_submit(doc: SalesInvoice, event: str):
+	"""
+	Attach XML file to Sales Invoice on submit if auto-attach is enabled.
+
+	This function is called via doc_events hook when a Sales Invoice is submitted.
+	It checks E Invoice Settings and attaches the XRECHNUNG XML to the specified field
+	or as a general attachment if no field is specified.
+	"""
+	if not doc.einvoice_profile or doc.einvoice_profile != "XRECHNUNG":
+		return
+
+	settings = frappe.get_cached_doc("E Invoice Settings")
+	if not settings.auto_attach_xml:
+		return
+
+	try:
+		xml_content = getattr(doc, "_einvoice_xml_bytes", None) or get_einvoice(doc)
+	except Exception:
+		doc.log_error("E Invoice Auto-Attach Failed")
+		# Don't raise exception - allow submit to continue even if attachment fails
+		return
+
+	# Pass None if no field is specified to create general attachment
+	field_name = settings.attach_field_for_xml_file or None
+	try:
+		_attach_xml_file(doc, xml_content, field_name)
+	except Exception:
+		doc.log_error("E Invoice Auto-Attach File Creation Failed")
+		# Don't raise exception - allow submit to continue
+		return
+
+
+def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | None):
+	"""
+	Create File document and attach XML to specified field or as general attachment.
+
+	Args:
+	    doc: Sales Invoice document
+	    xml_content: XML file content as bytes
+	    field_name: Target attachment field name (None for general attachment)
+	"""
+	if not xml_content:
+		doc.log_error("E Invoice Auto-Attach: Empty XML content")
+		return
+
+	if field_name:
+		if not hasattr(doc, field_name):
+			doc.log_error(
+				title="E Invoice Auto-Attach: invalid field",
+				message=f"Field '{field_name}' is configured for XML attachment, but does not exist on the document.",
+			)
+			return
+
+		if doc.get(field_name):
+			doc.log_error(
+				title="E Invoice Auto-Attach: conflicting value",
+				message=f"Field '{field_name}' is configured for XML attachment, but already has a value.",
+			)
+			return
+
+	base_name = get_xml_attachment_file_base_name(doc)
+	file_name = f"{base_name}.xml"
+
+	# Create new File document
+	file_doc = frappe.new_doc("File")
+	file_doc.file_name = file_name
+	file_doc.content = xml_content
+	file_doc.folder = "Home/Attachments"
+	file_doc.is_private = 1
+	file_doc.attached_to_doctype = doc.doctype
+	file_doc.attached_to_name = doc.name
+
+	# Only set attached_to_field if field is specified
+	if field_name:
+		file_doc.attached_to_field = field_name
+
+	# Save file
+	file_doc.save(ignore_permissions=True)
+
+	# Update field value on Sales Invoice only if field is specified
+	if field_name:
+		doc.db_set(field_name, file_doc.file_url)
+
+
+def get_item_rate(item_tax_template: str | None, taxes: list) -> float | None:
+	"""Resolve the VAT % for this line from the Item Tax Template and the invoice tax rows.
+
+	1) Return the ``tax_rate`` of the first template row (in template order) whose ``tax_type``
+	   matches one of the invoice's ``account_head`` values. When *Not Applicable*
+	   (`not_applicable`) exists on **Item Tax Template Detail** (ERPNext v16 / v15 via
+	   frappe/erpnext#54687), skip those rows and allow a genuine 0% rate. Otherwise only
+	   non-zero ``tax_rate`` rows are considered (legacy templates that list unused taxes at 0%).
+	2) If every matching row was skipped, the template states that none of the invoice's taxes
+	   apply to this line, so the rate is 0.
+	3) If no template row matched at all: if there is exactly one *On Net Total* row, use its
+	   ``rate``.
+	"""
 	if item_tax_template:
-		# match the accounts from the taxes table with the rate from the item tax template
-		tax_template = frappe.get_doc("Item Tax Template", item_tax_template)
+		tax_template = frappe.get_cached_doc("Item Tax Template", item_tax_template)
 		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
+		has_not_applicable = bool(frappe.get_meta("Item Tax Template Detail").get_field("not_applicable"))
+		matched_but_skipped = False
+
+		def _is_applicable(item_tax) -> bool:
+			if has_not_applicable:
+				return not cint(item_tax.get("not_applicable"))
+			# Legacy templates list unused taxes at 0%, so a 0% row cannot be told apart
+			# from a genuine 0% rate.
+			return bool(item_tax.tax_rate)
 
 		for item_tax in tax_template.taxes:
-			if item_tax.tax_type in applicable_accounts:
+			if item_tax.tax_type not in applicable_accounts:
+				continue
+			if _is_applicable(item_tax):
 				return item_tax.tax_rate
+			matched_but_skipped = True
 
-	# if only one tax is on net total, return its rate
+		if matched_but_skipped:
+			return 0.0
+
 	tax_rates = [invoice_tax.rate for invoice_tax in taxes if invoice_tax.charge_type == "On Net Total"]
 	return tax_rates[0] if len(tax_rates) == 1 else None
 
@@ -878,13 +1055,20 @@ def as_base_64(content: str | bytes) -> str:
 
 @frappe.whitelist(allow_guest=True)
 def download_pdf(
-	doctype: str, name: str, format=None, doc=None, no_letterhead=0, language=None, letterhead=None
+	doctype: str,
+	name: str,
+	format: str | None = None,
+	doc: FrappeDocument | str | dict[str, Any] | None = None,
+	no_letterhead: str | int | None = None,
+	language: str | None = None,
+	letterhead: str | None = None,
+	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,
 ):
 	from frappe.utils.print_format import download_pdf as frappe_download_pdf
 
 	# Regular Frappe PDF download
 	# Sets frappe.local.response.filecontent to the PDF data
-	frappe_download_pdf(doctype, name, format, doc, no_letterhead, language, letterhead)
+	frappe_download_pdf(doctype, name, format, doc, no_letterhead, language, letterhead, pdf_generator)
 
 	# If the doctype is a Sales Invoice, try to attach the XML to the PDF
 	if doctype == "Sales Invoice":
@@ -1001,3 +1185,35 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 
 	xml_bytes = get_einvoice(invoice_id)
 	return attach_xml(pdf_data, xml_bytes, level)
+
+
+def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str:
+	"""Filename stem (no `.xml`) for the downloadable XML.
+
+	Uses *pattern* when given, otherwise reads *Auto name format for XML file*
+	from **E Invoice Settings**. Falls back to `doc.name` when the pattern is
+	empty or fails to resolve. Result is sanitized via `get_safe_file_name`
+	(same rules as **File** attachments).
+	"""
+	if pattern is None:
+		pattern = frappe.get_single_value("E Invoice Settings", "auto_name_format_for_xml_file")
+	pattern = cstr(pattern).strip()
+	if pattern:
+		try:
+			base = parse_naming_series(pattern, doc=doc, number_generator=_no_series_counter).strip()
+		except Exception:
+			frappe.log_error(
+				title=_("E Invoice XML file name pattern failed"),
+				message=frappe.get_traceback(),
+				reference_doctype=doc.doctype,
+				reference_name=doc.name,
+			)
+			base = ""
+		if base:
+			return get_safe_file_name(base)
+	return get_safe_file_name(doc.name)
+
+
+def _no_series_counter(_key: str, _digits: int) -> str:
+	"""Disable the series counter so XML naming has no DB side effects."""
+	return ""

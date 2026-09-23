@@ -4,16 +4,19 @@ authors = [
     { name = "ALYF GmbH", email = "hallo@alyf.de"}
 ]
 description = "Create and import european e-invoices with ERPNext"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 readme = "README.md"
 dynamic = ["version"]
 dependencies = [
     # "frappe~=15.0.0" # Installed and managed by bench.
     "factur-x~=3.1",
     "drafthorse~=2025.1.0",
-    "saxonche~=12.5.0",
-    "lxml>=4.9.3,<6.0.0",
+    "saxonche>=12.5.0,<13.0.0",
+    "lxml>=6.1.0,<7.0.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/alyf-de/eu_einvoice.git"
 
 [build-system]
 requires = ["flit_core >=3.4,<4"]
@@ -25,7 +28,7 @@ build-backend = "flit_core.buildapi"
 
 [tool.ruff]
 line-length = 110
-target-version = "py310"
+target-version = "py314"
 
 [tool.ruff.lint]
 select = [

@@ -21,6 +21,7 @@ class EInvoiceTradeTax(Document):
 		parenttype: DF.Data
 		rate_applicable_percent: DF.Percent
 		tax_account: DF.Link | None
+		vat_exemption_reason_text: DF.SmallText | None
 	# end: auto-generated types
 
 	pass

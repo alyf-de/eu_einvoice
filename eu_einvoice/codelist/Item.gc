@@ -1,0 +1,1513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gc:CodeList xmlns:gc="http://docs.oasis-open.org/codelist/ns/genericode/1.0/" xmlns="">
+  <Annotation>
+    <AppInfo>
+      <ext:info xmlns:ext="urn:cef.eu:codelist:gc-annotation">This is a Digital Building Blocks for Europe Code List.
+
+This file was automatically generated.
+Do NOT edit!</ext:info>
+    </AppInfo>
+  </Annotation>
+  <Identification>
+    <ShortName>Item</ShortName>
+    <Version>2026-05-15</Version>
+    <CanonicalUri>urn:cef.eu:names:identifier:Item</CanonicalUri>
+    <CanonicalVersionUri>urn:cef.eu:names:identifier:Item-2026-05-15</CanonicalVersionUri>
+  </Identification>
+  <ColumnSet>
+    <Column Id="Code" Use="required">
+      <ShortName>Unique code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Name" Use="required">
+      <ShortName>Meaning of the code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Key Id="CodeKey">
+      <ShortName>Unique code</ShortName>
+      <ColumnRef Ref="Code" />
+    </Key>
+  </ColumnSet>
+  <SimpleCodeList>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product version number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Assembly</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>HIBC (Health Industry Bar Code)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cold roll number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hot roll number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Slab number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Software revision number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UPC (Universal Product Code) Consumer package code (1-5-5)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UPC (Universal Product Code) Consumer package code (1-5-5-</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sample number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Pack number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UPC (Universal Product Code) Shipping container code (1-2-</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UPC (Universal Product Code)/EAN (European article number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UPC (Universal Product Code) suffix</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>State label code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Heat number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Coupon number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Resource number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work task number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price look up number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NSN (North Atlantic Treaty Organization Stock Number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Refined product code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Exhibit</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>End item</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Federal supply classification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Engineering data list</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Milestone event number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lot number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National drug code 4-4-2 format</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National drug code 5-3-2 format</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National drug code 5-4-1 format</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National drug code 5-4-2 format</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National drug code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Part number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Local Stock Number (LSN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Next higher assembly number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Data category</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Control number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Special material identification code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Locally assigned control number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's colour</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's part number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Variable measure product code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Financial phase</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contract breakdown</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Technical phase</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dye lot number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Daily statement of activities</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Periodical statement of activities within a bilaterally</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Calendar week statement of activities</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Calendar month statement of activities</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original equipment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Industry commodity code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Commodity grouping</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Colour number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs article number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Drawing revision number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Drawing</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Engineering change level</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Material code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EMD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EMDN (European Medical Device Nomenclature)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Article Numbering Association (EAN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Fish species</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's internal product group code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GMN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Global model number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National product group code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>General specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>HS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Harmonised system</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ISBN (International Standard Book Number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's item number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ISSN (International Standard Serial Number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's style number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's size code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Machine number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manufacturer's (producer's) article number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Model number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product/service identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>NB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Batch number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ON</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Part number description</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchaser's order line number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchase order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PPI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Phytosanitary Passport identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Promotional variant number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>QS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's qualifier for size</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Returnable container number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Release number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Run number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Record keeping of model year</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Supplier's article number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard group of products (mixed assortment)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SKU (Stock keeping unit)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Serial number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>RSK number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IFLS (Institut Francais du Libre Service) 5 digit product</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IFLS (Institut Francais du Libre Service) 9 digit product</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GS1 Global Trade Item Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EDIS (Energy Data Identification System)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Slaughter number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Official animal number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Harmonized tariff schedule</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Supplier's supplier article number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>46 Level DOT Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Airline Tariff 6D</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Title 49 Code of Federal Regulations</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Civil Aviation Administration code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hazardous Materials ID DOT</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Endorsement</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Air Force Regulation 71-4</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Breed</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Chemical Abstract Service (CAS) registry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Engine model designation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Institutional Meat Purchase Specifications (IMPS) Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price Look-Up code (PLU)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Maritime Organization (IMO) Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bureau of Explosives 600-A (rail)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>United Nations Dangerous Goods List</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Code of Botanical Nomenclature (ICBN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Code of Zoological Nomenclature (ICZN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Code of Nomenclature for Cultivated Plants</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Distributor’s article identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SST</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Norwegian Classification system ENVA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Supplier assigned classification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Mexican classification system AMECE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>German classification system CCG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Finnish classification system EANFIN</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Canadian classification system ICC</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SSZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>French classification system IFLS5</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ST</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Style number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dutch classification system CBL</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Japanese classification system JICFS</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>European Union dairy subsidy eligibility classification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GS1 Spain classification system</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GS1 Poland classification system</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Federal Agency on Technical Regulating and Metrology of the</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Efficient Consumer Response (ECR) Austria classification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GS1 Italy classification system</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CPV (Common Procurement Vocabulary)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IFDA (International Foodservice Distributors Association)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>AHFS (American Hospital Formulary Service) pharmacologic -</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ATC (Anatomical Therapeutic Chemical) classification system</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CLADIMED (Classification des Dispositifs Médicaux)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CMDR (Canadian Medical Device Regulations) classification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CNDM (Classificazione Nazionale dei Dispositivi Medici)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UK DM&amp;D (Dictionary of Medicines &amp; Devices) standard coding</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>eCl@ss</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EDMA (European Diagnostic Manufacturers Association)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EGAR (European Generic Article Register)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GMDN (Global Medical Devices Nomenclature)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GPI (Generic Product Identifier)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>HCPCS (Healthcare Common Procedure Coding System)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ICPS (International Classification for Patient Safety)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>MedDRA (Medical Dictionary for Regulatory Activities)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Medical Columbus</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NAPCS (North American Product Classification System)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NHS (National Health Services) eClass</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>US FDA (Food and Drug Administration) Product Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SNOMED CT (Systematized Nomenclature of Medicine-Clinical</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UMDNS (Universal Medical Device Nomenclature System)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GS1 Global Returnable Asset Identifier, non-serialised</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IMEI</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Waste Type (EMSA)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ship's store classification type</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Emergency fire code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Emergency spillage code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IMDG packing group</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>MARPOL Code IBC</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SUM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IMDG subsidiary risk class</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport group number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TSN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Taxonomic Serial Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TSO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IMDG main hazard class</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TSP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EU Combined Nomenclature</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TSQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Therapeutic classification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TSR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>European Waste Catalogue</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TSS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price grouping code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TST</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UNSPSC</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TSU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EU RoHS Directive</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>UA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ultimate customer's article number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>UP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UPC (Universal product code)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor item number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor's (seller's) part number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor's supplemental item number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ZZZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Mutually defined</SimpleValue>
+      </Value>
+    </Row>
+  </SimpleCodeList>
+</gc:CodeList>

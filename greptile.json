@@ -1,0 +1,8 @@
+{
+    "context": {
+        "repos": [
+            "frappe/frappe",
+            "frappe/erpnext"
+        ]
+    }
+}
