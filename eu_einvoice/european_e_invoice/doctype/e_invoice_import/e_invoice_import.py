@@ -372,10 +372,7 @@ class EInvoiceImport(Document):
 		If the buyer ID is provided and we have already found either Company or
 		Supplier, we can find the other one.
 		"""
-		if not self.buyer_id:
-			return
-
-		if self.company and not self.supplier:
+		if self.buyer_id and self.company and not self.supplier:
 			suppliers = frappe.get_all(
 				"Customer Number At Supplier",
 				filters={"customer_number": self.buyer_id, "company": self.company, "parenttype": "Supplier"},
@@ -385,7 +382,7 @@ class EInvoiceImport(Document):
 			if len(suppliers) == 1:
 				self.supplier = suppliers[0]
 
-		if self.supplier and not self.company:
+		if self.buyer_id and self.supplier and not self.company:
 			companies = frappe.get_all(
 				"Customer Number At Supplier",
 				filters={"customer_number": self.buyer_id, "parent": self.supplier, "parenttype": "Supplier"},
