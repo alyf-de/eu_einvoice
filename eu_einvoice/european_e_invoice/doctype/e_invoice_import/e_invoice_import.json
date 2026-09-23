@@ -20,8 +20,8 @@
   "section_break_z2sq",
   "amended_from",
   "buyer_tab",
-  "buyer_name",
   "buyer_id",
+  "buyer_name",
   "column_break_metg",
   "company",
   "purchase_order",
@@ -532,16 +532,16 @@
    "fieldtype": "Column Break"
   },
   {
-    "fieldname": "buyer_id",
-    "fieldtype": "Data",
-    "label": "Buyer ID",
-    "read_only": 1
+   "fieldname": "buyer_id",
+   "fieldtype": "Data",
+   "label": "Buyer ID",
+   "read_only": 1
   },
   {
-    "fieldname": "seller_id",
-    "fieldtype": "Data",
-    "label": "Seller ID",
-    "read_only": 1
+   "fieldname": "seller_id",
+   "fieldtype": "Data",
+   "label": "Seller ID",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -552,7 +552,7 @@
    "link_fieldname": "e_invoice_import"
   }
  ],
- "modified": "2026-09-23 18:04:03.032057",
+ "modified": "2026-09-23 06:07:14.162063",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Import",
