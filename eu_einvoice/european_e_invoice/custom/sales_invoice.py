@@ -500,14 +500,26 @@ class EInvoiceGenerator:
 			li.settlement.trade_tax.rate_applicable_percent = item_tax_rate
 
 		if li.settlement.trade_tax.rate_applicable_percent._value == 0:
-			li.settlement.trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
-				[
-					("Item Tax Template", item.item_tax_template),
-					("Account", item.income_account),
-					("Tax Category", self.invoice.tax_category),
-					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-				]
-			).upper()
+			records = [
+				("Item Tax Template", item.item_tax_template),
+				("Account", item.income_account),
+				("Tax Category", self.invoice.tax_category),
+				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+			]
+			code = vat_exemption_reason_codes.get_code(records)
+			if not code:
+				category = getattr(li.settlement.trade_tax.category_code, "_text", None)
+				category_default_map = {
+					"K": "VATEX-EU-IC",
+					"AE": "VATEX-EU-AE",
+					"E": "VATEX-EU-E",
+					"G": "VATEX-EU-G",
+					"O": "VATEX-EU-O",
+				}
+				code = category_default_map.get(category) or vat_exemption_reason_codes.get(records)
+
+			if code:
+				li.settlement.trade_tax.exemption_reason_code = str(code).upper()
 			self._set_optional_vat_exemption_reason_text(li.settlement.trade_tax)
 
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
@@ -555,12 +567,20 @@ class EInvoiceGenerator:
 					]
 				)
 
-				trade_tax.rate_applicable_percent = tax_rate
+				if trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
+					# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
+					trade_tax.rate_applicable_percent = 0
+				else:
+					trade_tax.rate_applicable_percent = tax_rate
 
 				if len(self.invoice.taxes) == 1:
 					# We only have one tax, so we can use the net total as basis amount
 					trade_tax.basis_amount = self.invoice.net_total
-					if len(self.item_tax_rates) == 1 and tax_rate == 0:
+					if (
+						len(self.item_tax_rates) == 1
+						and tax_rate == 0
+						and trade_tax.category_code._text not in ("AE", "E", "G", "K", "Z")
+					):
 						# We only have one tax rate on the line items, but it was not specified on the tax row
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
@@ -571,6 +591,16 @@ class EInvoiceGenerator:
 					if not basis and tax.tax_amount and tax_rate:
 						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
 					trade_tax.basis_amount = basis
+
+				if trade_tax.rate_applicable_percent._value == 0:
+					self._set_vat_exemption_for_trade_tax(
+						trade_tax,
+						[
+							("Account", tax.account_head),
+							("Tax Category", self.invoice.tax_category),
+							("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+						],
+					)
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
@@ -594,6 +624,20 @@ class EInvoiceGenerator:
 						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 					]
 				)
+
+				if trade_tax.type_code == "VAT":
+					if trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
+						trade_tax.rate_applicable_percent = 0
+					if trade_tax.rate_applicable_percent._value == 0:
+						self._set_vat_exemption_for_trade_tax(
+							trade_tax,
+							[
+								("Account", tax.account_head),
+								("Tax Category", self.invoice.tax_category),
+								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+							],
+						)
+
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Total":
@@ -616,6 +660,20 @@ class EInvoiceGenerator:
 						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 					]
 				)
+
+				if trade_tax.type_code == "VAT":
+					if trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
+						trade_tax.rate_applicable_percent = 0
+					if trade_tax.rate_applicable_percent._value == 0:
+						self._set_vat_exemption_for_trade_tax(
+							trade_tax,
+							[
+								("Account", tax.account_head),
+								("Tax Category", self.invoice.tax_category),
+								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+							],
+						)
+
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 
@@ -634,14 +692,54 @@ class EInvoiceGenerator:
 		trade_tax.basis_amount = self.invoice.net_total
 		trade_tax.rate_applicable_percent = 0
 		trade_tax.calculated_amount = 0
-		trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
+		self._set_vat_exemption_for_trade_tax(
+			trade_tax,
 			[
 				("Tax Category", self.invoice.tax_category),
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-			]
-		).upper()
-		self._set_optional_vat_exemption_reason_text(trade_tax)
+			],
+		)
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
+
+	def _set_vat_exemption_for_trade_tax(
+		self, trade_tax: ApplicableTradeTax, records: list[tuple[str, str]] | None = None
+	) -> None:
+		category = getattr(trade_tax.category_code, "_text", None)
+		records = records or [
+			("Tax Category", self.invoice.tax_category),
+			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+		]
+
+		code = vat_exemption_reason_codes.get_code(records)
+
+		# Fallback to line item exemption reason code for the same VAT category
+		if not code and category and hasattr(self.doc, "trade") and hasattr(self.doc.trade, "items"):
+			items = getattr(self.doc.trade.items, "children", self.doc.trade.items)
+			for item in items:
+				item_tax = getattr(item.settlement, "trade_tax", None)
+				if (
+					item_tax
+					and getattr(item_tax.category_code, "_text", None) == category
+					and getattr(item_tax.exemption_reason_code, "_text", None)
+				):
+					code = item_tax.exemption_reason_code._text
+					break
+
+		# Fallback to category-specific VATEX default code if not mapped
+		if not code:
+			category_default_map = {
+				"K": "VATEX-EU-IC",
+				"AE": "VATEX-EU-AE",
+				"E": "VATEX-EU-E",
+				"G": "VATEX-EU-G",
+				"O": "VATEX-EU-O",
+			}
+			code = category_default_map.get(category) or vat_exemption_reason_codes.get(records)
+
+		if code:
+			trade_tax.exemption_reason_code = str(code).upper()
+
+		self._set_optional_vat_exemption_reason_text(trade_tax)
 
 	def _set_optional_vat_exemption_reason_text(self, trade_tax: ApplicableTradeTax) -> None:
 		if self.vat_exemption_reason_text:
