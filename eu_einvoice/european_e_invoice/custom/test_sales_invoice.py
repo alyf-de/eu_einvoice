@@ -196,6 +196,9 @@ class TestNotSubjectToVatInvoice(FrappeTestCase):
 			common_code=code,
 			applies_to=[{"link_doctype": doctype, "link_name": name}],
 		).insert()
+		# ERPNext caches the code list lookup per request, and a test run is one request. Test records
+		# can look up this code list before it exists, so clear the cached miss.
+		frappe.clear_cache(doctype="Code List")
 
 	def test_einvoice_for_category_o(self):
 		for profile in (EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
