@@ -1,22 +1,14 @@
 # Copyright (c) 2024, ALYF GmbH and Contributors
 # See license.txt
 
-<<<<<<< HEAD
-# import frappe
-from frappe.tests.utils import FrappeTestCase
-
-
-class TestEInvoiceImport(FrappeTestCase):
-	pass
-=======
 from decimal import Decimal
 
 import frappe
 from drafthorse.models.tradelines import LineItem
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase
 
 
-class TestEInvoiceImport(IntegrationTestCase):
+class TestEInvoiceImport(FrappeTestCase):
 	def test_product_ids(self):
 		supplier = "_Test Supplier"
 		buyer_item = make_item("_Test E Invoice Buyer Item")
@@ -34,18 +26,6 @@ class TestEInvoiceImport(IntegrationTestCase):
 
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
-
-	def test_default_company_without_buyer_id(self):
-		frappe.defaults.set_user_default("company", "_Test Company")
-		self.addCleanup(frappe.defaults.clear_user_default, "company")
-
-		doc = frappe.new_doc("E Invoice Import")
-		doc.buyer_name = "Unknown Buyer GmbH"
-
-		doc.guess_company()
-		doc.guess_company_and_supplier()
-
-		self.assertEqual(doc.company, "_Test Company")
 
 
 def make_item(item_code: str, supplier_items=None) -> str:
@@ -70,4 +50,3 @@ def make_line_item(seller_assigned_id=None, buyer_assigned_id=None) -> LineItem:
 	if buyer_assigned_id:
 		li.product.buyer_assigned_id = buyer_assigned_id
 	return li
->>>>>>> c30c284 (fix(E Invoice Import): read product IDs without scheme suffix (#301))
