@@ -18,9 +18,7 @@ frappe.ui.form.on("E Invoice Settings", {
 
 	async set_auto_attach_options(frm) {
 		const options = await get_autocomplete_options("Sales Invoice", ["Attach"]);
-		const filtered = options.filter(
-			(option) => option.value !== "einvoice_embedded_document"
-		);
+		const filtered = options.filter((option) => option.value !== "einvoice_embedded_document");
 		frm.fields_dict.attach_field_for_xml_file.set_data(filtered);
 	},
 
