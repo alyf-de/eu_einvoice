@@ -268,8 +268,8 @@ class EInvoiceImport(Document):
 		else:
 			item.product_name = product_name_full
 			item.product_description = product_description
-		item.seller_product_id = str(li.product.seller_assigned_id)
-		item_code = str(li.product.buyer_assigned_id)
+		item.seller_product_id = li.product.seller_assigned_id._text or None
+		item_code = li.product.buyer_assigned_id._text or None
 		if item_code and not frappe.db.exists("Item", item_code):
 			item_code = None
 
