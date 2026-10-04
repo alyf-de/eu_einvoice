@@ -148,6 +148,7 @@ doc_events = {
 	"Sales Invoice": {
 		"validate": "eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc",
 		"on_submit": "eu_einvoice.european_e_invoice.custom.sales_invoice.attach_xml_on_submit",
+		"after_print": "eu_einvoice.european_e_invoice.custom.sales_invoice.postprocess_pdf",
 	}
 }
 
@@ -179,9 +180,9 @@ doc_events = {
 
 # Overriding Methods
 # ------------------------------
-override_whitelisted_methods = {
-	"frappe.utils.print_format.download_pdf": "eu_einvoice.european_e_invoice.custom.sales_invoice.download_pdf",
-}
+# override_whitelisted_methods = {
+# 	"frappe.utils.print_format.download_pdf": "eu_einvoice.european_e_invoice.custom.sales_invoice.download_pdf",
+# }
 
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

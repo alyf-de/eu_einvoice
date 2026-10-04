@@ -1053,37 +1053,6 @@ def as_base_64(content: str | bytes) -> str:
 	return b64encode(content).decode("utf-8")
 
 
-@frappe.whitelist(allow_guest=True)
-def download_pdf(
-	doctype: str,
-	name: str,
-	format: str | None = None,
-	doc: FrappeDocument | str | dict[str, Any] | None = None,
-	no_letterhead: str | int | None = None,
-	language: str | None = None,
-	letterhead: str | None = None,
-	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,
-):
-	from frappe.utils.print_format import download_pdf as frappe_download_pdf
-
-	# Regular Frappe PDF download
-	# Sets frappe.local.response.filecontent to the PDF data
-	frappe_download_pdf(doctype, name, format, doc, no_letterhead, language, letterhead, pdf_generator)
-
-	# If the doctype is a Sales Invoice, try to attach the XML to the PDF
-	if doctype == "Sales Invoice":
-		zugferd_pdf = None
-		try:
-			# If creating and attaching XML fails, we still want to return the original PDF.
-			zugferd_pdf = attach_xml_to_pdf(name, frappe.local.response.filecontent)
-		except Exception:
-			frappe.log_error(f"Error attaching XML to PDF for Sales Invoice {name}")
-
-		if zugferd_pdf:
-			# If attaching XML was successful, replace the original PDF with the ZUGFeRD PDF
-			frappe.local.response.filecontent = zugferd_pdf
-
-
 def _get_icc_profile_path() -> str:
 	"""Get the path to the ICC profile used by Ghostscript."""
 	import os
@@ -1217,3 +1186,13 @@ def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str
 def _no_series_counter(_key: str, _digits: int) -> str:
 	"""Disable the series counter so XML naming has no DB side effects."""
 	return ""
+
+
+def postprocess_pdf(doc: SalesInvoice, event: str, pdf: bytes) -> bytes:
+	if not pdf:
+		return pdf
+	try:
+		return attach_xml_to_pdf(doc.name, pdf)
+	except Exception:
+		frappe.log_error(f"Error attaching XML to PDF for Sales Invoice {doc.name}")
+		return pdf
