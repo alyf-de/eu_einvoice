@@ -705,6 +705,11 @@ class EInvoiceGenerator:
 		self, trade_tax: ApplicableTradeTax, records: list[tuple[str, str]] | None = None
 	) -> None:
 		category = getattr(trade_tax.category_code, "_text", None)
+		# EN 16931 rules BR-Z-10 and BR-S-10: zero-rated (Z) and standard (S) VAT breakdowns
+		# SHALL NOT provide exemption reason code or text.
+		if category in ("Z", "S"):
+			return
+
 		records = records or [
 			("Tax Category", self.invoice.tax_category),
 			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
@@ -725,7 +730,11 @@ class EInvoiceGenerator:
 					code = item_tax.exemption_reason_code._text
 					break
 
-		# Fallback to category-specific VATEX default code if not mapped
+		# Check administrator-configured code list default first
+		if not code:
+			code = vat_exemption_reason_codes.get(records)
+
+		# Fallback to category-specific VATEX default code if still unmapped
 		if not code:
 			category_default_map = {
 				"K": "VATEX-EU-IC",
@@ -734,7 +743,7 @@ class EInvoiceGenerator:
 				"G": "VATEX-EU-G",
 				"O": "VATEX-EU-O",
 			}
-			code = category_default_map.get(category) or vat_exemption_reason_codes.get(records)
+			code = category_default_map.get(category)
 
 		if code:
 			trade_tax.exemption_reason_code = str(code).upper()

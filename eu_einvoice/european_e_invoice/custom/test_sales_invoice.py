@@ -246,6 +246,73 @@ class TestApplicableTradeTaxes(IntegrationTestCase):
 		self.assertEqual(header_tax.exemption_reason_code._text, "VATEX-EU-AE")
 		self.assertEqual(header_tax.exemption_reason._text, "Reverse Charge")
 
+	def test_zero_rate_z_category_omits_exemption_reason_code_and_text(self):
+		"""EN 16931 BR-Z-10: 0% rate for category Z must NOT emit exemption reason code or text."""
+		invoice = frappe._dict(
+			net_total=100,
+			tax_category="Zero Rated",
+			taxes_and_charges="Zero Rated VAT",
+			precision=lambda fieldname: 2,
+			taxes=[
+				frappe._dict(
+					account_head="Zero Rated Tax",
+					charge_type="On Net Total",
+					rate=0,
+					tax_amount=0,
+					net_amount=100,
+				),
+			],
+		)
+		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
+		generator.doc = Document()
+		generator.item_tax_rates = {0}
+		generator.vat_exemption_reason_text = "Zero-rated export"
+
+		with patch.object(duty_tax_fee_category_codes, "get", return_value="Z"):
+			self.assertTrue(generator._add_taxes_and_charges())
+
+		trade_taxes = generator.doc.trade.settlement.trade_tax.children
+		self.assertEqual(len(trade_taxes), 1)
+		header_tax = trade_taxes[0]
+		self.assertEqual(header_tax.category_code._text, "Z")
+		self.assertEqual(header_tax.rate_applicable_percent._value, 0)
+		self.assertIsNone(getattr(header_tax, "exemption_reason_code", None))
+		self.assertIsNone(getattr(header_tax, "exemption_reason", None))
+
+	def test_unmapped_category_respects_configured_vatex_default(self):
+		"""Configured code list default takes precedence over hardcoded fallback."""
+		invoice = frappe._dict(
+			net_total=300,
+			tax_category="Intra-Community",
+			taxes_and_charges="0% Tax",
+			precision=lambda fieldname: 2,
+			taxes=[
+				frappe._dict(
+					account_head="Tax Account",
+					charge_type="On Net Total",
+					rate=0,
+					tax_amount=0,
+					net_amount=300,
+				),
+			],
+		)
+		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
+		generator.doc = Document()
+		generator.item_tax_rates = {0}
+
+		with (
+			patch.object(duty_tax_fee_category_codes, "get", return_value="K"),
+			patch.object(vat_exemption_reason_codes, "get_code", return_value=None),
+			patch.object(vat_exemption_reason_codes, "get", return_value="CUSTOM-DEFAULT-CODE"),
+		):
+			self.assertTrue(generator._add_taxes_and_charges())
+
+		trade_taxes = generator.doc.trade.settlement.trade_tax.children
+		self.assertEqual(len(trade_taxes), 1)
+		header_tax = trade_taxes[0]
+		self.assertEqual(header_tax.category_code._text, "K")
+		self.assertEqual(header_tax.exemption_reason_code._text, "CUSTOM-DEFAULT-CODE")
+
 
 class TestXmlAttachmentNaming(IntegrationTestCase):
 	def test_auto_name_format_from_e_invoice_settings(self):
