@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 import frappe
 from drafthorse.models.document import Document
+from drafthorse.models.party import TradeParty
 from drafthorse.models.payment import PaymentMeans
 from drafthorse.models.tradelines import LineItem
 from frappe.tests import IntegrationTestCase
@@ -16,6 +17,7 @@ from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import im
 	EInvoiceImport,
 	get_create_purchase_invoice_action,
 	is_ubl_xml,
+	payee_differs_from_seller,
 )
 
 UBL_INVOICE = b"""<?xml version="1.0" encoding="UTF-8"?>
@@ -169,9 +171,48 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual(guess(seller_name="Unknown", payee_iban="ES9121000418450200051332"), by_iban)
 		self.assertEqual(guess(seller_name="Unknown", payee_iban="ES91 2100 0418 4502 0005 1332"), by_iban)
 
+		# an IBAN-only match must not beat the seller name (payee may differ from seller)
+		self.assertEqual(
+			guess(seller_name=f"Name Match {suffix}", payee_iban="ES9121000418450200051332"), by_name
+		)
+
+		# lowercase IBAN, and a bank account without party does not make the match ambiguous
+		frappe.get_doc(
+			doctype="Bank Account",
+			account_name=f"Orphan {suffix}",
+			bank=bank,
+			party_type="Supplier",
+			iban="ES9121000418450200051332",
+		).insert()
+		self.assertEqual(guess(seller_name="Unknown", payee_iban="es9121000418450200051332"), by_iban)
+
+		# the IBAN of a payee that differs from the seller is not used
+		doc = frappe.new_doc("E Invoice Import")
+		doc.update({"seller_name": "Unknown", "payee_iban": "ES9121000418450200051332"})
+		doc.flags.payee_differs = True
+		doc.guess_supplier()
+		self.assertIsNone(doc.supplier)
+
 		# disabled bank accounts are ignored
 		bank_account.db_set("disabled", 1)
 		self.assertIsNone(guess(seller_name="Unknown", payee_iban="ES9121000418450200051332"))
+
+	def test_payee_differs_from_seller(self):
+		def party(name=None, id=None, legal_id=None):
+			party = TradeParty()
+			party.name = name
+			party.id = id
+			party.legal_organization.id = ("0002", legal_id) if legal_id else None
+			return party
+
+		seller = party("Seller GmbH", "S-1", "FR123")
+
+		self.assertFalse(payee_differs_from_seller(seller, party()))  # no payee
+		self.assertFalse(payee_differs_from_seller(seller, party("Seller GmbH")))
+		self.assertFalse(payee_differs_from_seller(seller, party("Bank Name", "S-1")))
+		self.assertFalse(payee_differs_from_seller(seller, party("Bank Name", legal_id="FR123")))
+		self.assertTrue(payee_differs_from_seller(seller, party("Factoring AG", "F-1", "DE999")))
+		self.assertTrue(payee_differs_from_seller(party("Seller GmbH"), party("Factoring AG")))
 
 	def test_default_company_without_buyer_id(self):
 		frappe.defaults.set_user_default("company", "_Test Company")
