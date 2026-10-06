@@ -170,6 +170,9 @@ class EInvoiceImport(Document):
 		self.issue_date = str(doc.header.issue_date_time)
 		self.currency = str(doc.trade.settlement.currency_code)
 		self.parse_seller(doc.trade.agreement.seller)
+		self.flags.payee_differs = payee_differs_from_seller(
+			doc.trade.agreement.seller, doc.trade.settlement.payee
+		)
 		self.parse_buyer(doc.trade.agreement.buyer)
 
 		buyer_reference = doc.trade.agreement.buyer_order.issuer_assigned_id._text
@@ -345,26 +348,35 @@ class EInvoiceImport(Document):
 		"""Find the Supplier, strongest identifier first.
 
 		A step only counts if it finds exactly one Supplier, otherwise we try the next one.
+		The payee IBAN comes last, and is ignored if the payee differs from the seller (BG-10).
 		"""
 		if self.supplier:
 			return
 
-		iban = (self.payee_iban or "").replace(" ", "")
+		iban = (self.payee_iban or "").replace(" ", "").upper()
 		iban_spaced = " ".join(iban[i : i + 4] for i in range(0, len(iban), 4))  # as printed on paper
 
 		# (identifier from the invoice, doctype, filters, field with the Supplier)
 		lookups = [
 			(self.seller_tax_id, "Supplier", {"tax_id": self.seller_tax_id}, "name"),
-			(
-				iban,
-				"Bank Account",
-				{"party_type": "Supplier", "disabled": 0, "iban": ["in", [iban, iban_spaced]]},
-				"party",
-			),
 			(self.seller_id, "Supplier", {"name": self.seller_id}, "name"),
 			(self.seller_name, "Supplier", {"supplier_name": self.seller_name}, "name"),
 			(self.seller_name, "Supplier", {"name": self.seller_name}, "name"),
+			(
+				iban,
+				"Bank Account",
+				{
+					"party_type": "Supplier",
+					"party": ["is", "set"],
+					"disabled": 0,
+					"iban": ["in", [iban, iban_spaced]],
+				},
+				"party",
+			),
 		]
+		if self.flags.payee_differs:
+			lookups.pop()  # the IBAN does not identify the seller
+
 		for identifier, doctype, filters, fieldname in lookups:
 			if not identifier:
 				continue  # not in the invoice, would match empty fields
@@ -486,6 +498,19 @@ class EInvoiceImport(Document):
 
 def flt_or_none(value) -> float | None:
 	return float(value) if value is not None else None
+
+
+def payee_differs_from_seller(seller: TradeParty, payee: TradeParty) -> bool:
+	"""Same test as schematron rule BR-17: a payee with a name, but no name or ID shared with the seller."""
+
+	def same(a, b):
+		return bool(a) and a == b
+
+	return bool(payee.name._text) and not (
+		same(payee.name._text, seller.name._text)
+		or same(payee.id._text, seller.id._text)
+		or same(payee.legal_organization.id._text, seller.legal_organization.id._text)
+	)
 
 
 def get_xml_bytes(einvoice: str) -> bytes:
