@@ -27,6 +27,60 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
 
+	def test_guess_supplier(self):
+		suffix = frappe.generate_hash(length=6)
+		group = frappe.db.get_value("Supplier Group", {"is_group": 0})
+
+		def make_supplier(name, supplier_name, tax_id=None):
+			return (
+				frappe.get_doc(
+					doctype="Supplier", supplier_name=supplier_name, supplier_group=group, tax_id=tax_id
+				)
+				.insert(set_name=name)
+				.name
+			)
+
+		def guess(**values):
+			doc = frappe.new_doc("E Invoice Import")
+			doc.update(values)
+			doc.guess_supplier()
+			return doc.supplier
+
+		# supplier ID differs from supplier name (naming series)
+		by_name = make_supplier(f"SUP-{suffix}-1", f"Name Match {suffix}")
+		self.assertEqual(guess(seller_name=f"Name Match {suffix}"), by_name)
+
+		# two suppliers with the same name: do not guess
+		make_supplier(f"SUP-{suffix}-2", f"Twin {suffix}")
+		make_supplier(f"SUP-{suffix}-3", f"Twin {suffix}")
+		self.assertIsNone(guess(seller_name=f"Twin {suffix}"))
+
+		# supplier ID equals seller name, unknown tax ID must not erase the match
+		by_id = make_supplier(f"ID Match {suffix}", f"ID Match {suffix}")
+		self.assertEqual(guess(seller_name=by_id, seller_tax_id=f"DE{suffix}"), by_id)
+
+		# tax ID wins over an unrelated supplier whose ID equals the seller ID
+		by_tax = make_supplier(f"SUP-{suffix}-4", f"Tax Match {suffix}", tax_id=f"DE-{suffix}")
+		self.assertEqual(guess(seller_id=by_id, seller_tax_id=f"DE-{suffix}"), by_tax)
+
+		# supplier found via the IBAN of its bank account
+		by_iban = make_supplier(f"SUP-{suffix}-5", f"IBAN Match {suffix}")
+		bank = frappe.get_doc(doctype="Bank", bank_name=f"Bank {suffix}").insert().name
+		bank_account = frappe.get_doc(
+			doctype="Bank Account",
+			account_name=f"IBAN Match {suffix}",
+			bank=bank,
+			party_type="Supplier",
+			party=by_iban,
+			iban="ES9121000418450200051332",
+		).insert()
+		self.assertEqual(guess(seller_name="Unknown", payee_iban="ES9121000418450200051332"), by_iban)
+		self.assertEqual(guess(seller_name="Unknown", payee_iban="ES91 2100 0418 4502 0005 1332"), by_iban)
+
+		# disabled bank accounts are ignored
+		bank_account.db_set("disabled", 1)
+		self.assertIsNone(guess(seller_name="Unknown", payee_iban="ES9121000418450200051332"))
+
 	def test_default_company_without_buyer_id(self):
 		frappe.defaults.set_user_default("company", "_Test Company")
 		self.addCleanup(frappe.defaults.clear_user_default, "company")

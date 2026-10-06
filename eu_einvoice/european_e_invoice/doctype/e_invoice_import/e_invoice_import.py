@@ -342,22 +342,37 @@ class EInvoiceImport(Document):
 		self.billing_period_end = period.end._value
 
 	def guess_supplier(self):
+		"""Find the Supplier, strongest identifier first.
+
+		A step only counts if it finds exactly one Supplier, otherwise we try the next one.
+		"""
 		if self.supplier:
 			return
 
-		if self.seller_id and frappe.db.exists("Supplier", self.seller_id):
-			self.supplier = self.seller_id
-			return
+		iban = (self.payee_iban or "").replace(" ", "")
+		iban_spaced = " ".join(iban[i : i + 4] for i in range(0, len(iban), 4))  # as printed on paper
 
-		if self.seller_name and frappe.db.exists("Supplier", self.seller_name):
-			self.supplier = self.seller_name
-			return
+		# (identifier from the invoice, doctype, filters, field with the Supplier)
+		lookups = [
+			(self.seller_tax_id, "Supplier", {"tax_id": self.seller_tax_id}, "name"),
+			(
+				iban,
+				"Bank Account",
+				{"party_type": "Supplier", "disabled": 0, "iban": ["in", [iban, iban_spaced]]},
+				"party",
+			),
+			(self.seller_id, "Supplier", {"name": self.seller_id}, "name"),
+			(self.seller_name, "Supplier", {"supplier_name": self.seller_name}, "name"),
+			(self.seller_name, "Supplier", {"name": self.seller_name}, "name"),
+		]
+		for identifier, doctype, filters, fieldname in lookups:
+			if not identifier:
+				continue  # not in the invoice, would match empty fields
 
-		if self.seller_tax_id and (
-			supplier := frappe.db.get_value("Supplier", {"tax_id": self.seller_tax_id}, "name")
-		):
-			self.supplier = supplier
-			return
+			suppliers = frappe.get_all(doctype, filters, pluck=fieldname, distinct=True, limit=2)
+			if len(suppliers) == 1:
+				self.supplier = suppliers[0]
+				return
 
 	def guess_company(self):
 		if self.company:
