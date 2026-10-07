@@ -191,3 +191,79 @@ class TestXmlAttachmentNaming(IntegrationTestCase):
 		doc = frappe._dict(name="SINV-00001", po_no="A/B", doctype="Sales Invoice")
 		base = get_xml_attachment_file_base_name(doc, pattern="{po_no}")
 		self.assertEqual(base, "A_B")
+
+
+class TestDrafthorseContainers(IntegrationTestCase):
+	"""drafthorse 2025.2.0 turned notes into single strings and payment means into a container."""
+
+	def _generator(self, profile: EInvoiceProfile, **invoice_fields):
+		invoice = frappe._dict(
+			name="ACC-SINV-TEST-1",
+			is_return=0,
+			amended_from=None,
+			posting_date="2026-10-07",
+			terms=None,
+			incoterm=None,
+			named_place=None,
+			company="Test & Partner GmbH",
+			payment_terms_template="Test Terms",
+			payment_schedule=[frappe._dict(mode_of_payment="Wire Transfer")],
+		)
+		invoice.update(invoice_fields)
+		generator = EInvoiceGenerator(profile, invoice, None, None)
+		generator.doc = Document()
+		return generator
+
+	def test_header_notes(self):
+		generator = self._generator(EInvoiceProfile.EN16931, terms="Zahlbar & sofort", incoterm="EXW")
+		with patch("frappe.db.get_single_value", return_value=None):
+			generator._set_header()
+
+		notes = generator.doc.header.notes.children
+		self.assertEqual([note.subject_code._text for note in notes], ["ABC", "AAR"])
+		self.assertEqual([note.content._text for note in notes], ["Zahlbar & sofort", "EXW"])
+
+	def test_payment_means(self):
+		for profile in (EInvoiceProfile.BASIC, EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
+			with self.subTest(profile=profile):
+				generator = self._generator(profile)
+				with (
+					patch(
+						"eu_einvoice.european_e_invoice.custom.sales_invoice.payment_means_codes.get",
+						return_value="58",
+					),
+					patch(
+						"eu_einvoice.european_e_invoice.custom.sales_invoice.get_bank_details",
+						return_value=("DE02120300000000202051", "BYLADEM1001"),
+					),
+				):
+					generator._add_payment_means()
+
+				instructions = generator.doc.trade.settlement.payment_means.children
+				self.assertEqual(len(instructions), 1)
+				self.assertEqual(instructions[0].type_code._text, "58")
+				self.assertEqual(instructions[0].payee_account.iban._text, "DE02120300000000202051")
+
+				if profile >= EInvoiceProfile.EN16931:
+					self.assertEqual(instructions[0].payee_account.account_name._text, "Test & Partner GmbH")
+					self.assertEqual(instructions[0].payee_institution.bic._text, "BYLADEM1001")
+
+	def test_payment_means_without_bank_account(self):
+		"""BT-81 (payment means type code) is still required when there is no IBAN."""
+		generator = self._generator(EInvoiceProfile.XRECHNUNG)
+		with (
+			patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice.payment_means_codes.get",
+				return_value="ZZZ",
+			),
+			patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice.get_bank_details",
+				return_value=(None, None),
+			),
+		):
+			generator._add_payment_means()
+
+		instructions = generator.doc.trade.settlement.payment_means.children
+		self.assertEqual(len(instructions), 1)
+		self.assertEqual(instructions[0].type_code._text, "ZZZ")
+		self.assertFalse(instructions[0].payee_account.iban._text)

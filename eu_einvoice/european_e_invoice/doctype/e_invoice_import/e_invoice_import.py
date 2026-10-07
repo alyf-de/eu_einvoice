@@ -21,9 +21,10 @@ from eu_einvoice.utils import EInvoiceProfile, get_profile
 
 if TYPE_CHECKING:
 	from drafthorse.models.accounting import ApplicableTradeTax, MonetarySummation
+	from drafthorse.models.container import Container
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
 	from drafthorse.models.payment import PaymentTerms
-	from drafthorse.models.trade import BillingSpecifiedPeriod, PaymentMeans
+	from drafthorse.models.trade import BillingSpecifiedPeriod
 	from drafthorse.models.tradelines import LineItem
 	from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
 
@@ -330,12 +331,25 @@ class EInvoiceImport(Document):
 		self.total_prepaid = flt_or_none(summation.prepaid_total._value)
 		self.due_payable = flt_or_none(summation.due_amount._value)
 
-	def parse_bank_details(self, payment_means: PaymentMeans):
-		self.payee_iban = payment_means.payee_account.iban._text or None
+	def parse_bank_details(self, payment_means: Container):
+		"""Read the payee bank account from the payment instructions (BG-16).
+
+		Since drafthorse 2025.2.0 this is a container, as an invoice may carry several
+		payment instructions. Use the first one that names an IBAN.
+		"""
+		instructions = list(payment_means.children)
+		if not instructions:
+			return
+
+		instruction = next(
+			(pm for pm in instructions if pm.payee_account.iban._text),
+			instructions[0],
+		)
+		self.payee_iban = instruction.payee_account.iban._text or None
 
 		if EInvoiceProfile(self.profile) >= EInvoiceProfile.EN16931:
-			self.payee_account_name = payment_means.payee_account.account_name._text or None
-			self.payee_bic = payment_means.payee_institution.bic._text or None
+			self.payee_account_name = instruction.payee_account.account_name._text or None
+			self.payee_bic = instruction.payee_institution.bic._text or None
 
 	def parse_billing_period(self, period: BillingSpecifiedPeriod):
 		self.billing_period_start = period.start._value
