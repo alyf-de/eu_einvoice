@@ -337,6 +337,9 @@ class EInvoiceImport(Document):
 		Since drafthorse 2025.2.0 this is a container, as an invoice may carry several
 		payment instructions. Use the first one that names an IBAN.
 		"""
+		# reset first, so that replacing the file never keeps bank details of the previous invoice
+		self.payee_iban = self.payee_account_name = self.payee_bic = None
+
 		instructions = list(payment_means.children)
 		if not instructions:
 			return

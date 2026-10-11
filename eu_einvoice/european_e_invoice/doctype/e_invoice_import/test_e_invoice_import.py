@@ -69,6 +69,20 @@ class TestEInvoiceImport(IntegrationTestCase):
 
 		self.assertIsNone(doc.payee_iban)
 
+	def test_bank_details_cleared_when_file_is_replaced(self):
+		"""A replaced file without payment instructions must not keep the previous bank details."""
+		doc = frappe.new_doc("E Invoice Import")
+		doc.profile = "EN 16931"
+		doc.payee_iban = "DE02120300000000202051"
+		doc.payee_account_name = "Old Supplier GmbH"
+		doc.payee_bic = "BYLADEM1001"
+
+		doc.parse_bank_details(Document().trade.settlement.payment_means)
+
+		self.assertIsNone(doc.payee_iban)
+		self.assertIsNone(doc.payee_account_name)
+		self.assertIsNone(doc.payee_bic)
+
 
 def make_item(item_code: str, supplier_items=None) -> str:
 	item = frappe.get_doc(

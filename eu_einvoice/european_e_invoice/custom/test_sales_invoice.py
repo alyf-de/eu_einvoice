@@ -1,8 +1,13 @@
+import io
+from datetime import date
 from unittest.mock import MagicMock, patch
 
 import frappe
 from drafthorse.models.document import Document
+from drafthorse.pdf import attach_xml
 from frappe.tests import IntegrationTestCase
+from lxml import etree
+from pypdf import PdfReader, PdfWriter
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	EInvoiceGenerator,
@@ -267,3 +272,29 @@ class TestDrafthorseContainers(IntegrationTestCase):
 		self.assertEqual(len(instructions), 1)
 		self.assertEqual(instructions[0].type_code._text, "ZZZ")
 		self.assertFalse(instructions[0].payee_account.iban._text)
+
+
+class TestPdfXmpMetadata(IntegrationTestCase):
+	"""drafthorse < 2025.2 wrote unescaped user input into the XMP metadata (invalid PDF/A-3)."""
+
+	def _pdf_metadata(self, seller_name: str) -> bytes:
+		doc = Document()
+		doc.context.guideline_parameter.id = "urn:cen.eu:en16931:2017"
+		doc.header.id = "ACC-SINV-TEST-1"
+		doc.header.type_code = "380"
+		doc.header.issue_date_time = date(2026, 10, 7)
+		doc.trade.agreement.seller.name = seller_name
+		doc.trade.agreement.buyer.name = "Buyer"
+		doc.trade.settlement.currency_code = "EUR"
+
+		writer = PdfWriter()
+		writer.add_blank_page(width=595, height=842)
+		pdf = io.BytesIO()
+		writer.write(pdf)
+
+		zugferd_pdf = attach_xml(pdf.getvalue(), doc.serialize(schema=None), "EN 16931")
+		return PdfReader(io.BytesIO(zugferd_pdf)).trailer["/Root"]["/Metadata"].get_object().get_data()
+
+	def test_seller_name_with_ampersand_survives_in_xmp(self):
+		xmp = etree.fromstring(self._pdf_metadata("Test & Partner GmbH"))  # raises on invalid XML
+		self.assertIn("Test & Partner GmbH", list(xmp.itertext()))
