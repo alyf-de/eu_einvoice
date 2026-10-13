@@ -332,23 +332,15 @@ class EInvoiceImport(Document):
 		self.due_payable = flt_or_none(summation.due_amount._value)
 
 	def parse_bank_details(self, payment_means: Container):
-		"""Read the payee bank account from the payment instructions (BG-16).
-
-		Since drafthorse 2025.2.0 this is a container, as an invoice may carry several
-		payment instructions. Use the first one that names an IBAN.
-		"""
+		"""Read the payee bank account from the first payment instruction (BG-16) with an IBAN."""
 		# reset first, so that replacing the file never keeps bank details of the previous invoice
 		self.payee_iban = self.payee_account_name = self.payee_bic = None
 
-		instructions = list(payment_means.children)
-		if not instructions:
+		instruction = next((pm for pm in payment_means.children if pm.payee_account.iban._text), None)
+		if not instruction:
 			return
 
-		instruction = next(
-			(pm for pm in instructions if pm.payee_account.iban._text),
-			instructions[0],
-		)
-		self.payee_iban = instruction.payee_account.iban._text or None
+		self.payee_iban = instruction.payee_account.iban._text
 
 		if EInvoiceProfile(self.profile) >= EInvoiceProfile.EN16931:
 			self.payee_account_name = instruction.payee_account.account_name._text or None

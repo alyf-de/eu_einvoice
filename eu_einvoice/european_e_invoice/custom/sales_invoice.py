@@ -731,8 +731,7 @@ class EInvoiceGenerator:
 			self.doc.trade.settlement.terms.add(payment_terms)
 
 	def _add_payment_means(self):
-		# Since drafthorse 2025.2.0, payment_means is a container (BG-16 may repeat).
-		# We still emit a single payment instruction, as before.
+		# BG-16 may repeat, but we emit a single payment instruction
 		payment_means = PaymentMeans()
 		payment_means.type_code = payment_means_codes.get(
 			[("Payment Terms Template", self.invoice.payment_terms_template)]

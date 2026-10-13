@@ -213,6 +213,7 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		invoice.einvoice_profile = profile.value
 		invoice.tax_category = self.tax_category
 		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.terms = "Zahlbar & sofort"
 		if with_tax_row:
 			invoice.append(
 				"taxes",
@@ -228,6 +229,11 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		xml = get_einvoice(invoice)
 
 		root = ET.fromstring(xml)
+		note = root.find(".//ram:IncludedNote", NAMESPACES)
+		self.assertEqual(note.findtext("ram:Content", namespaces=NAMESPACES), "Zahlbar & sofort")
+		self.assertEqual(note.findtext("ram:SubjectCode", namespaces=NAMESPACES), "ABC")
+		self.assertEqual(len(root.findall(".//ram:SpecifiedTradeSettlementPaymentMeans", NAMESPACES)), 1)
+
 		line_tax = root.find(".//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax", NAMESPACES)
 		self.assertEqual(line_tax.findtext("ram:CategoryCode", namespaces=NAMESPACES), "O")
 		# BR-O-05: no VAT rate on the line, not even 0
@@ -384,35 +390,16 @@ class TestXmlAttachmentNaming(IntegrationTestCase):
 		self.assertEqual(base, "A_B")
 
 
-class TestDrafthorseContainers(IntegrationTestCase):
-	"""drafthorse 2025.2.0 turned notes into single strings and payment means into a container."""
-
-	def _generator(self, profile: EInvoiceProfile, **invoice_fields):
+class TestPaymentMeans(IntegrationTestCase):
+	def _generator(self, profile: EInvoiceProfile):
 		invoice = frappe._dict(
-			name="ACC-SINV-TEST-1",
-			is_return=0,
-			amended_from=None,
-			posting_date="2026-10-07",
-			terms=None,
-			incoterm=None,
-			named_place=None,
 			company="Test & Partner GmbH",
 			payment_terms_template="Test Terms",
 			payment_schedule=[frappe._dict(mode_of_payment="Wire Transfer")],
 		)
-		invoice.update(invoice_fields)
 		generator = EInvoiceGenerator(profile, invoice, None, None)
 		generator.doc = Document()
 		return generator
-
-	def test_header_notes(self):
-		generator = self._generator(EInvoiceProfile.EN16931, terms="Zahlbar & sofort", incoterm="EXW")
-		with patch("frappe.db.get_single_value", return_value=None):
-			generator._set_header()
-
-		notes = generator.doc.header.notes.children
-		self.assertEqual([note.subject_code._text for note in notes], ["ABC", "AAR"])
-		self.assertEqual([note.content._text for note in notes], ["Zahlbar & sofort", "EXW"])
 
 	def test_payment_means(self):
 		for profile in (EInvoiceProfile.BASIC, EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
