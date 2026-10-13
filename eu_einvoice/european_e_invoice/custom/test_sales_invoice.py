@@ -8,13 +8,9 @@ import frappe
 from drafthorse.models.document import Document
 from drafthorse.pdf import attach_xml
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
-<<<<<<< HEAD
 from frappe.tests.utils import FrappeTestCase
-=======
-from frappe.tests import IntegrationTestCase
 from lxml import etree
 from pypdf import PdfReader, PdfWriter
->>>>>>> ec2629a (fix: support drafthorse 2025.2 (escaped XMP metadata) (#314))
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	EInvoiceGenerator,
@@ -397,7 +393,7 @@ class TestXmlAttachmentNaming(FrappeTestCase):
 		self.assertEqual(base, "A_B")
 
 
-class TestPaymentMeans(IntegrationTestCase):
+class TestPaymentMeans(FrappeTestCase):
 	def _generator(self, profile: EInvoiceProfile):
 		invoice = frappe._dict(
 			company="Test & Partner GmbH",
@@ -454,7 +450,7 @@ class TestPaymentMeans(IntegrationTestCase):
 		self.assertFalse(instructions[0].payee_account.iban._text)
 
 
-class TestPdfXmpMetadata(IntegrationTestCase):
+class TestPdfXmpMetadata(FrappeTestCase):
 	"""drafthorse < 2025.2 wrote unescaped user input into the XMP metadata (invalid PDF/A-3)."""
 
 	def _pdf_metadata(self, seller_name: str) -> bytes:

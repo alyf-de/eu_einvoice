@@ -29,20 +29,6 @@ class TestEInvoiceImport(FrappeTestCase):
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
 
-<<<<<<< HEAD
-=======
-	def test_default_company_without_buyer_id(self):
-		frappe.defaults.set_user_default("company", "_Test Company")
-		self.addCleanup(frappe.defaults.clear_user_default, "company")
-
-		doc = frappe.new_doc("E Invoice Import")
-		doc.buyer_name = "Unknown Buyer GmbH"
-
-		doc.guess_company()
-		doc.guess_company_and_supplier()
-
-		self.assertEqual(doc.company, "_Test Company")
-
 	def test_bank_details_from_payment_means_container(self):
 		"""drafthorse >= 2025.2 exposes payment instructions (BG-16) as a container."""
 		einvoice = Document()
@@ -85,7 +71,6 @@ class TestEInvoiceImport(FrappeTestCase):
 		self.assertIsNone(doc.payee_account_name)
 		self.assertIsNone(doc.payee_bic)
 
->>>>>>> ec2629a (fix: support drafthorse 2025.2 (escaped XMP metadata) (#314))
 
 def make_item(item_code: str, supplier_items=None) -> str:
 	item = frappe.get_doc(
