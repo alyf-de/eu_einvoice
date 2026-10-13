@@ -4,6 +4,8 @@
 from decimal import Decimal
 
 import frappe
+from drafthorse.models.document import Document
+from drafthorse.models.payment import PaymentMeans
 from drafthorse.models.tradelines import LineItem
 from frappe.tests.utils import FrappeTestCase
 
@@ -27,6 +29,63 @@ class TestEInvoiceImport(FrappeTestCase):
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
 
+<<<<<<< HEAD
+=======
+	def test_default_company_without_buyer_id(self):
+		frappe.defaults.set_user_default("company", "_Test Company")
+		self.addCleanup(frappe.defaults.clear_user_default, "company")
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_name = "Unknown Buyer GmbH"
+
+		doc.guess_company()
+		doc.guess_company_and_supplier()
+
+		self.assertEqual(doc.company, "_Test Company")
+
+	def test_bank_details_from_payment_means_container(self):
+		"""drafthorse >= 2025.2 exposes payment instructions (BG-16) as a container."""
+		einvoice = Document()
+		without_iban = PaymentMeans()
+		without_iban.type_code = "ZZZ"
+		einvoice.trade.settlement.payment_means.add(without_iban)
+		with_iban = PaymentMeans()
+		with_iban.type_code = "58"
+		with_iban.payee_account.iban = "DE02120300000000202051"
+		with_iban.payee_account.account_name = "Test GmbH"
+		with_iban.payee_institution.bic = "BYLADEM1001"
+		einvoice.trade.settlement.payment_means.add(with_iban)
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.profile = "EN 16931"
+		doc.parse_bank_details(einvoice.trade.settlement.payment_means)
+
+		self.assertEqual(doc.payee_iban, "DE02120300000000202051")
+		self.assertEqual(doc.payee_account_name, "Test GmbH")
+		self.assertEqual(doc.payee_bic, "BYLADEM1001")
+
+	def test_bank_details_without_payment_means(self):
+		doc = frappe.new_doc("E Invoice Import")
+		doc.profile = "EN 16931"
+		doc.parse_bank_details(Document().trade.settlement.payment_means)
+
+		self.assertIsNone(doc.payee_iban)
+
+	def test_bank_details_cleared_when_file_is_replaced(self):
+		"""A replaced file without payment instructions must not keep the previous bank details."""
+		doc = frappe.new_doc("E Invoice Import")
+		doc.profile = "EN 16931"
+		doc.payee_iban = "DE02120300000000202051"
+		doc.payee_account_name = "Old Supplier GmbH"
+		doc.payee_bic = "BYLADEM1001"
+
+		doc.parse_bank_details(Document().trade.settlement.payment_means)
+
+		self.assertIsNone(doc.payee_iban)
+		self.assertIsNone(doc.payee_account_name)
+		self.assertIsNone(doc.payee_bic)
+
+>>>>>>> ec2629a (fix: support drafthorse 2025.2 (escaped XMP metadata) (#314))
 
 def make_item(item_code: str, supplier_items=None) -> str:
 	item = frappe.get_doc(
