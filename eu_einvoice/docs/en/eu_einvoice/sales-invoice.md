@@ -159,3 +159,16 @@ BASIC | EN 16931 | EXTENDED
 You can upload an XML invoice file to https://www.itb.ec.europa.eu/invoice/upload and validate it as "CII Invoice CML". Use the _E Invoice Profile_ "EN 16931" for generating your invoice.
 
 E-invoices according to the "XRECHNUNG" profile can be validated at https://erechnungsvalidator.service-bw.de.
+
+### EXTENDED invoices and EN 16931 validation errors
+
+The "EXTENDED" profile adds data that is not part of the EN 16931 core. For example, the dates of the purchase order, the **Sales Order** and the **Delivery Notes**. For this reason, the invoice declares itself as `urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended`. In EN 16931, "conformant" means "core plus extension". "compliant" means "restricted subset of the core" (for example XRechnung).
+
+Some receiving systems validate EXTENDED invoices against the EN 16931 core rules and reject them. Typical messages are:
+
+- `[CII-DT-027] - FormattedIssueDateTime should not be present`
+- `[CII-SR-175] - DeliveryNoteReferencedDocument should not be present`
+
+These messages do not show an error in the invoice. They only show that the invoice contains extension data. The correct check for this profile is the Factur-X EXTENDED schematron, and the app already validates against it.
+
+If a customer cannot accept EXTENDED invoices, set the _E Invoice Profile_ of the **Customer** to "EN 16931". New **Sales Invoices** for this customer then use this profile and leave out the extension data. For existing draft **Sales Invoices**, change the _E Invoice Profile_ on the invoice. You cannot change the _E Invoice Profile_ of a submitted **Sales Invoice**. To send it again with a different profile, create a credit note for the submitted invoice. Then create a new **Sales Invoice** with the correct _E Invoice Profile_.
