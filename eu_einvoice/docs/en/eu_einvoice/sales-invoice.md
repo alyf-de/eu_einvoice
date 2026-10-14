@@ -171,4 +171,4 @@ Some receiving systems validate EXTENDED invoices against the EN 16931 core rule
 
 These messages do not show an error in the invoice. They only show that the invoice contains extension data. The correct check for this profile is the Factur-X EXTENDED schematron, and the app already validates against it.
 
-If a customer cannot accept EXTENDED invoices, set the _E Invoice Profile_ of the **Customer** to "EN 16931". New **Sales Invoices** for this customer then use this profile and leave out the extension data. For existing **Sales Invoices**, change the _E Invoice Profile_ on the invoice.
+If a customer cannot accept EXTENDED invoices, set the _E Invoice Profile_ of the **Customer** to "EN 16931". New **Sales Invoices** for this customer then use this profile and leave out the extension data. For existing draft **Sales Invoices**, change the _E Invoice Profile_ on the invoice. You cannot change the _E Invoice Profile_ of a submitted **Sales Invoice**. To send it again with a different profile, cancel and amend it, change the _E Invoice Profile_ on the amended draft, and submit it.
