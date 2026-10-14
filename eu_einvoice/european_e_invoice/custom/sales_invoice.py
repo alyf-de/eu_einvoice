@@ -10,7 +10,7 @@ import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
 from drafthorse.models.document import Document, IncludedNote
 from drafthorse.models.party import TaxRegistration, URIUniversalCommunication
-from drafthorse.models.payment import PaymentTerms
+from drafthorse.models.payment import PaymentMeans, PaymentTerms
 from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
@@ -281,12 +281,12 @@ class EInvoiceGenerator:
 
 		if self.invoice.terms:
 			note = IncludedNote(subject_code="ABC")  # Conditions of sale or purchase
-			note.content.add(to_markdown(self.invoice.terms).strip())
+			note.content = to_markdown(self.invoice.terms).strip()
 			self.doc.header.notes.add(note)
 
 		if self.invoice.incoterm:
 			note = IncludedNote(subject_code="AAR")  # Terms of delivery
-			note.content.add(f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip())
+			note.content = f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip()
 			self.doc.header.notes.add(note)
 
 	def _set_seller(self):
@@ -736,7 +736,9 @@ class EInvoiceGenerator:
 			self.doc.trade.settlement.terms.add(payment_terms)
 
 	def _add_payment_means(self):
-		self.doc.trade.settlement.payment_means.type_code = payment_means_codes.get(
+		# BG-16 may repeat, but we emit a single payment instruction
+		payment_means = PaymentMeans()
+		payment_means.type_code = payment_means_codes.get(
 			[("Payment Terms Template", self.invoice.payment_terms_template)]
 			+ [("Mode of Payment", term.mode_of_payment) for term in self.invoice.payment_schedule]
 		)
@@ -747,13 +749,15 @@ class EInvoiceGenerator:
 			if not iban:
 				continue
 
-			self.doc.trade.settlement.payment_means.payee_account.iban = iban
+			payment_means.payee_account.iban = iban
 
 			if self.profile >= EInvoiceProfile.EN16931:
-				self.doc.trade.settlement.payment_means.payee_account.account_name = self.invoice.company
-				self.doc.trade.settlement.payment_means.payee_institution.bic = bic
+				payment_means.payee_account.account_name = self.invoice.company
+				payment_means.payee_institution.bic = bic
 
 			break
+
+		self.doc.trade.settlement.payment_means.add(payment_means)
 
 	def _set_totals(self):
 		# [BR-DEC-09]-The allowed maximum number of decimals for the Sum of Invoice line net amount (BT-106) is 2.

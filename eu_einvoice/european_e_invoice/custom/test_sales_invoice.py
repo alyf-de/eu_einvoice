@@ -1,11 +1,16 @@
+import io
 import re
+from datetime import date
 from unittest.mock import MagicMock, patch
 from xml.etree import ElementTree as ET
 
 import frappe
 from drafthorse.models.document import Document
+from drafthorse.pdf import attach_xml
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from frappe.tests import IntegrationTestCase
+from lxml import etree
+from pypdf import PdfReader, PdfWriter
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	EInvoiceGenerator,
@@ -208,6 +213,7 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		invoice.einvoice_profile = profile.value
 		invoice.tax_category = self.tax_category
 		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.terms = "Zahlbar & sofort"
 		if with_tax_row:
 			invoice.append(
 				"taxes",
@@ -223,6 +229,11 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		xml = get_einvoice(invoice)
 
 		root = ET.fromstring(xml)
+		note = root.find(".//ram:IncludedNote", NAMESPACES)
+		self.assertEqual(note.findtext("ram:Content", namespaces=NAMESPACES), "Zahlbar & sofort")
+		self.assertEqual(note.findtext("ram:SubjectCode", namespaces=NAMESPACES), "ABC")
+		self.assertEqual(len(root.findall(".//ram:SpecifiedTradeSettlementPaymentMeans", NAMESPACES)), 1)
+
 		line_tax = root.find(".//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax", NAMESPACES)
 		self.assertEqual(line_tax.findtext("ram:CategoryCode", namespaces=NAMESPACES), "O")
 		# BR-O-05: no VAT rate on the line, not even 0
@@ -377,3 +388,86 @@ class TestXmlAttachmentNaming(IntegrationTestCase):
 		doc = frappe._dict(name="SINV-00001", po_no="A/B", doctype="Sales Invoice")
 		base = get_xml_attachment_file_base_name(doc, pattern="{po_no}")
 		self.assertEqual(base, "A_B")
+
+
+class TestPaymentMeans(IntegrationTestCase):
+	def _generator(self, profile: EInvoiceProfile):
+		invoice = frappe._dict(
+			company="Test & Partner GmbH",
+			payment_terms_template="Test Terms",
+			payment_schedule=[frappe._dict(mode_of_payment="Wire Transfer")],
+		)
+		generator = EInvoiceGenerator(profile, invoice, None, None)
+		generator.doc = Document()
+		return generator
+
+	def test_payment_means(self):
+		for profile in (EInvoiceProfile.BASIC, EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
+			with self.subTest(profile=profile):
+				generator = self._generator(profile)
+				with (
+					patch(
+						"eu_einvoice.european_e_invoice.custom.sales_invoice.payment_means_codes.get",
+						return_value="58",
+					),
+					patch(
+						"eu_einvoice.european_e_invoice.custom.sales_invoice.get_bank_details",
+						return_value=("DE02120300000000202051", "BYLADEM1001"),
+					),
+				):
+					generator._add_payment_means()
+
+				instructions = generator.doc.trade.settlement.payment_means.children
+				self.assertEqual(len(instructions), 1)
+				self.assertEqual(instructions[0].type_code._text, "58")
+				self.assertEqual(instructions[0].payee_account.iban._text, "DE02120300000000202051")
+
+				if profile >= EInvoiceProfile.EN16931:
+					self.assertEqual(instructions[0].payee_account.account_name._text, "Test & Partner GmbH")
+					self.assertEqual(instructions[0].payee_institution.bic._text, "BYLADEM1001")
+
+	def test_payment_means_without_bank_account(self):
+		"""BT-81 (payment means type code) is still required when there is no IBAN."""
+		generator = self._generator(EInvoiceProfile.XRECHNUNG)
+		with (
+			patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice.payment_means_codes.get",
+				return_value="ZZZ",
+			),
+			patch(
+				"eu_einvoice.european_e_invoice.custom.sales_invoice.get_bank_details",
+				return_value=(None, None),
+			),
+		):
+			generator._add_payment_means()
+
+		instructions = generator.doc.trade.settlement.payment_means.children
+		self.assertEqual(len(instructions), 1)
+		self.assertEqual(instructions[0].type_code._text, "ZZZ")
+		self.assertFalse(instructions[0].payee_account.iban._text)
+
+
+class TestPdfXmpMetadata(IntegrationTestCase):
+	"""drafthorse < 2025.2 wrote unescaped user input into the XMP metadata (invalid PDF/A-3)."""
+
+	def _pdf_metadata(self, seller_name: str) -> bytes:
+		doc = Document()
+		doc.context.guideline_parameter.id = "urn:cen.eu:en16931:2017"
+		doc.header.id = "ACC-SINV-TEST-1"
+		doc.header.type_code = "380"
+		doc.header.issue_date_time = date(2026, 10, 7)
+		doc.trade.agreement.seller.name = seller_name
+		doc.trade.agreement.buyer.name = "Buyer"
+		doc.trade.settlement.currency_code = "EUR"
+
+		writer = PdfWriter()
+		writer.add_blank_page(width=595, height=842)
+		pdf = io.BytesIO()
+		writer.write(pdf)
+
+		zugferd_pdf = attach_xml(pdf.getvalue(), doc.serialize(schema=None), "EN 16931")
+		return PdfReader(io.BytesIO(zugferd_pdf)).trailer["/Root"]["/Metadata"].get_object().get_data()
+
+	def test_seller_name_with_ampersand_survives_in_xmp(self):
+		xmp = etree.fromstring(self._pdf_metadata("Test & Partner GmbH"))  # raises on invalid XML
+		self.assertIn("Test & Partner GmbH", list(xmp.itertext()))
