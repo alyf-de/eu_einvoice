@@ -1094,7 +1094,7 @@ def download_pdf(
 	name: str,
 	format: str | None = None,
 	doc: FrappeDocument | str | dict[str, Any] | None = None,
-	no_letterhead: str | int | None = None,
+	no_letterhead: bool | int = 0,
 	language: str | None = None,
 	letterhead: str | None = None,
 	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,
@@ -1105,18 +1105,68 @@ def download_pdf(
 	# Sets frappe.local.response.filecontent to the PDF data
 	frappe_download_pdf(doctype, name, format, doc, no_letterhead, language, letterhead, pdf_generator)
 
-	# If the doctype is a Sales Invoice, try to attach the XML to the PDF
-	if doctype == "Sales Invoice":
-		zugferd_pdf = None
-		try:
-			# If creating and attaching XML fails, we still want to return the original PDF.
-			zugferd_pdf = attach_xml_to_pdf(name, frappe.local.response.filecontent)
-		except Exception:
-			frappe.log_error(f"Error attaching XML to PDF for Sales Invoice {name}")
+	if doctype == "Sales Invoice" and not has_after_print_hook():
+		# Frappe versions with the `after_print` event embed the XML via `postprocess_pdf`.
+		frappe.local.response.filecontent = _attach_xml_or_keep_pdf(name, frappe.local.response.filecontent)
 
-		if zugferd_pdf:
-			# If attaching XML was successful, replace the original PDF with the ZUGFeRD PDF
-			frappe.local.response.filecontent = zugferd_pdf
+
+def has_after_print_hook() -> bool:
+	"""Whether Frappe runs the `after_print` doc event on every generated PDF (frappe/frappe#42740)."""
+	from frappe.utils import print_utils
+
+	return hasattr(print_utils, "postprocess_pdf")
+
+
+def postprocess_pdf(doc: SalesInvoice, event: str, pdf: bytes) -> bytes:
+	"""`after_print` doc event: embed the e-invoice XML into every Sales Invoice PDF."""
+	if not pdf:
+		return pdf
+
+	return _attach_xml_or_keep_pdf(doc.name, pdf)
+
+
+def patch_attach_print():
+	"""Embed the e-invoice XML into PDFs created by `frappe.attach_print`.
+
+	Email attachments, auto repeat and workflow actions render the PDF via `attach_print`,
+	which the `download_pdf` override does not cover (#274). Frappe versions with the
+	`after_print` event handle this via `postprocess_pdf`; older versions get a wrapper.
+	Runs as `before_request` and `before_job` hook, so it applies once per process.
+	"""
+	if has_after_print_hook():
+		return
+
+	from frappe.utils import print_utils
+
+	if getattr(print_utils.attach_print, "_eu_einvoice", False):
+		return
+
+	original_attach_print = print_utils.attach_print
+
+	def attach_print(doctype, name, *args, **kwargs):
+		attachment = original_attach_print(doctype, name, *args, **kwargs)
+		if (
+			doctype == "Sales Invoice"
+			and isinstance(attachment, dict)
+			and cstr(attachment.get("fname")).lower().endswith(".pdf")
+		):
+			attachment["fcontent"] = _attach_xml_or_keep_pdf(name, attachment["fcontent"])
+
+		return attachment
+
+	attach_print._eu_einvoice = True
+	attach_print.__wrapped__ = original_attach_print
+	print_utils.attach_print = attach_print
+	frappe.attach_print = attach_print
+
+
+def _attach_xml_or_keep_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
+	"""Return the ZUGFeRD PDF, or the original PDF if creating or attaching the XML fails."""
+	try:
+		return attach_xml_to_pdf(invoice_id, pdf_data) or pdf_data
+	except Exception:
+		frappe.log_error(f"Error attaching XML to PDF for Sales Invoice {invoice_id}")
+		return pdf_data
 
 
 def _get_icc_profile_path() -> str:

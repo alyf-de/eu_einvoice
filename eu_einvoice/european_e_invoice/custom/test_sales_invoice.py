@@ -471,3 +471,98 @@ class TestPdfXmpMetadata(IntegrationTestCase):
 	def test_seller_name_with_ampersand_survives_in_xmp(self):
 		xmp = etree.fromstring(self._pdf_metadata("Test & Partner GmbH"))  # raises on invalid XML
 		self.assertIn("Test & Partner GmbH", list(xmp.itertext()))
+
+
+class TestPrintPdf(IntegrationTestCase):
+	"""ZUGFeRD XML in downloaded and emailed PDFs (#274, #311)."""
+
+	module = "eu_einvoice.european_e_invoice.custom.sales_invoice"
+
+	def test_download_pdf_without_no_letterhead(self):
+		"""Callers may omit `no_letterhead`; Frappe expects bool | int, not None (#311)."""
+		from eu_einvoice.european_e_invoice.custom.sales_invoice import download_pdf
+
+		with (
+			patch("frappe.utils.print_format.download_pdf") as frappe_download_pdf,
+			patch(f"{self.module}.has_after_print_hook", return_value=False),
+			patch(f"{self.module}.attach_xml_to_pdf", return_value=b"%PDF-zugferd"),
+		):
+			frappe.local.response.filecontent = b"%PDF-plain"
+			download_pdf("Sales Invoice", "ACC-SINV-TEST-1", "Standard")
+
+		self.assertEqual(frappe_download_pdf.call_args.args[4], 0)
+		self.assertEqual(frappe.local.response.filecontent, b"%PDF-zugferd")
+
+	def test_download_pdf_keeps_pdf_if_xml_fails(self):
+		from eu_einvoice.european_e_invoice.custom.sales_invoice import download_pdf
+
+		with (
+			patch("frappe.utils.print_format.download_pdf"),
+			patch(f"{self.module}.has_after_print_hook", return_value=False),
+			patch(f"{self.module}.attach_xml_to_pdf", side_effect=Exception("broken")),
+			patch("frappe.log_error"),
+		):
+			frappe.local.response.filecontent = b"%PDF-plain"
+			download_pdf("Sales Invoice", "ACC-SINV-TEST-1", "Standard")
+
+		self.assertEqual(frappe.local.response.filecontent, b"%PDF-plain")
+
+	def test_attach_print_embeds_xml(self):
+		"""Email attachments are rendered via frappe.attach_print (#274)."""
+		from frappe.utils import print_utils
+
+		from eu_einvoice.european_e_invoice.custom.sales_invoice import patch_attach_print
+
+		def fake_attach_print(doctype, name, *args, **kwargs):
+			return {"fname": f"{name}.pdf", "fcontent": b"%PDF-plain"}
+
+		with (
+			patch.object(print_utils, "attach_print", fake_attach_print),
+			patch.object(frappe, "attach_print", fake_attach_print),
+			patch(f"{self.module}.has_after_print_hook", return_value=False),
+			patch(f"{self.module}.attach_xml_to_pdf", return_value=b"%PDF-zugferd") as attach_xml,
+		):
+			patch_attach_print()
+			patch_attach_print()  # idempotent
+
+			self.assertTrue(frappe.attach_print._eu_einvoice)
+			self.assertIs(frappe.attach_print.__wrapped__, fake_attach_print)
+			invoice = frappe.attach_print("Sales Invoice", "ACC-SINV-TEST-1", print_format="Standard")
+			other = frappe.attach_print("Quotation", "SAL-QTN-TEST-1", print_format="Standard")
+
+		self.assertEqual(invoice["fcontent"], b"%PDF-zugferd")
+		self.assertEqual(other["fcontent"], b"%PDF-plain")
+		attach_xml.assert_called_once_with("ACC-SINV-TEST-1", b"%PDF-plain")
+
+	def test_attach_print_not_patched_with_after_print_hook(self):
+		"""With frappe/frappe#42740 the `after_print` event handles all PDFs, so nothing is wrapped."""
+		from frappe.utils import print_utils
+
+		from eu_einvoice.european_e_invoice.custom.sales_invoice import download_pdf, patch_attach_print
+
+		def fake_attach_print(doctype, name, *args, **kwargs):
+			return {"fname": f"{name}.pdf", "fcontent": b"%PDF-plain"}
+
+		with (
+			patch.object(print_utils, "attach_print", fake_attach_print),
+			patch.object(frappe, "attach_print", fake_attach_print),
+			patch(f"{self.module}.has_after_print_hook", return_value=True),
+			patch("frappe.utils.print_format.download_pdf"),
+			patch(f"{self.module}.attach_xml_to_pdf") as attach_xml,
+		):
+			patch_attach_print()
+			self.assertIs(frappe.attach_print, fake_attach_print)
+
+			frappe.local.response.filecontent = b"%PDF-from-after-print"
+			download_pdf("Sales Invoice", "ACC-SINV-TEST-1", "Standard")
+
+		attach_xml.assert_not_called()
+		self.assertEqual(frappe.local.response.filecontent, b"%PDF-from-after-print")
+
+	def test_postprocess_pdf(self):
+		from eu_einvoice.european_e_invoice.custom.sales_invoice import postprocess_pdf
+
+		doc = frappe._dict(name="ACC-SINV-TEST-1")
+		with patch(f"{self.module}.attach_xml_to_pdf", return_value=b"%PDF-zugferd"):
+			self.assertEqual(postprocess_pdf(doc, "after_print", b"%PDF-plain"), b"%PDF-zugferd")
+			self.assertEqual(postprocess_pdf(doc, "after_print", b""), b"")

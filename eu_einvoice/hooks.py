@@ -148,6 +148,7 @@ doc_events = {
 	"Sales Invoice": {
 		"validate": "eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc",
 		"on_submit": "eu_einvoice.european_e_invoice.custom.sales_invoice.attach_xml_on_submit",
+		"after_print": "eu_einvoice.european_e_invoice.custom.sales_invoice.postprocess_pdf",
 	}
 }
 
@@ -201,12 +202,12 @@ override_whitelisted_methods = {
 
 # Request Events
 # ----------------
-# before_request = ["eu_einvoice.utils.before_request"]
+before_request = ["eu_einvoice.european_e_invoice.custom.sales_invoice.patch_attach_print"]
 # after_request = ["eu_einvoice.utils.after_request"]
 
 # Job Events
 # ----------
-# before_job = ["eu_einvoice.utils.before_job"]
+before_job = ["eu_einvoice.european_e_invoice.custom.sales_invoice.patch_attach_print"]
 # after_job = ["eu_einvoice.utils.after_job"]
 
 # User Data Protection
