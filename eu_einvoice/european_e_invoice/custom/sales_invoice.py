@@ -1122,7 +1122,7 @@ def postprocess_pdf(doc: SalesInvoice, event: str, pdf: bytes) -> bytes:
 	if not pdf:
 		return pdf
 
-	return _attach_xml_or_keep_pdf(doc.name, pdf)
+	return _attach_xml_or_keep_pdf(doc, pdf)
 
 
 def patch_attach_print():
@@ -1149,8 +1149,12 @@ def patch_attach_print():
 			doctype == "Sales Invoice"
 			and isinstance(attachment, dict)
 			and cstr(attachment.get("fname")).lower().endswith(".pdf")
+			# the wrapper is process-wide; skip sites without this app
+			and "eu_einvoice" in frappe.get_installed_apps()
 		):
-			attachment["fcontent"] = _attach_xml_or_keep_pdf(name, attachment["fcontent"])
+			# XML from the same document as the PDF (e.g. a queued workflow copy)
+			invoice = kwargs.get("doc") or name
+			attachment["fcontent"] = _attach_xml_or_keep_pdf(invoice, attachment["fcontent"])
 
 		return attachment
 
@@ -1160,12 +1164,13 @@ def patch_attach_print():
 	frappe.attach_print = attach_print
 
 
-def _attach_xml_or_keep_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
+def _attach_xml_or_keep_pdf(invoice: str | SalesInvoice, pdf_data: bytes) -> bytes:
 	"""Return the ZUGFeRD PDF, or the original PDF if creating or attaching the XML fails."""
 	try:
-		return attach_xml_to_pdf(invoice_id, pdf_data) or pdf_data
+		return attach_xml_to_pdf(invoice, pdf_data) or pdf_data
 	except Exception:
-		frappe.log_error(f"Error attaching XML to PDF for Sales Invoice {invoice_id}")
+		name = invoice if isinstance(invoice, str) else invoice.name
+		frappe.log_error(f"Error attaching XML to PDF for Sales Invoice {name}")
 		return pdf_data
 
 
@@ -1248,11 +1253,11 @@ def _is_ghostscript_installed() -> bool:
 	return shutil.which("gs") is not None
 
 
-def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
+def attach_xml_to_pdf(invoice_id: str | SalesInvoice, pdf_data: bytes) -> bytes:
 	"""Return the PDF data with the invoice attached as XML.
 
 	Params:
-	    invoice_id: The name of the Sales Invoice.
+	    invoice_id: The name of the Sales Invoice, or the document the PDF was rendered from.
 	    pdf_data: The PDF data as bytes.
 	"""
 	from drafthorse.pdf import attach_xml
@@ -1263,7 +1268,10 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 		except RuntimeError:
 			frappe.log_error("Error converting PDF to PDF/A-3 using Ghostscript.")
 
-	level = frappe.db.get_value("Sales Invoice", invoice_id, "einvoice_profile")
+	if isinstance(invoice_id, str):
+		level = frappe.db.get_value("Sales Invoice", invoice_id, "einvoice_profile")
+	else:
+		level = invoice_id.get("einvoice_profile")
 	if not level or level == "XRECHNUNG":
 		# XRECHNUNG does not support embedding into PDF
 		return pdf_data
