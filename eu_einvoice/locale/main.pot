@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-05-12 20:23+0053\n"
-"PO-Revision-Date: 2026-05-12 20:23+0053\n"
+"POT-Creation-Date: 2026-10-15 12:10+0000\n"
+"PO-Revision-Date: 2026-10-15 12:10+0000\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:807
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:856
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr ""
 
@@ -53,7 +53,7 @@ msgstr ""
 msgid "Allowance Total"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:106
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:109
 msgid "An E Invoice Import with the same Invoice ID and Supplier already exists."
 msgstr ""
 
@@ -148,6 +148,11 @@ msgstr ""
 msgid "Buyer Electronic Address Scheme"
 msgstr ""
 
+#. Label of the buyer_id (Data) field in DocType 'E Invoice Import'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
+msgid "Buyer ID"
+msgstr ""
+
 #. Label of the buyer_name (Data) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Buyer Name"
@@ -169,11 +174,11 @@ msgstr ""
 msgid "Calculation Percent"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:838
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:887
 msgid "Cannot create E Invoice."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:852
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:901
 msgid "Cannot validate E Invoice schematron."
 msgstr ""
 
@@ -188,8 +193,23 @@ msgstr ""
 msgid "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:212
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:237
 msgid "Could not validate E Invoice schematron. See Error Log for details."
+msgstr ""
+
+#. Label of the create_item (Button) field in DocType 'E Invoice Item'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
+msgid "Create Item"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:93
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:512
+msgid "Create Purchase Invoice"
+msgstr ""
+
+#. Label of the create_supplier (Button) field in DocType 'E Invoice Import'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
+msgid "Create Supplier"
 msgstr ""
 
 #. Label of the create_supplier_address (Button) field in DocType 'E Invoice
@@ -227,7 +247,7 @@ msgstr ""
 msgid "E Invoice Import"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:653
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:737
 msgid "E Invoice Import {0} does not exist"
 msgstr ""
 
@@ -264,11 +284,11 @@ msgstr ""
 msgid "E Invoice Trade Tax"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1168
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1241
 msgid "E Invoice XML file name pattern failed"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:820
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:869
 msgid "E Invoice is not correct"
 msgstr ""
 
@@ -303,11 +323,11 @@ msgstr ""
 msgid "Embedded Document"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:52
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:64
 msgid "Field '{0}' does not exist on Sales Invoice doctype"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:60
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:72
 msgid "Field '{0}' must be of type 'Attach'. Current type: {1}"
 msgstr ""
 
@@ -321,6 +341,18 @@ msgstr ""
 #. DocType 'E Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty."
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:8
+msgid "Import Code Lists"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:14
+msgid "Import of code lists queued. This may take a few minutes."
+msgstr ""
+
+#: eu_einvoice/install.py:32
+msgid "Importing Code Lists"
 msgstr ""
 
 #. Label of the line_total (Currency) field in DocType 'E Invoice Import'
@@ -338,11 +370,11 @@ msgstr ""
 msgid "Monetary Summation"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:446
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:530
 msgid "No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:449
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:533
 msgid "Not an E-Invoice"
 msgstr ""
 
@@ -372,11 +404,11 @@ msgstr ""
 msgid "Payment Means"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:120
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:124
 msgid "Please create or select a supplier before submitting"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:126
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:130
 msgid "Please map all invoice lines to an item before submitting"
 msgstr ""
 
@@ -384,7 +416,7 @@ msgstr ""
 msgid "Please note the validation errors of the e-invoice."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:123
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:127
 msgid "Please select a company before submitting"
 msgstr ""
 
@@ -399,7 +431,7 @@ msgstr ""
 msgid "Product Name"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:647
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:731
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
 msgstr ""
 
@@ -459,6 +491,11 @@ msgstr ""
 msgid "Seller Electronic Address Scheme"
 msgstr ""
 
+#. Label of the seller_id (Data) field in DocType 'E Invoice Import'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
+msgid "Seller ID"
+msgstr ""
+
 #. Label of the seller_name (Data) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Seller Name"
@@ -496,12 +533,16 @@ msgstr ""
 msgid "Tax Basis Total"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:456
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:540
 msgid "The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:161
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:165
 msgid "The uploaded file does not contain valid XML data."
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:181
+msgid "The uploaded file is not a Cross-Industry-Invoice (CII). Please upload a valid CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
 msgstr ""
 
 #. Label of the total_prepaid (Currency) field in DocType 'E Invoice Import'
@@ -509,12 +550,21 @@ msgstr ""
 msgid "Total Prepaid"
 msgstr ""
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:169
+msgid "UBL invoices are not supported. Please upload a CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
+msgstr ""
+
 #. Label of the unit_code (Data) field in DocType 'E Invoice Item'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
 msgid "Unit Code"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:459
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:172
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:184
+msgid "Unsupported e-invoice format"
+msgstr ""
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:543
 msgid "Unsupported file format"
 msgstr ""
 
@@ -579,19 +629,19 @@ msgstr ""
 msgid "XML Settings"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:786
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:835
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:775
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:824
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:763
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:812
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:798
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:847
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
 

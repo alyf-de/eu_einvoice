@@ -8,9 +8,42 @@ from drafthorse.models.document import Document
 from drafthorse.models.payment import PaymentMeans
 from drafthorse.models.tradelines import LineItem
 from frappe.tests import IntegrationTestCase
+from lxml.etree import fromstring
+
+from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import is_ubl_xml
+
+UBL_INVOICE = b"""<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+	xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:ID>3360587</cbc:ID>
+</Invoice>
+"""
+
+UBL_CREDIT_NOTE = b"""<?xml version="1.0" encoding="UTF-8"?>
+<CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+	xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:ID>CN-1</cbc:ID>
+</CreditNote>
+"""
+
+CII_INVOICE = b"""<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice
+	xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100">
+	<rsm:ExchangedDocument>
+		<ram:ID xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100">1</ram:ID>
+	</rsm:ExchangedDocument>
+</rsm:CrossIndustryInvoice>
+"""
 
 
 class TestEInvoiceImport(IntegrationTestCase):
+	def test_is_ubl_xml_detects_invoice_and_credit_note(self):
+		self.assertTrue(is_ubl_xml(fromstring(UBL_INVOICE)))
+		self.assertTrue(is_ubl_xml(fromstring(UBL_CREDIT_NOTE)))
+
+	def test_is_ubl_xml_rejects_cii(self):
+		self.assertFalse(is_ubl_xml(fromstring(CII_INVOICE)))
+
 	def test_product_ids(self):
 		supplier = "_Test Supplier"
 		buyer_item = make_item("_Test E Invoice Buyer Item")
