@@ -1,0 +1,1977 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gc:CodeList xmlns:gc="http://docs.oasis-open.org/codelist/ns/genericode/1.0/" xmlns="">
+  <Annotation>
+    <AppInfo>
+      <ext:info xmlns:ext="urn:cef.eu:codelist:gc-annotation">This is a Digital Building Blocks for Europe Code List.
+
+This file was automatically generated.
+Do NOT edit!</ext:info>
+    </AppInfo>
+  </Annotation>
+  <Identification>
+    <ShortName>ICD</ShortName>
+    <Version>2026-05-15</Version>
+    <CanonicalUri>urn:cef.eu:names:identifier:ICD</CanonicalUri>
+    <CanonicalVersionUri>urn:cef.eu:names:identifier:ICD-2026-05-15</CanonicalVersionUri>
+  </Identification>
+  <ColumnSet>
+    <Column Id="Code" Use="required">
+      <ShortName>Unique code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Name" Use="required">
+      <ShortName>Meaning of the code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Key Id="CodeKey">
+      <ShortName>Unique code</ShortName>
+      <ColumnRef Ref="Code" />
+    </Key>
+  </ColumnSet>
+  <SimpleCodeList>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0002</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>System Information et Repertoire des Entreprise et des Etablissements: SIRENE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0003</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Codification Numerique des Etablissments Financiers En Belgique</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0004</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NBS/OSI NETWORK</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0005</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>USA FED GOV OSI NETWORK</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0006</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>USA DOD OSI NETWORK</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0007</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Organisationsnummer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0008</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>LE NUMERO NATIONAL</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0009</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SIRET-CODE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0010</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Organizational Identifiers for Structured Names under ISO 9541 Part 2</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0011</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Code Designator for the Identification of OSI-based, Amateur Radio Organizations, Network Objects and Application Services.</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0012</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>European Computer Manufacturers Association: ECMA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0013</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>VSA FTP CODE (FTP = File Transfer Protocol)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0014</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NIST/OSI Implememts' Workshop</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0015</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Electronic Data Interchange: EDI</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0016</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EWOS Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0017</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>COMMON LANGUAGE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0018</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SNA/OSI Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0019</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Air Transport Industry Services Communications Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0020</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>European Laboratory for Particle Physics: CERN</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0021</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SOCIETY FOR WORLDWIDE INTERBANK FINANCIAL, TELECOMMUNICATION S.W.I.F.T.</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0022</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OSF Distributed Computing Object Identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0023</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Nordic University and Research Network: NORDUnet</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0024</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Digital Equipment Corporation: DEC</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0025</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OSI ASIA-OCEANIA WORKSHOP</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0026</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NATO ISO 6523 ICDE coding scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0027</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Aeronautical Telecommunications Network (ATN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0028</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Standard ISO 6523</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0029</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The All-Union Classifier of Enterprises and Organisations</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0030</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>AT&amp;T/OSI Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0031</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EDI Partner Identification Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0032</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Telecom Australia</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0033</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>S G W OSI Internetwork</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0034</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reuter Open Address Standard</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0035</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ISO 6523 - ICD</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0036</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>TeleTrust Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0037</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>LY-tunnus</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0038</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The Australian GOSIP Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0039</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The OZ DOD OSI Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0040</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Unilever Group Companies</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0041</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Citicorp Global Information Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0042</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DBP Telekom Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0043</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>HydroNETT</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0044</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Thai Industrial Standards Institute (TISI)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0045</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ICI Company Identification System</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0046</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FUNLOC</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0047</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>BULL ODI/DSA/UNIX Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0048</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OSINZ</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0049</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Auckland Area Health</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0050</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Firmenich</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0051</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>AGFA-DIS</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0052</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Society of Motion Picture and Television Engineers (SMPTE)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0053</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Migros_Network M_NETOPZ</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0054</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ISO6523 - ICDPCR</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0055</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Energy Net</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0056</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Nokia Object Identifiers (NOI)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0057</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Saint Gobain</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0058</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Siemens Corporate Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0059</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DANZNET</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0060</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Data Universal Numbering System (D-U-N-S Number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0061</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SOFFEX OSI</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0062</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>KPN OVN</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0063</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ascomOSINet</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0064</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UTC: Uniforme Transport Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0065</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SOLVAY OSI CODING</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0066</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Roche Corporate Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0067</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ZellwegerOSINet</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0068</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Intel Corporation OSI</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0069</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SITA Object Identifier Tree</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0070</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DaimlerChrysler Corporate Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0071</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>LEGO /OSI NETWORK</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0072</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NAVISTAR/OSI Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0073</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ICD Formatted ATM address</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0074</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ARINC</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0075</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Alcanet/Alcatel-Alsthom Corporate Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0076</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sistema Italiano di Identificazione di ogetti gestito da UNINFO</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0077</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sistema Italiano di Indirizzamento di Reti OSI Gestito da UNINFO</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0078</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Mitel terminal or switching equipment</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0079</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ATM Forum</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0080</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UK National Health Service Scheme, (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0081</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International NSAP</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0082</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Norwegian Telecommunications Authority's, NTA'S, EDI, identifier scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0083</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Advanced Telecommunications Modules Limited, Corporate Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0084</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Athens Chamber of Commerce &amp; Industry Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0085</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Swiss Chambers of Commerce Scheme (EDIRA) compliant</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0086</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>United States Council for International Business (USCIB) Scheme, (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0087</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National Federation of Chambers of Commerce &amp; Industry of Belgium, Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0088</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EAN Location Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0089</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The Association of British Chambers of Commerce Ltd. Scheme, (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0090</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Internet IP addressing - ISO 6523 ICD encoding</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0091</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cisco Sysytems / OSI Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0093</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Revenue Canada Business Number Registration (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0094</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DEUTSCHER INDUSTRIE- UND HANDELSTAG (DIHT) Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0095</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hewlett - Packard Company Internal AM Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0096</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The Danish Business Authority - P-number (DK:P)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0097</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FTI - Ediforum Italia, (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0098</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CHAMBER OF COMMERCE TEL AVIV-JAFFA Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0099</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Siemens Supervisory Systems Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0100</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>PNG_ICD Scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0101</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>South African Code Allocation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0102</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>HEAG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0104</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>BT - ICD Coding System</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0105</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Portuguese Chamber of Commerce and Industry Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0106</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vereniging van Kamers van Koophandel en Fabrieken in Nederland (Association of Chambers of Commerce and Industry in the Netherlands), Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0107</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Association of Swedish Chambers of Commerce and Industry Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0108</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Australian Chambers of Commerce and Industry Scheme (EDIRA compliant)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0109</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>BellSouth ICD AESA (ATM End System Address)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0110</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bell Atlantic</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0111</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0112</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ISO register for Standards producing Organizations</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0113</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OriginNet</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0114</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Check Point Software Technologies</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0115</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Pacific Bell Data Communications Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0116</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>PSS Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0117</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>STENTOR-ICD CODING SYSTEM</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0118</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ATM-Network ZN'96</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0119</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>MCI / OSI Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0120</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Advantis</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0121</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Affable Software Data Interchange Codes</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0122</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>BB-DATA GmbH</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0123</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>BASF Company ATM-Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0124</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IOTA Identifiers for Organizations for Telecommunications Addressing using the ICD system format defined in ISO/IEC 8348</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0125</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Henkel Corporate Network (H-Net)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0126</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GTE/OSI Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0127</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dresdner Bank Corporate Network</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0128</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>BCNR (Swiss Clearing Bank Number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0129</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>BPI (Swiss Business Partner Identification) code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0130</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Directorates of the European Commission</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0131</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Code for the Identification of National Organizations</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0132</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Certicom Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0133</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>TC68 OID</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0134</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Infonet Services Corporation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0135</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SIA Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0136</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cable &amp; Wireless Global ATM End-System Address Plan</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0137</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Global AESA scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0138</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>France Telecom ATM End System Address Plan</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0139</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Savvis Communications AESA:.</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0140</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Toshiba Organizations, Partners, And Suppliers' (TOPAS) Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0141</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NATO Commercial and Government Entity system</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0142</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SECETI Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0143</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EINESTEINet AG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0144</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DoDAAC (Department of Defense Activity Address Code)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0145</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DGCP (Direction Générale de la Comptabilité Publique)administrative accounting identification scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0146</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DGI (Direction Générale des Impots) code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0147</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard Company Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0148</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ITU (International Telecommunications Union)Data Network Identification Codes (DNIC)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0149</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Global Business Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0150</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Madge Networks Ltd- ICD ATM Addressing Scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0151</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Australian Business Number (ABN) Scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0152</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Edira Scheme Identifier Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0153</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Concert Global Network Services ICD AESA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0154</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Identification number of economic subjects: (ICO)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0155</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Global Crossing AESA (ATM End System Address)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0156</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>AUNA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0157</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ATM interconnection with the Dutch KPN Telecom</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0158</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Identification number of economic subject (ICO) Act on State Statistics of 29 November 2'001, § 27</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0159</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ACTALIS Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0160</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GTIN - Global Trade Item Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0161</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ECCMA Open Technical Directory</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0162</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CEN/ISSS Object Identifier Scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0163</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>US-EPA Facility Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0164</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>TELUS Corporation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0165</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FIEIE Object identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0166</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Swissguide Identifier Scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0167</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Priority Telecom ATM End System Address Plan</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0168</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vodafone Ireland OSI Addressing</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0169</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Swiss Federal Business Identification Number. Central Business names Index (zefix) Identification Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0170</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Teikoku Company Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0171</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Luxembourg CP &amp; CPS (Certification Policy and Certification Practice Statement) Index</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0172</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Project Group “Lists of Properties” (PROLIST®)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0173</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>eCI@ss</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0174</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>StepNexus</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0175</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Siemens AG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0176</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Paradine GmbH</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0177</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Odette International Limited</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0178</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Route1 MobiNET</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0179</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Penango Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0180</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lithuanian military PKI</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0183</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Numéro d'identification suisse des enterprises (IDE), Swiss Unique Business Identification Number (UIDB)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0184</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>DIGSTORG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0185</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Perceval Object Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0186</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>TrustPoint Object Identifiers</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0187</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Amazon Unique Identification Scheme</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0188</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Corporate Number of The Social Security and Tax Number System</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0189</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>European Business Identifier (EBID)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0190</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Organisatie Indentificatie Nummer (OIN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0191</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Company Code (Estonia)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0192</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Organisasjonsnummer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0193</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UBL.BE Party Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0194</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>KOIOS Open Technical Dictionary</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0195</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Singapore Nationwide E-lnvoice Framework</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0196</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Icelandic identifier - Íslensk kennitala</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0197</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>APPLiA Pl Standard</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0198</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ERSTORG</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0199</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Legal Entity Identifier (LEI)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0200</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Legal entity code (Lithuania)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0201</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Codice Univoco Unità Organizzativa iPA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0202</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Indirizzo di Posta Elettronica Certificata</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0203</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>eDelivery Network Participant identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0204</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Leitweg-ID</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0205</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CODDEST</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0206</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Registre du Commerce et de l’Industrie : RCI</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0207</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>PiLog Ontology Codification Identifier (POCI)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0208</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Numero d'entreprise / ondernemingsnummer / Unternehmensnummer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0209</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>GS1 identification keys</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0210</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CODICE FISCALE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0211</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>PARTITA IVA</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0212</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Finnish Organization Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0213</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Finnish Organization Value Add Tax Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0214</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tradeplace TradePI Standard</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0215</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Net service ID</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0216</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OVTcode</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0217</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The Netherlands Chamber of Commerce and Industry establishment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0218</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Unified registration number (Latvia)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0219</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Taxpayer registration code (Latvia)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0220</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The Register of Natural Persons (Latvia)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0221</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>The registered number of the qualified invoice issuer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0222</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Metadata Registry Support</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0223</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EU based company</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0224</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FTCTC CODE ROUTAGE</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0225</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FRCTC ELECTRONIC ADDRESS</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0226</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>FRCTC Particulier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0227</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NON - EU based company</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0228</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Répertoire des Entreprises et des Etablissements (RIDET)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0229</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>T.A.H.I.T.I (traitement automatique hiérarchisé des institutions de Tahiti et des îles)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0230</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National e-Invoicing Framework</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0231</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Single taxable company (France)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0232</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NOBB product number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0233</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Elnummer</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0234</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Toimitusosoite ID</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0235</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>UAE Tax Identification Number (TIN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0236</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ToimipaikkalD</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0237</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CPR (Danish person civil registration number)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0238</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Plateforme.s agréée.s à la facturation électronique (PPF/PDP)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0239</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>EAEU</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0240</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Register of legal persons (in French : Répertoire des personnes morales)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0241</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hitachi Rail</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0242</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>OpenPeppol Service Provider Identification Scheme (SPIS)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0243</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Business Partner Number (Catena-X)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0244</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax Identification (Tax ID), Nigeria</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0245</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax identification number (DIČ, Slovakia)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0246</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>German Electronic Business Address</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0247</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Name unknown</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>0248</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Oman Value Added Tax Identification Number (VATIN)</SimpleValue>
+      </Value>
+    </Row>
+  </SimpleCodeList>
+</gc:CodeList>

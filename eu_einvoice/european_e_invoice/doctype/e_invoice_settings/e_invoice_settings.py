@@ -27,6 +27,18 @@ class EInvoiceSettings(Document):
 		vat_exemption_reason_text: DF.SmallText | None
 	# end: auto-generated types
 
+	@frappe.whitelist()
+	def import_code_lists(self):
+		"""Import the bundled EN 16931 code lists into an existing site."""
+		frappe.only_for("System Manager")
+		# ~4600 Common Codes, too slow for a request
+		frappe.enqueue(
+			"eu_einvoice.install.import_code_lists",
+			queue="long",
+			timeout=1800,
+			enqueue_after_commit=True,
+		)
+
 	def before_validate(self):
 		if not self.validate_sales_invoice_on_save:
 			self.error_action_on_save = ""
