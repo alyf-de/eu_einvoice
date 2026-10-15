@@ -9,13 +9,7 @@ import frappe
 from drafthorse.models.document import Document
 from drafthorse.models.payment import PaymentMeans
 from drafthorse.models.tradelines import LineItem
-<<<<<<< HEAD
 from frappe.tests.utils import FrappeTestCase
-
-
-class TestEInvoiceImport(FrappeTestCase):
-=======
-from frappe.tests import IntegrationTestCase
 from lxml.etree import fromstring
 
 from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
@@ -54,7 +48,7 @@ UNSUPPORTED_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
 """
 
 
-class TestEInvoiceImport(IntegrationTestCase):
+class TestEInvoiceImport(FrappeTestCase):
 	def test_is_ubl_xml_detects_invoice_and_credit_note(self):
 		self.assertTrue(is_ubl_xml(fromstring(UBL_INVOICE)))
 		self.assertTrue(is_ubl_xml(fromstring(UBL_CREDIT_NOTE)))
@@ -107,7 +101,6 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual(message.get("title"), "Unsupported e-invoice format")
 		self.assertEqual(message.get("primary_action"), get_create_purchase_invoice_action())
 
->>>>>>> dcbb474 (feat: UBL warning (#323))
 	def test_product_ids(self):
 		supplier = "_Test Supplier"
 		buyer_item = make_item("_Test E Invoice Buyer Item")
