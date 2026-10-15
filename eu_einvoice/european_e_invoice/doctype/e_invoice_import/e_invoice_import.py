@@ -14,7 +14,7 @@ from facturx import get_xml_from_pdf
 from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from lxml.etree import XMLSyntaxError
+from lxml.etree import QName, XMLSyntaxError, fromstring
 
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile, get_profile
@@ -160,9 +160,30 @@ class EInvoiceImport(Document):
 	def read_values_from_einvoice(self) -> None:
 		xml_bytes = self.get_xml_bytes()
 		try:
-			doc = DrafthorseDocument.parse(xml_bytes, strict=False)
+			root = fromstring(xml_bytes)
 		except XMLSyntaxError:
 			frappe.throw(_("The uploaded file does not contain valid XML data."))
+
+		if is_ubl_xml(root):
+			frappe.throw(
+				msg=_(
+					"UBL invoices are not supported. Please upload a CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
+				),
+				title=_("Unsupported e-invoice format"),
+				primary_action=get_create_purchase_invoice_action(),
+			)
+
+		try:
+			doc = DrafthorseDocument.parse(xml_bytes, strict=False)
+		except TypeError:
+			# Wrong root element (not CrossIndustryInvoice), but not UBL
+			frappe.throw(
+				msg=_(
+					"The uploaded file is not a Cross-Industry-Invoice (CII). Please upload a valid CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
+				),
+				title=_("Unsupported e-invoice format"),
+				primary_action=get_create_purchase_invoice_action(),
+			)
 
 		self.profile = get_profile(doc.context.guideline_parameter.id._text).value
 		self._validate_schematron(xml_bytes)
@@ -482,13 +503,25 @@ def flt_or_none(value) -> float | None:
 	return float(value) if value is not None else None
 
 
-def get_xml_bytes(einvoice: str) -> bytes:
-	"""Reads the XML data from the attached XML or PDF file."""
-	CREATE_PI_ACTION = {
+# OASIS UBL 2.x document namespaces (Invoice-2, CreditNote-2, ...)
+UBL_NAMESPACE_PREFIX = "urn:oasis:names:specification:ubl:"
+
+
+def get_create_purchase_invoice_action() -> dict:
+	return {
 		"label": _("Create Purchase Invoice"),
 		"client_action": "eu_einvoice.utils.new_purchase_invoice",
 	}
 
+
+def is_ubl_xml(root) -> bool:
+	"""Return True if the XML root uses an OASIS UBL 2.x document namespace."""
+	namespace = QName(root).namespace or ""
+	return namespace.startswith(UBL_NAMESPACE_PREFIX)
+
+
+def get_xml_bytes(einvoice: str) -> bytes:
+	"""Reads the XML data from the attached XML or PDF file."""
 	file = relative_url_to_path(einvoice)
 	if file.suffix.lower() == ".pdf":
 		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes(), check_xsd=False)
@@ -498,7 +531,7 @@ def get_xml_bytes(einvoice: str) -> bytes:
 					"No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
 				),
 				title=_("Not an E-Invoice"),
-				primary_action=CREATE_PI_ACTION,
+				primary_action=get_create_purchase_invoice_action(),
 			)
 	elif file.suffix.lower() == ".xml":
 		xml_bytes = file.read_bytes()
@@ -508,7 +541,7 @@ def get_xml_bytes(einvoice: str) -> bytes:
 				"The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 			).format(file.suffix),
 			title=_("Unsupported file format"),
-			primary_action=CREATE_PI_ACTION,
+			primary_action=get_create_purchase_invoice_action(),
 		)
 
 	return xml_bytes
