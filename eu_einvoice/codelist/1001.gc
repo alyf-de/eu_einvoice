@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gc:CodeList xmlns:gc="http://docs.oasis-open.org/codelist/ns/genericode/1.0/" xmlns="">
+  <Annotation>
+    <AppInfo>
+      <ext:info xmlns:ext="urn:cef.eu:codelist:gc-annotation">This is a Digital Building Blocks for Europe Code List.
+
+This file was automatically generated.
+Do NOT edit!</ext:info>
+    </AppInfo>
+  </Annotation>
+  <Identification>
+    <ShortName>1001</ShortName>
+    <Version>2026-05-15</Version>
+    <CanonicalUri>urn:cef.eu:names:identifier:1001</CanonicalUri>
+    <CanonicalVersionUri>urn:cef.eu:names:identifier:1001-2026-05-15</CanonicalVersionUri>
+  </Identification>
+  <ColumnSet>
+    <Column Id="Code" Use="required">
+      <ShortName>Unique code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Name" Use="required">
+      <ShortName>Meaning of the code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Remark" Use="optional">
+      <ShortName>Optional remark for the usage of this code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Key Id="CodeKey">
+      <ShortName>Unique code</ShortName>
+      <ColumnRef Ref="Code" />
+    </Key>
+  </ColumnSet>
+  <SimpleCodeList>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>71</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Request for payment</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>80</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit note related to goods or services</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>81</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit note related to goods or services</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>82</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Metered services invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>83</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit note related to financial adjustments</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>84</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit note related to financial adjustments</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>102</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax notification</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>130</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Invoicing data sheet</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>202</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Direct payment valuation</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>203</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Provisional payment valuation</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>204</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment valuation</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>211</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Interim application for payment</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>218</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Final payment request based on completion of work</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>219</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment request for completed units</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>261</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self billed credit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>262</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consolidated credit note - goods and services</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>295</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price variation invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>296</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit note for price variation</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>308</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delcredere credit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>325</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Proforma invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>326</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Partial invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>331</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Commercial invoice which includes a packing list</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>380</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Commercial invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>381</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>382</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Commission note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>383</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>384</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Corrected invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>385</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consolidated invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>386</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prepayment invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>387</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hire invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>388</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>389</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self-billed invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>390</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delcredere invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>393</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Factored invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>394</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lease invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>395</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>396</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Factored credit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>420</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Optical Character Reading (OCR) payment credit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>456</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit advice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>457</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reversal of debit</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>458</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reversal of credit</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>471</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self-billed corrective invoice, invoice type, Corrected</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>472</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Factored Corrective Invoice, invoice type, Corrected</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>473</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self billed Factored corrective invoice, invoice type, Corrected</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>500</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self Prepayment invoice, invoice type, Original</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>501</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self billed factored invoice, invoice type, Original</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>502</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self billet factored Credit Note, Credit note type, Corrected</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>503</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prepayment credit note, credit note type, Corrected</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>527</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Self billed debit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>532</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Forwarder's credit note</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Credit Note</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>553</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Forwarder's invoice discrepancy report</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>575</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Insurer's invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>623</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Forwarder's invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>633</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Port charges documents</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>751</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Invoice information for accounting purposes</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>780</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Freight invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>817</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Claim notification</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>870</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consular invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>875</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Partial construction invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>876</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Partial final construction invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>877</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Final construction invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>935</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs invoice</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Invoice</SimpleValue>
+      </Value>
+    </Row>
+  </SimpleCodeList>
+</gc:CodeList>

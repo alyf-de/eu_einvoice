@@ -10,16 +10,22 @@ import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
 from drafthorse.models.document import Document, IncludedNote
 from drafthorse.models.party import TaxRegistration, URIUniversalCommunication
-from drafthorse.models.payment import PaymentTerms
+from drafthorse.models.payment import PaymentMeans, PaymentTerms
 from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.utils import html2text
-from frappe.utils.data import date_diff, flt, getdate, to_markdown
+from frappe.model.naming import parse_naming_series
+from frappe.utils import cstr
+from frappe.utils.data import cint, date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
+from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
+	get_embed_attachments,
+	migrate_legacy_embed_to_table,
+	validate_einvoice_attachment_rows,
+)
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
 from eu_einvoice.utils import EInvoiceProfile, get_drafthorse_schema, get_guideline
@@ -36,17 +42,32 @@ if TYPE_CHECKING:
 	from eu_einvoice.european_e_invoice.doctype.e_invoice_settings.e_invoice_settings import EInvoiceSettings
 
 uom_codes = CommonCodeRetriever(
-	["urn:xoev-de:kosit:codeliste:rec20_3", "urn:xoev-de:kosit:codeliste:rec21_3"], "C62"
+	[
+		"urn:xoev-de:kosit:codeliste:rec20",
+		"urn:xoev-de:kosit:codeliste:rec21",
+		"urn:cef.eu:names:identifier:Unit",
+	],
+	"C62",
 )
-payment_means_codes = CommonCodeRetriever(["urn:xoev-de:xrechnung:codeliste:untdid.4461_3"], "ZZZ")
-duty_tax_fee_category_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:untdid.5305_3"], "S")
-vat_exemption_reason_codes = CommonCodeRetriever(["urn:xoev-de:kosit:codeliste:vatex_1"], "vatex-eu-ae")
+payment_means_codes = CommonCodeRetriever(
+	["urn:xoev-de:xrechnung:codeliste:untdid.4461", "urn:cef.eu:names:identifier:Payment"], "ZZZ"
+)
+duty_tax_fee_category_codes = CommonCodeRetriever(
+	["urn:xoev-de:kosit:codeliste:untdid.5305", "urn:cef.eu:names:identifier:5305"], "S"
+)
+vat_exemption_reason_codes = CommonCodeRetriever(
+	["urn:xoev-de:kosit:codeliste:vatex", "urn:cef.eu:names:identifier:VATEX"], "vatex-eu-ae"
+)
+# VAT categories that need an exemption reason on the VAT breakdown (BR-AE-10, BR-E-10, ...)
+EXEMPT_VAT_CATEGORIES = ("AE", "E", "G", "K", "O")
 
 
 @frappe.whitelist()
 def download_xrechnung(invoice_id: str):
-	frappe.local.response.filename = f"{invoice_id}.xml"
-	frappe.local.response.filecontent = get_einvoice(invoice_id)
+	invoice = frappe.get_doc("Sales Invoice", invoice_id)
+	base_name = get_xml_attachment_file_base_name(invoice)
+	frappe.local.response.filecontent = get_einvoice(invoice)
+	frappe.local.response.filename = f"{base_name}.xml"
 	frappe.local.response.type = "download"
 
 
@@ -126,7 +147,10 @@ class EInvoiceGenerator:
 		self.buyer_contact = buyer_contact
 		self.doc = None
 		self.item_tax_rates = set()
+		# VAT category code -> exemption reason code, collected from the line items
+		self.line_exemption_reason_codes = {}
 		self.delivery_dates = []
+		self.vat_exemption_reason_text = ""
 
 	def get_einvoice(self) -> Document | None:
 		"""Return the einvoice document as a Python object."""
@@ -135,6 +159,9 @@ class EInvoiceGenerator:
 	def create_einvoice(self):
 		"""Create the einvoice document as a Python object."""
 		self.doc = Document()
+		self.vat_exemption_reason_text = str(
+			frappe.db.get_single_value("E Invoice Settings", "vat_exemption_reason_text") or ""
+		).strip()
 
 		self._set_context()
 		self._set_header()
@@ -151,7 +178,7 @@ class EInvoiceGenerator:
 				self.doc.trade.agreement.buyer_order.issue_date_time = getdate(self.invoice.po_date)
 
 		if self.profile >= EInvoiceProfile.EN16931:
-			self._embed_attachment()
+			self._embed_attachments()
 
 		sales_orders = set()
 		for item in self.invoice.items:
@@ -184,27 +211,28 @@ class EInvoiceGenerator:
 		self._add_payment_terms()
 		self._set_totals()
 
-	def _embed_attachment(self):
-		"""Add the embedded document to the einvoice."""
-		if not self.invoice.einvoice_embedded_document:
-			return
+	def _embed_attachments(self):
+		"""Add embedded documents to the e-invoice as CII ARD 916 references.
 
-		file = find_file_by_url(self.invoice.einvoice_embedded_document)
-
-		content = None
-		if not file.is_remote_file:
-			file_name = os.path.basename(file.file_url)
-			mime_type = mimetypes.guess_type(file.file_url)[0]
-			content = as_base_64(file.get_content())
-
-		ref_doc = AdditionalReferencedDocument()
-		ref_doc.issuer_assigned_id = file.name
-		if file.is_remote_file:
-			ref_doc.uri_id = file.file_url
-		else:
-			ref_doc.attached_object = (mime_type, file_name, content)
-		ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
-		self.doc.trade.agreement.additional_references.add(ref_doc)
+		Raises:
+			frappe.ValidationError: When a **File** row is missing or embed filenames
+				are not unique (BR-DE-22).
+		"""
+		attachments = get_embed_attachments(self.invoice)
+		for attachment in attachments:
+			file = frappe.get_doc("File", attachment.file)
+			ref_doc = AdditionalReferencedDocument()
+			ref_doc.issuer_assigned_id = file.name
+			if file.is_remote_file:
+				ref_doc.uri_id = file.file_url
+			else:
+				mime_type = mimetypes.guess_type(attachment.file_name)[0]
+				# encodings=[] keeps binary payloads as bytes. Default File.get_content()
+				# may decode small files via windows-1252 and corrupt PNG/PDF bytes.
+				content = as_base_64(file.get_content(encodings=[]))
+				ref_doc.attached_object = (mime_type, attachment.file_name, content)
+			ref_doc.type_code = "916"  # "Related document" according to UNTDID 1001
+			self.doc.trade.agreement.additional_references.add(ref_doc)
 
 	def _set_context(self):
 		"""Set default context according to XRechnung 3.0.2"""
@@ -253,12 +281,12 @@ class EInvoiceGenerator:
 
 		if self.invoice.terms:
 			note = IncludedNote(subject_code="ABC")  # Conditions of sale or purchase
-			note.content.add(to_markdown(self.invoice.terms).strip())
+			note.content = to_markdown(self.invoice.terms).strip()
 			self.doc.header.notes.add(note)
 
 		if self.invoice.incoterm:
 			note = IncludedNote(subject_code="AAR")  # Terms of delivery
-			note.content.add(f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip())
+			note.content = f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip()
 			self.doc.header.notes.add(note)
 
 	def _set_seller(self):
@@ -273,7 +301,10 @@ class EInvoiceGenerator:
 		self._set_seller_address()
 
 	def _set_seller_id(self):
-		for row in self.customer.supplier_numbers:
+		supplier_numbers = getattr(self.customer, "supplier_numbers", None)
+		if not supplier_numbers:
+			return
+		for row in supplier_numbers:
 			if row.company == self.invoice.company and row.supplier_number:
 				self.doc.trade.agreement.seller.id = row.supplier_number
 				break
@@ -461,31 +492,30 @@ class EInvoiceGenerator:
 				li.delivery.delivery_note.issue_date_time = getdate(posting_date)
 
 		li.settlement.trade_tax.type_code = "VAT"
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(
-			[
-				("Item Tax Template", item.item_tax_template),
-				("Account", item.income_account),
-				("Tax Category", self.invoice.tax_category),
-				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-			]
-		)
-		if li.settlement.trade_tax.category_code._text in ("AE", "E", "G", "K", "Z"):
-			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05
+		lookup = [
+			("Item Tax Template", item.item_tax_template),
+			("Account", item.income_account),
+			("Tax Category", self.invoice.tax_category),
+			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+		]
+		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+		category_code = li.settlement.trade_tax.category_code._text
+		if category_code in EXEMPT_VAT_CATEGORIES:
+			# Only the line knows Item Tax Template and income Account; the rest is looked up again
+			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.
+			exemption_reason_code = vat_exemption_reason_codes.get_code(lookup[:2])
+			if exemption_reason_code:
+				self.line_exemption_reason_codes.setdefault(category_code, exemption_reason_code)
+
+		if category_code in ("AE", "E", "G", "K", "Z"):
+			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05 (rate 0.00; see EN 16931 tax code guidance)
 			li.settlement.trade_tax.rate_applicable_percent = 0
-		else:
+		elif category_code != "O":
 			item_tax_rate = get_item_rate(item.item_tax_template, self.invoice.taxes)
 			self.item_tax_rates.add(item_tax_rate)
 			li.settlement.trade_tax.rate_applicable_percent = item_tax_rate
-
-		if li.settlement.trade_tax.rate_applicable_percent._value == 0:
-			li.settlement.trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
-				[
-					("Item Tax Template", item.item_tax_template),
-					("Account", item.income_account),
-					("Tax Category", self.invoice.tax_category),
-					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-				]
-			).upper()
+		# else BR-O-05: category O must not contain BT-152 (omit rate entirely, not even 0)
+		# BT-120/BT-121 (exemption reason) belong only on the document-level VAT breakdown (BG-23).
 
 		li.settlement.monetary_summation.total_amount = flt(item.net_amount, item.precision("net_amount"))
 		self.doc.trade.items.add(li)
@@ -493,6 +523,11 @@ class EInvoiceGenerator:
 	def _add_taxes_and_charges(self):
 		tax_added = False
 		for i, tax in enumerate(self.invoice.taxes):
+			lookup = [
+				("Account", tax.account_head),
+				("Tax Category", self.invoice.tax_category),
+				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+			]
 			if tax.charge_type == "Actual" and self.profile >= EInvoiceProfile.EXTENDED:
 				service_charge = LogisticsServiceCharge()
 				service_charge.description = tax.description
@@ -504,7 +539,6 @@ class EInvoiceGenerator:
 						# Add applied VAT for the service charge (BR-FXEXT-S-08)
 						service_charge_tax = AppliedTradeTax()
 						service_charge_tax.type_code = "VAT"
-						service_charge_tax.rate_applicable_percent = vat_line.rate
 						service_charge_tax.category_code = duty_tax_fee_category_codes.get(
 							[
 								("Account", vat_line.account_head),
@@ -512,46 +546,51 @@ class EInvoiceGenerator:
 								("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 							]
 						)
+						if service_charge_tax.category_code._text != "O":
+							# BR-O-07: category O must not contain a VAT rate
+							service_charge_tax.rate_applicable_percent = vat_line.rate
 						service_charge.trade_tax.add(service_charge_tax)
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
+				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
+				if tax.tax_amount == 0 and tax_rate != 0 and tax_rate not in self.item_tax_rates:
+					# No line item uses this rate, so there is nothing to declare for it.
+					# True 0% rows are kept, as are rates used by a line with a net amount of 0.
+					continue
 				trade_tax = ApplicableTradeTax()
 				trade_tax.calculated_amount = tax.tax_amount
 				trade_tax.type_code = "VAT"
-				trade_tax.category_code = duty_tax_fee_category_codes.get(
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					]
-				)
-				tax_rate = tax.rate or frappe.db.get_value("Account", tax.account_head, "tax_rate") or 0
-				trade_tax.rate_applicable_percent = tax_rate
+				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+
+				self._set_header_vat_category_rate(trade_tax, tax_rate)
 
 				if len(self.invoice.taxes) == 1:
 					# We only have one tax, so we can use the net total as basis amount
 					trade_tax.basis_amount = self.invoice.net_total
-					if len(self.item_tax_rates) == 1 and tax_rate == 0:
+					if (
+						trade_tax.category_code._text != "O"
+						and len(self.item_tax_rates) == 1
+						and tax_rate == 0
+					):
 						# We only have one tax rate on the line items, but it was not specified on the tax row
 						# so we use the tax rate from the line items.
 						trade_tax.rate_applicable_percent = self.item_tax_rates.pop()
-				elif hasattr(tax, "net_amount"):
-					trade_tax.basis_amount = tax.net_amount
-				elif hasattr(tax, "custom_net_amount"):
-					trade_tax.basis_amount = tax.custom_net_amount
-				elif tax.tax_amount and tax_rate:
-					# We don't know the basis amount for this tax, so we try to calculate it
-					trade_tax.basis_amount = round(tax.tax_amount / tax_rate * 100, 2)
 				else:
-					trade_tax.basis_amount = 0
+					# Prefer ERPNext tax-row net_amount (frappe/erpnext#54687). hasattr is always
+					# true once the field exists, so use flt() and fall back when still 0.
+					basis = flt(tax.get("net_amount")) or flt(tax.get("custom_net_amount"))
+					if not basis and tax.tax_amount and tax_rate:
+						basis = flt(tax.tax_amount / tax_rate * 100, self.invoice.precision("net_total"))
+					trade_tax.basis_amount = basis
+
+				self._set_document_vat_exemption_reason(trade_tax, lookup)
 
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Amount":
 				trade_tax = ApplicableTradeTax()
 				trade_tax.basis_amount = self.invoice.taxes[i - 1].tax_amount
-				trade_tax.rate_applicable_percent = tax.rate
 				trade_tax.calculated_amount = tax.tax_amount
 
 				if self.invoice.taxes[i - 1].charge_type == "Actual":
@@ -561,19 +600,14 @@ class EInvoiceGenerator:
 					# A tax or duty applied on and in addition to existing duties and taxes.
 					trade_tax.type_code = "SUR"
 
-				trade_tax.category_code = duty_tax_fee_category_codes.get(
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					]
-				)
+				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+				self._set_header_vat_category_rate(trade_tax, tax.rate)
+				self._set_document_vat_exemption_reason(trade_tax, lookup)
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 			elif tax.charge_type == "On Previous Row Total":
 				trade_tax = ApplicableTradeTax()
 				trade_tax.basis_amount = self.invoice.taxes[i - 1].total
-				trade_tax.rate_applicable_percent = tax.rate
 				trade_tax.calculated_amount = tax.tax_amount
 
 				if self.invoice.taxes[i - 1].charge_type == "Actual":
@@ -583,13 +617,9 @@ class EInvoiceGenerator:
 					# A tax or duty applied on and in addition to existing duties and taxes.
 					trade_tax.type_code = "SUR"
 
-				trade_tax.category_code = duty_tax_fee_category_codes.get(
-					[
-						("Account", tax.account_head),
-						("Tax Category", self.invoice.tax_category),
-						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-					]
-				)
+				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+				self._set_header_vat_category_rate(trade_tax, tax.rate)
+				self._set_document_vat_exemption_reason(trade_tax, lookup)
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
 				tax_added = True
 
@@ -606,15 +636,52 @@ class EInvoiceGenerator:
 			]
 		)
 		trade_tax.basis_amount = self.invoice.net_total
-		trade_tax.rate_applicable_percent = 0
+		self._set_header_vat_category_rate(trade_tax, 0)
 		trade_tax.calculated_amount = 0
-		trade_tax.exemption_reason_code = vat_exemption_reason_codes.get(
+		self._set_document_vat_exemption_reason(
+			trade_tax,
 			[
 				("Tax Category", self.invoice.tax_category),
 				("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-			]
-		).upper()
+			],
+		)
 		self.doc.trade.settlement.trade_tax.add(trade_tax)
+
+	def _set_header_vat_category_rate(self, trade_tax: ApplicableTradeTax, rate: float) -> None:
+		"""Set BT-119 on the document-level VAT breakdown (BG-23).
+
+		EN 16931 BR-48 allows omitting the rate for category O. XRechnung BR-DE-14
+		requires RateApplicablePercent on every header ApplicableTradeTax, so O uses 0.00.
+		"""
+		if trade_tax.category_code._text != "O" or self.profile == EInvoiceProfile.XRECHNUNG:
+			trade_tax.rate_applicable_percent = rate
+
+	def _set_document_vat_exemption_reason(
+		self, trade_tax: ApplicableTradeTax, lookup: list[tuple[str, str | None]]
+	) -> None:
+		"""Set BT-120/BT-121 on the document-level VAT breakdown (BG-23) when required.
+
+		Per EN 16931 tax code guidance, the exemption reason is only stated for document
+		level totals. Required for AE, E, G, K, O (BR-*-10); forbidden for S and Z (BR-S-10, BR-Z-10).
+		"""
+		category_code = trade_tax.category_code._text
+		if category_code not in EXEMPT_VAT_CATEGORIES:
+			return
+
+		# Most specific first: the breakdown's own tax account, then the line items,
+		# then the invoice-wide records and the default.
+		tax_account_records = [record for record in lookup if record[0] == "Account"]
+		exemption_reason_code = (
+			vat_exemption_reason_codes.get_code(tax_account_records)
+			or self.line_exemption_reason_codes.get(category_code)
+			or vat_exemption_reason_codes.get(lookup)
+		)
+		trade_tax.exemption_reason_code = exemption_reason_code.upper()
+		self._set_optional_vat_exemption_reason_text(trade_tax)
+
+	def _set_optional_vat_exemption_reason_text(self, trade_tax: ApplicableTradeTax) -> None:
+		if self.vat_exemption_reason_text:
+			trade_tax.exemption_reason = self.vat_exemption_reason_text
 
 	def _add_delivery_date(self):
 		if self.delivery_dates:
@@ -669,7 +736,9 @@ class EInvoiceGenerator:
 			self.doc.trade.settlement.terms.add(payment_terms)
 
 	def _add_payment_means(self):
-		self.doc.trade.settlement.payment_means.type_code = payment_means_codes.get(
+		# BG-16 may repeat, but we emit a single payment instruction
+		payment_means = PaymentMeans()
+		payment_means.type_code = payment_means_codes.get(
 			[("Payment Terms Template", self.invoice.payment_terms_template)]
 			+ [("Mode of Payment", term.mode_of_payment) for term in self.invoice.payment_schedule]
 		)
@@ -680,13 +749,15 @@ class EInvoiceGenerator:
 			if not iban:
 				continue
 
-			self.doc.trade.settlement.payment_means.payee_account.iban = iban
+			payment_means.payee_account.iban = iban
 
 			if self.profile >= EInvoiceProfile.EN16931:
-				self.doc.trade.settlement.payment_means.payee_account.account_name = self.invoice.company
-				self.doc.trade.settlement.payment_means.payee_institution.bic = bic
+				payment_means.payee_account.account_name = self.invoice.company
+				payment_means.payee_institution.bic = bic
 
 			break
+
+		self.doc.trade.settlement.payment_means.add(payment_means)
 
 	def _set_totals(self):
 		# [BR-DEC-09]-The allowed maximum number of decimals for the Sum of Invoice line net amount (BT-106) is 2.
@@ -721,7 +792,7 @@ class EInvoiceGenerator:
 		self.doc.trade.settlement.monetary_summation.due_amount = flt(self.invoice.outstanding_amount, 2)
 
 
-def validate_vat_id(vat_id: str) -> tuple[str, str]:
+def validate_vat_id(vat_id: str) -> str:
 	COUNTRY_CODE_REGEX = r"^[A-Z]{2}$"
 	VAT_NUMBER_REGEX = r"^[0-9A-Za-z\+\*\.]{2,12}$"
 
@@ -739,7 +810,16 @@ def validate_vat_id(vat_id: str) -> tuple[str, str]:
 
 
 def validate_doc(doc, event):
-	"""Validate the Sales Invoice form."""
+	"""Validate **Sales Invoice** e-invoice fields on save and submit.
+
+	When ``multi_attachment_embed_enabled`` is on, migrates ``einvoice_embedded_document``
+	to ``einvoice_attachments`` and validates child-table rows (unique filenames,
+	duplicate-content warning) before e-invoice validation.
+
+	Args:
+		doc (SalesInvoice): The invoice being validated.
+		event (str): Frappe document event name (for example ``"validate"``).
+	"""
 	for tax_row in doc.taxes:
 		if tax_row.charge_type == "On Item Quantity":
 			frappe.msgprint(
@@ -793,6 +873,12 @@ def validate_doc(doc, event):
 		)
 
 	settings: EInvoiceSettings = frappe.get_single("E Invoice Settings")
+
+	if settings.multi_attachment_embed_enabled:
+		migrate_legacy_embed_to_table(doc)
+
+		if doc.get("einvoice_attachments"):
+			validate_einvoice_attachment_rows(doc, settings)
 
 	if settings.should_validate(doc.docstatus):
 		validate_einvoice(doc)
@@ -906,7 +992,8 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 			)
 			return
 
-	file_name = f"{doc.name}.xml".replace("/", "-")
+	base_name = get_xml_attachment_file_base_name(doc)
+	file_name = f"{base_name}.xml"
 
 	# Create new File document
 	file_doc = frappe.new_doc("File")
@@ -929,18 +1016,42 @@ def _attach_xml_file(doc: SalesInvoice, xml_content: bytes, field_name: str | No
 		doc.db_set(field_name, file_doc.file_url)
 
 
-def get_item_rate(item_tax_template: str | None, taxes: list[dict]) -> float | None:
-	"""Get the tax rate for an item from the item tax template and the taxes table."""
+def get_item_rate(item_tax_template: str | None, taxes: list) -> float | None:
+	"""Resolve the VAT % for this line from the Item Tax Template and the invoice tax rows.
+
+	1) Return the ``tax_rate`` of the first template row (in template order) whose ``tax_type``
+	   matches one of the invoice's ``account_head`` values. When *Not Applicable*
+	   (`not_applicable`) exists on **Item Tax Template Detail** (ERPNext v16 / v15 via
+	   frappe/erpnext#54687), skip those rows and allow a genuine 0% rate. Otherwise only
+	   non-zero ``tax_rate`` rows are considered (legacy templates that list unused taxes at 0%).
+	2) If every matching row was skipped, the template states that none of the invoice's taxes
+	   apply to this line, so the rate is 0.
+	3) If no template row matched at all: if there is exactly one *On Net Total* row, use its
+	   ``rate``.
+	"""
 	if item_tax_template:
-		# match the accounts from the taxes table with the rate from the item tax template
-		tax_template = frappe.get_doc("Item Tax Template", item_tax_template)
+		tax_template = frappe.get_cached_doc("Item Tax Template", item_tax_template)
 		applicable_accounts = [tax.account_head for tax in taxes if tax.account_head]
+		has_not_applicable = bool(frappe.get_meta("Item Tax Template Detail").get_field("not_applicable"))
+		matched_but_skipped = False
+
+		def _is_applicable(item_tax) -> bool:
+			if has_not_applicable:
+				return not cint(item_tax.get("not_applicable"))
+			# Legacy templates list unused taxes at 0%, so a 0% row cannot be told apart
+			# from a genuine 0% rate.
+			return bool(item_tax.tax_rate)
 
 		for item_tax in tax_template.taxes:
-			if item_tax.tax_type in applicable_accounts:
+			if item_tax.tax_type not in applicable_accounts:
+				continue
+			if _is_applicable(item_tax):
 				return item_tax.tax_rate
+			matched_but_skipped = True
 
-	# if only one tax is on net total, return its rate
+		if matched_but_skipped:
+			return 0.0
+
 	tax_rates = [invoice_tax.rate for invoice_tax in taxes if invoice_tax.charge_type == "On Net Total"]
 	return tax_rates[0] if len(tax_rates) == 1 else None
 
@@ -1030,7 +1141,6 @@ def download_pdf(
 
 def _get_icc_profile_path() -> str:
 	"""Get the path to the ICC profile used by Ghostscript."""
-	import os
 	import re
 	import subprocess
 
@@ -1064,7 +1174,6 @@ def _get_icc_profile_path() -> str:
 
 def _convert_pdf_to_pdfa(pdf_data: bytes) -> bytes:
 	"""Convert the PDF data to PDF/A-3 using Ghostscript."""
-	import os
 	import subprocess
 
 	cwd = None
@@ -1129,3 +1238,40 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes) -> bytes:
 
 	xml_bytes = get_einvoice(invoice_id)
 	return attach_xml(pdf_data, xml_bytes, level)
+
+
+def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str:
+	"""Filename stem (no `.xml`) for the downloadable XML.
+
+	Uses *pattern* when given, otherwise reads *Auto name format for XML file*
+	from **E Invoice Settings**. Falls back to `doc.name` when the pattern is
+	empty or fails to resolve. Result is sanitized via `_get_safe_file_name`
+	(same rules as **File** attachments).
+	"""
+	if pattern is None:
+		pattern = frappe.get_single_value("E Invoice Settings", "auto_name_format_for_xml_file")
+	pattern = cstr(pattern).strip()
+	if pattern:
+		try:
+			base = parse_naming_series(pattern, doc=doc, number_generator=_no_series_counter).strip()
+		except Exception:
+			frappe.log_error(
+				title=_("E Invoice XML file name pattern failed"),
+				message=frappe.get_traceback(),
+				reference_doctype=doc.doctype,
+				reference_name=doc.name,
+			)
+			base = ""
+		if base:
+			return _get_safe_file_name(base)
+	return _get_safe_file_name(doc.name)
+
+
+def _get_safe_file_name(file_name: str) -> str:
+	"""Local-only; mirrors ``get_safe_file_name`` in Frappe v17+ file utils."""
+	return re.sub(r"[/\\%?#]", "_", file_name)
+
+
+def _no_series_counter(_key: str, _digits: int) -> str:
+	"""Disable the series counter so XML naming has no DB side effects."""
+	return ""

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gc:CodeList xmlns:gc="http://docs.oasis-open.org/codelist/ns/genericode/1.0/" xmlns="">
+  <Annotation>
+    <AppInfo>
+      <ext:info xmlns:ext="urn:cef.eu:codelist:gc-annotation">This is a Digital Building Blocks for Europe Code List.
+
+This file was automatically generated.
+Do NOT edit!</ext:info>
+    </AppInfo>
+  </Annotation>
+  <Identification>
+    <ShortName>5305</ShortName>
+    <Version>2026-05-15</Version>
+    <CanonicalUri>urn:cef.eu:names:identifier:5305</CanonicalUri>
+    <CanonicalVersionUri>urn:cef.eu:names:identifier:5305-2026-05-15</CanonicalVersionUri>
+  </Identification>
+  <ColumnSet>
+    <Column Id="Code" Use="required">
+      <ShortName>Unique code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Name" Use="required">
+      <ShortName>Meaning of the code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Remark" Use="optional">
+      <ShortName>Optional remark for the usage of this code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Key Id="CodeKey">
+      <ShortName>Unique code</ShortName>
+      <ColumnRef Ref="Code" />
+    </Key>
+  </ColumnSet>
+  <SimpleCodeList>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>S</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard rate</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Standard rate</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>Z</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Zero rated goods</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Zero rated goods</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>E</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Exempt from tax</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Exempt from tax</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>VAT Reverse charge</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>VAT reverse charge</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>K</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>VAT exempt for EEA intra-community supply of goods and services</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>VAT exempt for intra community supply of goods</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>G</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Free export item, tax not charged</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Free export item, tax not charged</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>O</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Service outside scope of tax</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Services outside scope of tax</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>L</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Canary Islands general indirect tax</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Canary Islands General Indirect Tax</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>M</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax for production, services and importation in Ceuta and Melilla</SimpleValue>
+      </Value>
+      <Value ColumnRef="Remark">
+        <SimpleValue>Liable for IPSI</SimpleValue>
+      </Value>
+    </Row>
+  </SimpleCodeList>
+</gc:CodeList>
