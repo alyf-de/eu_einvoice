@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gc:CodeList xmlns:gc="http://docs.oasis-open.org/codelist/ns/genericode/1.0/" xmlns="">
+  <Annotation>
+    <AppInfo>
+      <ext:info xmlns:ext="urn:cef.eu:codelist:gc-annotation">This is a Digital Building Blocks for Europe Code List.
+
+This file was automatically generated.
+Do NOT edit!</ext:info>
+    </AppInfo>
+  </Annotation>
+  <Identification>
+    <ShortName>Allowance</ShortName>
+    <Version>2026-05-15</Version>
+    <CanonicalUri>urn:cef.eu:names:identifier:Allowance</CanonicalUri>
+    <CanonicalVersionUri>urn:cef.eu:names:identifier:Allowance-2026-05-15</CanonicalVersionUri>
+  </Identification>
+  <ColumnSet>
+    <Column Id="Code" Use="required">
+      <ShortName>Unique code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Name" Use="required">
+      <ShortName>Meaning of the code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Key Id="CodeKey">
+      <ShortName>Unique code</ShortName>
+      <ColumnRef Ref="Code" />
+    </Key>
+  </ColumnSet>
+  <SimpleCodeList>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>41</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bonus for works ahead of schedule</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>42</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Other bonus</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>60</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manufacturer’s consumer discount</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>62</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Due to military status</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>63</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Due to work accident</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>64</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Special agreement</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>65</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Production error discount</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>66</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>New outlet discount</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>67</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sample discount</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>68</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>End-of-range discount</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>70</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Incoterm discount</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>71</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Point of sales threshold allowance</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>88</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Material surcharge/deduction</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>95</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Discount</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>100</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Special rebate</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>102</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Fixed long term</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>103</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Temporary</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>104</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>105</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Yearly turnover</SimpleValue>
+      </Value>
+    </Row>
+  </SimpleCodeList>
+</gc:CodeList>

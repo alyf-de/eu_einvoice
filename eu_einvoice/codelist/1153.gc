@@ -1,0 +1,6577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gc:CodeList xmlns:gc="http://docs.oasis-open.org/codelist/ns/genericode/1.0/" xmlns="">
+  <Annotation>
+    <AppInfo>
+      <ext:info xmlns:ext="urn:cef.eu:codelist:gc-annotation">This is a Digital Building Blocks for Europe Code List.
+
+This file was automatically generated.
+Do NOT edit!</ext:info>
+    </AppInfo>
+  </Annotation>
+  <Identification>
+    <ShortName>1153</ShortName>
+    <Version>2026-05-15</Version>
+    <CanonicalUri>urn:cef.eu:names:identifier:1153</CanonicalUri>
+    <CanonicalVersionUri>urn:cef.eu:names:identifier:1153-2026-05-15</CanonicalVersionUri>
+  </Identification>
+  <ColumnSet>
+    <Column Id="Code" Use="required">
+      <ShortName>Unique code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Column Id="Name" Use="required">
+      <ShortName>Meaning of the code</ShortName>
+      <Data Type="string" />
+    </Column>
+    <Key Id="CodeKey">
+      <ShortName>Unique code</ShortName>
+      <ColumnRef Ref="Code" />
+    </Key>
+  </ColumnSet>
+  <SimpleCodeList>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Order acknowledgement document identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Proforma invoice document identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Documentary credit identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contract document addendum identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Goods declaration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit card number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Offer number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bank's batch interbank transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bank's individual interbank transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delivery order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Despatch advice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Drawing number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Waybill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delivery schedule number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment identifier, consignee assigned</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Partial shipment identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Municipality assigned business registry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport contract document identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Master label number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Despatch note document identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Enquiry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Docket number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Civil action number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Carrier's agent reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AAZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard Carrier Alpha Code (SCAC) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs valuation decision number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>End use authorization number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Anti-dumping case number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs tariff number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Declarant's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Repair estimate number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs decision request number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sub-house bill of lading number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax payment identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Quota number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transit (onward carriage) guarantee (bond) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs guarantee number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Replacing part number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Seller's catalogue number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Originator's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Declarant's Customs identity number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Importer reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Export clearance instruction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Import clearance instruction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Goods declaration document identifier, Customs</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Article number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Intra-plant routing</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Stock keeping unit number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Text Element Identifier deletion reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Allotment identification (Air)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ABZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vehicle licence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Air cargo transfer manifest</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cargo acceptance order reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>US government agency number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Shipping unit identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Additional reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Related document number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Addressee reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ATA carnet number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Packaging unit identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Outerpackaging unit identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer material specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bank reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Principal reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Collection advice document identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Iron charge number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hot roll number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cold roll number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Railway wagon number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Unique claims reference number of the sender</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Loss/event number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Estimate order reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reference number to previous message</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Banker's acceptance</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Duty memo number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ACZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Equipment transport charge number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's item number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Matured certificate of deposit</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Loan</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Analysis number/test number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Treaty number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Catastrophe number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bureau signing (statement reference)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Company / syndicate reference 1</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Company / syndicate reference 2</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ordering customer consignment reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Shipowner's authorization number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Inland transport order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Container work order reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Statement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Unique market reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Group accounting</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Broker reference 1</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Broker reference 2</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lloyd's claims office reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Secure delivery terms and conditions agreement reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ADZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Trader account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Authorization for expense (AFE) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Government agency reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Assembly number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Symbol number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AED</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Commodity number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Eur 1 certificate number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer process specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Applicable instructions or standards</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Registration number of previous Customs declaration</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Post-entry reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delivery number (transport)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport route</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer's unit inventory number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product reservation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Project number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Drawing list number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AER</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Project specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AES</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Primary reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AET</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Request for cancellation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Supplier's control number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Shipping note number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Empty container bill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Non-negotiable maritime transport document number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Substitute air waybill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AEZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Despatch note (post parcels) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Airlines flight identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Through bill of lading number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cargo manifest number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bordereau number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs item number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Export Control Commodity number (ECCN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Marking/label reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tariff number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Replenishment purchase order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Immediate transportation no. for in bond movement</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transportation exportation no. for in bond movement</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Immediate exportation no. for in bond movement</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Associated invoices</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Secondary Customs reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Account party's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Beneficiary's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Second beneficiary's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Applicant's bank reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Issuing bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Beneficiary's bank reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Direct payment valuation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Direct payment valuation request number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Quantity valuation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Quantity valuation request number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bill of quantities number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment valuation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AFZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Situation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Agreement to pay number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contract party reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Account party's bank reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Agent's bank reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Agent's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Applicant's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dispute number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit rating agency's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Request number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Single transaction sequence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Application reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delivery verification certificate</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Number of temporary importation document</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reference number quoted on statement</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sender's reference to the original message</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Company issued equipment ID</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Domestic flight number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International flight number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Employer identification number of service bureau</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Service group identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Member number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous member number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Scheme/plan number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous scheme/plan number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Receiving party's member identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AGZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payroll number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Packaging specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Authority issued equipment identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Training flight number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Fund code number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Signal code number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Major force program number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Nomination number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Laboratory registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport contract reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payee's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payer's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Creditor's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debtor's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Joint venture reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Chamber of Commerce registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Wool identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Wool tax reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Meat processing establishment registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Quarantine/treatment status reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Request for quote number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manual processing authority number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Rate note number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Freight Forwarder number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AHZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs release code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Compliance code number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Department of transportation bond number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Export establishment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AID</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Certificate of conformity</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ministerial certificate of homologation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous delivery instruction number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Passport number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Common transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AII</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bank's common transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer's individual transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bank's individual transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer's common transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Individual transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product sourcing agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs transhipment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs preference inquiry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Packing plant number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original certificate number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Processing plant number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Slaughter plant number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Charge card account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Event reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport section reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Referred product for mechanical analysis</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Referred product for chemical analysis</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AIZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consolidated invoice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Part reference indicator in a drawing</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>U.S. Code of Federal Regulations (CFR)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchasing activity clause number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>U.S. Defense Federal Acquisition Regulation Supplement</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Agency clause number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Circular publication number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>U.S. Federal Acquisition Regulation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>U.S. General Services Administration Regulation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>U.S. Federal Information Resources Management Regulation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Paragraph</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Special instructions number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Site specific procedures, terms, and conditions number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Master solicitation procedures, terms, and conditions</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>U.S. Department of Veterans Affairs Acquisition Regulation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Military Interdepartmental Purchase Request (MIPR) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Foreign military sales number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Defense priorities allocation system priority rating</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Wage determination number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard Industry Classification (SIC) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>End item number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Federal supply schedule item number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Technical document number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Technical order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Suffix</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AJZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transportation account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Container disposition order reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Container prefix</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment return reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment survey reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment survey report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment stuffing order</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vehicle Identification Number (VIN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Government bill of lading</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ordering customer's second reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Direct debit reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Meter reading at the beginning of the delivery</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Meter reading at the end of delivery</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Replenishment purchase order range start number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Third bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Action authorization number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Appropriation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product change authority number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>General cargo consignment reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Catalogue sequence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Forwarding order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment survey reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lease contract reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport costs reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment stripping order</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prior policy number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AKZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Policy number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Procurement budget number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Domestic inventory management code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer reference number assigned to previous balance of</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous credit advice reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reporting form number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Authorization number for exception to dangerous goods</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dangerous goods security number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dangerous goods transport licence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous rental agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Next rental agreement reason number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignee's invoice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Message batch number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous delivery schedule number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Physical inventory recount reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Receiving advice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Returnable container reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Returns notice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sales forecast number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sales report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous tax control number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>AGERD (Aerospace Ground Equipment Requirement Data) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Registered capital reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard number of inspection document</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Model</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Financial management reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ALZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>NOTIfication for COLlection number (NOTICOL)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous request for metered reading reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Next rental agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reference number of a request for metered reading</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hastening number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AME</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Repair data request number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consumption data request number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Profile number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Case number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Government quality assurance and control level Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment plan reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Replaced meter unit number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AML</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Replenishment purchase order range end number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Insurer assigned reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Canadian excise entry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Premium rate table</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Advise through bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>US, Department of Transportation bond surety code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>US, Food and Drug Administration establishment indicator</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>US, Federal Communications Commission (FCC) import</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Goods and Services Tax identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Integrated logistic support cross reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Department number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's catalogue number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Financial settlement party's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard's version number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AMZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Pipeline number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Account servicing bank's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Completed units payment request reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment in advance request reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AND</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Parent file</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sub file</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CAD file layer convention</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Technical regulation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Plot file</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>File conversion journal</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Authorization number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reference number assigned by third party</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Deposit reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Named bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Drawee's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Case of need party's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Collecting bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Remitting bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Principal's bank reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Presenting bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignee's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Financial transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Receiving bank's authorization number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Clearing reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ANY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sending bank's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Documentary payment reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Accounting file reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sender's file reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Receiver's file reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Source document internal reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Principal's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Calendar</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work shift</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work breakdown structure</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Organisation breakdown structure</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AON</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work task charge number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Functional work group</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work team</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Department</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Statement of work</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work package</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Planning package</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cost account</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work order</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transportation Control Number (TCN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Constraint notation</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>ETERMS reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AOZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Implementation version number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Accounts receivable number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Incorporated legal reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment instalment reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Equipment owner reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cedent's claim number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reinsurer's claim number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price/sales catalogue response reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>General purpose message reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Invoicing data sheet reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>API</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Inventory report reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ceiling formula reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price variation formula reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reference to account servicing bank's message</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Party sequence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchaser's request reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contractor request reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Accident reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Commercial account summary reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contract breakdown reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contractor registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Applicable coefficient identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Special budget account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Authorisation for repair reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manufacturer defined repair rates reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original submitter log number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original submitter, parent Data Maintenance Request (DMR)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>APZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original submitter, child Data Maintenance Request (DMR)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Entry point assessment log number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Entry point assessment log number, parent DMR</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Entry point assessment log number, child DMR</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Data structure tag</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Central secretariat log number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Central secretariat log number, parent Data Maintenance</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Central secretariat log number, child Data Maintenance</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International assessment log number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International assessment log number, parent Data</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International assessment log number, child Data Maintenance</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Status report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Message design group number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>US Customs Service (USCS) entry code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Beginning job sequence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sender's clause number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dun and Bradstreet Canada's 8 digit Standard Industrial</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Activite Principale Exercee (APE) identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dun and Bradstreet US 8 digit Standard Industrial</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Nomenclature Activity Classification Economy (NACE)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Norme Activite Francaise (NAF) identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Registered contractor activity type</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Statistic Bundes Amt (SBA) identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>State or province assigned entity identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Institute of Security and Future Market Development (ISFMD)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>File identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AQZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bankruptcy procedure number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>National government business identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prior Data Universal Number System (DUNS) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Companies Registry Office (CRO) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Costa Rican judicial number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Numero de Identificacion Tributaria (NIT)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Patron number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Registro Informacion Fiscal (RIF) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Registro Unico de Contribuyente (RUC) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tokyo SHOKO Research (TSR) business identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Personal identity card number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Systeme Informatique pour le Repertoire des ENtreprises</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Systeme Informatique pour le Repertoire des ETablissements</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Publication issue number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original filing number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Document page identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Public filing registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Regiristo Federal de Contribuyentes</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Social security number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Document volume number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ART</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Book number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Stock exchange company identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Imputation account</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Financial phase reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Technical phase reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prior contractor registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ARZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Stock adjustment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dispensation reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Investment reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Assuming company</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Budget chapter</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Duty free products security number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Duty free products receipt authorisation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Party information message reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Formal statement reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Proof of delivery reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Supplier's credit claim reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Picture of actual product</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Picture of a generic product</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Trading partner identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prior trading partner identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Password</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Formal report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Fund account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Safe custody number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Master account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AST</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Group reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Accounting transmission number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product data file number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cadastro Geral do Contribuinte (CGC)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Foreign resident identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>CD-ROM</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ASZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Physical medium</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Financial cancellation reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchase for export Customs agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Judgment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Secretariat number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous banking status message reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Last received banking status message reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bank's documentary procedure reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer's documentary procedure reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Safe deposit box number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Receiving Bankgiro number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sending Bankgiro number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bankgiro reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Guarantee number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Collection instrument number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Converted Postgiro number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cost centre alignment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Kamer Van Koophandel (KVK) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Institut Belgo-Luxembourgeois de Codification (IBLC) number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>External object reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Exceptional transport authorisation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Clave Unica de Identificacion Tributaria (CUIT)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Registro Unico Tributario (RUT)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Flat rack container bundle identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment acceptance order reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment release order reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ATZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ship's stay reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Authorization to meet competition number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Place of positioning reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Party reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Issued prescription identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Collection reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Travel service</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment stock contract</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Importer's letter of credit reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Performed prescription identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Image reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Proposed purchase order reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Application for financial support reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manufacturing quality agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Software editor reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Software reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Software quality reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consolidated orders' reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs binding ruling number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs non-binding ruling number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delivery route reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Net area supplier reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Time series reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Connecting point to central grid</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Marketing plan identification number (MPIN)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Entity reference number, previous</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>International Standard Industrial Classification (ISIC)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AUZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customs pre-approval ruling number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Account payable number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>First financial institution's transaction reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product characteristics directory</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Supplier's customer reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Inventory report request number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Metering point</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Passenger reservation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Slaughterhouse approval number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Meat cutting plant approval number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer travel service identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Export control classification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Broker reference 3</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment information</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Goods item information</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dangerous Goods information</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Pilotage services exemption number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Person registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Place of packing approval number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original Mandate Reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Mandate Reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reservation station indentifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Unique goods shipment identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Framework Agreement Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hash value</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Movement reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Economic Operators Registration and Identification Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AVZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Local Reference Number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Rate code number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Air waybill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Documentary credit amendment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Advising bank's reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cost centre</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Work item quantity determination</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Internal data process number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Category of work reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Policy form number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Net area</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Service provider</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Error position</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Service category reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Connected location</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Related party</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Latest accounting entry record reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Accounting entry</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Document reference, original</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Hygienic Certificate number, national</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Administrative Reference Code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Pick-up sheet number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Phone number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's fund number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Company trading account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reserved goods identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AWZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Handling and movement reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Instruction to despatch reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Instruction for returns number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Metered services consumption report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Order status enquiry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Firm booking reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product inquiry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Split delivery number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Service relation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Serial shipping container code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXJ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Test specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport status report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tooling contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Formula reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Pre-agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product certification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Product specification reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payroll deduction advice reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>TRACES party identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>AXU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Block Stowage Reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Beginning meter reading actual</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bid number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Beginning meter reading estimated</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>House bill of lading number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bill of lading number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment identifier, carrier assigned</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Blanket order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Broker or sales office number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Batch number/lot number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BTP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Battery and accumulator producer registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>BW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Blended with number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IATA Cargo Agent CASS Address number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Matching of entries, balanced</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Entry flagging</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Matching of entries, unbalanced</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Document reference, internal</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>European Value Added Tax identification</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cost accounting document</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CAZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Grid operator's customer reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CBA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ticket control number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CBB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Order shipment grouping reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit note number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CEC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ceding company</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CED</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit letter number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CFE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignee's further order</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CFF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Animal farm licence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CFO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignor's further order</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignee's order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer catalogue number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cheque number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CKN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Checking number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Credit memo number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CMR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Road consignment note number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Carrier's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CNO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Charges note document attachment indicator</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>COF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Call off order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Condition of purchase document number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Customer reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CRN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport means journey identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Condition of sale document number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CST</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Team assignment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CU</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment identifier, consignor assigned</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Container operators reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Package number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>CZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cooperation contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Deferment approval number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DAN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Buyer's debtor number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Distributor invoice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Debit note number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Document identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Delivery note number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>DR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Dock receipt number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ending meter reading actual</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Embargo permit number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ED</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Export declaration</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ending meter reading estimated</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EEP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Electrical and electronic equipment producer registration</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Employer's identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Embargo number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Equipment number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ER</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Container/equipment receipt number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ERN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Exporter's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ET</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Excess transportation number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>EX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Export permit identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Fiscal number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment identifier, freight forwarder assigned</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>File line identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FLW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Flow reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Freight bill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Foreign exchange</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Final sequence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Free zone identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>File version number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>FX</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Foreign exchange contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard's number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Government contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Standard's code number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GDN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>General declaration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>GN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Government reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>HS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Harmonised system number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>HWB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>House waybill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Internal vendor number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>In bond number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ICA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>IATA cargo agent code number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ICE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Insurance certificate reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ICO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Insurance contract reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>II</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Initial sample inspection report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Internal order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>INB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Intermediary broker</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>INN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Interchange number new</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>INO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Interchange number old</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Import permit identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Invoice number suffix</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Internal customer number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>IV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Invoice document identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>JB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Job number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>JE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ending job sequence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Shipping label serial number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LAN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Loading authorisation identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LAR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lower number in range</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Lockbox</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Letter of credit number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Document line identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Load planning number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LRC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Reservation office identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>LS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Bar coded label serial number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ship notice/manifest number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Master bill of lading number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manufacturer's part number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MG</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Meter unit number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manufacturing order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Message recipient</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MRN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Mailing reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Message sender</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MSS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Manufacturer's material safety data sheet number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>MWB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Master air waybill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>NA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>North American hazardous goods classification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>NF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Nota Fiscal</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>OH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Current invoice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>OI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous invoice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ON</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Order document identifier, buyer assigned</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>OP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Original purchase order</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>OR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>General order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payer's financial institution account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Production code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Promotion deal number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Plant number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prime contractor contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price list version number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PK</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Packing list number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price list number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>POR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchase order response number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchase order change number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payment reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Price quote number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Purchase order number suffix</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Prior purchase order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>PY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payee's financial institution account number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Remittance advice number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Rail/road routing code</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RCN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Railway consignment note number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Release number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>REN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Consignment receipt identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Export reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payer's financial institution transit routing No.(ACH</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>RT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Payee's financial institution transit routing No.</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sales person number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sales region number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SD</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sales department number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Serial number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SEA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Allocated seat</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ship from</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SH</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous highest schedule number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>SID (Shipper's identifying number for shipment)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sales office number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment seal identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Scan line</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SQ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Equipment sequence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SRN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Shipment reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Sellers reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>STA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Station reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SW</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Swap order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>SZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Specification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TB</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Trucker's bill of lading</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TCR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Terminal operator's consignment reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Telex message number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TF</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transfer number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>TIR carnet number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TIN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport instruction number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TL</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Tax exemption licence number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transaction reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>TP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Test report number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>UAR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Upper number of range</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>UC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ultimate customer's reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>UCN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Unique consignment reference number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>UN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>United Nations Dangerous Goods identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>UO</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Ultimate customer's order number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>URI</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Uniform Resource Identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>VAT registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor contract number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VGR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment gross mass verification reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vessel identifier</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Order number (vendor)</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VON</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Voyage number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VOR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Transport equipment gross mass verification order reference</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor product number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor ID number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Vendor order number suffix</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VT</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Motor vehicle identification number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>VV</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Voucher number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>WE</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Warehouse entry number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>WM</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Weight agreement number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>WN</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Well number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>WR</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Warehouse receipt number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>WS</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Warehouse storage location number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>WY</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Rail waybill number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>XA</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Company/place registration number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>XC</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Cargo control number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>XP</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Previous cargo control number</SimpleValue>
+      </Value>
+    </Row>
+    <Row>
+      <Value ColumnRef="Code">
+        <SimpleValue>ZZZ</SimpleValue>
+      </Value>
+      <Value ColumnRef="Name">
+        <SimpleValue>Mutually defined reference number</SimpleValue>
+      </Value>
+    </Row>
+  </SimpleCodeList>
+</gc:CodeList>

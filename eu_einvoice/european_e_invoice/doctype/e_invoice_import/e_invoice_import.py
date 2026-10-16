@@ -1,6 +1,7 @@
 # Copyright (c) 2024, ALYF GmbH and contributors
 # For license information, please see license.txt
 
+from __future__ import annotations
 
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -13,16 +14,17 @@ from facturx import get_xml_from_pdf
 from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from lxml.etree import XMLSyntaxError
+from lxml.etree import QName, XMLSyntaxError, fromstring
 
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile, get_profile
 
 if TYPE_CHECKING:
 	from drafthorse.models.accounting import ApplicableTradeTax, MonetarySummation
+	from drafthorse.models.container import Container
 	from drafthorse.models.party import PostalTradeAddress, TradeParty
 	from drafthorse.models.payment import PaymentTerms
-	from drafthorse.models.trade import BillingSpecifiedPeriod, PaymentMeans
+	from drafthorse.models.trade import BillingSpecifiedPeriod
 	from drafthorse.models.tradelines import LineItem
 	from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
 
@@ -155,9 +157,30 @@ class EInvoiceImport(Document):
 	def read_values_from_einvoice(self) -> None:
 		xml_bytes = self.get_xml_bytes()
 		try:
-			doc = DrafthorseDocument.parse(xml_bytes, strict=False)
+			root = fromstring(xml_bytes)
 		except XMLSyntaxError:
 			frappe.throw(_("The uploaded file does not contain valid XML data."))
+
+		if is_ubl_xml(root):
+			frappe.throw(
+				msg=_(
+					"UBL invoices are not supported. Please upload a CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
+				),
+				title=_("Unsupported e-invoice format"),
+				primary_action=get_create_purchase_invoice_action(),
+			)
+
+		try:
+			doc = DrafthorseDocument.parse(xml_bytes, strict=False)
+		except TypeError:
+			# Wrong root element (not CrossIndustryInvoice), but not UBL
+			frappe.throw(
+				msg=_(
+					"The uploaded file is not a Cross-Industry-Invoice (CII). Please upload a valid CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
+				),
+				title=_("Unsupported e-invoice format"),
+				primary_action=get_create_purchase_invoice_action(),
+			)
 
 		self.profile = get_profile(doc.context.guideline_parameter.id._text).value
 		self._validate_schematron(xml_bytes)
@@ -223,7 +246,7 @@ class EInvoiceImport(Document):
 		if any(validation_warnings):
 			self.validation_warnings += "\n".join(validation_warnings)
 
-	def parse_seller(self, seller: "TradeParty"):
+	def parse_seller(self, seller: TradeParty):
 		self.seller_name = str(seller.name)
 		self.seller_tax_id = (
 			seller.tax_registrations.children[0].id._text if seller.tax_registrations.children else None
@@ -232,13 +255,13 @@ class EInvoiceImport(Document):
 		self.seller_electronic_address_scheme = str(seller.electronic_address.uri_ID._scheme_id)
 		self.parse_address(seller.address, "seller")
 
-	def parse_buyer(self, buyer: "TradeParty"):
+	def parse_buyer(self, buyer: TradeParty):
 		self.buyer_name = str(buyer.name)
 		self.buyer_electronic_address = str(buyer.electronic_address.uri_ID._text)
 		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
 		self.parse_address(buyer.address, "buyer")
 
-	def parse_address(self, address: "PostalTradeAddress", prefix: str) -> _dict:
+	def parse_address(self, address: PostalTradeAddress, prefix: str) -> _dict:
 		country = frappe.db.get_value("Country", {"code": str(address.country_id).lower()}, "name")
 
 		self.set(f"{prefix}_city", str(address.city_name))
@@ -247,7 +270,7 @@ class EInvoiceImport(Document):
 		self.set(f"{prefix}_postcode", str(address.postcode))
 		self.set(f"{prefix}_country", str(country))
 
-	def parse_line_item(self, li: "LineItem"):
+	def parse_line_item(self, li: LineItem):
 		item = self.append("items")
 
 		net_rate = float(li.agreement.net.amount._value)
@@ -262,8 +285,8 @@ class EInvoiceImport(Document):
 		else:
 			item.product_name = product_name_full
 			item.product_description = product_description
-		item.seller_product_id = str(li.product.seller_assigned_id)
-		item_code = str(li.product.buyer_assigned_id)
+		item.seller_product_id = li.product.seller_assigned_id._text or None
+		item_code = li.product.buyer_assigned_id._text or None
 		if item_code and not frappe.db.exists("Item", item_code):
 			item_code = None
 
@@ -274,13 +297,15 @@ class EInvoiceImport(Document):
 		item.tax_rate = flt_or_none(li.settlement.trade_tax.rate_applicable_percent._value)
 		item.total_amount = flt_or_none(li.settlement.monetary_summation.total_amount._value)
 
-	def parse_tax(self, tax: "ApplicableTradeTax"):
+	def parse_tax(self, tax: ApplicableTradeTax):
 		t = self.append("taxes")
 		t.basis_amount = flt_or_none(tax.basis_amount._value)
 		t.rate_applicable_percent = flt_or_none(tax.rate_applicable_percent._value)
 		t.calculated_amount = flt_or_none(tax.calculated_amount._value)
+		reason_text = tax.exemption_reason._text
+		t.vat_exemption_reason_text = str(reason_text).strip() if reason_text else None
 
-	def parse_payment_term(self, term: "PaymentTerms"):
+	def parse_payment_term(self, term: PaymentTerms):
 		if not term.partial_amount.children:
 			self.due_date = term.due._value
 			return
@@ -309,7 +334,7 @@ class EInvoiceImport(Document):
 		if term.discount_terms.actual_amount._value:
 			t.discount_actual_amount = float(term.discount_terms.actual_amount._value)
 
-	def parse_monetary_summation(self, summation: "MonetarySummation"):
+	def parse_monetary_summation(self, summation: MonetarySummation):
 		self.line_total = flt_or_none(summation.line_total._value)
 		self.allowance_total = flt_or_none(summation.allowance_total._value)
 		self.charge_total = flt_or_none(summation.charge_total._value)
@@ -322,14 +347,22 @@ class EInvoiceImport(Document):
 		self.total_prepaid = flt_or_none(summation.prepaid_total._value)
 		self.due_payable = flt_or_none(summation.due_amount._value)
 
-	def parse_bank_details(self, payment_means: "PaymentMeans"):
-		self.payee_iban = payment_means.payee_account.iban._text or None
+	def parse_bank_details(self, payment_means: Container):
+		"""Read the payee bank account from the first payment instruction (BG-16) with an IBAN."""
+		# reset first, so that replacing the file never keeps bank details of the previous invoice
+		self.payee_iban = self.payee_account_name = self.payee_bic = None
+
+		instruction = next((pm for pm in payment_means.children if pm.payee_account.iban._text), None)
+		if not instruction:
+			return
+
+		self.payee_iban = instruction.payee_account.iban._text
 
 		if EInvoiceProfile(self.profile) >= EInvoiceProfile.EN16931:
-			self.payee_account_name = payment_means.payee_account.account_name._text or None
-			self.payee_bic = payment_means.payee_institution.bic._text or None
+			self.payee_account_name = instruction.payee_account.account_name._text or None
+			self.payee_bic = instruction.payee_institution.bic._text or None
 
-	def parse_billing_period(self, period: "BillingSpecifiedPeriod"):
+	def parse_billing_period(self, period: BillingSpecifiedPeriod):
 		self.billing_period_start = period.start._value
 		self.billing_period_end = period.end._value
 
@@ -358,13 +391,15 @@ class EInvoiceImport(Document):
 				continue
 
 			if row.unit_code:
-				rec20_3 = get_docnames_for("urn:xoev-de:kosit:codeliste:rec20_3", "UOM", row.unit_code)
-				if rec20_3:
-					row.uom = rec20_3[0]
-				else:
-					rec21_3 = get_docnames_for("urn:xoev-de:kosit:codeliste:rec21_3", "UOM", row.unit_code)
-					if rec21_3:
-						row.uom = rec21_3[0]
+				for code_list in (
+					"urn:xoev-de:kosit:codeliste:rec20",
+					"urn:xoev-de:kosit:codeliste:rec21",
+					"urn:cef.eu:names:identifier:Unit",
+				):
+					docnames = get_docnames_for(code_list, "UOM", row.unit_code)
+					if docnames:
+						row.uom = docnames[0]
+						break
 			elif row.item:
 				stock_uom, purchase_uom = frappe.db.get_value("Item", row.item, ["stock_uom", "purchase_uom"])
 				row.uom = purchase_uom or stock_uom
@@ -428,13 +463,25 @@ def flt_or_none(value) -> float | None:
 	return float(value) if value is not None else None
 
 
-def get_xml_bytes(einvoice: str) -> bytes:
-	"""Reads the XML data from the attached XML or PDF file."""
-	CREATE_PI_ACTION = {
+# OASIS UBL 2.x document namespaces (Invoice-2, CreditNote-2, ...)
+UBL_NAMESPACE_PREFIX = "urn:oasis:names:specification:ubl:"
+
+
+def get_create_purchase_invoice_action() -> dict:
+	return {
 		"label": _("Create Purchase Invoice"),
 		"client_action": "eu_einvoice.utils.new_purchase_invoice",
 	}
 
+
+def is_ubl_xml(root) -> bool:
+	"""Return True if the XML root uses an OASIS UBL 2.x document namespace."""
+	namespace = QName(root).namespace or ""
+	return namespace.startswith(UBL_NAMESPACE_PREFIX)
+
+
+def get_xml_bytes(einvoice: str) -> bytes:
+	"""Reads the XML data from the attached XML or PDF file."""
 	file = relative_url_to_path(einvoice)
 	if file.suffix.lower() == ".pdf":
 		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes(), check_xsd=False)
@@ -444,7 +491,7 @@ def get_xml_bytes(einvoice: str) -> bytes:
 					"No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
 				),
 				title=_("Not an E-Invoice"),
-				primary_action=CREATE_PI_ACTION,
+				primary_action=get_create_purchase_invoice_action(),
 			)
 	elif file.suffix.lower() == ".xml":
 		xml_bytes = file.read_bytes()
@@ -454,7 +501,7 @@ def get_xml_bytes(einvoice: str) -> bytes:
 				"The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 			).format(file.suffix),
 			title=_("Unsupported file format"),
-			primary_action=CREATE_PI_ACTION,
+			primary_action=get_create_purchase_invoice_action(),
 		)
 
 	return xml_bytes
@@ -466,8 +513,8 @@ def relative_url_to_path(url: str) -> Path:
 
 
 @frappe.whitelist()
-def create_purchase_invoice(source_name, target_doc=None):
-	def post_process(source, target: "PurchaseInvoice"):
+def create_purchase_invoice(source_name: str, target_doc: Document | None = None):
+	def post_process(source, target: PurchaseInvoice):
 		target.set_missing_values()
 
 	def process_item_row(source, target, source_parent) -> None:

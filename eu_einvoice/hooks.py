@@ -175,7 +175,7 @@ doc_events = {
 # Testing
 # -------
 
-# before_tests = "eu_einvoice.install.before_tests"
+before_tests = "erpnext.setup.utils.before_tests"
 
 # Overriding Methods
 # ------------------------------
@@ -246,3 +246,8 @@ export_python_type_annotations = True
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+
+# Translation
+# ------------
+# List of apps whose translatable strings should be excluded from this app's translations.
+ignore_translatable_strings_from = ["frappe", "erpnext"]

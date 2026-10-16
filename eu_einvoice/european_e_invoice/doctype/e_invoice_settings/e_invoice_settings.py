@@ -18,12 +18,26 @@ class EInvoiceSettings(Document):
 
 		attach_field_for_xml_file: DF.Autocomplete | None
 		auto_attach_xml: DF.Check
+		auto_name_format_for_xml_file: DF.Data | None
 		error_action_on_save: DF.Literal["", "Warning Message", "Error Message"]
 		error_action_on_submit: DF.Literal["", "Warning Message", "Error Message"]
 		sales_invoice_number_field: DF.Autocomplete | None
 		validate_sales_invoice_on_save: DF.Check
 		validate_sales_invoice_on_submit: DF.Check
+		vat_exemption_reason_text: DF.SmallText | None
 	# end: auto-generated types
+
+	@frappe.whitelist()
+	def import_code_lists(self):
+		"""Import the bundled EN 16931 code lists into an existing site."""
+		frappe.only_for("System Manager")
+		# ~4600 Common Codes, too slow for a request
+		frappe.enqueue(
+			"eu_einvoice.install.import_code_lists",
+			queue="long",
+			timeout=1800,
+			enqueue_after_commit=True,
+		)
 
 	def before_validate(self):
 		if not self.validate_sales_invoice_on_save:
