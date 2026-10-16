@@ -66,4 +66,4 @@ docstring-code-format = true
 
 [tool.bench.frappe-dependencies]
 frappe = ">=15.117.0,<16.0.0"
-erpnext = ">=15.121.1,<16.0.0"
+erpnext = ">=15.121.4,<16.0.0"
