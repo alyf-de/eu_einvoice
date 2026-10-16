@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-08-03 10:28+0053\n"
+"POT-Creation-Date: 2026-10-15 14:53+0000\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:821
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:870
 msgid "A document level discount is currently not supported in the e-invoice."
 msgstr "Ein Rabatt auf der Dokumentebene wird in der E-Rechnung derzeit nicht unterstützt."
 
@@ -59,7 +59,7 @@ msgstr "Abschläge gesamt"
 msgid "Already migrated {0}."
 msgstr "Bereits migriert {0}."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:106
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:107
 msgid "An E Invoice Import with the same Invoice ID and Supplier already exists."
 msgstr "Eine E-Rechnung mit der gleichen Rechnungs-ID und Lieferanten existiert bereits."
 
@@ -69,7 +69,7 @@ msgstr "Eine E-Rechnung mit der gleichen Rechnungs-ID und Lieferanten existiert 
 msgid "Attach Field for XML File"
 msgstr "Anhangsfeld für XML-Datei"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:51
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:59
 msgid "Attach file"
 msgstr "Datei anhängen"
 
@@ -187,11 +187,11 @@ msgstr "Käufer-Referenz"
 msgid "Calculation Percent"
 msgstr "Berechnung Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:858
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:907
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:872
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:921
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
@@ -200,7 +200,7 @@ msgstr "E-Rechnung konnte nicht validiert werden."
 msgid "Charge Total"
 msgstr "Zuschläge gesamt"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:25
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:34
 msgid "Clear unresolvable links from the legacy field instead of leaving them unchanged. Each removal is logged."
 msgstr "Nicht auflösbare Links im Legacy-Feld löschen statt unverändert zu lassen. Jede Entfernung wird protokolliert."
 
@@ -234,9 +234,24 @@ msgstr "Eingebettetes Dokument konnte nicht migriert werden: Kein Datei-Datensat
 msgid "Could not migrate embedded document: no File record found for URL {0}. The legacy attachment link was removed."
 msgstr "Eingebettetes Dokument konnte nicht migriert werden: Kein Datei-Datensatz für URL {0} gefunden. Der alte Anhangslink wurde entfernt."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:212
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:234
 msgid "Could not validate E Invoice schematron. See Error Log for details."
 msgstr "E-Rechnung konnte nicht validiert werden. Details im Fehlerlog."
+
+#. Label of the create_item (Button) field in DocType 'E Invoice Item'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json
+msgid "Create Item"
+msgstr "Artikel erstellen"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:93
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:472
+msgid "Create Purchase Invoice"
+msgstr "Eingangsrechnung erstellen"
+
+#. Label of the create_supplier (Button) field in DocType 'E Invoice Import'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
+msgid "Create Supplier"
+msgstr "Lieferant erstellen"
 
 #. Label of the create_supplier_address (Button) field in DocType 'E Invoice
 #. Import'
@@ -250,7 +265,7 @@ msgstr "Lieferanten-Adresse erstellen"
 msgid "Default VAT exemption reason"
 msgstr "Standard Grund für die Umsatzsteuerbefreiung"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:31
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:32
 msgid "Download eInvoice"
 msgstr "E-Rechnung herunterladen"
 
@@ -282,7 +297,7 @@ msgstr "E-Rechnungs-Anhangszeile"
 msgid "E Invoice Import"
 msgstr "E-Rechnungs-Import"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:653
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:697
 msgid "E Invoice Import {0} does not exist"
 msgstr "E-Rechnungs-Import {0} existiert nicht"
 
@@ -319,18 +334,18 @@ msgstr "E-Rechnungs-Einstellungen"
 msgid "E Invoice Trade Tax"
 msgstr "E-Rechnungs-Steuer"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1186
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:1259
 msgid "E Invoice XML file name pattern failed"
 msgstr "Namensmuster für E-Rechnungs-XML-Datei fehlgeschlagen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:840
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:889
 msgid "E Invoice is not correct"
 msgstr "E-Rechnung ist nicht korrekt"
 
 #: eu_einvoice/custom_fields.py:41 eu_einvoice/custom_fields.py:77
 #: eu_einvoice/custom_fields.py:99 eu_einvoice/custom_fields.py:139
 msgid "E Invoicing"
-msgstr ""
+msgstr "E-Rechnung"
 
 #. Label of the einvoice (Attach) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
@@ -342,7 +357,7 @@ msgstr "E-Rechnung"
 #: eu_einvoice/desktop_icon/e_invoicing.json
 #: eu_einvoice/workspace_sidebar/e_invoicing.json
 msgid "E-Invoicing"
-msgstr ""
+msgstr "E-Rechnungen"
 
 #: eu_einvoice/custom_fields.py:68 eu_einvoice/custom_fields.py:90
 #: eu_einvoice/custom_fields.py:112
@@ -370,7 +385,7 @@ msgstr "Eingebettete Dokumente {0} enthalten identischen Dateiinhalt. Erwägen S
 msgid "Embedded Documents {0} use the same filename. Each annex must have a unique filename."
 msgstr "Eingebettete Dokumente {0} verwenden denselben Dateinamen. Jeder Anhang muss einen eindeutigen Dateinamen haben."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:120
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:132
 msgid "Enable Multiple Attachment Embedding first."
 msgstr "Aktivieren Sie zuerst die Einbettung mehrerer Anhänge."
 
@@ -384,11 +399,11 @@ msgstr "Einbettung mehrerer Anhänge in Rechnungs-PDF/XML aktivieren"
 msgid "Errors: {0}."
 msgstr "Fehler: {0}."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:66
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:78
 msgid "Field '{0}' does not exist on Sales Invoice doctype"
 msgstr "Feld '{0}' existiert nicht im DocType 'Sales Invoice'"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:74
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.py:86
 msgid "Field '{0}' must be of type 'Attach'. Current type: {1}"
 msgstr "Feld '{0}' muss vom Typ 'Anhängen' sein. Aktueller Typ: {1}"
 
@@ -410,15 +425,22 @@ msgstr "Datei-Abschnitt"
 msgid "If set, written to BT-120 (<code>ram:ExemptionReason</code>) on VAT breakdowns where an exemption reason code is emitted. Left unset in the XML when empty."
 msgstr "Wenn ausgefüllt, wird der Text als BT-120 (<code>ram:ExemptionReason</code>) in der Steueraufschlüsselung geschrieben, sobald ein Befreiungsgrundcode ausgegeben wird. Bleibt das Feld leer, wird BT-120 im XML nicht gesetzt."
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:8
+msgid "Import Code Lists"
+msgstr "Code Liste importieren"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:14
+msgid "Import of code lists queued. This may take a few minutes."
+msgstr "Import der Code-Listen wurde eingereiht. Dies kann einige Minuten dauern."
+
+#: eu_einvoice/install.py:32
+msgid "Importing Code Lists"
+msgstr "Code-Listen werden importiert"
+
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:84
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:165
 msgid "Invalid attachment file"
 msgstr "Ungültige Anhangsdatei"
-
-#. Label of the id (Data) field in DocType 'E Invoice Import'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
-msgid "Invoice ID"
-msgstr "Rechnungs-ID"
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:688
 msgid "Legacy embed migration failed for {0}"
@@ -447,7 +469,7 @@ msgstr "Mit {0} verknüpfen"
 
 #. Label of the btn_migrate_attachments_to_table (Button) field in DocType 'E
 #. Invoice Settings'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:12
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:21
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
 msgid "Migrate Existing Attachments to Table"
 msgstr "Vorhandene Anhänge in Tabelle migrieren"
@@ -476,15 +498,15 @@ msgstr "Migration eingereiht. Fortschritt verfolgen in {0}."
 msgid "Monetary Summation"
 msgstr "Gesamtbeträge"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:17
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:26
 msgid "Move legacy <b>Embedded Document</b> links into the <b>Embedded Documents</b> table for all Sales Invoices."
 msgstr "Legacy-Links aus <b>Eingebettetes Dokument</b> in die Tabelle <b>Eingebettete Dokumente</b> für alle Ausgangsrechnungen verschieben."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:446
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:490
 msgid "No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
 msgstr "In der PDF-Datei wurden keine maschinenlesbaren Daten gefunden. Sie können stattdessen eine reguläre Eingangsrechnung manuell erstellen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:449
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:493
 msgid "Not an E-Invoice"
 msgstr "Keine E-Rechnung"
 
@@ -522,23 +544,23 @@ msgstr ""
 msgid "Payment Means"
 msgstr "Zahlungsmittel"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:120
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:121
 msgid "Please create or select a supplier before submitting"
 msgstr "Bitte vor dem Buchen einen Lieferanten auswählen oder erstellen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:126
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:127
 msgid "Please map all invoice lines to an item before submitting"
 msgstr "Bitte vor dem Buchen alle Positionen einem Artikel zuordnen."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:23
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:24
 msgid "Please note the validation errors of the e-invoice."
 msgstr "Bitte beachten Sie die Validierungsfehler der E-Rechnung."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:61
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:69
 msgid "Please save the Sales Invoice before attaching files."
 msgstr "Bitte speichern Sie die Ausgangsrechnung, bevor Sie Dateien anhängen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:123
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:124
 msgid "Please select a company before submitting"
 msgstr "Bitte vor dem Buchen ein Unternehmen auswählen."
 
@@ -553,7 +575,7 @@ msgstr "Produktbeschreibung"
 msgid "Product Name"
 msgstr "Produktname"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:647
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:691
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
 msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
 
@@ -562,7 +584,7 @@ msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
 msgid "Purchase Order Row"
 msgstr "Bestellposition"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:40
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:49
 msgid "Queuing migration..."
 msgstr "Migration wird eingereiht …"
 
@@ -572,7 +594,7 @@ msgstr "Migration wird eingereiht …"
 msgid "Rate Applicable Percent"
 msgstr "Anwendbarer Prozentsatz"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:24
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:33
 msgid "Remove broken legacy file links"
 msgstr "Defekte Legacy-Dateilinks entfernen"
 
@@ -586,7 +608,7 @@ msgstr "Defekter Legacy-Link zum eingebetteten Dokument aus Feld `einvoice_embed
 msgid "Sales Invoice Number Field"
 msgstr "Rechnungsnummer-Feld"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:60
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.js:68
 msgid "Save required"
 msgstr "Speichern erforderlich"
 
@@ -657,7 +679,7 @@ msgstr "Verkäufer-Steuer-ID"
 msgid "Settlement"
 msgstr "Ausgleich"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:31
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.js:40
 msgid "Start migration"
 msgstr "Migration starten"
 
@@ -674,7 +696,7 @@ msgstr "Steuerbasis gesamt"
 msgid "The Embedded Document has not been migrated to the Embedded Documents table yet. Wait for the background migration to finish or ask a System Manager to run Migrate attachments to table on {0}."
 msgstr "Das eingebettete Dokument wurde noch nicht in die Tabelle Eingebettete Dokumente migriert. Warten Sie, bis die Hintergrundmigration abgeschlossen ist, oder bitten Sie einen System Manager, unter {0} „Vorhandene Anhänge in Tabelle migrieren“ auszuführen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:456
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:500
 msgid "The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 msgstr "Das Format der hochgeladenen Datei ({0}) wird für E-Rechnungen nicht unterstützt. Bitte laden Sie eine gültige E-Rechnungsdatei hoch oder erstellen Sie stattdessen eine reguläre Eingangsrechnung manuell."
 
@@ -682,14 +704,22 @@ msgstr "Das Format der hochgeladenen Datei ({0}) wird für E-Rechnungen nicht un
 msgid "The legacy embedded document was moved to the Embedded Documents table."
 msgstr "Das eingebettete Legacy-Dokument wurde in die Tabelle Eingebettete Dokumente verschoben."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:161
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:162
 msgid "The uploaded file does not contain valid XML data."
 msgstr "Die hochgeladene Datei enthält keine gültige XML-Daten."
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:178
+msgid "The uploaded file is not a Cross-Industry-Invoice (CII). Please upload a valid CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
+msgstr "Die hochgeladene Datei ist keine Cross-Industry-Invoice (CII). Bitte laden Sie eine gültige CII- oder ZUGFeRD-E-Rechnung hoch, oder erstellen Sie stattdessen manuell eine Eingangsrechnung."
 
 #. Label of the total_prepaid (Currency) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Total Prepaid"
 msgstr "Vorausbezahlt"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:166
+msgid "UBL invoices are not supported. Please upload a CII or ZUGFeRD e-invoice, or create a regular Purchase Invoice manually instead."
+msgstr "UBL-Rechnungen werden nicht unterstützt. Bitte laden Sie eine CII- oder ZUGFeRD-E-Rechnung hoch, oder erstellen Sie stattdessen manuell eine Eingangsrechnung."
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:349
 msgid "Unable to migrate embedded document from legacy field `einvoice_embedded_document` to `einvoice_attachments` table for Sales Invoice {0}"
@@ -700,7 +730,12 @@ msgstr "Eingebettetes Dokument konnte nicht vom Legacy-Feld `einvoice_embedded_d
 msgid "Unit Code"
 msgstr "Einheits-Code"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:459
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:169
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:181
+msgid "Unsupported e-invoice format"
+msgstr "Nicht unterstütztes E-Rechnungsformat"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:503
 msgid "Unsupported file format"
 msgstr "Nicht unterstütztes Dateiformat"
 
@@ -786,19 +821,19 @@ msgstr "Zeile #{0} ({1})"
 msgid "{0} Migration finished."
 msgstr "{0} Migration abgeschlossen."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:800
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:849
 msgid "{0} row #{1}: Discount Date should be after Posting Date"
 msgstr "{0} Zeile {1}: Rabatt-Datum sollte nach Buchungsdatum liegen"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:789
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:838
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr "Die Gebührenart 'Tatsächlich' wird nur in den E-Rechnungs-Profilen 'EXTENDED' und 'XRECHNUNG' unterstützt."
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:777
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:826
 msgid "{0} row #{1}: Type '{2}' is not supported in e-invoice"
 msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 
-#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:812
+#: eu_einvoice/european_e_invoice/custom/sales_invoice.py:861
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
 
