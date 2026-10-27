@@ -902,6 +902,9 @@ def as_base_64(content: str | bytes) -> str:
 	return b64encode(content).decode("utf-8")
 
 
+# Overrides frappe.utils.print_format.download_pdf, which allows guests (shared print links)
+# and checks print permission itself. The XML is only added if `get_einvoice` passes its read check.
+# nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @frappe.whitelist(allow_guest=True)
 def download_pdf(
 	doctype: str,
