@@ -315,6 +315,11 @@ class EInvoiceGenerator:
 			seller_tax_id = self.invoice.company_tax_id.strip()
 			seller_vat_scheme = "FC"
 
+		# BR-O-02: category O invoices must not contain Seller VAT identifier (BT-31).
+		# Keep FC (BT-32, e.g. Steuernummer). Company Tax ID stays in ERPNext for other invoices.
+		if seller_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
+
 		self.doc.trade.agreement.seller.tax_registrations.add(
 			TaxRegistration(
 				id=(seller_vat_scheme, seller_tax_id),
@@ -409,11 +414,31 @@ class EInvoiceGenerator:
 				customer_tax_id = self.invoice.tax_id.strip()
 				customer_vat_scheme = "FC"
 
+		# BR-O-02: category O invoices must not contain Buyer VAT identifier (BT-48).
+		# Keep FC. Customer Tax ID stays in ERPNext for other invoices.
+		if customer_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
+
 		self.doc.trade.agreement.buyer.tax_registrations.add(
 			TaxRegistration(
 				id=(customer_vat_scheme, customer_tax_id),
 			)
 		)
+
+	def _has_not_subject_to_vat_line(self) -> bool:
+		"""True if any invoice line will use VAT category O (Not subject to VAT)."""
+		for item in self.invoice.items:
+			category_code = duty_tax_fee_category_codes.get(
+				[
+					("Item Tax Template", item.item_tax_template),
+					("Account", item.income_account),
+					("Tax Category", self.invoice.tax_category),
+					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+				]
+			)
+			if category_code == "O":
+				return True
+		return False
 
 	def _set_buyer_address(self):
 		if not self.buyer_address:
