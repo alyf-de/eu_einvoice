@@ -250,13 +250,8 @@ class EInvoiceImport(Document):
 			self.validation_warnings += "\n".join(validation_warnings)
 
 	def parse_seller(self, seller: TradeParty):
-<<<<<<< HEAD
-		self.seller_name = str(seller.name)
-=======
 		# stripped, because we use them to find the Supplier
 		self.seller_name = stripped_text(seller.name)
-		self.seller_id = stripped_text(seller.id)
->>>>>>> db021af (fix(E Invoice Import): match supplier by name, IBAN and unique hits (#309) (#310))
 		self.seller_tax_id = (
 			stripped_text(seller.tax_registrations.children[0].id) or None
 			if seller.tax_registrations.children
@@ -386,20 +381,12 @@ class EInvoiceImport(Document):
 		if self.supplier:
 			return
 
-<<<<<<< HEAD
-		if frappe.db.exists("Supplier", self.seller_name):
-			self.supplier = self.seller_name
-
-		if self.seller_tax_id:
-			self.supplier = frappe.db.get_value("Supplier", {"tax_id": self.seller_tax_id}, "name")
-=======
 		iban = (self.payee_iban or "").replace(" ", "").upper()
 		iban_spaced = " ".join(iban[i : i + 4] for i in range(0, len(iban), 4))  # as printed on paper
 
 		# (identifier from the invoice, doctype, filters, field with the Supplier)
 		lookups = [
 			(self.seller_tax_id, "Supplier", {"tax_id": self.seller_tax_id}, "name"),
-			(self.seller_id, "Supplier", {"name": self.seller_id}, "name"),
 			(self.seller_name, "Supplier", {"supplier_name": self.seller_name}, "name"),
 			(self.seller_name, "Supplier", {"name": self.seller_name}, "name"),
 		]
@@ -426,7 +413,6 @@ class EInvoiceImport(Document):
 			if len(suppliers) == 1:
 				self.supplier = suppliers[0]
 				return
->>>>>>> db021af (fix(E Invoice Import): match supplier by name, IBAN and unique hits (#309) (#310))
 
 	def guess_company(self):
 		if self.company:

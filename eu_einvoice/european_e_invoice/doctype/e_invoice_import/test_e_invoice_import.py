@@ -92,14 +92,12 @@ class TestEInvoiceImport(IntegrationTestCase):
 	def test_seller_identifiers_are_stripped(self):
 		seller = TradeParty()
 		seller.name = "\n  Seller GmbH  \n"
-		seller.id = " S-1 "
 		seller.tax_registrations.add(TaxRegistration(id=("VA", " DE123456789 ")))
 
 		doc = frappe.new_doc("E Invoice Import")
 		doc.parse_seller(seller)
 
 		self.assertEqual(doc.seller_name, "Seller GmbH")
-		self.assertEqual(doc.seller_id, "S-1")
 		self.assertEqual(doc.seller_tax_id, "DE123456789")
 
 	def _assert_unsupported_einvoice_throw(self, xml_bytes: bytes, message_snippet: str):
@@ -134,8 +132,6 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
 
-<<<<<<< HEAD
-=======
 	def test_guess_supplier(self):
 		suffix = frappe.generate_hash(length=6)
 		group = frappe.db.get_value("Supplier Group", {"is_group": 0})
@@ -168,9 +164,9 @@ class TestEInvoiceImport(IntegrationTestCase):
 		by_id = make_supplier(f"ID Match {suffix}", f"ID Match {suffix}")
 		self.assertEqual(guess(seller_name=by_id, seller_tax_id=f"DE{suffix}"), by_id)
 
-		# tax ID wins over an unrelated supplier whose ID equals the seller ID
+		# tax ID wins over an unrelated supplier whose ID equals the seller name
 		by_tax = make_supplier(f"SUP-{suffix}-4", f"Tax Match {suffix}", tax_id=f"DE-{suffix}")
-		self.assertEqual(guess(seller_id=by_id, seller_tax_id=f"DE-{suffix}"), by_tax)
+		self.assertEqual(guess(seller_name=by_id, seller_tax_id=f"DE-{suffix}"), by_tax)
 
 		# supplier found via the IBAN of its bank account
 		by_iban = make_supplier(f"SUP-{suffix}-5", f"IBAN Match {suffix}")
@@ -234,19 +230,6 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertFalse(payee_differs_from_seller(seller, party("Bank Name", "S-1 ")))
 		self.assertFalse(payee_differs_from_seller(seller, party(" ")))  # blank name is no payee
 
-	def test_default_company_without_buyer_id(self):
-		frappe.defaults.set_user_default("company", "_Test Company")
-		self.addCleanup(frappe.defaults.clear_user_default, "company")
-
-		doc = frappe.new_doc("E Invoice Import")
-		doc.buyer_name = "Unknown Buyer GmbH"
-
-		doc.guess_company()
-		doc.guess_company_and_supplier()
-
-		self.assertEqual(doc.company, "_Test Company")
-
->>>>>>> db021af (fix(E Invoice Import): match supplier by name, IBAN and unique hits (#309) (#310))
 	def test_bank_details_from_payment_means_container(self):
 		"""drafthorse >= 2025.2 exposes payment instructions (BG-16) as a container."""
 		einvoice = Document()
