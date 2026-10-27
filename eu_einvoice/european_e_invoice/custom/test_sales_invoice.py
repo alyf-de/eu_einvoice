@@ -13,7 +13,7 @@ from lxml import etree
 from pypdf import PdfReader, PdfWriter
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
-	EInvoiceGenerator,
+	SalesInvoiceGenerator,
 	duty_tax_fee_category_codes,
 	get_einvoice,
 	get_item_rate,
@@ -109,7 +109,7 @@ class TestVatExemptionReason(IntegrationTestCase):
 	def test_empty_header_tax_skips_exemption_for_zero_rated(self):
 		"""BR-Z-10: zero-rated VAT breakdown must not have an exemption reason."""
 		invoice = frappe._dict(tax_category=None, taxes_and_charges=None, net_total=100)
-		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
+		generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
 		generator.doc = Document()
 
 		with patch.object(duty_tax_fee_category_codes, "get", return_value="Z"):
@@ -147,7 +147,7 @@ class TestVatExemptionReason(IntegrationTestCase):
 					precision=lambda fieldname: 2,
 					taxes=[previous, vat_row],
 				)
-				generator = EInvoiceGenerator(EInvoiceProfile.EXTENDED, invoice, None, None)
+				generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EXTENDED)
 				generator.doc = Document()
 				generator.item_tax_rates = set()
 
@@ -328,7 +328,7 @@ class TestApplicableTradeTaxes(IntegrationTestCase):
 				frappe._dict(account_head="_Test VAT 2", charge_type="On Net Total", rate=2, tax_amount=0),
 			],
 		)
-		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
+		generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
 		generator.doc = Document()
 		generator.item_tax_rates = {19, 7, 10, 5, 3}
 
@@ -397,7 +397,7 @@ class TestPaymentMeans(IntegrationTestCase):
 			payment_terms_template="Test Terms",
 			payment_schedule=[frappe._dict(mode_of_payment="Wire Transfer")],
 		)
-		generator = EInvoiceGenerator(profile, invoice, None, None)
+		generator = SalesInvoiceGenerator(invoice, profile)
 		generator.doc = Document()
 		return generator
 
