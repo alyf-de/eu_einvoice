@@ -193,6 +193,9 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		code_list = retriever.code_lists[0]
 		if not frappe.db.exists("Code List", code_list):
 			frappe.get_doc(doctype="Code List", __newname=code_list, title=code_list).insert()
+			# ERPNext's resolve_code_list is request-cached, and the whole test run is one request.
+			# An earlier test may have resolved this code list before it existed.
+			frappe.local.request_cache.clear()
 
 		frappe.get_doc(
 			doctype="Common Code",
