@@ -17,13 +17,13 @@ from eu_einvoice.european_e_invoice.einvoice import (  # noqa: F401
 	duty_tax_fee_category_codes,
 	get_einvoice,
 	get_item_rate,
+	get_tax_registration,
 	get_xml_attachment_file_base_name,
 	payment_means_codes,
 	validate_doc,
 	validate_vat_id,
 	vat_exemption_reason_codes,
 )
-from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
 from eu_einvoice.utils import EInvoiceProfile
 
 if TYPE_CHECKING:
@@ -158,16 +158,7 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 			buyer.electronic_address = ("EM", buyer.address.email_id)
 
 		if self.invoice.tax_id:
-			if is_valid_swiss_vat_id(self.invoice.tax_id):
-				customer_tax_id = normalize_swiss_vat_id(self.invoice.tax_id)
-				customer_vat_scheme = "VA"
-			else:
-				try:
-					customer_tax_id = validate_vat_id(self.invoice.tax_id.strip())
-					customer_vat_scheme = "VA"
-				except ValueError:
-					customer_tax_id = self.invoice.tax_id.strip()
-					customer_vat_scheme = "FC"
+			customer_vat_scheme, customer_tax_id = get_tax_registration(self.invoice.tax_id)
 
 			# BR-O-02: category O invoices must not contain Buyer VAT identifier (BT-48).
 			# Keep FC. Customer Tax ID stays in ERPNext for other invoices.

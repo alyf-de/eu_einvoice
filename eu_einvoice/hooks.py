@@ -46,6 +46,7 @@ app_include_js = ["/assets/eu_einvoice/js/utils.js", "/assets/eu_einvoice/js/que
 doctype_js = {
 	"Purchase Order": "european_e_invoice/custom/purchase_order.js",
 	"Sales Invoice": "european_e_invoice/custom/sales_invoice.js",
+	"Purchase Invoice": "european_e_invoice/custom/purchase_invoice.js",
 	"Company": "european_e_invoice/custom/company.js",
 	"Customer": "european_e_invoice/custom/customer.js",
 	"Supplier": "european_e_invoice/custom/supplier.js",
@@ -148,12 +149,18 @@ doc_events = {
 	"Sales Invoice": {
 		"validate": "eu_einvoice.european_e_invoice.einvoice.validate_doc",
 		"on_submit": "eu_einvoice.european_e_invoice.einvoice.attach_xml_on_submit",
-	}
+	},
+	"Purchase Invoice": {
+		# Runs the generic validate_doc for self-billed invoices only
+		"validate": "eu_einvoice.european_e_invoice.custom.purchase_invoice.validate",
+		"on_submit": "eu_einvoice.european_e_invoice.einvoice.attach_xml_on_submit",
+	},
 }
 
 # E-invoice generator per doctype. Other apps can register their own doctypes here.
 einvoice_generators = {
 	"Sales Invoice": "eu_einvoice.european_e_invoice.custom.sales_invoice.SalesInvoiceGenerator",
+	"Purchase Invoice": "eu_einvoice.european_e_invoice.custom.purchase_invoice.PurchaseInvoiceGenerator",
 }
 
 # Scheduled Tasks
