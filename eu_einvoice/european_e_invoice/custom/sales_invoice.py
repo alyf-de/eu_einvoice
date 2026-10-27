@@ -145,6 +145,8 @@ class EInvoiceGenerator:
 		self.item_tax_rates = set()
 		# VAT category code -> exemption reason code, collected from the line items
 		self.line_exemption_reason_codes = {}
+		# item id() -> duty/tax/fee category code; resolved once for BR-O-02 and line export
+		self._line_vat_category_codes = None
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -425,20 +427,26 @@ class EInvoiceGenerator:
 			)
 		)
 
+	def _line_vat_category_lookup(self, item: SalesInvoiceItem) -> list[tuple[str, str]]:
+		return [
+			("Item Tax Template", item.item_tax_template),
+			("Account", item.income_account),
+			("Tax Category", self.invoice.tax_category),
+			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+		]
+
+	def _resolve_line_vat_category_codes(self) -> dict[int, str]:
+		"""Resolve each line's VAT category once; reused for BR-O-02 and line export."""
+		if self._line_vat_category_codes is None:
+			self._line_vat_category_codes = {
+				id(item): duty_tax_fee_category_codes.get(self._line_vat_category_lookup(item))
+				for item in self.invoice.items
+			}
+		return self._line_vat_category_codes
+
 	def _has_not_subject_to_vat_line(self) -> bool:
 		"""True if any invoice line will use VAT category O (Not subject to VAT)."""
-		for item in self.invoice.items:
-			category_code = duty_tax_fee_category_codes.get(
-				[
-					("Item Tax Template", item.item_tax_template),
-					("Account", item.income_account),
-					("Tax Category", self.invoice.tax_category),
-					("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-				]
-			)
-			if category_code == "O":
-				return True
-		return False
+		return "O" in self._resolve_line_vat_category_codes().values()
 
 	def _set_buyer_address(self):
 		if not self.buyer_address:
@@ -512,14 +520,9 @@ class EInvoiceGenerator:
 				li.delivery.delivery_note.issue_date_time = getdate(posting_date)
 
 		li.settlement.trade_tax.type_code = "VAT"
-		lookup = [
-			("Item Tax Template", item.item_tax_template),
-			("Account", item.income_account),
-			("Tax Category", self.invoice.tax_category),
-			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-		]
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
-		category_code = li.settlement.trade_tax.category_code._text
+		lookup = self._line_vat_category_lookup(item)
+		category_code = self._resolve_line_vat_category_codes()[id(item)]
+		li.settlement.trade_tax.category_code = category_code
 		if category_code in EXEMPT_VAT_CATEGORIES:
 			# Only the line knows Item Tax Template and income Account; the rest is looked up again
 			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.

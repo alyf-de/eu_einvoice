@@ -291,9 +291,10 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		invoice = create_sales_invoice(do_not_save=True, rate=100)
 		invoice.tax_category = self.tax_category
 		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.insert()
+		# After insert: fetch_from company/customer.tax_id would overwrite values set earlier.
 		invoice.company_tax_id = "DE123456789"
 		invoice.tax_id = "DE987654321"
-		invoice.insert()
 
 		xml = get_einvoice(invoice)
 		root = ET.fromstring(xml)
@@ -317,9 +318,10 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		invoice = create_sales_invoice(do_not_save=True, rate=100)
 		invoice.tax_category = self.tax_category
 		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.insert()
+		# After insert: fetch_from company/customer.tax_id would overwrite values set earlier.
 		invoice.company_tax_id = "12/345/67890"
 		invoice.tax_id = "98/765/43210"
-		invoice.insert()
 
 		root = ET.fromstring(get_einvoice(invoice))
 		seller_fc_ids = root.findall(
