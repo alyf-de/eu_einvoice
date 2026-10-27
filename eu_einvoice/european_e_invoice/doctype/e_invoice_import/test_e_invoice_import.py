@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import frappe
 from drafthorse.models.document import Document
-from drafthorse.models.party import TradeParty
+from drafthorse.models.party import TaxRegistration, TradeParty
 from drafthorse.models.payment import PaymentMeans
 from drafthorse.models.tradelines import LineItem
 from frappe.tests import IntegrationTestCase
@@ -88,6 +88,19 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual(doc.buyer_name, "Buyer GmbH")
 		self.assertEqual(doc.profile, "EN 16931")
 		self.assertEqual(str(doc.issue_date), "2024-01-15")
+
+	def test_seller_identifiers_are_stripped(self):
+		seller = TradeParty()
+		seller.name = "\n  Seller GmbH  \n"
+		seller.id = " S-1 "
+		seller.tax_registrations.add(TaxRegistration(id=("VA", " DE123456789 ")))
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.parse_seller(seller)
+
+		self.assertEqual(doc.seller_name, "Seller GmbH")
+		self.assertEqual(doc.seller_id, "S-1")
+		self.assertEqual(doc.seller_tax_id, "DE123456789")
 
 	def _assert_unsupported_einvoice_throw(self, xml_bytes: bytes, message_snippet: str):
 		frappe.flags.mute_messages = False
@@ -213,6 +226,11 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertFalse(payee_differs_from_seller(seller, party("Bank Name", legal_id="FR123")))
 		self.assertTrue(payee_differs_from_seller(seller, party("Factoring AG", "F-1", "DE999")))
 		self.assertTrue(payee_differs_from_seller(party("Seller GmbH"), party("Factoring AG")))
+
+		# surrounding whitespace does not make the payee differ
+		self.assertFalse(payee_differs_from_seller(seller, party(" Seller GmbH\n")))
+		self.assertFalse(payee_differs_from_seller(seller, party("Bank Name", "S-1 ")))
+		self.assertFalse(payee_differs_from_seller(seller, party(" ")))  # blank name is no payee
 
 	def test_default_company_without_buyer_id(self):
 		frappe.defaults.set_user_default("company", "_Test Company")

@@ -253,10 +253,13 @@ class EInvoiceImport(Document):
 			self.validation_warnings += "\n".join(validation_warnings)
 
 	def parse_seller(self, seller: TradeParty):
-		self.seller_name = str(seller.name)
-		self.seller_id = str(seller.id)
+		# stripped, because we use them to find the Supplier
+		self.seller_name = stripped_text(seller.name)
+		self.seller_id = stripped_text(seller.id)
 		self.seller_tax_id = (
-			seller.tax_registrations.children[0].id._text if seller.tax_registrations.children else None
+			stripped_text(seller.tax_registrations.children[0].id) or None
+			if seller.tax_registrations.children
+			else None
 		)
 		self.seller_electronic_address = str(seller.electronic_address.uri_ID._text)
 		self.seller_electronic_address_scheme = str(seller.electronic_address.uri_ID._scheme_id)
@@ -392,20 +395,21 @@ class EInvoiceImport(Document):
 			(self.seller_id, "Supplier", {"name": self.seller_id}, "name"),
 			(self.seller_name, "Supplier", {"supplier_name": self.seller_name}, "name"),
 			(self.seller_name, "Supplier", {"name": self.seller_name}, "name"),
-			(
-				iban,
-				"Bank Account",
-				{
-					"party_type": "Supplier",
-					"party": ["is", "set"],
-					"disabled": 0,
-					"iban": ["in", [iban, iban_spaced]],
-				},
-				"party",
-			),
 		]
-		if self.flags.payee_differs:
-			lookups.pop()  # the IBAN does not identify the seller
+		if not self.flags.payee_differs:  # otherwise the IBAN does not identify the seller
+			lookups.append(
+				(
+					iban,
+					"Bank Account",
+					{
+						"party_type": "Supplier",
+						"party": ["is", "set"],
+						"disabled": 0,
+						"iban": ["in", [iban, iban_spaced]],
+					},
+					"party",
+				)
+			)
 
 		for identifier, doctype, filters, fieldname in lookups:
 			if not identifier:
@@ -534,13 +538,18 @@ def payee_differs_from_seller(seller: TradeParty, payee: TradeParty) -> bool:
 	"""Same test as schematron rule BR-17: a payee with a name, but no name or ID shared with the seller."""
 
 	def same(a, b):
-		return bool(a) and a == b
+		return bool(stripped_text(a)) and stripped_text(a) == stripped_text(b)
 
-	return bool(payee.name._text) and not (
-		same(payee.name._text, seller.name._text)
-		or same(payee.id._text, seller.id._text)
-		or same(payee.legal_organization.id._text, seller.legal_organization.id._text)
+	return bool(stripped_text(payee.name)) and not (
+		same(payee.name, seller.name)
+		or same(payee.id, seller.id)
+		or same(payee.legal_organization.id, seller.legal_organization.id)
 	)
+
+
+def stripped_text(element) -> str:
+	"""Text of a drafthorse element without surrounding whitespace, empty if missing."""
+	return (element._text or "").strip()
 
 
 # OASIS UBL 2.x document namespaces (Invoice-2, CreditNote-2, ...)
