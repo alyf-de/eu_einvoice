@@ -96,6 +96,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install mariadb-client
+          # MariaDB 11.4+ clients require SSL by default, the MariaDB 10.6 service does not support it
+          printf '[client]\nskip-ssl\n' > ~/.my.cnf
 
       - name: Setup
         run: |
