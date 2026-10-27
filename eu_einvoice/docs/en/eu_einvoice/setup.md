@@ -55,7 +55,7 @@ The eInvoice standard only supports one payment means per invoice, so do not spe
 
 eInvoice validation can be time-consuming. Use **E Invoice Settings** to configure when validation occurs and how errors are handled:
 
-- **Validate Sales Invoice on Save/Submit**: Enable or disable validation at these stages.
+- **Validate Invoice on Save/Submit**: Enable or disable validation at these stages, for Sales Invoices and self-billed Purchase Invoices.
 - **Action on Validation Error**: Choose how to handle validation errors:
   - *Empty* (default): No action taken
   - *Warning Message*: Show errors but allow save/submit

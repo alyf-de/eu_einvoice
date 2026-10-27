@@ -1,6 +1,5 @@
 {
  "actions": [],
- "allow_rename": 1,
  "creation": "2025-09-05 12:02:26.455512",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -25,18 +24,18 @@
    "default": "1",
    "fieldname": "validate_sales_invoice_on_save",
    "fieldtype": "Check",
-   "label": "Validate Sales Invoice on Save"
+   "label": "Validate Invoice on Save"
   },
   {
    "default": "1",
    "fieldname": "validate_sales_invoice_on_submit",
    "fieldtype": "Check",
-   "label": "Validate Sales Invoice on Submit"
+   "label": "Validate Invoice on Submit"
   },
   {
    "fieldname": "sales_invoice_section",
    "fieldtype": "Section Break",
-   "label": "Sales Invoice"
+   "label": "Invoice"
   },
   {
    "fieldname": "column_break_rnbc",
@@ -104,10 +103,10 @@
   }
  ],
  "grid_page_length": 50,
- "index_web_pages_for_search": 1,
  "issingle": 1,
+ "link_display_mode": "Search",
  "links": [],
- "modified": "2026-05-08 11:55:24.180676",
+ "modified": "2026-10-27 23:09:00.236768",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
