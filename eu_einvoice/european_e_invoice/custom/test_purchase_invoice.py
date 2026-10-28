@@ -6,6 +6,7 @@ from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make
 from erpnext.controllers.sales_and_purchase_return import make_return_doc
 from frappe.tests import IntegrationTestCase
 
+from eu_einvoice.european_e_invoice.custom.purchase_invoice import validate
 from eu_einvoice.european_e_invoice.einvoice import (
 	attach_xml_to_pdf,
 	duty_tax_fee_category_codes,
@@ -269,6 +270,19 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 
 		messages = [str(call.args[0]) for call in msgprint.call_args_list]
 		self.assertTrue(any("not be valid with deducted taxes" in message for message in messages), messages)
+
+	def test_supplier_einvoice_and_internal_supplier(self):
+		"""Both are unusual for a self-billed invoice, so we warn."""
+		invoice = self.make_invoice(self.domestic, EInvoiceProfile.EN16931, taxes=[vat_row(19)])
+		invoice.e_invoice_import = "Supplier's e-invoice"
+		invoice.is_internal_supplier = 1
+
+		with patch("frappe.msgprint") as msgprint:
+			validate(invoice, "validate")
+
+		messages = [str(call.args[0]) for call in msgprint.call_args_list]
+		self.assertTrue(any("bill the same supply twice" in message for message in messages), messages)
+		self.assertTrue(any("is an internal supplier" in message for message in messages), messages)
 
 	def test_clearing_the_profile_resets_the_status(self):
 		self.addCleanup(
