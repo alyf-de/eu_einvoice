@@ -14,6 +14,7 @@ from eu_einvoice.european_e_invoice.einvoice import (
 	duty_tax_fee_category_codes,
 	get_tax_registration,
 	validate_doc,
+	validate_einvoice,
 )
 from eu_einvoice.utils import EInvoiceProfile
 
@@ -212,6 +213,8 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 def validate(doc: PurchaseInvoice, event: str):
 	"""Validate a self-billed Purchase Invoice. Others are left alone."""
 	if not doc.einvoice_profile:
+		# Clears the status left by an earlier profile
+		validate_einvoice(doc)
 		return
 
 	warnings = []

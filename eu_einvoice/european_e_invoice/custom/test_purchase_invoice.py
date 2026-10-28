@@ -270,6 +270,23 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		messages = [str(call.args[0]) for call in msgprint.call_args_list]
 		self.assertTrue(any("not be valid with deducted taxes" in message for message in messages), messages)
 
+	def test_clearing_the_profile_resets_the_status(self):
+		self.addCleanup(
+			frappe.db.set_single_value,
+			"E Invoice Settings",
+			"validate_sales_invoice_on_save",
+			frappe.db.get_single_value("E Invoice Settings", "validate_sales_invoice_on_save"),
+		)
+		frappe.db.set_single_value("E Invoice Settings", "validate_sales_invoice_on_save", 1)
+
+		invoice = self.make_invoice(self.domestic, EInvoiceProfile.XRECHNUNG, taxes=[vat_row(19)])
+		self.assertTrue(invoice.einvoice_is_correct, invoice.validation_errors)
+
+		invoice.einvoice_profile = None
+		invoice.save()
+		self.assertFalse(invoice.einvoice_is_correct)
+		self.assertFalse(invoice.validation_errors)
+
 	def test_server_never_sets_the_profile(self):
 		"""The supplier's profile is only a default in the form. Code that sets the profile wins."""
 		supplier = frappe.get_doc(
