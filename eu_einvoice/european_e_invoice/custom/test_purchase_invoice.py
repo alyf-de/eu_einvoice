@@ -173,12 +173,10 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		invoice = make_return_doc("Purchase Invoice", original.name)
 		invoice.insert()
 
-		for profile, type_code in ((EInvoiceProfile.EN16931, "261"), (EInvoiceProfile.XRECHNUNG, "381")):
+		for profile in (EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
 			with self.subTest(profile=profile):
 				root = self.assert_valid_einvoice(invoice, profile)
-				self.assertEqual(
-					root.findtext(".//rsm:ExchangedDocument/ram:TypeCode", namespaces=NS), type_code
-				)
+				self.assertEqual(root.findtext(".//rsm:ExchangedDocument/ram:TypeCode", namespaces=NS), "389")
 				self.assertEqual(
 					root.findtext(".//ram:InvoiceReferencedDocument/ram:IssuerAssignedID", namespaces=NS),
 					original.name,
