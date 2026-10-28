@@ -301,6 +301,25 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		self.assertFalse(invoice.einvoice_is_correct)
 		self.assertFalse(invoice.validation_errors)
 
+	def test_invoice_number_field(self):
+		"""The invoice number field from E Invoice Settings applies to every doctype that has it."""
+		self.addCleanup(
+			frappe.db.set_single_value,
+			"E Invoice Settings",
+			"sales_invoice_number_field",
+			frappe.db.get_single_value("E Invoice Settings", "sales_invoice_number_field"),
+		)
+		# Stands in for a custom number field. Set directly, the settings only offer Sales Invoice fields.
+		frappe.db.set_single_value("E Invoice Settings", "sales_invoice_number_field", "bill_no")
+
+		invoice = self.make_invoice(self.domestic, EInvoiceProfile.EN16931, taxes=[vat_row(19)])
+		root = self.assert_valid_einvoice(invoice, EInvoiceProfile.EN16931)
+		self.assertEqual(root.findtext(".//rsm:ExchangedDocument/ram:ID", namespaces=NS), invoice.name)
+
+		invoice.bill_no = "GU-1500087"
+		root = self.assert_valid_einvoice(invoice, EInvoiceProfile.EN16931)
+		self.assertEqual(root.findtext(".//rsm:ExchangedDocument/ram:ID", namespaces=NS), "GU-1500087")
+
 	def test_server_never_sets_the_profile(self):
 		"""The supplier's profile is only a default in the form. Code that sets the profile wins."""
 		supplier = frappe.get_doc(

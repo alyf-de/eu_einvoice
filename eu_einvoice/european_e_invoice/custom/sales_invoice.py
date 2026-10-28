@@ -49,16 +49,6 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 	def customer(self) -> Customer:
 		return frappe.get_doc("Customer", self.invoice.customer)
 
-	def get_invoice_number(self) -> str:
-		sales_invoice_number_field = frappe.db.get_single_value(
-			"E Invoice Settings", "sales_invoice_number_field"
-		)
-
-		if sales_invoice_number_field and (invoice_number := self.invoice.get(sales_invoice_number_field)):
-			return invoice_number
-
-		return self.invoice.name
-
 	def get_type_code(self) -> str:
 		# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred1001.htm
 		if self.invoice.is_return:
