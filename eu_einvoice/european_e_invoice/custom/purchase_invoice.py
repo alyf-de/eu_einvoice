@@ -220,6 +220,20 @@ def validate(doc: PurchaseInvoice, event: str):
 	warnings = []
 	generator = PurchaseInvoiceGenerator(doc, EInvoiceProfile(doc.einvoice_profile))
 
+	if doc.e_invoice_import:
+		warnings.append(
+			_(
+				"This invoice is linked to the supplier's e-invoice {0}. A self-billed invoice would bill the same supply twice."
+			).format(doc.e_invoice_import)
+		)
+
+	if doc.is_internal_supplier:
+		warnings.append(
+			_(
+				"Supplier {0} is an internal supplier. Inter-company invoices are usually not self-billed."
+			).format(doc.supplier)
+		)
+
 	if doc.bill_no:
 		warnings.append(
 			_(
