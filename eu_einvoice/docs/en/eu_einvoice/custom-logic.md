@@ -15,6 +15,8 @@ This app provides hooks to add custom logic to the eInvoice creation process:
 
     Called right after the eInvoice is generated. The hook function receives the **Sales Invoice** and the generated eInvoice as arguments.
 
+The hooks run for every doctype with e-invoices, for example also for self-billed **Purchase Invoices** (add them under `"Purchase Invoice"` in `doc_events`). You can use `after_einvoice_generation` to set values the app does not support, for example an invoice number from a field that differs per doctype.
+
 For example, your `myapp/hooks.py` could look like this:
 
 ```python
