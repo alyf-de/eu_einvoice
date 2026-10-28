@@ -65,8 +65,8 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 		# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred1001.htm
 		if self.invoice.is_return:
 			# -- Self-billed invoice with negative amounts, referencing the original --
-			# 381 would be a credit note issued by the seller, and XRechnung warns about
-			# 261 "self-billed credit note" (BR-DE-17). Peppol self-billing corrects the same way.
+			# 389 keeps the self-billing marking, which a plain 381 credit note lacks. XRechnung warns
+			# about 261 "self-billed credit note" (BR-DE-17). Peppol self-billing corrects the same way.
 			return "389"
 
 		if self.invoice.amended_from:
