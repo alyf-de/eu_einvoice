@@ -143,7 +143,16 @@ class EInvoiceGenerator:
 		raise NotImplementedError
 
 	def get_invoice_number(self) -> str:
-		"""Return the invoice number (BT-1)."""
+		"""Return the invoice number (BT-1).
+
+		The field from E Invoice Settings applies to every doctype that has it. Doctypes without it
+		use the name. Other numbering can be set in the `after_einvoice_generation` hook.
+		"""
+		invoice_number_field = frappe.db.get_single_value("E Invoice Settings", "sales_invoice_number_field")
+
+		if invoice_number_field and (invoice_number := self.invoice.get(invoice_number_field)):
+			return invoice_number
+
 		return self.invoice.name
 
 	def get_ship_to(self) -> tuple[str, Address] | None:

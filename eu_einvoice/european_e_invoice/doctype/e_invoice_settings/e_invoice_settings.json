@@ -75,10 +75,10 @@
    "label": "Attach Field for XML File"
   },
   {
-   "description": "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>.",
+   "description": "Configure this if you are storing custom invoice numbers in a field other than <code>name</code>. Applies to every doctype with e-invoices that has this field.",
    "fieldname": "sales_invoice_number_field",
    "fieldtype": "Autocomplete",
-   "label": "Sales Invoice Number Field"
+   "label": "Invoice Number Field"
   },
   {
    "fieldname": "column_break_vlzj",
@@ -106,7 +106,7 @@
  "issingle": 1,
  "link_display_mode": "Search",
  "links": [],
- "modified": "2026-10-27 23:09:00.236768",
+ "modified": "2026-10-28 21:01:15.027159",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Settings",
