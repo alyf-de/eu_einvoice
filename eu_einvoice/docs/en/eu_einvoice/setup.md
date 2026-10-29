@@ -55,10 +55,10 @@ The eInvoice standard only supports one payment means per invoice, so do not spe
 
 eInvoice validation can be time-consuming. Use **E Invoice Settings** to configure when validation occurs and how errors are handled:
 
-- **Validate Sales Invoice on Save/Submit**: Enable or disable validation at these stages.
+- **Validate Invoice on Save/Submit**: Enable or disable validation at these stages, for Sales Invoices and self-billed Purchase Invoices.
 - **Action on Validation Error**: Choose how to handle validation errors:
   - *Empty* (default): No action taken
   - *Warning Message*: Show errors but allow save/submit
   - *Error Message*: Block save/submit and show errors
 
-If you use a separate field for the sales invoice number, configure the field name in **E Invoice Settings** -> **Sales Invoice Number**.
+If you use a separate field for the invoice number, configure the field name in **E Invoice Settings** -> _Invoice Number Field_. It applies to every invoice type that has this field, for example also to self-billed **Purchase Invoices** with a custom field of the same name. Otherwise the document name is used.

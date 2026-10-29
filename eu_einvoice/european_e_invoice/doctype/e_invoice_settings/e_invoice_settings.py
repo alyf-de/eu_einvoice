@@ -75,7 +75,7 @@ class EInvoiceSettings(Document):
 			)
 
 	def should_validate(self, docstatus: DocStatus) -> bool:
-		"""Return True if a Sales Invoice should be validated."""
+		"""Return True if an invoice should be validated."""
 		return (docstatus == DocStatus.submitted() and self.validate_sales_invoice_on_submit) or (
 			docstatus == DocStatus.draft() and self.validate_sales_invoice_on_save
 		)

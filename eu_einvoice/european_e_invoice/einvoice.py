@@ -24,6 +24,7 @@ from frappe.utils.data import cint, date_diff, flt, getdate, to_markdown
 
 from eu_einvoice.common_codes import CommonCodeRetriever
 from eu_einvoice.schematron import get_validation_errors
+from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
 from eu_einvoice.utils import EInvoiceProfile, get_drafthorse_schema, get_guideline
 
 if TYPE_CHECKING:
@@ -142,8 +143,12 @@ class EInvoiceGenerator:
 		raise NotImplementedError
 
 	def get_invoice_number(self) -> str:
-		"""Return the invoice number (BT-1)."""
-		return self.invoice.name
+		"""Return the invoice number (BT-1).
+
+		The field from E Invoice Settings applies to every doctype that has it. Doctypes without it
+		use the name. Other numbering can be set in the `after_einvoice_generation` hook.
+		"""
+		return get_invoice_number(self.invoice)
 
 	def get_ship_to(self) -> tuple[str, Address] | None:
 		"""Return name and address of the deliver-to party (BG-13), if any."""
@@ -258,7 +263,8 @@ class EInvoiceGenerator:
 		self.doc.header.id = self.get_invoice_number()
 		self.doc.header.type_code = self.get_type_code()
 
-		if self.invoice.is_return:
+		# ERPNext allows returns without an original invoice
+		if self.invoice.is_return and self.invoice.return_against:
 			self._set_referenced_invoice(self.invoice.return_against)
 		elif self.invoice.amended_from:
 			self._set_referenced_invoice(self.invoice.amended_from)
@@ -275,12 +281,14 @@ class EInvoiceGenerator:
 			note.content = f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip()
 			self.doc.header.notes.add(note)
 
-	def _set_referenced_invoice(self, invoice_name: str | None):
+	def _set_referenced_invoice(self, invoice_name: str):
 		"""Set the preceding invoice reference (BG-3) of a credit note or corrected invoice."""
-		self.doc.trade.settlement.invoice_referenced_document.issuer_assigned_id = invoice_name
-		self.doc.trade.settlement.invoice_referenced_document.issue_date_time = frappe.db.get_value(
-			self.invoice.doctype, invoice_name, "posting_date"
+		referenced = frappe.get_doc(self.invoice.doctype, invoice_name)
+		# The number the recipient got, which can differ from the name
+		self.doc.trade.settlement.invoice_referenced_document.issuer_assigned_id = get_invoice_number(
+			referenced
 		)
+		self.doc.trade.settlement.invoice_referenced_document.issue_date_time = referenced.posting_date
 
 	def _write_party(self, target, party: TradeParty):
 		"""Write a seller or buyer to the Drafthorse trade party `target`."""
@@ -627,6 +635,12 @@ class EInvoiceGenerator:
 		self.doc.trade.settlement.monetary_summation.due_amount = flt(self.invoice.outstanding_amount, 2)
 
 
+def get_invoice_number(invoice: FrappeDocument) -> str:
+	"""Return the number from the E Invoice Settings field, if the invoice has it, else the name."""
+	invoice_number_field = frappe.db.get_single_value("E Invoice Settings", "sales_invoice_number_field")
+	return (invoice_number_field and invoice.get(invoice_number_field)) or invoice.name
+
+
 def validate_vat_id(vat_id: str) -> str:
 	COUNTRY_CODE_REGEX = r"^[A-Z]{2}$"
 	VAT_NUMBER_REGEX = r"^[0-9A-Za-z\+\*\.]{2,12}$"
@@ -642,6 +656,17 @@ def validate_vat_id(vat_id: str) -> str:
 		raise ValueError("Invalid VAT number")
 
 	return country_code + vat_number
+
+
+def get_tax_registration(tax_id: str) -> tuple[str, str]:
+	"""Return the tax registration (scheme, ID) of a party: "VA" for a VAT ID, else "FC" for a tax number."""
+	if is_valid_swiss_vat_id(tax_id):
+		return "VA", normalize_swiss_vat_id(tax_id)
+
+	try:
+		return "VA", validate_vat_id(tax_id.strip())
+	except ValueError:
+		return "FC", tax_id.strip()
 
 
 def validate_doc(doc, event):
@@ -757,8 +782,8 @@ def attach_xml_on_submit(doc: FrappeDocument, event: str):
 	Attach XML file to the invoice on submit if auto-attach is enabled.
 
 	This function is called via doc_events hook when an invoice is submitted.
-	It checks E Invoice Settings and attaches the XRECHNUNG XML to the specified field
-	or as a general attachment if no field is specified.
+	It checks E Invoice Settings and attaches the XRECHNUNG XML to the specified field,
+	or as a general attachment if no field is specified or the doctype has no such field.
 	"""
 	if not doc.einvoice_profile or doc.einvoice_profile != "XRECHNUNG":
 		return
@@ -774,8 +799,12 @@ def attach_xml_on_submit(doc: FrappeDocument, event: str):
 		# Don't raise exception - allow submit to continue even if attachment fails
 		return
 
-	# Pass None if no field is specified to create general attachment
-	field_name = settings.attach_field_for_xml_file or None
+	field_name = settings.attach_field_for_xml_file
+	field = doc.meta.get_field(field_name) if field_name else None
+	if not field or field.fieldtype != "Attach":
+		# The setting names a Sales Invoice field. Other doctypes get a general attachment.
+		field_name = None
+
 	try:
 		_attach_xml_file(doc, xml_content, field_name)
 	except Exception:
@@ -797,20 +826,12 @@ def _attach_xml_file(doc: FrappeDocument, xml_content: bytes, field_name: str | 
 		doc.log_error("E Invoice Auto-Attach: Empty XML content")
 		return
 
-	if field_name:
-		if not hasattr(doc, field_name):
-			doc.log_error(
-				title="E Invoice Auto-Attach: invalid field",
-				message=f"Field '{field_name}' is configured for XML attachment, but does not exist on the document.",
-			)
-			return
-
-		if doc.get(field_name):
-			doc.log_error(
-				title="E Invoice Auto-Attach: conflicting value",
-				message=f"Field '{field_name}' is configured for XML attachment, but already has a value.",
-			)
-			return
+	if field_name and doc.get(field_name):
+		doc.log_error(
+			title="E Invoice Auto-Attach: conflicting value",
+			message=f"Field '{field_name}' is configured for XML attachment, but already has a value.",
+		)
+		return
 
 	base_name = get_xml_attachment_file_base_name(doc)
 	file_name = f"{base_name}.xml"
@@ -1018,7 +1039,8 @@ def _is_ghostscript_installed() -> bool:
 def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes, doctype: str = "Sales Invoice") -> bytes:
 	"""Return the PDF data with the invoice attached as XML.
 
-	Returns the PDF unchanged if `doctype` does not support e-invoices.
+	Returns the PDF unchanged if `doctype` does not support e-invoices, or if the document has
+	no e-invoice profile (except for Sales Invoices, which are still converted to PDF/A).
 
 	Params:
 	    invoice_id: The name of the invoice.
@@ -1030,13 +1052,18 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes, doctype: str = "Sales In
 	if not get_generator_class(doctype):
 		return pdf_data
 
+	level = frappe.db.get_value(doctype, invoice_id, "einvoice_profile")
+	if not level and doctype != "Sales Invoice":
+		# Documents without a profile don't issue an e-invoice, e.g. most Purchase Invoices.
+		# Sales Invoices keep their PDF/A conversion for backwards compatibility.
+		return pdf_data
+
 	if _is_ghostscript_installed():
 		try:
 			pdf_data = _convert_pdf_to_pdfa(pdf_data)
 		except RuntimeError:
 			frappe.log_error("Error converting PDF to PDF/A-3 using Ghostscript.")
 
-	level = frappe.db.get_value(doctype, invoice_id, "einvoice_profile")
 	if not level or level == "XRECHNUNG":
 		# XRECHNUNG does not support embedding into PDF
 		return pdf_data

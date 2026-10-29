@@ -17,13 +17,13 @@ from eu_einvoice.european_e_invoice.einvoice import (  # noqa: F401
 	duty_tax_fee_category_codes,
 	get_einvoice,
 	get_item_rate,
+	get_tax_registration,
 	get_xml_attachment_file_base_name,
 	payment_means_codes,
 	validate_doc,
 	validate_vat_id,
 	vat_exemption_reason_codes,
 )
-from eu_einvoice.switzerland import is_valid_swiss_vat_id, normalize_swiss_vat_id
 from eu_einvoice.utils import EInvoiceProfile
 
 if TYPE_CHECKING:
@@ -48,16 +48,6 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 	@cached_property
 	def customer(self) -> Customer:
 		return frappe.get_doc("Customer", self.invoice.customer)
-
-	def get_invoice_number(self) -> str:
-		sales_invoice_number_field = frappe.db.get_single_value(
-			"E Invoice Settings", "sales_invoice_number_field"
-		)
-
-		if sales_invoice_number_field and (invoice_number := self.invoice.get(sales_invoice_number_field)):
-			return invoice_number
-
-		return self.invoice.name
 
 	def get_type_code(self) -> str:
 		# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred1001.htm
@@ -151,13 +141,7 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 			buyer.electronic_address = ("EM", buyer.address.email_id)
 
 		if self.invoice.tax_id:
-			if is_valid_swiss_vat_id(self.invoice.tax_id):
-				buyer.tax_registration = ("VA", normalize_swiss_vat_id(self.invoice.tax_id))
-			else:
-				try:
-					buyer.tax_registration = ("VA", validate_vat_id(self.invoice.tax_id.strip()))
-				except ValueError:
-					buyer.tax_registration = ("FC", self.invoice.tax_id.strip())
+			buyer.tax_registration = get_tax_registration(self.invoice.tax_id)
 
 		return buyer
 
