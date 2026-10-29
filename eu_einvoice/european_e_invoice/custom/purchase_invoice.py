@@ -149,7 +149,7 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 
 		# BT-10 is mandatory in XRechnung (BR-DE-15). As the buyer, we route it with our own order.
 		# ponytail: derived, add a field when a buyer needs a real routing ID here.
-		self.doc.trade.agreement.buyer_reference = purchase_order or self.invoice.name
+		self.doc.trade.agreement.buyer_reference = purchase_order or self.get_invoice_number()
 
 		if purchase_order:
 			self.doc.trade.agreement.buyer_order.issuer_assigned_id = purchase_order

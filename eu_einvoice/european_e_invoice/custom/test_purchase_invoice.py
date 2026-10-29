@@ -185,6 +185,16 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 				)
 				self.assertEqual(float(root.findtext(".//ram:GrandTotalAmount", namespaces=NS)), -119)
 
+	def test_return_without_original(self):
+		"""ERPNext allows returns not linked to an invoice. They have no preceding invoice reference."""
+		invoice = self.make_invoice(self.domestic, EInvoiceProfile.EN16931, taxes=[vat_row(19)])
+		invoice.is_return = 1
+		invoice.items[0].qty = -1
+		invoice.save()
+
+		root = self.assert_valid_einvoice(invoice, EInvoiceProfile.EN16931)
+		self.assertIsNone(root.find(".//ram:InvoiceReferencedDocument", NS))
+
 	def test_multiple_vat_rates(self):
 		# Stands in for a 7% VAT account
 		reduced_vat_account = "_Test Account Excise Duty - _TC"
@@ -321,6 +331,7 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		invoice.bill_no = "GU-1500087"
 		root = self.assert_valid_einvoice(invoice, EInvoiceProfile.EN16931)
 		self.assertEqual(root.findtext(".//rsm:ExchangedDocument/ram:ID", namespaces=NS), "GU-1500087")
+		self.assertEqual(root.findtext(".//ram:BuyerReference", namespaces=NS), "GU-1500087")
 
 		# A correction references the number the supplier received
 		invoice.submit()

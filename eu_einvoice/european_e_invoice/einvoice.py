@@ -263,7 +263,8 @@ class EInvoiceGenerator:
 		self.doc.header.id = self.get_invoice_number()
 		self.doc.header.type_code = self.get_type_code()
 
-		if self.invoice.is_return:
+		# ERPNext allows returns without an original invoice
+		if self.invoice.is_return and self.invoice.return_against:
 			self._set_referenced_invoice(self.invoice.return_against)
 		elif self.invoice.amended_from:
 			self._set_referenced_invoice(self.invoice.amended_from)
@@ -280,7 +281,7 @@ class EInvoiceGenerator:
 			note.content = f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip()
 			self.doc.header.notes.add(note)
 
-	def _set_referenced_invoice(self, invoice_name: str | None):
+	def _set_referenced_invoice(self, invoice_name: str):
 		"""Set the preceding invoice reference (BG-3) of a credit note or corrected invoice."""
 		referenced = frappe.get_doc(self.invoice.doctype, invoice_name)
 		# The number the recipient got, which can differ from the name
