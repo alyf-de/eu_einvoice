@@ -41,7 +41,7 @@ Only invoices with an _E Invoice Profile_ get an e-invoice. Ordinary purchase in
 
 Good to know:
 
-- The profile is only a default in the form. You can change or clear it per invoice. Duplicates and amendments keep the profile of the original.
+- The profile is only a default in the form. You can change or clear it per invoice. Duplicates, amendments and returns keep the profile of the original.
 - If **E Invoice Settings** > _Auto-attach XML File_ is enabled, invoices with "XRECHNUNG" get the XML attached on submit.
 - **E Invoice Settings** > _Validate Invoice on Save/Submit_ and the error actions apply to self-billed invoices too.
 

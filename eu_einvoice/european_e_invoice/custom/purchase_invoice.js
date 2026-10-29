@@ -14,8 +14,9 @@ frappe.ui.form.on("Purchase Invoice", {
 			return;
 		}
 
-		if (frm.doc.__run_link_triggers === false) {
-			// Like ERPNext's payment terms: duplicates and amendments keep the copied profile
+		if (frm.doc.__run_link_triggers === false || frm.doc.return_against) {
+			// Like ERPNext's payment terms: duplicates and amendments keep the copied profile.
+			// Returns too, their mapper does not stop the link triggers.
 			return;
 		}
 
