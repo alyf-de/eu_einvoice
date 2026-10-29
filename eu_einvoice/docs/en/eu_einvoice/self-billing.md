@@ -55,7 +55,7 @@ Messages about the **seller** refer to your **supplier**, messages about the **b
 
 When you save, the app also warns about invoices that are probably not meant to be self-billed:
 
-- _Supplier Invoice No_ is set, or the invoice is linked to the supplier's own e-invoice (**E Invoice Import**). Both mean the supplier issued their own invoice.
+- The invoice is linked to the supplier's own e-invoice (**E Invoice Import**), so the supplier issued their own invoice.
 - The supplier is an internal supplier.
 
 It also warns when the supplier has no default bank account, or when the invoice has deducted taxes.

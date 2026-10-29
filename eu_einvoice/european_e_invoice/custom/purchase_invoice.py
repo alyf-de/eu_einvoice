@@ -234,13 +234,6 @@ def validate(doc: PurchaseInvoice, event: str):
 			).format(doc.supplier)
 		)
 
-	if doc.bill_no:
-		warnings.append(
-			_(
-				"The Supplier Invoice No is set. If the supplier issues their own invoice, the self-billed invoice bills the same supply twice."
-			)
-		)
-
 	if generator.is_reverse_charge:
 		if flt(doc.grand_total, doc.precision("grand_total")) != flt(
 			doc.net_total, doc.precision("net_total")
