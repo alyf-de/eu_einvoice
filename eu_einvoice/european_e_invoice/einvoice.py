@@ -148,12 +148,7 @@ class EInvoiceGenerator:
 		The field from E Invoice Settings applies to every doctype that has it. Doctypes without it
 		use the name. Other numbering can be set in the `after_einvoice_generation` hook.
 		"""
-		invoice_number_field = frappe.db.get_single_value("E Invoice Settings", "sales_invoice_number_field")
-
-		if invoice_number_field and (invoice_number := self.invoice.get(invoice_number_field)):
-			return invoice_number
-
-		return self.invoice.name
+		return get_invoice_number(self.invoice)
 
 	def get_ship_to(self) -> tuple[str, Address] | None:
 		"""Return name and address of the deliver-to party (BG-13), if any."""
@@ -287,10 +282,12 @@ class EInvoiceGenerator:
 
 	def _set_referenced_invoice(self, invoice_name: str | None):
 		"""Set the preceding invoice reference (BG-3) of a credit note or corrected invoice."""
-		self.doc.trade.settlement.invoice_referenced_document.issuer_assigned_id = invoice_name
-		self.doc.trade.settlement.invoice_referenced_document.issue_date_time = frappe.db.get_value(
-			self.invoice.doctype, invoice_name, "posting_date"
+		referenced = frappe.get_doc(self.invoice.doctype, invoice_name)
+		# The number the recipient got, which can differ from the name
+		self.doc.trade.settlement.invoice_referenced_document.issuer_assigned_id = get_invoice_number(
+			referenced
 		)
+		self.doc.trade.settlement.invoice_referenced_document.issue_date_time = referenced.posting_date
 
 	def _write_party(self, target, party: TradeParty):
 		"""Write a seller or buyer to the Drafthorse trade party `target`."""
@@ -637,6 +634,12 @@ class EInvoiceGenerator:
 		self.doc.trade.settlement.monetary_summation.due_amount = flt(self.invoice.outstanding_amount, 2)
 
 
+def get_invoice_number(invoice: FrappeDocument) -> str:
+	"""Return the number from the E Invoice Settings field, if the invoice has it, else the name."""
+	invoice_number_field = frappe.db.get_single_value("E Invoice Settings", "sales_invoice_number_field")
+	return (invoice_number_field and invoice.get(invoice_number_field)) or invoice.name
+
+
 def validate_vat_id(vat_id: str) -> str:
 	COUNTRY_CODE_REGEX = r"^[A-Z]{2}$"
 	VAT_NUMBER_REGEX = r"^[0-9A-Za-z\+\*\.]{2,12}$"
@@ -796,7 +799,8 @@ def attach_xml_on_submit(doc: FrappeDocument, event: str):
 		return
 
 	field_name = settings.attach_field_for_xml_file
-	if field_name and not doc.meta.has_field(field_name):
+	field = doc.meta.get_field(field_name) if field_name else None
+	if not field or field.fieldtype != "Attach":
 		# The setting names a Sales Invoice field. Other doctypes get a general attachment.
 		field_name = None
 
