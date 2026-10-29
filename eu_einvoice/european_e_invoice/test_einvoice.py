@@ -3,7 +3,7 @@ from unittest.mock import patch
 import frappe
 from drafthorse.models.document import IncludedNote
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
 from eu_einvoice.european_e_invoice.einvoice import attach_xml_to_pdf, get_einvoice, get_generator_class
@@ -24,7 +24,7 @@ def after_einvoice_generation(doc, method=None, einvoice_doc=None):
 	einvoice_doc.header.notes.add(note)
 
 
-class TestEInvoiceHooks(IntegrationTestCase):
+class TestEInvoiceHooks(FrappeTestCase):
 	def test_doc_events_before_and_after_generation(self):
 		invoice = create_sales_invoice(do_not_save=True)
 		invoice.einvoice_profile = EInvoiceProfile.EN16931.value
@@ -43,7 +43,7 @@ class TestEInvoiceHooks(IntegrationTestCase):
 		self.assertIn(f"Added by hook for {invoice.name}", xml)
 
 
-class TestGeneratorRegistry(IntegrationTestCase):
+class TestGeneratorRegistry(FrappeTestCase):
 	def test_sales_invoice_is_registered(self):
 		self.assertIs(get_generator_class("Sales Invoice"), SalesInvoiceGenerator)
 
