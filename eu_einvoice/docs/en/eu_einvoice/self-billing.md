@@ -78,4 +78,3 @@ It also warns when the supplier has no default bank account, or when the invoice
 ## Limits
 
 - Deducted taxes are not supported.
-- The **PDF on Submit** app embeds the XML only for **Sales Invoices**.
