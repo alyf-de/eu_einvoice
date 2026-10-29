@@ -4,6 +4,7 @@ from xml.etree import ElementTree as ET
 import frappe
 from erpnext.accounts.doctype.purchase_invoice.test_purchase_invoice import make_purchase_invoice
 from erpnext.controllers.sales_and_purchase_return import make_return_doc
+from erpnext.stock.doctype.item.test_item import make_item
 from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice.custom.purchase_invoice import validate
@@ -198,7 +199,8 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		invoice.append(
 			"items",
 			{
-				"item_code": invoice.items[0].item_code,
+				# Another item: Buying Settings may forbid the same item twice
+				"item_code": make_item("_Test Self-Billing Item 7", {"is_stock_item": 0}).name,
 				"qty": 1,
 				"rate": 100,
 				"expense_account": invoice.items[0].expense_account,
