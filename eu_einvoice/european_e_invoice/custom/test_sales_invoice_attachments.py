@@ -23,17 +23,17 @@ from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import 
 from eu_einvoice.european_e_invoice.custom.embed_attachment_test_helpers import (
 	make_sales_invoice_doc as make_embed_test_invoice,
 )
-from eu_einvoice.european_e_invoice.custom.sales_invoice import (
-	as_base_64,
-	attach_xml_to_pdf,
-	get_einvoice,
-	validate_doc,
-)
 from eu_einvoice.european_e_invoice.custom.sales_invoice_attachments import (
 	EmbedAttachment,
 	_get_table_embed_attachments,
 	get_embed_attachments,
 	validate_einvoice_attachment_rows,
+)
+from eu_einvoice.european_e_invoice.einvoice import (
+	as_base_64,
+	attach_xml_to_pdf,
+	get_einvoice,
+	validate_doc,
 )
 from eu_einvoice.tests.helpers import (
 	LOCAL_ANNEX_PNG_BYTES,
@@ -65,7 +65,7 @@ def append_attachment_rows(doc, rows: list[dict]) -> None:
 
 def run_embed_with_attachments(generator, attachments: list[EmbedAttachment]) -> None:
 	with patch(
-		"eu_einvoice.european_e_invoice.custom.sales_invoice.get_embed_attachments",
+		"eu_einvoice.european_e_invoice.einvoice.get_embed_attachments",
 		return_value=attachments,
 	):
 		generator._embed_attachments()
@@ -143,11 +143,11 @@ class UnitTestLegacyEmbedAttachment(UnitTestCase):
 				mock_doc = mock_file_doc(scenario.mock_file) if scenario.mock_file else None
 				with (
 					patch(
-						"eu_einvoice.european_e_invoice.custom.sales_invoice.frappe.db.exists",
+						"eu_einvoice.european_e_invoice.einvoice.frappe.db.exists",
 						return_value=True,
 					),
 					patch(
-						"eu_einvoice.european_e_invoice.custom.sales_invoice.frappe.get_doc",
+						"eu_einvoice.european_e_invoice.einvoice.frappe.get_doc",
 						return_value=mock_doc,
 					) as get_doc_mock,
 				):
@@ -355,11 +355,11 @@ class UnitTestValidateEinvoiceAttachmentRows(UnitTestCase):
 		]
 		with (
 			patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice.frappe.db.exists",
+				"eu_einvoice.european_e_invoice.einvoice.frappe.db.exists",
 				return_value=True,
 			),
 			patch(
-				"eu_einvoice.european_e_invoice.custom.sales_invoice.frappe.get_doc",
+				"eu_einvoice.european_e_invoice.einvoice.frappe.get_doc",
 				side_effect=[alpha, beta],
 			),
 		):
@@ -400,7 +400,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		set_multi_attachment_embed_enabled(True)
 		frappe.clear_messages()
 
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+		with patch("eu_einvoice.european_e_invoice.einvoice.validate_einvoice"):
 			validate_doc(sales_invoice, "validate")
 
 		self.assertEqual(sales_invoice.einvoice_embedded_document, "")
@@ -424,7 +424,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		set_multi_attachment_embed_enabled(True)
 		frappe.clear_messages()
 
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+		with patch("eu_einvoice.european_e_invoice.einvoice.validate_einvoice"):
 			validate_doc(sales_invoice, "validate")
 
 		self.assertEqual(sales_invoice.einvoice_embedded_document, "")
@@ -440,7 +440,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		sales_invoice.einvoice_embedded_document = broken_url
 		frappe.clear_messages()
 
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+		with patch("eu_einvoice.european_e_invoice.einvoice.validate_einvoice"):
 			validate_doc(sales_invoice, "validate")
 
 		self.assertEqual(sales_invoice.einvoice_embedded_document, broken_url)
@@ -484,7 +484,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		sales_invoice.einvoice_embedded_document = broken_url
 		frappe.clear_messages()
 
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+		with patch("eu_einvoice.european_e_invoice.einvoice.validate_einvoice"):
 			validate_doc(sales_invoice, "validate")
 
 		self.assertEqual(sales_invoice.einvoice_embedded_document, "")
@@ -523,7 +523,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		invoice_a.einvoice_embedded_document = annex_file.file_url
 		frappe.clear_messages()
 
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+		with patch("eu_einvoice.european_e_invoice.einvoice.validate_einvoice"):
 			validate_doc(invoice_a, "validate")
 
 		self.assertEqual(invoice_a.einvoice_embedded_document, annex_file.file_url)
@@ -554,7 +554,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		)
 		frappe.clear_messages()
 
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+		with patch("eu_einvoice.european_e_invoice.einvoice.validate_einvoice"):
 			with self.assertRaises(frappe.ValidationError) as error:
 				validate_doc(doc, "validate")
 
@@ -636,7 +636,7 @@ class IntegrationTestSalesInvoiceAttachments(IntegrationTestCase):
 		)
 		frappe.clear_messages()
 
-		with patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_einvoice"):
+		with patch("eu_einvoice.european_e_invoice.einvoice.validate_einvoice"):
 			with self.assertRaises(frappe.ValidationError) as error:
 				validate_doc(sales_invoice, "validate")
 
