@@ -322,6 +322,16 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		root = self.assert_valid_einvoice(invoice, EInvoiceProfile.EN16931)
 		self.assertEqual(root.findtext(".//rsm:ExchangedDocument/ram:ID", namespaces=NS), "GU-1500087")
 
+		# A correction references the number the supplier received
+		invoice.submit()
+		credit = make_return_doc("Purchase Invoice", invoice.name)
+		credit.insert()
+		root = self.assert_valid_einvoice(credit, EInvoiceProfile.EN16931)
+		self.assertEqual(
+			root.findtext(".//ram:InvoiceReferencedDocument/ram:IssuerAssignedID", namespaces=NS),
+			"GU-1500087",
+		)
+
 	def test_server_never_sets_the_profile(self):
 		"""The supplier's profile is only a default in the form. Code that sets the profile wins."""
 		supplier = frappe.get_doc(
