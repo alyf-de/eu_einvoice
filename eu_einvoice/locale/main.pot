@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-10-28 16:31+0053\n"
-"PO-Revision-Date: 2026-10-28 16:31+0053\n"
+"POT-Creation-Date: 2026-10-29 10:43+0053\n"
+"PO-Revision-Date: 2026-10-29 10:43+0053\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language-Team: hallo@alyf.de\n"
 "MIME-Version: 1.0\n"
@@ -543,7 +543,7 @@ msgstr ""
 msgid "Supplier Invoice File"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/purchase_invoice.py:265
+#: eu_einvoice/european_e_invoice/custom/purchase_invoice.py:258
 #, python-brace-format
 msgid "Supplier {0} has no default bank account with an IBAN, so the e-invoice has no payee account."
 msgstr ""
@@ -556,10 +556,6 @@ msgstr ""
 #. Label of the tax_basis_total (Currency) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json:411
 msgid "Tax Basis Total"
-msgstr ""
-
-#: eu_einvoice/european_e_invoice/custom/purchase_invoice.py:240
-msgid "The Supplier Invoice No is set. If the supplier issues their own invoice, the self-billed invoice bills the same supply twice."
 msgstr ""
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:590
@@ -658,7 +654,7 @@ msgstr ""
 msgid "Warning Message"
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/purchase_invoice.py:250
+#: eu_einvoice/european_e_invoice/custom/purchase_invoice.py:243
 #, python-brace-format
 msgid "With VAT category {0}, the e-invoice states no VAT, so the taxes and charges must add up to zero."
 msgstr ""
@@ -679,7 +675,7 @@ msgstr ""
 msgid "{0} row #{1}: The charge type 'Actual' is only supported in the eInvoice profiles 'EXTENDED' and 'XRECHNUNG'."
 msgstr ""
 
-#: eu_einvoice/european_e_invoice/custom/purchase_invoice.py:257
+#: eu_einvoice/european_e_invoice/custom/purchase_invoice.py:250
 #, python-brace-format
 msgid "{0} row #{1}: The e-invoice will not be valid with deducted taxes."
 msgstr ""
