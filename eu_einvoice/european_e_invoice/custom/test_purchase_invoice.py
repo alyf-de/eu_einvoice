@@ -325,7 +325,7 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		supplier = frappe.get_doc(
 			doctype="Supplier",
 			supplier_name="_Test Supplier With Self-Billing Profile",
-			supplier_group="All Supplier Groups",
+			supplier_group=frappe.db.get_value("Supplier Group", {"is_group": 0}),
 			self_billing_einvoice_profile=EInvoiceProfile.XRECHNUNG.value,
 		).insert()
 		invoice = make_purchase_invoice(supplier=supplier.name, qty=1, rate=100, do_not_submit=True)
@@ -432,7 +432,7 @@ def make_supplier(supplier_name: str, country: str, tax_id: str, with_bank: bool
 	supplier = frappe.get_doc(
 		doctype="Supplier",
 		supplier_name=supplier_name,
-		supplier_group="All Supplier Groups",
+		supplier_group=frappe.db.get_value("Supplier Group", {"is_group": 0}),
 		country=country,
 		tax_id=tax_id,
 	).insert()
