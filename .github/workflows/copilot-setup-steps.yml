@@ -40,16 +40,47 @@ jobs:
       - name: Clone
         uses: actions/checkout@v6
 
+      - name: Find versions
+        id: versions
+        run: |
+          # pyproject.toml pins e.g. frappe = ">=16.0.0-dev,<17.0.0", so we use version-16
+          FRAPPE_MAJOR=$(grep -oP '^frappe = ">=\K\d+' pyproject.toml)
+          echo "frappe-branch=version-$FRAPPE_MAJOR" >> $GITHUB_OUTPUT
+
+          case $FRAPPE_MAJOR in
+            15) PYTHON_VERSION=3.10; NODE_VERSION=18 ;;
+            *)  PYTHON_VERSION=3.14; NODE_VERSION=24 ;;
+          esac
+          echo "python=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+          echo "node=$NODE_VERSION" >> $GITHUB_OUTPUT
+
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.14'
+          python-version: ${{ steps.versions.outputs.python }}
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: ${{ steps.versions.outputs.node }}
           check-latest: true
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
+
+      - uses: actions/cache@v5
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Install MariaDB Client
         run: |
@@ -58,24 +89,45 @@ jobs:
 
       - name: Setup
         run: |
-          pip install frappe-bench
-          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" ~/frappe-bench
+          uv tool install frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch ${{ steps.versions.outputs.frappe-branch }} --python "$(which python)" ~/frappe-bench
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
 
-      - name: Install
+      - name: Get apps
         working-directory: /home/runner/frappe-bench
         run: |
-          bench get-app --resolve-deps --soft-link eu_einvoice $GITHUB_WORKSPACE
-          bench setup requirements --dev
-          bench new-site --db-root-password root --admin-password admin test_site
-          bench --site test_site install-app eu_einvoice
-          bench build
+          bench get-app --branch ${{ steps.versions.outputs.frappe-branch }} --skip-assets erpnext
+          bench get-app --soft-link --skip-assets eu_einvoice $GITHUB_WORKSPACE
+        env:
+          CI: 'Yes'
+
+      - name: Setup requirements
+        working-directory: /home/runner/frappe-bench
+        run: bench setup requirements --dev
+        env:
+          CI: 'Yes'
+
+      - name: Build assets
+        working-directory: /home/runner/frappe-bench
+        run: bench build
+        env:
+          CI: 'Yes'
+
+      - name: Create site
+        working-directory: /home/runner/frappe-bench
+        run: bench new-site --db-root-password root --admin-password admin test_site
+        env:
+          CI: 'Yes'
+
+      - name: Install apps
+        working-directory: /home/runner/frappe-bench
+        run: bench --site test_site install-app eu_einvoice
         env:
           CI: 'Yes'
 
       - name: Install pre-commit
-        run: pip install pre-commit
+        run: uv tool install pre-commit
 
       - name: Activate pre-commit
         working-directory: /home/runner/frappe-bench/apps/eu_einvoice
