@@ -2,6 +2,19 @@
 
 This is a Frappe Framework app for creating and importing European e-invoices with ERPNext.
 
+## Copilot Environment
+
+When you run as GitHub Copilot (coding agent or code review), a ready Frappe bench is available:
+
+- **Bench**: `/home/runner/frappe-bench`. Run all `bench` commands from this directory.
+- **Site**: `test_site`, with ERPNext and this app installed. Tests are enabled.
+- **App**: `/home/runner/frappe-bench/apps/eu_einvoice` is a symlink to the repository checkout, so the bench runs the code you see.
+
+Use the bench to check your work. Do not rely on reading the code alone:
+
+- **When you change code**: Before you finish, run the tests of each module you changed (see [Testing](#testing)). If you changed a DocType JSON file or added a patch, run `bench --site test_site migrate` first. Put the commands and their results in the PR description.
+- **When you review a pull request**: Before you report a suspected bug, try to confirm it on the bench. Run the related tests, or reproduce the problem with `bench --site test_site execute`. In your comment, say if and how you confirmed the problem.
+
 ## Code Style & Formatting
 
 ### Python
@@ -62,12 +75,6 @@ This is a Frappe Framework app for creating and importing European e-invoices wi
 - ❌ `.orderby("field", "desc")` → ✅ `.orderby("field", order=frappe.qb.desc)`
 
 ## Frappe Bench Commands
-
-### Bench Location
-
-- **Local development**: Varies by installation
-- **GitHub Actions CI**: `/home/runner/frappe-bench`
-- **App location in CI**: `/home/runner/frappe-bench/apps/eu_einvoice`
 
 ### Development
 ```bash
