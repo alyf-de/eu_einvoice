@@ -91,9 +91,16 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 
 		if self.invoice.company_tax_id:
 			try:
-				seller.tax_registration = ("VA", validate_vat_id(self.invoice.company_tax_id.strip()))
+				seller_tax_id = validate_vat_id(self.invoice.company_tax_id.strip())
+				seller_vat_scheme = "VA"
 			except ValueError:
-				seller.tax_registration = ("FC", self.invoice.company_tax_id.strip())
+				seller_tax_id = self.invoice.company_tax_id.strip()
+				seller_vat_scheme = "FC"
+
+			# BR-O-02: category O invoices must not contain Seller VAT identifier (BT-31).
+			# Keep FC (BT-32, e.g. Steuernummer). Company Tax ID stays in ERPNext for other invoices.
+			if not (seller_vat_scheme == "VA" and self._has_not_subject_to_vat_line()):
+				seller.tax_registration = (seller_vat_scheme, seller_tax_id)
 
 		contact = None
 		if self.invoice.get("company_contact_person"):
@@ -152,12 +159,20 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 
 		if self.invoice.tax_id:
 			if is_valid_swiss_vat_id(self.invoice.tax_id):
-				buyer.tax_registration = ("VA", normalize_swiss_vat_id(self.invoice.tax_id))
+				customer_tax_id = normalize_swiss_vat_id(self.invoice.tax_id)
+				customer_vat_scheme = "VA"
 			else:
 				try:
-					buyer.tax_registration = ("VA", validate_vat_id(self.invoice.tax_id.strip()))
+					customer_tax_id = validate_vat_id(self.invoice.tax_id.strip())
+					customer_vat_scheme = "VA"
 				except ValueError:
-					buyer.tax_registration = ("FC", self.invoice.tax_id.strip())
+					customer_tax_id = self.invoice.tax_id.strip()
+					customer_vat_scheme = "FC"
+
+			# BR-O-02: category O invoices must not contain Buyer VAT identifier (BT-48).
+			# Keep FC. Customer Tax ID stays in ERPNext for other invoices.
+			if not (customer_vat_scheme == "VA" and self._has_not_subject_to_vat_line()):
+				buyer.tax_registration = (customer_vat_scheme, customer_tax_id)
 
 		return buyer
 
