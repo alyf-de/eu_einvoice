@@ -120,21 +120,6 @@ def get_einvoice(invoice: str | SalesInvoice) -> bytes:
 
 	return doc.serialize(schema=get_drafthorse_schema(profile))
 
-<<<<<<< HEAD
-=======
-		if self.invoice.company_tax_id:
-			try:
-				seller_tax_id = validate_vat_id(self.invoice.company_tax_id.strip())
-				seller_vat_scheme = "VA"
-			except ValueError:
-				seller_tax_id = self.invoice.company_tax_id.strip()
-				seller_vat_scheme = "FC"
-
-			# BR-O-02: category O invoices must not contain Seller VAT identifier (BT-31).
-			# Keep FC (BT-32, e.g. Steuernummer). Company Tax ID stays in ERPNext for other invoices.
-			if not (seller_vat_scheme == "VA" and self._has_not_subject_to_vat_line()):
-				seller.tax_registration = (seller_vat_scheme, seller_tax_id)
->>>>>>> 9433233 (feat: suppress VAT ID in VATEX O case (#332))
 
 class EInvoiceGenerator:
 	"""Map ERPNext entities to a Drafthorse document."""
@@ -164,6 +149,8 @@ class EInvoiceGenerator:
 		self.item_tax_rates = set()
 		# VAT category code -> exemption reason code, collected from the line items
 		self.line_exemption_reason_codes = {}
+		# item id() -> duty/tax/fee category code; resolved once for BR-O-02 and line export
+		self._line_vat_category_codes = None
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -183,59 +170,6 @@ class EInvoiceGenerator:
 		self._set_seller()
 		self._set_buyer()
 
-<<<<<<< HEAD
-=======
-		if frappe.db.get_single_value("Selling Settings", "cust_master_name") != "Customer Name":
-			buyer.id = self.invoice.customer
-
-		if self.invoice.customer_address:
-			buyer.address = frappe.get_doc("Address", self.invoice.customer_address)
-
-		if self.invoice.contact_person:
-			contact = frappe.get_doc("Contact", self.invoice.contact_person)
-			buyer.person_name = contact.full_name
-			buyer.department = contact.department
-			buyer.email = contact.email_id
-			buyer.phone = contact.phone or contact.mobile_no
-
-		if self.customer.electronic_address_scheme and self.customer.electronic_address:
-			buyer.electronic_address = (
-				frappe.db.get_value("Common Code", self.customer.electronic_address_scheme, "common_code"),
-				self.customer.electronic_address,
-			)
-		elif self.invoice.contact_email:
-			buyer.electronic_address = ("EM", self.invoice.contact_email)
-		elif buyer.address and buyer.address.email_id:
-			buyer.electronic_address = ("EM", buyer.address.email_id)
-
-		if self.invoice.tax_id:
-			if is_valid_swiss_vat_id(self.invoice.tax_id):
-				customer_tax_id = normalize_swiss_vat_id(self.invoice.tax_id)
-				customer_vat_scheme = "VA"
-			else:
-				try:
-					customer_tax_id = validate_vat_id(self.invoice.tax_id.strip())
-					customer_vat_scheme = "VA"
-				except ValueError:
-					customer_tax_id = self.invoice.tax_id.strip()
-					customer_vat_scheme = "FC"
-
-			# BR-O-02: category O invoices must not contain Buyer VAT identifier (BT-48).
-			# Keep FC. Customer Tax ID stays in ERPNext for other invoices.
-			if not (customer_vat_scheme == "VA" and self._has_not_subject_to_vat_line()):
-				buyer.tax_registration = (customer_vat_scheme, customer_tax_id)
-
-		return buyer
-
-	def get_ship_to(self) -> tuple[str, Address] | None:
-		if not self.invoice.shipping_address_name:
-			return None
-
-		address = frappe.get_doc("Address", self.invoice.shipping_address_name)
-		return address.address_title or self.invoice.customer_name, address
-
-	def set_references(self) -> None:
->>>>>>> 9433233 (feat: suppress VAT ID in VATEX O case (#332))
 		if self.invoice.buyer_reference:
 			self.doc.trade.agreement.buyer_reference = self.invoice.buyer_reference
 
@@ -388,6 +322,11 @@ class EInvoiceGenerator:
 			seller_tax_id = self.invoice.company_tax_id.strip()
 			seller_vat_scheme = "FC"
 
+		# BR-O-02: category O invoices must not contain Seller VAT identifier (BT-31).
+		# Keep FC (BT-32, e.g. Steuernummer). Company Tax ID stays in ERPNext for other invoices.
+		if seller_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
+
 		self.doc.trade.agreement.seller.tax_registrations.add(
 			TaxRegistration(
 				id=(seller_vat_scheme, seller_tax_id),
@@ -482,6 +421,11 @@ class EInvoiceGenerator:
 				customer_tax_id = self.invoice.tax_id.strip()
 				customer_vat_scheme = "FC"
 
+		# BR-O-02: category O invoices must not contain Buyer VAT identifier (BT-48).
+		# Keep FC. Customer Tax ID stays in ERPNext for other invoices.
+		if customer_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
+
 		self.doc.trade.agreement.buyer.tax_registrations.add(
 			TaxRegistration(
 				id=(customer_vat_scheme, customer_tax_id),
@@ -529,6 +473,27 @@ class EInvoiceGenerator:
 				elif self.buyer_contact.mobile_no:
 					self.doc.trade.agreement.buyer.contact.telephone.number = self.buyer_contact.mobile_no
 
+	def _get_line_lookup(self, item: SalesInvoiceItem) -> list[tuple[str, str | None]]:
+		return [
+			("Item Tax Template", item.item_tax_template),
+			("Account", item.income_account),
+			("Tax Category", self.invoice.tax_category),
+			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+		]
+
+	def _resolve_line_vat_category_codes(self) -> dict[int, str | None]:
+		"""Resolve each line's VAT category once; reused for BR-O-02 and line export."""
+		if self._line_vat_category_codes is None:
+			self._line_vat_category_codes = {
+				id(item): duty_tax_fee_category_codes.get(self._get_line_lookup(item))
+				for item in self.invoice.items
+			}
+		return self._line_vat_category_codes
+
+	def _has_not_subject_to_vat_line(self) -> bool:
+		"""True if any invoice line will use VAT category O (Not subject to VAT)."""
+		return "O" in self._resolve_line_vat_category_codes().values()
+
 	def _add_line_item(self, item: SalesInvoiceItem):
 		li = LineItem()
 		li.document.line_id = str(item.idx)
@@ -560,14 +525,9 @@ class EInvoiceGenerator:
 				li.delivery.delivery_note.issue_date_time = getdate(posting_date)
 
 		li.settlement.trade_tax.type_code = "VAT"
-		lookup = [
-			("Item Tax Template", item.item_tax_template),
-			("Account", item.income_account),
-			("Tax Category", self.invoice.tax_category),
-			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-		]
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
-		category_code = li.settlement.trade_tax.category_code._text
+		lookup = self._get_line_lookup(item)
+		category_code = self._resolve_line_vat_category_codes()[id(item)]
+		li.settlement.trade_tax.category_code = category_code
 		if category_code in EXEMPT_VAT_CATEGORIES:
 			# Only the line knows Item Tax Template and income Account; the rest is looked up again
 			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.
