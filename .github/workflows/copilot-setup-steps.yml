@@ -132,3 +132,15 @@ jobs:
         run: |
           pre-commit --version
           pre-commit install
+
+      - name: Install skills
+        run: |
+          # Pin to a commit, skill text goes straight into the agent's context
+          SKILLS_SHA=5dc2f984081f6d8e23559af03b0e7c2799245d79
+          for skill in frappe-app-dev frappe-code-review code-style technical-writing; do
+            gh skill install frappe/skills skills/$skill --pin $SKILLS_SHA
+          done
+          # Keep the installed skills out of Copilot's commits
+          echo ".agents/skills/" >> .git/info/exclude
+        env:
+          GH_TOKEN: ${{ github.token }}
