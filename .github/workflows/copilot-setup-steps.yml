@@ -34,7 +34,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
-        options: --health-cmd="mariadb-admin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        options: --health-cmd="mariadb-admin ping" --health-interval=5s --health-timeout=2s --health-retries=3 --tmpfs=/var/lib/mysql:rw,noexec,nosuid,size=2g
 
     steps:
       - name: Clone
@@ -74,19 +74,8 @@ jobs:
       - name: Setup uv
         uses: astral-sh/setup-uv@v10.3.3
         with:
-          enable-cache: true
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
-
-      - uses: actions/cache@v5
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          # Copilot sessions can't restore caches from PR runs and don't save their own
+          enable-cache: false
 
       - name: Install MariaDB Client
         run: |
@@ -99,6 +88,9 @@ jobs:
           bench init --skip-redis-config-generation --skip-assets --frappe-branch ${{ steps.versions.outputs.frappe-branch }} --python "$(which python)" ~/frappe-bench
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
+          # The database is thrown away after the session, so skip the fsync on every commit
+          mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL innodb_flush_log_at_trx_commit = 0"
+          mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL sync_binlog = 0"
 
       - name: Get apps
         working-directory: /home/runner/frappe-bench
