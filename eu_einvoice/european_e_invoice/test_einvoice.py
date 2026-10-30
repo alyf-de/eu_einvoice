@@ -6,7 +6,12 @@ from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sal
 from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
-from eu_einvoice.european_e_invoice.einvoice import attach_xml_to_pdf, get_einvoice, get_generator_class
+from eu_einvoice.european_e_invoice.einvoice import (
+	attach_xml_to_pdf,
+	get_einvoice,
+	get_generator_class,
+	validate_doc,
+)
 from eu_einvoice.utils import EInvoiceProfile
 
 HOOK_PATH = "eu_einvoice.european_e_invoice.test_einvoice"
@@ -67,3 +72,22 @@ class TestGeneratorRegistry(IntegrationTestCase):
 	def test_attach_xml_to_pdf_keeps_pdf_of_unregistered_doctype(self):
 		pdf_data = b"%PDF-1.4 not an invoice"
 		self.assertIs(attach_xml_to_pdf("TODO-0001", pdf_data, doctype="ToDo"), pdf_data)
+
+
+class TestValidateDoc(IntegrationTestCase):
+	def test_validate_doc_with_empty_profile(self):
+		for profile in ("", None):
+			with self.subTest(einvoice_profile=profile):
+				doc = frappe._dict(
+					einvoice_profile=profile,
+					taxes=[frappe._dict(idx=1, charge_type="Actual")],
+					einvoice_is_correct=1,
+					validation_errors="Old error",
+					validation_warnings="Old warning",
+				)
+
+				validate_doc(doc, "validate")
+
+				self.assertEqual(doc.einvoice_is_correct, 0)
+				self.assertEqual(doc.validation_errors, "")
+				self.assertEqual(doc.validation_warnings, "")
