@@ -96,6 +96,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install mariadb-client
+          # MariaDB 10.6 server has no TLS, but newer clients require it by default
+          printf "[client]\nskip-ssl\n" > ~/.my.cnf
 
       - name: Setup
         run: |
