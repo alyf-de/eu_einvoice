@@ -660,6 +660,12 @@ def validate_vat_id(vat_id: str) -> str:
 
 def validate_doc(doc, event):
 	"""Validate the form of an invoice that supports e-invoices."""
+	if not doc.einvoice_profile:
+		doc.einvoice_is_correct = 0
+		doc.validation_errors = ""
+		doc.validation_warnings = ""
+		return
+
 	for tax_row in doc.taxes:
 		if tax_row.charge_type == "On Item Quantity":
 			frappe.msgprint(
