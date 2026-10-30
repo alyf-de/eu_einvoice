@@ -286,6 +286,57 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		header_tax = root.find(".//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax", NAMESPACES)
 		self.assertEqual(header_tax.findtext("ram:ExemptionReasonCode", namespaces=NAMESPACES), "VATEX-EU-G")
 
+	def test_category_o_omits_seller_and_buyer_vat_ids(self):
+		"""BR-O-02: keep Tax IDs in ERPNext, but do not emit VA identifiers on category O invoices."""
+		invoice = create_sales_invoice(do_not_save=True, rate=100)
+		invoice.tax_category = self.tax_category
+		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.insert()
+		# After insert: fetch_from company/customer.tax_id would overwrite values set earlier.
+		invoice.company_tax_id = "DE123456789"
+		invoice.tax_id = "DE987654321"
+
+		xml = get_einvoice(invoice)
+		root = ET.fromstring(xml)
+		seller_vat_ids = root.findall(
+			".//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']",
+			NAMESPACES,
+		)
+		buyer_vat_ids = root.findall(
+			".//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']",
+			NAMESPACES,
+		)
+		self.assertEqual(seller_vat_ids, [])
+		self.assertEqual(buyer_vat_ids, [])
+
+		errors, _warnings = get_validation_errors(xml.decode(), EInvoiceProfile.EN16931)
+		br_o_02 = [error for error in errors if "BR-O-02" in error]
+		self.assertEqual(br_o_02, [])
+
+	def test_category_o_keeps_seller_and_buyer_tax_registration_fc(self):
+		"""BR-O-02 only forbids VA (BT-31 / BT-48); FC may remain for seller and buyer."""
+		invoice = create_sales_invoice(do_not_save=True, rate=100)
+		invoice.tax_category = self.tax_category
+		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.insert()
+		# After insert: fetch_from company/customer.tax_id would overwrite values set earlier.
+		invoice.company_tax_id = "12/345/67890"
+		invoice.tax_id = "98/765/43210"
+
+		root = ET.fromstring(get_einvoice(invoice))
+		seller_fc_ids = root.findall(
+			".//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID='FC']",
+			NAMESPACES,
+		)
+		buyer_fc_ids = root.findall(
+			".//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID='FC']",
+			NAMESPACES,
+		)
+		self.assertEqual(len(seller_fc_ids), 1)
+		self.assertEqual(seller_fc_ids[0].text, "12/345/67890")
+		self.assertEqual(len(buyer_fc_ids), 1)
+		self.assertEqual(buyer_fc_ids[0].text, "98/765/43210")
+
 
 class TestApplicableTradeTaxes(IntegrationTestCase):
 	def test_multi_tax_invoice_groups_and_basis_amounts(self):

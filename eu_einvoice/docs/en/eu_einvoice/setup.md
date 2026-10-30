@@ -26,6 +26,14 @@ For example, your standard **Payment Terms Template** is "Bank Transfer, 30 days
 
 The retrieval of codes goes from the most specific to the most general. For example, for the VAT type of a line item, the app first looks for a code using the item's _Item Tax Template_ and _Income Account_, then falls back to the code for the invoice's _Tax Category_ or _Sales Taxes and Charges Template_.
 
+### VAT category "O" (Not subject to VAT)
+
+Map **Common Code** "O" (and VATEX "vatex-eu-o") when the supply is outside the scope of VAT.
+
+For these invoices, the app omits the Seller VAT identifier (BT-31) and Buyer VAT identifier (BT-48) even if _Company Tax ID_ / _Tax Id_ are set on the **Sales Invoice**. Other invoices keep emitting those VAT IDs as usual. A non-VAT tax registration (scheme "FC", BT-32) is still written when _Company Tax ID_ is not a VAT ID.
+
+EN 16931 still requires a seller identification (BR-CO-26). Without BT-31, set a _Supplier Number_ on the **Customer** so the eInvoice contains the Seller identifier (BT-29).
+
 ## Buyer Reference (German: Leitweg-ID)
 
 If you work with government customers or similar large organizations, you might need to specify their _Buyer Reference_ in the eInvoice. Set the _Buyer Reference_ field in the **Sales Invoice**. You can already fill this field in the **Customer** master data or the **Sales Order**.
