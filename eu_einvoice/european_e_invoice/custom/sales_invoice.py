@@ -145,6 +145,8 @@ class EInvoiceGenerator:
 		self.item_tax_rates = set()
 		# VAT category code -> exemption reason code, collected from the line items
 		self.line_exemption_reason_codes = {}
+		# item id() -> duty/tax/fee category code; resolved once for BR-O-02 and line export
+		self._line_vat_category_codes = None
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -315,6 +317,11 @@ class EInvoiceGenerator:
 			seller_tax_id = self.invoice.company_tax_id.strip()
 			seller_vat_scheme = "FC"
 
+		# BR-O-02: category O invoices must not contain Seller VAT identifier (BT-31).
+		# Keep FC (BT-32, e.g. Steuernummer). Company Tax ID stays in ERPNext for other invoices.
+		if seller_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
+
 		self.doc.trade.agreement.seller.tax_registrations.add(
 			TaxRegistration(
 				id=(seller_vat_scheme, seller_tax_id),
@@ -409,6 +416,11 @@ class EInvoiceGenerator:
 				customer_tax_id = self.invoice.tax_id.strip()
 				customer_vat_scheme = "FC"
 
+		# BR-O-02: category O invoices must not contain Buyer VAT identifier (BT-48).
+		# Keep FC. Customer Tax ID stays in ERPNext for other invoices.
+		if customer_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
+
 		self.doc.trade.agreement.buyer.tax_registrations.add(
 			TaxRegistration(
 				id=(customer_vat_scheme, customer_tax_id),
@@ -456,6 +468,26 @@ class EInvoiceGenerator:
 				elif self.buyer_contact.mobile_no:
 					self.doc.trade.agreement.buyer.contact.telephone.number = self.buyer_contact.mobile_no
 
+	def _resolve_line_vat_category_codes(self) -> dict[int, str | None]:
+		"""Resolve each line's VAT category once; reused for BR-O-02 and line export."""
+		if self._line_vat_category_codes is None:
+			self._line_vat_category_codes = {
+				id(item): duty_tax_fee_category_codes.get(
+					[
+						("Item Tax Template", item.item_tax_template),
+						("Account", item.income_account),
+						("Tax Category", self.invoice.tax_category),
+						("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+					]
+				)
+				for item in self.invoice.items
+			}
+		return self._line_vat_category_codes
+
+	def _has_not_subject_to_vat_line(self) -> bool:
+		"""True if any invoice line will use VAT category O (Not subject to VAT)."""
+		return "O" in self._resolve_line_vat_category_codes().values()
+
 	def _add_line_item(self, item: SalesInvoiceItem):
 		li = LineItem()
 		li.document.line_id = str(item.idx)
@@ -493,8 +525,8 @@ class EInvoiceGenerator:
 			("Tax Category", self.invoice.tax_category),
 			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
 		]
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
-		category_code = li.settlement.trade_tax.category_code._text
+		category_code = self._resolve_line_vat_category_codes()[id(item)]
+		li.settlement.trade_tax.category_code = category_code
 		if category_code in EXEMPT_VAT_CATEGORIES:
 			# Only the line knows Item Tax Template and income Account; the rest is looked up again
 			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.
