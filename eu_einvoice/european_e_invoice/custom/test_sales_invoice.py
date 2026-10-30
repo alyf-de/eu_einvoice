@@ -18,6 +18,7 @@ from eu_einvoice.european_e_invoice.custom.sales_invoice import (
 	get_einvoice,
 	get_item_rate,
 	get_xml_attachment_file_base_name,
+	validate_doc,
 	vat_exemption_reason_codes,
 )
 from eu_einvoice.schematron import get_validation_errors
@@ -522,3 +523,22 @@ class TestPdfXmpMetadata(IntegrationTestCase):
 	def test_seller_name_with_ampersand_survives_in_xmp(self):
 		xmp = etree.fromstring(self._pdf_metadata("Test & Partner GmbH"))  # raises on invalid XML
 		self.assertIn("Test & Partner GmbH", list(xmp.itertext()))
+
+
+class TestValidateDoc(IntegrationTestCase):
+	def test_validate_doc_with_empty_profile(self):
+		for profile in ("", None):
+			with self.subTest(einvoice_profile=profile):
+				doc = frappe._dict(
+					einvoice_profile=profile,
+					taxes=[frappe._dict(idx=1, charge_type="Actual")],
+					einvoice_is_correct=1,
+					validation_errors="Old error",
+					validation_warnings="Old warning",
+				)
+
+				validate_doc(doc, "validate")
+
+				self.assertEqual(doc.einvoice_is_correct, 0)
+				self.assertEqual(doc.validation_errors, "")
+				self.assertEqual(doc.validation_warnings, "")

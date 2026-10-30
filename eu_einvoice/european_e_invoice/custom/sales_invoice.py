@@ -848,6 +848,12 @@ def validate_doc(doc, event):
 		doc (SalesInvoice): The invoice being validated.
 		event (str): Frappe document event name (for example ``"validate"``).
 	"""
+	if not doc.einvoice_profile:
+		doc.einvoice_is_correct = 0
+		doc.validation_errors = ""
+		doc.validation_warnings = ""
+		return
+
 	for tax_row in doc.taxes:
 		if tax_row.charge_type == "On Item Quantity":
 			frappe.msgprint(
