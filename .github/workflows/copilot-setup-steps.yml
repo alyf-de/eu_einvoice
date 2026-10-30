@@ -43,9 +43,15 @@ jobs:
       - name: Find versions
         id: versions
         run: |
-          # pyproject.toml pins e.g. frappe = ">=16.0.0-dev,<17.0.0", so we use version-16
-          FRAPPE_MAJOR=$(grep -oP '^frappe = ">=\K\d+' pyproject.toml)
-          echo "frappe-branch=version-$FRAPPE_MAJOR" >> $GITHUB_OUTPUT
+          # pyproject.toml pins e.g. frappe = ">=15.117.0,<16.0.0", so we use version-15.
+          # A "-dev" pin like ">=17.0.0-dev,<18.0.0" means the develop branch.
+          FRAPPE_MIN_VERSION=$(grep -oP '^frappe = ">=\K[^,"]+' pyproject.toml)
+          FRAPPE_MAJOR=${FRAPPE_MIN_VERSION%%.*}
+          if [[ $FRAPPE_MIN_VERSION == *-dev ]]; then
+            echo "frappe-branch=develop" >> $GITHUB_OUTPUT
+          else
+            echo "frappe-branch=version-$FRAPPE_MAJOR" >> $GITHUB_OUTPUT
+          fi
 
           case $FRAPPE_MAJOR in
             15) PYTHON_VERSION=3.10; NODE_VERSION=18 ;;

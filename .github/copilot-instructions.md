@@ -186,8 +186,8 @@ eu_einvoice/
 - **lxml**: >=4.9.3,<6.0.0 - XML processing
 
 ### Frappe/ERPNext
-- Requires Frappe >= 16.0.0-dev, < 17.0.0
-- Requires ERPNext >= 16.0.0-dev, < 17.0.0
+- Requires Frappe >= 17.0.0-dev, < 18.0.0
+- Requires ERPNext >= 17.0.0-dev, < 18.0.0
 
 ## Code Quality Checks
 
