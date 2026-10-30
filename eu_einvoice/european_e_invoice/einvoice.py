@@ -126,6 +126,8 @@ class EInvoiceGenerator:
 		self.item_tax_rates = set()
 		# VAT category code -> exemption reason code, collected from the line items
 		self.line_exemption_reason_codes = {}
+		# item id() -> VAT category, shared by BR-O-02 and line export
+		self._line_vat_category_codes = None
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -290,7 +292,9 @@ class EInvoiceGenerator:
 			target.id = party.id
 
 		if party.tax_registration:
-			target.tax_registrations.add(TaxRegistration(id=party.tax_registration))
+			# BR-O-02 forbids seller and buyer VAT IDs on category O invoices, but allows FC.
+			if party.tax_registration[0] != "VA" or not self._has_not_subject_to_vat_line():
+				target.tax_registrations.add(TaxRegistration(id=party.tax_registration))
 
 		if party.address:
 			self._write_address(target.address, party.address)
@@ -328,6 +332,21 @@ class EInvoiceGenerator:
 		self.doc.trade.delivery.ship_to.name = name
 		self._write_address(self.doc.trade.delivery.ship_to.address, address)
 
+	def _resolve_line_vat_category_codes(self) -> dict[int, str | None]:
+		"""Resolve each line's VAT category once for BR-O-02 and line export."""
+		if self._line_vat_category_codes is None:
+			self._line_vat_category_codes = {
+				id(item): duty_tax_fee_category_codes.get(
+					self.get_line_lookup(item) + self._document_lookup()
+				)
+				for item in self.invoice.items
+			}
+		return self._line_vat_category_codes
+
+	def _has_not_subject_to_vat_line(self) -> bool:
+		"""Return whether any invoice line uses VAT category O."""
+		return "O" in self._resolve_line_vat_category_codes().values()
+
 	def _add_line_item(self, item):
 		li = LineItem()
 		li.document.line_id = str(item.idx)
@@ -353,10 +372,8 @@ class EInvoiceGenerator:
 
 		li.settlement.trade_tax.type_code = "VAT"
 		line_lookup = self.get_line_lookup(item)
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(
-			line_lookup + self._document_lookup()
-		)
-		category_code = li.settlement.trade_tax.category_code._text
+		category_code = self._resolve_line_vat_category_codes()[id(item)]
+		li.settlement.trade_tax.category_code = category_code
 		if category_code in EXEMPT_VAT_CATEGORIES:
 			# Only the line knows Item Tax Template and Account; the rest is looked up again
 			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.

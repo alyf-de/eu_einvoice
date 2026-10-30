@@ -1,12 +1,19 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import frappe
-from drafthorse.models.document import IncludedNote
+from drafthorse.models.document import Document, IncludedNote
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from frappe.tests.utils import FrappeTestCase
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
-from eu_einvoice.european_e_invoice.einvoice import attach_xml_to_pdf, get_einvoice, get_generator_class
+from eu_einvoice.european_e_invoice.einvoice import (
+	EInvoiceGenerator,
+	TradeParty,
+	attach_xml_to_pdf,
+	duty_tax_fee_category_codes,
+	get_einvoice,
+	get_generator_class,
+)
 from eu_einvoice.utils import EInvoiceProfile
 
 HOOK_PATH = "eu_einvoice.european_e_invoice.test_einvoice"
@@ -41,6 +48,40 @@ class TestEInvoiceHooks(FrappeTestCase):
 
 		self.assertIn("PO-FROM-BEFORE-HOOK", xml)
 		self.assertIn(f"Added by hook for {invoice.name}", xml)
+
+
+class TestPartyTaxRegistration(FrappeTestCase):
+	def test_category_o_suppresses_only_vat_ids(self):
+		for category in ("O", "S"):
+			for scheme in ("VA", "FC"):
+				with self.subTest(category=category, scheme=scheme):
+					invoice = MagicMock(items=[object()], tax_category=None, taxes_and_charges=None)
+					generator = EInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
+					generator.tax_template_doctype = "Custom Tax Template"
+					doc = Document()
+					party = TradeParty(
+						name="Test Party",
+						tax_registration=(scheme, "123456789"),
+						email="test@example.com",
+					)
+					with (
+						patch.object(generator, "get_line_lookup", return_value=[]),
+						patch.object(duty_tax_fee_category_codes, "get", return_value=category) as get_code,
+					):
+						for target in (doc.trade.agreement.seller, doc.trade.agreement.buyer):
+							generator._write_party(target, party)
+							registrations = target.tax_registrations.children
+							if category == "O" and scheme == "VA":
+								self.assertEqual(registrations, [])
+							else:
+								self.assertEqual(len(registrations), 1)
+								self.assertEqual(registrations[0].id._text, "123456789")
+								self.assertEqual(registrations[0].id._scheme_id, scheme)
+							self.assertEqual(target.contact.email.address._text, party.email)
+						if scheme == "VA":
+							get_code.assert_called_once_with(
+								[("Tax Category", None), ("Custom Tax Template", None)]
+							)
 
 
 class TestGeneratorRegistry(FrappeTestCase):
