@@ -123,6 +123,7 @@ jobs:
         run: |
           bench --site test_site install-app eu_einvoice
           bench --site test_site set-config allow_tests true
+          bench --site test_site set-config developer_mode 1
         env:
           CI: 'Yes'
 
