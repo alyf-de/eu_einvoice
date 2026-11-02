@@ -16,7 +16,6 @@ repos:
       - id: check-ast
       - id: check-json
       - id: check-toml
-      - id: check-yaml
       - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
