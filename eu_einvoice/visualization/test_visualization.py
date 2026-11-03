@@ -104,6 +104,28 @@ class TestVisualization(UnitTestCase):
 		self.assertNotIn("alert(1)", clean)
 		self.assertIn("downloadData('download-d0e9')", clean)
 
+	def test_sanitize_preserves_kosit_tab_show_handlers(self):
+		dirty = (
+			"<html><head></head><body>"
+			'<button id="menueUebersicht" onclick="show(this);">Overview</button>'
+			'<button id="menueDetails" onclick="show(this)">Details</button>'
+			'<button onclick="show(evil)">nope</button>'
+			'<button onclick="alert(1); show(this)">nope2</button>'
+			"</body></html>"
+		)
+		clean = sanitize_viewer_html(dirty)
+		self.assertIn('onclick="show(this);"', clean)
+		self.assertIn('onclick="show(this)"', clean)
+		self.assertNotIn("show(evil)", clean)
+		self.assertNotIn("alert(1)", clean)
+
+	def test_render_keeps_tab_onclick_handlers(self):
+		xml = (FIXTURES / "included-notes-bg-1-uncefact.xml").read_text()
+		html = render_einvoice_html(xml, lang="en")
+		self.assertIn('id="menueDetails"', html)
+		self.assertRegex(html, r'id="menueDetails"[^>]*onclick="show\(this\);?"')
+		self.assertRegex(html, r'id="menueAnlagen"[^>]*onclick="show\(this\);?"')
+
 	def test_strip_xml_doctype_removes_internal_subset(self):
 		xml = '<?xml version="1.0"?>\n<!DOCTYPE foo [\n  <!ENTITY xxe SYSTEM "file:///etc/hostname">\n]>\n<root/>'
 		stripped = strip_xml_doctype(xml)
@@ -122,6 +144,17 @@ class TestVisualization(UnitTestCase):
 		xml = '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/hostname"'
 		stripped = strip_xml_doctype(xml)
 		self.assertEqual(stripped, '<?xml version="1.0"?>')
+
+	def test_strip_xml_doctype_not_bypassed_by_expanding_unicode(self):
+		"""ß grows under .upper(); indices from an uppercased copy must not be reused."""
+		comment = "<!--" + ("ß" * 300) + "-->"
+		doctype = '<!DOCTYPE foo [\n  <!ENTITY xxe SYSTEM "file:///etc/hostname">\n]>\n'
+		xml = '<?xml version="1.0"?>\n' + comment + "\n" + doctype + "<root/>"
+		stripped = strip_xml_doctype(xml)
+		self.assertNotIn("DOCTYPE", stripped.upper())
+		self.assertNotIn("ENTITY", stripped.upper())
+		self.assertIn("<root/>", stripped)
+		self.assertIn(comment, stripped)
 
 	def test_xxe_file_entity_not_reflected_in_html(self):
 		"""Regression: SaxonC must not expand file:// entities into viewer HTML."""

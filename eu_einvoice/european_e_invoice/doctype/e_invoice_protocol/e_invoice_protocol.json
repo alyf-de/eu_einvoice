@@ -18,11 +18,13 @@
   "column_break_file",
   "content_hash",
   "file_hash",
+  "ruleset_hash",
   "copied_from",
   "reference_section",
   "reference_doctype",
   "column_break_ref",
   "reference_name",
+  "company",
   "validator_section",
   "validator",
   "validator_version",
@@ -150,6 +152,16 @@
    "read_only": 1
   },
   {
+   "bold": 1,
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
    "fieldname": "validator_section",
    "fieldtype": "Section Break",
    "label": "Validation"
@@ -208,11 +220,18 @@
    "fieldtype": "Text",
    "label": "Validation Warnings",
    "read_only": 1
+  },
+  {
+   "description": "SHA-256 of the Schematron stylesheet(s) used for this result. Part of the reuse key with Content Hash and XML Hash.",
+   "fieldname": "ruleset_hash",
+   "fieldtype": "Data",
+   "label": "Ruleset Hash",
+   "read_only": 1
   }
  ],
  "link_display_mode": "Search",
  "links": [],
- "modified": "2026-11-03 18:21:12.488710",
+ "modified": "2026-11-03 23:03:04.499599",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Protocol",

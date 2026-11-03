@@ -37,8 +37,10 @@ _ON_ATTR_RE = re.compile(
 	r"""\s+on[a-z]+\s*=\s*(?:(?P<quote>["'])(?P<qvalue>.*?)(?P=quote)|(?P<uvalue>[^\s>]+))""",
 	re.IGNORECASE | re.DOTALL,
 )
-# KoSIT attachment download handlers use generate-id() ids like download-d0e123
-_SAFE_DOWNLOAD_ONCLICK = re.compile(r"^downloadData\('download-[A-Za-z0-9_-]+'\)$")
+# Trusted KoSIT handlers from xrechnung-html.xsl / xrechnung-viewer.js only:
+# - tab switching: show(this) / show(this);
+# - attachment download: downloadData('download-d0e123') via generate-id()
+_SAFE_ONCLICK = re.compile(r"^(?:show\(this\);?|downloadData\('download-[A-Za-z0-9_-]+'\))$")
 
 _VIEWER_CSP = (
 	"default-src 'none'; "
@@ -155,14 +157,14 @@ def _replace_unsafe_url_attr(match: re.Match) -> str:
 
 
 def _replace_unsafe_handler_attr(match: re.Match) -> str:
-	# Preserve KoSIT attachment download hooks only
+	# Preserve trusted KoSIT tab + attachment download hooks only
 	full = match.group(0)
 	name = full.lstrip().split("=", 1)[0].strip().lower()
 	if match.group("quote") is not None:
 		value = (match.group("qvalue") or "").strip()
 	else:
 		value = (match.group("uvalue") or "").strip()
-	if name == "onclick" and _SAFE_DOWNLOAD_ONCLICK.match(value):
+	if name == "onclick" and _SAFE_ONCLICK.match(value):
 		return full
 	return ""
 

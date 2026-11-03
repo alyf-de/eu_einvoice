@@ -231,12 +231,16 @@ class EInvoiceImport(Document):
 			xml_content_hash,
 		)
 
-		# Schematron at most once per content_hash + file_hash
+		# Schematron at most once per content_hash + file_hash + ruleset_hash
 		content_hash = None
 		file_url = self.get("einvoice")
 		if file_url:
 			content_hash = frappe.db.get_value("File", {"file_url": file_url}, "content_hash")
-		reused = reuse_validation_for_hashes(content_hash, xml_content_hash(xml_bytes))
+		reused = reuse_validation_for_hashes(
+			content_hash,
+			xml_content_hash(xml_bytes),
+			invoice_profile=self.get("profile"),
+		)
 		if reused:
 			validation_errors, validation_warnings, _result = reused
 		else:

@@ -1,6 +1,7 @@
 # Copyright (c) 2026, ALYF GmbH and contributors
 # For license information, please see license.txt
 
+import frappe
 from frappe.model.document import Document
 
 
@@ -13,6 +14,7 @@ class EInvoiceProtocol(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		company: DF.Link | None
 		content_hash: DF.Data | None
 		copied_from: DF.Link | None
 		detection_timestamp: DF.Datetime | None
@@ -26,6 +28,7 @@ class EInvoiceProtocol(Document):
 		reference_doctype: DF.Link | None
 		reference_name: DF.DynamicLink | None
 		result: DF.Literal["Pending", "Valid", "Invalid", "Unsupported"]
+		ruleset_hash: DF.Data | None
 		validation_errors: DF.Text | None
 		validation_timestamp: DF.Datetime | None
 		validation_warnings: DF.Text | None
@@ -55,3 +58,8 @@ class EInvoiceProtocol(Document):
 		from eu_einvoice.european_e_invoice.protocol import propagate_validation_to_pending_siblings
 
 		propagate_validation_to_pending_siblings(self)
+
+
+def on_doctype_update():
+	# Upload reuse looks up by content_hash + file_hash + ruleset_hash.
+	frappe.db.add_index("E Invoice Protocol", ["content_hash", "file_hash", "ruleset_hash"])

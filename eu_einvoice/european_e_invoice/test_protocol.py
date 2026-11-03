@@ -12,6 +12,7 @@ from eu_einvoice.european_e_invoice.protocol import (
 	UPLOAD_MODE_ALL,
 	UPLOAD_MODE_NONE,
 	UPLOAD_MODE_SELECTED,
+	_company_from_reference,
 	create_protocol_stub_from_file,
 	maybe_create_protocol_stub,
 	maybe_validate_protocol_on_attach,
@@ -21,7 +22,12 @@ from eu_einvoice.european_e_invoice.protocol import (
 	validate_protocol_for_file,
 	xml_content_hash,
 )
-from eu_einvoice.schematron import get_saxon_version, get_validation_errors, get_validator_version
+from eu_einvoice.schematron import (
+	get_ruleset_hash,
+	get_saxon_version,
+	get_validation_errors,
+	get_validator_version,
+)
 from eu_einvoice.utils import EInvoiceProfile
 from eu_einvoice.visualization import EInvoiceFormat
 
@@ -190,7 +196,7 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertEqual(protocol.file_name, "test-einvoice.xml")
 
 	def test_validation_copied_for_same_hashes(self):
-		"""Second File with the same content_hash + file_hash copies validation, no Schematron."""
+		"""Second File with the same content_hash + file_hash + ruleset_hash copies validation."""
 		first = self._make_xml_file()
 		create_protocol_stub_from_file(first)
 		validate_protocol_for_file(first)
@@ -199,6 +205,8 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		)
 		self.assertIn(original.result, ("Valid", "Invalid"))
 		self.assertFalse(original.copied_from)
+		self.assertEqual(original.ruleset_hash, get_ruleset_hash(original.invoice_profile))
+		self.assertTrue(original.ruleset_hash)
 
 		second = self._make_xml_file()
 		self.assertEqual(
@@ -224,6 +232,7 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertEqual(copy.error_count, original.error_count)
 		self.assertEqual(copy.content_hash, original.content_hash)
 		self.assertEqual(copy.file_hash, original.file_hash)
+		self.assertEqual(copy.ruleset_hash, original.ruleset_hash)
 
 		with patch(
 			"eu_einvoice.european_e_invoice.protocol.get_validation_errors",
@@ -231,6 +240,46 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		) as mocked:
 			validate_protocol_for_file(second)
 			mocked.assert_not_called()
+
+	def test_ruleset_change_does_not_reuse_old_result(self):
+		"""Identical XML with a different ruleset_hash must re-run Schematron; old row stays."""
+		first = self._make_xml_file()
+		create_protocol_stub_from_file(first)
+		validate_protocol_for_file(first)
+		original = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": first}, "name")
+		)
+		self.assertTrue(original.ruleset_hash)
+		old_result = original.result
+
+		# Simulate a bundled ruleset update without deleting history
+		frappe.db.set_value("E Invoice Protocol", original.name, "ruleset_hash", "stale-ruleset")
+
+		second = self._make_xml_file()
+		with patch(
+			"eu_einvoice.european_e_invoice.protocol.get_validation_errors",
+			return_value=(["new-rules-error"], []),
+		) as mocked:
+			create_protocol_stub_from_file(second)
+			# Stub stays Pending (no matching ruleset); Schematron not run on stub create
+			mocked.assert_not_called()
+			validate_protocol_for_file(second)
+			mocked.assert_called()
+
+		fresh = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": second}, "name")
+		)
+		self.assertNotEqual(fresh.name, original.name)
+		self.assertFalse(fresh.copied_from)
+		self.assertEqual(fresh.ruleset_hash, get_ruleset_hash(fresh.invoice_profile))
+		self.assertNotEqual(fresh.ruleset_hash, "stale-ruleset")
+		self.assertEqual(fresh.result, "Invalid")
+		self.assertIn("new-rules-error", fresh.validation_errors or "")
+
+		original.reload()
+		self.assertEqual(original.ruleset_hash, "stale-ruleset")
+		self.assertEqual(original.result, old_result)
+		self.assertFalse(original.copied_from)
 
 	def test_validation_propagates_to_earlier_pending_stub(self):
 		"""Upload stub stays Pending until a later File with the same hashes is validated."""
@@ -380,12 +429,60 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		file_doc.reload()
 
 		with patch("eu_einvoice.european_e_invoice.protocol.frappe.enqueue") as enqueue:
-			maybe_validate_protocol_on_attach(file_doc)
+			with patch(
+				"eu_einvoice.european_e_invoice.protocol._company_from_reference",
+				return_value="_Test Company",
+			):
+				maybe_validate_protocol_on_attach(file_doc)
 			enqueue.assert_not_called()
 
 		protocol.reload()
 		self.assertEqual(protocol.reference_doctype, "Purchase Invoice")
 		self.assertEqual(protocol.reference_name, "PINV-SETTLED")
+		self.assertEqual(protocol.company, "_Test Company")
+
+	def test_company_from_reference_reads_company_field(self):
+		self.assertIsNone(_company_from_reference(None, None))
+		self.assertIsNone(_company_from_reference("File", "x"))
+
+		company = frappe.db.get_value("Company", {}, "name")
+		self.assertTrue(company)
+
+		import_doc = frappe.get_doc(
+			{
+				"doctype": "E Invoice Import",
+				"company": company,
+			}
+		)
+		import_doc.insert(ignore_permissions=True)
+		self.addCleanup(lambda: frappe.delete_doc("E Invoice Import", import_doc.name, force=True))
+
+		self.assertEqual(_company_from_reference("E Invoice Import", import_doc.name), company)
+
+	def test_stub_stores_company_from_attached_document(self):
+		company = frappe.db.get_value("Company", {}, "name")
+		self.assertTrue(company)
+
+		import_doc = frappe.get_doc(
+			{
+				"doctype": "E Invoice Import",
+				"company": company,
+			}
+		)
+		import_doc.insert(ignore_permissions=True)
+		self.addCleanup(lambda: frappe.delete_doc("E Invoice Import", import_doc.name, force=True))
+
+		file_name = self._make_xml_file(
+			attached_to_doctype="E Invoice Import",
+			attached_to_name=import_doc.name,
+		)
+		create_protocol_stub_from_file(file_name)
+		protocol = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name")
+		)
+		self.assertEqual(protocol.company, company)
+		self.assertEqual(protocol.reference_doctype, "E Invoice Import")
+		self.assertEqual(protocol.reference_name, import_doc.name)
 
 	def test_attach_hook_skips_when_protocol_disabled(self):
 		self._set_upload_mode(UPLOAD_MODE_NONE)
@@ -438,11 +535,13 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		original = frappe.get_doc(
 			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": first}, "name")
 		)
+		# Fixture is XRechnung; reuse key includes that profile's stylesheet hash
+		self.assertEqual(original.invoice_profile, EInvoiceProfile.XRECHNUNG.value)
 
 		second = self._make_xml_file()
 		second_doc = frappe.get_doc("File", second)
 		import_doc = frappe.new_doc("E Invoice Import")
-		import_doc.profile = EInvoiceProfile.EN16931.value
+		import_doc.profile = EInvoiceProfile.XRECHNUNG.value
 		import_doc.einvoice = second_doc.file_url
 
 		with patch(
@@ -456,7 +555,9 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 			(original.validation_errors or "").strip(),
 		)
 		reused = reuse_validation_for_hashes(
-			second_doc.content_hash, xml_content_hash(CII_FIXTURE.read_bytes())
+			second_doc.content_hash,
+			xml_content_hash(CII_FIXTURE.read_bytes()),
+			invoice_profile=EInvoiceProfile.XRECHNUNG.value,
 		)
 		self.assertIsNotNone(reused)
 		self.assertEqual(reused[2], original.result)

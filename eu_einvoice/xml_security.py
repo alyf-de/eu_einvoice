@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import re
+
 _BOM = "\ufeff"
-_DOCTYPE_MARK = "<!DOCTYPE"
+# Search without uppercasing the whole string: characters like ß expand under
+# .upper() / .casefold(), which shifts indices and can leave DOCTYPE intact.
+_DOCTYPE_RE = re.compile(r"<!DOCTYPE", re.IGNORECASE)
 
 
 def strip_xml_doctype(xml_string: str) -> str:
@@ -18,12 +22,12 @@ def strip_xml_doctype(xml_string: str) -> str:
 
 	# Scan repeatedly in case a payload embeds more than one DOCTYPE.
 	while True:
-		upper = xml_string.upper()
-		start = upper.find(_DOCTYPE_MARK)
-		if start == -1:
+		match = _DOCTYPE_RE.search(xml_string)
+		if match is None:
 			return xml_string
 
-		index = start + len(_DOCTYPE_MARK)
+		start = match.start()
+		index = match.end()
 		bracket_depth = 0
 		end = None
 		while index < len(xml_string):

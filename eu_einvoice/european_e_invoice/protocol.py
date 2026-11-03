@@ -12,7 +12,12 @@ from lxml.etree import fromstring
 from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
 	relative_url_to_path,
 )
-from eu_einvoice.schematron import PROFILE_TO_XSL, get_validation_errors, get_validator_version
+from eu_einvoice.schematron import (
+	PROFILE_TO_XSL,
+	get_ruleset_hash,
+	get_validation_errors,
+	get_validator_version,
+)
 from eu_einvoice.utils import EInvoiceProfile, get_profile
 from eu_einvoice.visualization import EInvoiceFormat, detect_einvoice_format
 
@@ -32,12 +37,13 @@ VALIDATOR_NAME = "Schematron (SaxonC)"
 # Results that finish the validation phase (copied/propagated; Schematron not re-run)
 SETTLED_RESULTS = ("Valid", "Invalid", "Unsupported")
 
-# Fields copied from an already-validated protocol for the same hashes
+# Fields copied from an already-validated protocol for the same hashes + ruleset
 _COPIED_VALIDATION_FIELDS = (
 	"result",
 	"validation_timestamp",
 	"einvoice_format",
 	"invoice_profile",
+	"ruleset_hash",
 	"validator",
 	"validator_version",
 	"error_count",
@@ -138,13 +144,7 @@ def _maybe_validate_protocol_on_attach(doc):
 
 	existing = _find_protocol_for_file(doc.name)
 	if existing and existing.result in SETTLED_RESULTS:
-		existing.db_set(
-			{
-				"reference_doctype": doc.attached_to_doctype,
-				"reference_name": doc.attached_to_name,
-			},
-			update_modified=False,
-		)
+		_update_protocol_reference(existing, doc)
 		return
 
 	kind = _candidate_kind(doc)
@@ -192,6 +192,7 @@ def _create_protocol_stub_from_file(file_name: str):
 	content_hash = file_doc.content_hash
 	file_hash = _sha256(xml_bytes)
 	profile = _cheap_profile(xml_bytes, einvoice_format)
+	ruleset_hash = _ruleset_hash_for_format(einvoice_format, profile)
 
 	doc = frappe.new_doc("E Invoice Protocol")
 	doc.result = "Pending"
@@ -204,9 +205,10 @@ def _create_protocol_stub_from_file(file_name: str):
 	doc.file_hash = file_hash
 	doc.reference_doctype = file_doc.attached_to_doctype
 	doc.reference_name = file_doc.attached_to_name
+	doc.company = _company_from_reference(doc.reference_doctype, doc.reference_name)
 
-	# Same blob + XML already settled elsewhere: copy result, skip Schematron
-	source = _find_original_validation(content_hash, file_hash)
+	# Same blob + XML + ruleset already settled elsewhere: copy result, skip Schematron
+	source = _find_original_validation(content_hash, file_hash, ruleset_hash)
 	if source:
 		_apply_copied_validation(doc, source)
 	elif einvoice_format != EInvoiceFormat.CII:
@@ -251,8 +253,11 @@ def _validate_protocol_for_file(file_name: str):
 		_update_protocol_reference(protocol, file_doc)
 		return
 
-	# Copy from an original validation for the same hashes
-	source = _find_original_validation(content_hash, file_hash, exclude=protocol.name)
+	profile_for_rules = protocol.invoice_profile or _cheap_profile(xml_bytes, einvoice_format)
+	ruleset_hash = _ruleset_hash_for_format(einvoice_format, profile_for_rules)
+
+	# Copy from an original validation for the same hashes + ruleset
+	source = _find_original_validation(content_hash, file_hash, ruleset_hash, exclude=protocol.name)
 	if source:
 		_apply_copied_validation(protocol, source)
 		_update_protocol_reference(protocol, file_doc)
@@ -328,14 +333,19 @@ def store_validation_result(
 			display_name = Path(file_url).name
 
 	file_hash = _sha256(xml_bytes)
+	ruleset_hash = get_ruleset_hash(invoice_profile) if invoice_profile else ""
 	protocol = _find_protocol_for_file(file_name) if file_name else None
 
-	# Prefer copying an existing original validation for these hashes
+	# Prefer copying an existing original validation for these hashes + ruleset
 	if not protocol or protocol.result == "Pending":
 		source = _find_original_validation(
-			content_hash, file_hash, exclude=protocol.name if protocol else None
+			content_hash,
+			file_hash,
+			ruleset_hash,
+			exclude=protocol.name if protocol else None,
 		)
 		if source:
+			company = _company_from_reference(attached_doctype, attached_name)
 			if not protocol:
 				protocol = frappe.new_doc("E Invoice Protocol")
 				protocol.detection_timestamp = now_datetime()
@@ -345,6 +355,7 @@ def store_validation_result(
 				protocol.file_hash = file_hash
 				protocol.reference_doctype = attached_doctype
 				protocol.reference_name = attached_name
+				protocol.company = company
 				_apply_copied_validation(protocol, source)
 				protocol.flags.ignore_links = True
 				protocol.insert(ignore_permissions=True)
@@ -352,6 +363,7 @@ def store_validation_result(
 				_apply_copied_validation(protocol, source)
 				protocol.reference_doctype = attached_doctype
 				protocol.reference_name = attached_name
+				protocol.company = company
 				protocol.flags.ignore_links = True
 				protocol.save(ignore_permissions=True)
 			return protocol
@@ -376,9 +388,11 @@ def store_validation_result(
 		"file_name": display_name,
 		"content_hash": content_hash,
 		"file_hash": file_hash,
+		"ruleset_hash": ruleset_hash,
 		"copied_from": None,
 		"reference_doctype": attached_doctype,
 		"reference_name": attached_name,
+		"company": _company_from_reference(attached_doctype, attached_name),
 		"validator": validator_label,
 		"validator_version": get_validator_version(invoice_profile),
 		"error_count": len(errors),
@@ -439,10 +453,16 @@ def xml_content_hash(xml_bytes: bytes) -> str:
 
 
 def reuse_validation_for_hashes(
-	content_hash: str | None, file_hash: str | None
+	content_hash: str | None,
+	file_hash: str | None,
+	*,
+	ruleset_hash: str | None = None,
+	invoice_profile: str | None = None,
 ) -> tuple[list[str], list[str], str] | None:
-	"""Return (errors, warnings, result) from an original protocol for these hashes."""
-	protocol = _find_original_validation(content_hash, file_hash)
+	"""Return (errors, warnings, result) from an original protocol for these hashes + ruleset."""
+	if ruleset_hash is None:
+		ruleset_hash = get_ruleset_hash(invoice_profile) if invoice_profile else ""
+	protocol = _find_original_validation(content_hash, file_hash, ruleset_hash)
 	if not protocol:
 		return None
 	errors = [line for line in (protocol.validation_errors or "").split("\n") if line]
@@ -462,6 +482,7 @@ def _mark_unsupported(protocol, einvoice_format: EInvoiceFormat):
 	protocol.result = "Unsupported"
 	protocol.validation_timestamp = now_datetime()
 	protocol.einvoice_format = einvoice_format.value
+	protocol.ruleset_hash = ""
 	protocol.validator = VALIDATOR_NAME
 	protocol.validator_version = ""
 	protocol.error_count = 0
@@ -479,13 +500,23 @@ def _update_protocol_reference(protocol, file_doc):
 		{
 			"reference_doctype": file_doc.attached_to_doctype,
 			"reference_name": file_doc.attached_to_name,
+			"company": _company_from_reference(file_doc.attached_to_doctype, file_doc.attached_to_name),
 		},
 		update_modified=False,
 	)
 
 
+def _company_from_reference(doctype: str | None, name: str | None) -> str | None:
+	"""Return *Company* from the reference document when that DocType has `company`."""
+	if not doctype or not name:
+		return None
+	if not frappe.get_meta(doctype).has_field("company"):
+		return None
+	return frappe.db.get_value(doctype, name, "company")
+
+
 def propagate_validation_to_pending_siblings(source):
-	"""Copy validation onto other Pending protocols with the same content_hash + file_hash.
+	"""Copy validation onto other Pending protocols with the same content + file + ruleset hashes.
 
 	Covers the case where a File Manager upload left a Pending stub, then attaching
 	the same blob created a new **File** that was validated.
@@ -498,6 +529,7 @@ def propagate_validation_to_pending_siblings(source):
 		return
 
 	original = _resolve_original(source)
+	# Pending stubs have no ruleset_hash yet; match on content + file hash only.
 	pending_names = frappe.get_all(
 		"E Invoice Protocol",
 		filters={
@@ -528,6 +560,8 @@ def _apply_copied_validation(target, source):
 		target.file_hash = original.file_hash
 	if not target.content_hash:
 		target.content_hash = original.content_hash
+	if not target.ruleset_hash:
+		target.ruleset_hash = original.ruleset_hash
 
 
 def _resolve_original(protocol):
@@ -540,19 +574,34 @@ def _resolve_original(protocol):
 	return current
 
 
+def _ruleset_hash_for_format(einvoice_format: EInvoiceFormat, profile: str | None) -> str:
+	"""Ruleset identity for reuse; empty when Schematron does not apply (non-CII)."""
+	if einvoice_format != EInvoiceFormat.CII:
+		return ""
+	return get_ruleset_hash(profile)
+
+
 def _find_original_validation(
 	content_hash: str | None,
 	file_hash: str | None,
+	ruleset_hash: str | None,
 	*,
 	exclude: str | None = None,
 ):
-	"""Find a completed protocol for these hashes; prefer one that is not itself a copy."""
+	"""Find a completed protocol for these hashes + ruleset; prefer a non-copy row.
+
+	Older settled rows without `ruleset_hash` are kept as history and are not reused
+	when the current bundled stylesheets differ (or when the field was empty).
+	"""
 	if not content_hash or not file_hash:
+		return None
+	if ruleset_hash is None:
 		return None
 
 	filters = {
 		"content_hash": content_hash,
 		"file_hash": file_hash,
+		"ruleset_hash": ruleset_hash,
 		"result": ("in", list(SETTLED_RESULTS)),
 	}
 	if exclude:

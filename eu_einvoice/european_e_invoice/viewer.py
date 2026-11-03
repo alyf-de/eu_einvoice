@@ -49,8 +49,7 @@ def files_with_protocol(identifiers: str | list) -> dict[str, str]:
 	if not file_names:
 		return {}
 
-	rows = frappe.get_list(
-		"E Invoice Protocol",
+	rows = _get_protocol_list(
 		filters={"file": ("in", list(file_names))},
 		fields=["file", "result"],
 		limit=len(file_names),
@@ -94,12 +93,23 @@ def _safe_render(xml_bytes: bytes, lang: str | None) -> str:
 		frappe.throw(_("Could not render e-invoice visualization. See Error Log for details."))
 
 
+def _get_protocol_list(**kwargs):
+	"""``frappe.get_list`` on **E Invoice Protocol**, or ``[]`` without read access.
+
+	Protocol is optional enrichment for the viewer and attachment decoration.
+	Callers that can read **E Invoice Import** / **File** but not Protocol
+	(e.g. Purchase User) must still get HTML / empty maps instead of PermissionError.
+	"""
+	if not frappe.has_permission("E Invoice Protocol", "read"):
+		return []
+	return frappe.get_list("E Invoice Protocol", **kwargs)
+
+
 def _protocol_for_file(file_name: str | None) -> str | None:
 	"""Return protocol name only if the caller may read **E Invoice Protocol**."""
 	if not file_name:
 		return None
-	names = frappe.get_list(
-		"E Invoice Protocol",
+	names = _get_protocol_list(
 		filters={"file": file_name},
 		pluck="name",
 		limit=1,
@@ -134,8 +144,7 @@ def _protocol_for_document(doc) -> str | None:
 	)
 	if not attached:
 		return None
-	names = frappe.get_list(
-		"E Invoice Protocol",
+	names = _get_protocol_list(
 		filters={"file": ("in", attached)},
 		pluck="name",
 		order_by="creation desc",
@@ -154,15 +163,35 @@ def _viewer_lang(lang: str | None) -> str:
 def _xml_from_document(doc) -> bytes:
 	"""Resolve e-invoice XML for outbound generators or inbound Attach fields."""
 	if doc.doctype == "E Invoice Import" and doc.get("einvoice"):
-		return get_xml_bytes(doc.einvoice)
+		return _xml_from_readable_file_url(doc.einvoice)
 
 	if doc.get("supplier_invoice_file"):
-		return get_xml_bytes(doc.supplier_invoice_file)
+		return _xml_from_readable_file_url(doc.supplier_invoice_file)
 
 	if get_generator_class(doc.doctype):
 		return get_einvoice(doc)
 
 	frappe.throw(_("No e-invoice XML found for {0}").format(doc.name))
+
+
+def _xml_from_readable_file_url(file_url: str) -> bytes:
+	"""Resolve an Attach URL to a **File** the caller may read, then extract XML.
+
+	Attach fields can store arbitrary private URLs even when inserting a linked
+	**File** fails. Never read from disk until File read permission is confirmed.
+	"""
+	file_names = frappe.get_list(
+		"File",
+		filters={"file_url": file_url},
+		pluck="name",
+		limit=1,
+	)
+	if not file_names:
+		frappe.throw(_("No permission to access this file."), frappe.PermissionError)
+
+	file_doc = frappe.get_doc("File", file_names[0])
+	file_doc.check_permission("read")
+	return _xml_from_file_doc(file_doc)
 
 
 def _xml_from_file_doc(file_doc) -> bytes:

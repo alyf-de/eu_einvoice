@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import hashlib
 from functools import lru_cache
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -7,6 +10,8 @@ from saxonche import PySaxonProcessor
 
 from eu_einvoice.utils import EInvoiceProfile
 from eu_einvoice.xml_security import strip_xml_doctype
+
+SCHEMATRON_DIR = Path(__file__).parent
 
 PROFILE_TO_XSL = {
 	EInvoiceProfile.BASIC: "Factur-X_1.07.2_BASIC.xsl",
@@ -58,8 +63,48 @@ def get_validator_version(profile: EInvoiceProfile | str | None = None) -> str:
 	return f"{ruleset}; {get_saxon_version()}"
 
 
+def stylesheets_for_profile(profile: EInvoiceProfile | str | None) -> tuple[str, ...]:
+	"""Return bundled stylesheet names applied for this profile (order matters for hashing)."""
+	if profile is None:
+		return ()
+	try:
+		profile_enum = profile if isinstance(profile, EInvoiceProfile) else EInvoiceProfile(profile)
+	except ValueError:
+		return ()
+
+	names: list[str] = []
+	primary = PROFILE_TO_XSL.get(profile_enum)
+	if primary:
+		names.append(primary)
+	# XRechnung validation also runs EN 16931
+	if profile_enum == EInvoiceProfile.XRECHNUNG:
+		en16931 = PROFILE_TO_XSL.get(EInvoiceProfile.EN16931)
+		if en16931 and en16931 not in names:
+			names.append(en16931)
+	return tuple(names)
+
+
+def get_ruleset_hash(profile: EInvoiceProfile | str | None = None) -> str:
+	"""SHA-256 of the stylesheet bytes used for this profile (empty when none apply)."""
+	if profile is None:
+		return ""
+	key = profile.value if isinstance(profile, EInvoiceProfile) else str(profile)
+	return _ruleset_hash_for_profile_key(key)
+
+
+@lru_cache(maxsize=16)
+def _ruleset_hash_for_profile_key(profile: str) -> str:
+	names = stylesheets_for_profile(profile)
+	if not names:
+		return ""
+	hasher = hashlib.sha256()
+	for name in names:
+		hasher.update((SCHEMATRON_DIR / name).read_bytes())
+	return hasher.hexdigest()
+
+
 def get_errors_from_stylesheet(xml_string: str, stylesheet: str):
-	stylesheet_path = Path(__file__).parent / stylesheet
+	stylesheet_path = SCHEMATRON_DIR / stylesheet
 	report = get_validation_report(xml_string, str(stylesheet_path))
 	return extract_failed_asserts(report)
 
