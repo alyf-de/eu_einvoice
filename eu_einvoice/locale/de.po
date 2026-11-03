@@ -626,6 +626,10 @@ msgstr "Validierungswarnungen"
 msgid "Warning Message"
 msgstr "Warnung"
 
+#: eu_einvoice/custom_fields.py:130
+msgid "Written to BT-120 on the e-invoice's VAT breakdown of exempt lines using this template. Overrides the default from E Invoice Settings."
+msgstr "Wird als BT-120 in die Steueraufschlüsselung der E-Rechnung für steuerbefreite Positionen mit dieser Vorlage geschrieben. Hat Vorrang vor dem Standard aus den E-Rechnungs-Einstellungen."
+
 #. Label of the section_break_yldr (Section Break) field in DocType 'E Invoice
 #. Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json
