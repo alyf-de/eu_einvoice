@@ -23,16 +23,14 @@ HOSTNAME_PATH = Path("/etc/hostname")
 def _cii_with_xxe_note(entity_uri: str, note_text: str = "&xxe;") -> str:
 	"""CII fixture with a DOCTYPE entity and one IncludedNote content replaced."""
 	base = (FIXTURES / "included-notes-bg-1-uncefact.xml").read_text()
-	doctype = (
-		f'<!DOCTYPE CrossIndustryInvoice [\n'
-		f'  <!ENTITY xxe SYSTEM "{entity_uri}">\n'
-		f"]>\n"
-	)
+	doctype = f'<!DOCTYPE CrossIndustryInvoice [\n  <!ENTITY xxe SYSTEM "{entity_uri}">\n]>\n'
 	# Insert DOCTYPE after the XML declaration.
 	decl_end = base.find("?>")
 	assert decl_end != -1
 	poisoned = base[: decl_end + 2] + "\n" + doctype + base[decl_end + 2 :]
-	return poisoned.replace("<ram:Content>Bemerkung 1</ram:Content>", f"<ram:Content>{note_text}</ram:Content>", 1)
+	return poisoned.replace(
+		"<ram:Content>Bemerkung 1</ram:Content>", f"<ram:Content>{note_text}</ram:Content>", 1
+	)
 
 
 class TestVisualization(UnitTestCase):
@@ -73,10 +71,10 @@ class TestVisualization(UnitTestCase):
 
 	def test_sanitize_strips_dangerous_href_and_handlers(self):
 		dirty = (
-			'<html><head></head><body>'
+			"<html><head></head><body>"
 			'<a href="javascript:alert(document.domain)">x</a>'
 			'<a href="https://ok.example/a">ok</a>'
-			"<a href=\"#dl\" onClick=\"downloadData('download-d0e1')\">dl</a>"
+			'<a href="#dl" onClick="downloadData(\'download-d0e1\')">dl</a>'
 			'<img src="data:text/html,x" onerror="alert(1)">'
 			"</body></html>"
 		)

@@ -2077,10 +2077,10 @@
       </xsl:if>
    </xsl:template>
    <xsl:template mode="BG-DEX-09" match="cac:PrepaidPayment">
-      <xsl:variable name="bg-contents" as="item()*">         
+      <xsl:variable name="bg-contents" as="item()*">
          <xsl:apply-templates mode="BT-DEX-001" select="cbc:ID"/>
          <xsl:apply-templates mode="BT-DEX-002" select="cbc:PaidAmount"/>
-         <xsl:apply-templates mode="BT-DEX-003" select="cbc:InstructionID"/>   
+         <xsl:apply-templates mode="BT-DEX-003" select="cbc:InstructionID"/>
       </xsl:variable>
       <xsl:if test="$bg-contents">
          <xr:THIRD_PARTY_PAYMENT>

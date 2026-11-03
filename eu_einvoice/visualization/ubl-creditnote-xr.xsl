@@ -21,7 +21,7 @@
    </xd:doc>
 
    <xsl:output method="xml" indent="yes"/>
-   
+
    <xsl:include href="./common-xr.xsl"/>
 
    <xsl:template match="/CreditNote:CreditNote">
@@ -1990,7 +1990,7 @@
             <xsl:sequence select="$bg-contents"/>
          </xr:SUB_INVOICE_ITEM_INFORMATION>
       </xsl:if>
-   </xsl:template>   
+   </xsl:template>
    <xsl:template mode="BG-DEX-08"
                  match="cac:SubCreditNoteLine/cac:Item/cac:AdditionalItemProperty">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad cac:SubCreditNoteLine/cac:Item/cac:AdditionalItemProperty der Instanz in konkreter Syntax wird auf 2 Objekte der EN 16931 abgebildet. -->
@@ -2006,7 +2006,7 @@
             <xsl:sequence select="$bg-contents"/>
          </xr:SUB_INVOICE_ITEM_ATTRIBUTES>
       </xsl:if>
-   </xsl:template>  
+   </xsl:template>
    <xsl:template mode="BG-DEX-03"
                  match="cac:SubCreditNoteLine/cac:AllowanceCharge[cbc:ChargeIndicator = 'false']">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad cac:SubCreditNoteLine/cac:AllowanceCharge[cbc:ChargeIndicator = 'false'] der Instanz in konkreter Syntax wird auf 5 Objekte der EN 16931 abgebildet. -->
@@ -2028,7 +2028,7 @@
             <xsl:sequence select="$bg-contents"/>
          </xr:SUB_INVOICE_LINE_ALLOWANCES>
       </xsl:if>
-   </xsl:template>  
+   </xsl:template>
    <xsl:template mode="BG-DEX-04"
                  match="cac:SubCreditNoteLine/cac:AllowanceCharge[cbc:ChargeIndicator = 'true']">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad cac:SubCreditNoteLine/cac:AllowanceCharge[cbc:ChargeIndicator = 'true'] der Instanz in konkreter Syntax wird auf 5 Objekte der EN 16931 abgebildet. -->
@@ -2050,7 +2050,7 @@
             <xsl:sequence select="$bg-contents"/>
          </xr:SUB_INVOICE_LINE_CHARGES>
       </xsl:if>
-   </xsl:template>  
+   </xsl:template>
    <xsl:template mode="BG-DEX-05" match="cac:SubCreditNoteLine/cac:InvoicePeriod">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad cac:SubCreditNoteLine/cac:InvoicePeriod der Instanz in konkreter Syntax wird auf 2 Objekte der EN 16931 abgebildet. -->
          <xsl:apply-templates mode="BT-134"
@@ -2065,7 +2065,7 @@
             <xsl:sequence select="$bg-contents"/>
          </xr:SUB_INVOICE_LINE_PERIOD>
       </xsl:if>
-   </xsl:template>   
+   </xsl:template>
    <xsl:template mode="BG-DEX-06"
                  match="cac:SubCreditNoteLine/cac:ClassifiedTaxCategory">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad cac:SubCreditNoteLine/cac:ClassifiedTaxCategory der Instanz in konkreter Syntax wird auf 2 Objekte der EN 16931 abgebildet. -->
@@ -2081,7 +2081,7 @@
             <xsl:sequence select="$bg-contents"/>
          </xr:SUB_INVOICE_LINE_VAT_INFORMATION>
       </xsl:if>
-   </xsl:template>   
+   </xsl:template>
    <xsl:template mode="BG-DEX-07" match="cac:SubCreditNoteLine/cac:Price">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad cac:SubCreditNoteLine/cac:Price der Instanz in konkreter Syntax wird auf 5 Objekte der EN 16931 abgebildet. -->
          <xsl:apply-templates mode="BT-146"
@@ -2103,5 +2103,5 @@
          </xr:SUB_INVOICE_PRICE_DETAILS>
       </xsl:if>
    </xsl:template>
-   
+
    </xsl:stylesheet>

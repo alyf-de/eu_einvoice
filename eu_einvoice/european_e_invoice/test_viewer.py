@@ -7,18 +7,21 @@ from unittest.mock import patch
 import frappe
 from frappe.tests import IntegrationTestCase
 
+from eu_einvoice.european_e_invoice import viewer as viewer_module
 from eu_einvoice.european_e_invoice.protocol import (
 	UPLOAD_MODE_ALL,
 	UPLOAD_MODE_NONE,
 	create_protocol_stub_from_file,
 	store_validation_result,
 )
-from eu_einvoice.european_e_invoice import viewer as viewer_module
 from eu_einvoice.european_e_invoice.viewer import files_with_protocol, render_from_file
 from eu_einvoice.visualization import EInvoiceFormat
 
 CII_FIXTURE = (
-	Path(__file__).resolve().parents[1] / "visualization" / "test_instances" / "included-notes-bg-1-uncefact.xml"
+	Path(__file__).resolve().parents[1]
+	/ "visualization"
+	/ "test_instances"
+	/ "included-notes-bg-1-uncefact.xml"
 )
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0" 
+<xsl:stylesheet version="2.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xr="urn:ce.eu:en16931:2017:xoev-de:kosit:standard:xrechnung-1"
   xmlns:xrf="https://projekte.kosit.org/xrechnung/xrechnung-visualization/functions"
   xmlns:xrv="http://www.example.org/XRechnung-Viewer" exclude-result-prefixes="#all">
@@ -559,7 +559,7 @@
       </div>
     </div>
   </xsl:template>
-  
+
 
   <xsl:template match="xr:PRECEDING_INVOICE_REFERENCE">
     <div role="list">
@@ -1212,7 +1212,7 @@
               </div>
               <div data-title="BT-128" class="BT-128 boxdaten wert">
                 <xsl:value-of select="xr:Invoice_line_object_identifier" />
-              </div>  
+              </div>
             </div>
             <div class="boxzeile" role="listitem">
               <div class="boxdaten legende">
@@ -1545,7 +1545,7 @@
                   <xsl:for-each select="xr:ITEM_INFORMATION/xr:Item_classification_identifier">
                     <div class="boxzeile" role="listitem">
                       <div class="boxdaten legende"><b><xsl:value-of select="xrf:_('artikelklassifizierung')" /></b>
-                      </div>                                          
+                      </div>
                     </div>
                     <div class="boxzeile" role="listitem">
                       <div class="boxdaten legende">
@@ -1573,7 +1573,7 @@
                           select="./@scheme_version_identifier" />
                       </div>
                     </div>
-                  </xsl:for-each>                  
+                  </xsl:for-each>
                 </div>
               </div>
             </div>
@@ -1594,7 +1594,7 @@
       </div>
     </div>
   </xsl:template>
-    
+
     <xsl:template name="zusaetze">
         <div id="zusaetze" class="divHide" role="tabpanel" aria-labelledby="menueZusaetze" tabindex="0">
             <div class="haftungausschluss">
@@ -1623,8 +1623,8 @@
             </div>
         </div>
     </xsl:template>
-    
-    
+
+
     <xsl:template name="zusaetzeVerkaeufer" match="xr:SELLER" mode="zusaetze">
         <div id="zusaetzeVerkaeufer" class="box boxZweispaltig">
             <div data-title="BG-4" class="BG-4 boxtitel" role="heading" aria-level="2">
@@ -1679,7 +1679,7 @@
                         <xsl:value-of select="xr:Seller_legal_registration_identifier/@scheme_identifier" />
                     </div>
                 </div>
-                
+
                 <div class="boxzeile" role="listitem">
                     <div class="boxdaten legende">
                         <xsl:value-of select="xrf:_('xr:Seller_VAT_identifier')" />:
@@ -1715,7 +1715,7 @@
             </div>
         </div>
     </xsl:template>
-    
+
 
   <xsl:template name="zusaetzeSteuervertreter" match="xr:SELLER_TAX_REPRESENTATIVE_PARTY">
     <div id="zusaetzeSteuervertreter" class="box boxZweispaltig">
@@ -2145,7 +2145,7 @@
           </a>
         </div>
       </div>
-        
+
       <div class="boxzeile" role="listitem">
         <div class="boxdaten legende">
           <xsl:value-of select="xrf:_('xr:Attached_document')" />:
@@ -2165,13 +2165,13 @@
                 </a>
                 <div id="{$download-id}" data-download-type="{xr:Attached_document/@mime_code}" data-download-filename="{xr:Attached_document/@filename}" data-original-ref-id="{$doc-ref-id}" style="display:none;">
                   <xsl:value-of select="xr:Attached_document" />
-                </div>              
+                </div>
             </xsl:otherwise>
-        </xsl:choose>    
+        </xsl:choose>
         </div>
       </div>
-        
-        
+
+
       <div class="boxzeile" role="listitem">
         <div class="boxdaten legende">
           <xsl:value-of select="xrf:_('xr:Attached_document/@mime_code')" />:

@@ -37,7 +37,7 @@
   <!-- Be aware that these are for the whole invoice -->
   <entry key="xr:Invoicing_period_start_date" id="BT-73">Von</entry>
   <entry key="xr:Invoicing_period_end_date" id="BT-74">Bis</entry>
-  <entry key="xr:Preceding_Invoice_reference" id="BT-25">Rechnungsnummer</entry> 
+  <entry key="xr:Preceding_Invoice_reference" id="BT-25">Rechnungsnummer</entry>
   <entry key="xr:Preceding_Invoice_issue_date" id="BT-26">Rechnungsdatum</entry>
   <entry key="xr:Sum_of_Invoice_line_net_amount" id="BT-106">Summe aller Positionen</entry>
   <entry key="xr:Sum_of_allowances_on_document_level" id="BT-107">Summe Nachlässe</entry>
@@ -238,7 +238,7 @@
   <entry key="amount-format">###.##0,00</entry>
   <entry key="percentage-format">##0,00</entry>
   <entry key="at-least-two-format">###.##0,#################</entry>
-  
+
   <entry key="sum-of-third-party-payment-amounts">Summe Fremdforderungen</entry>
 
   <entry key="no-script">Inhalte auf dieser Seite sind ohne JavaScript nur eingeschränkt darstellbar.</entry>

@@ -246,9 +246,7 @@ class EInvoiceImport(Document):
 				validation_errors, validation_warnings = get_validation_errors(xml_string, profile)
 				# Match outbound / protocol: XRechnung also requires EN 16931
 				if profile == EInvoiceProfile.XRECHNUNG:
-					basic_errors, basic_warnings = get_validation_errors(
-						xml_string, EInvoiceProfile.EN16931
-					)
+					basic_errors, basic_warnings = get_validation_errors(xml_string, EInvoiceProfile.EN16931)
 					validation_errors = list(validation_errors) + list(basic_errors)
 					validation_warnings = list(validation_warnings) + list(basic_warnings)
 			except Exception:

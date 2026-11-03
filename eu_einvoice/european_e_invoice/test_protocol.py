@@ -147,7 +147,9 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertTrue(second_protocol)
 		self.assertNotEqual(first_protocol, second_protocol)
 		self.assertEqual(
-			frappe.db.count("E Invoice Protocol", {"content_hash": frappe.get_doc("File", first).content_hash}),
+			frappe.db.count(
+				"E Invoice Protocol", {"content_hash": frappe.get_doc("File", first).content_hash}
+			),
 			2,
 		)
 
@@ -453,7 +455,9 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 			(import_doc.validation_errors or "").strip(),
 			(original.validation_errors or "").strip(),
 		)
-		reused = reuse_validation_for_hashes(second_doc.content_hash, xml_content_hash(CII_FIXTURE.read_bytes()))
+		reused = reuse_validation_for_hashes(
+			second_doc.content_hash, xml_content_hash(CII_FIXTURE.read_bytes())
+		)
 		self.assertIsNotNone(reused)
 		self.assertEqual(reused[2], original.result)
 

@@ -151,7 +151,7 @@ def sanitize_viewer_html(html: str) -> str:
 def _replace_unsafe_url_attr(match: re.Match) -> str:
 	if is_safe_viewer_url(match.group("url")):
 		return match.group(0)
-	return f'{match.group("prefix")}#{match.group("suffix")}'
+	return f"{match.group('prefix')}#{match.group('suffix')}"
 
 
 def _replace_unsafe_handler_attr(match: re.Match) -> str:

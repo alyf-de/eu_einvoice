@@ -22,7 +22,7 @@
    </xd:doc>
 
    <xsl:output method="xml" indent="yes"/>
-   
+
    <xsl:include href="./common-xr.xsl"/>
 
    <xsl:template match="/rsm:CrossIndustryInvoice">
@@ -44,14 +44,14 @@
                   <xsl:with-param name="date-values" select="distinct-values(./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TaxPointDate/udt:DateString[@format = '102'])"/>
                </xsl:call-template>
             </xr:Value_added_tax_point_date>
-         </xsl:if>   
+         </xsl:if>
          <xsl:apply-templates mode="BT-8"
                               select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:DueDateTypeCode"/>
          <xsl:if test="count(./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString[@format = '102']) > 0">
             <xr:Payment_due_date><xsl:attribute name="xr:id" select="'BT-9'"/>
-               <xsl:attribute name="xr:src" select="'/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime'"/>            
+               <xsl:attribute name="xr:src" select="'/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime'"/>
                <xsl:apply-templates mode="BT-9"
-                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString[@format = '102']"/>            
+                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString[@format = '102']"/>
             </xr:Payment_due_date>
          </xsl:if>
          <xsl:apply-templates mode="BT-10"
@@ -77,11 +77,11 @@
          <xsl:if test="count(./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description) > 0">
             <xr:Payment_terms>
                <xsl:attribute name="xr:id" select="'BT-20'"/>
-               <xsl:attribute name="xr:src" select="'/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description'"/>            
+               <xsl:attribute name="xr:src" select="'/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description'"/>
                <xsl:apply-templates mode="BT-20"
                   select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description"/>
             </xr:Payment_terms>
-         </xsl:if>        
+         </xsl:if>
          <xsl:apply-templates mode="BG-1" select="./rsm:ExchangedDocument/ram:IncludedNote"/>
          <xsl:apply-templates mode="BG-2" select="./rsm:ExchangedDocumentContext"/>
          <xsl:apply-templates mode="BG-3"
@@ -95,7 +95,7 @@
          <xsl:apply-templates mode="BG-11"
                               select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty"/>
          <xsl:apply-templates mode="BG-13"
-             select="./rsm:SupplyChainTradeTransaction [ 
+             select="./rsm:SupplyChainTradeTransaction [
              exists( ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty) or
              exists( ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString) or
              exists( ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod)
@@ -125,7 +125,7 @@
          <xsl:apply-templates mode="BG-21"
                               select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']"/>
          <xsl:apply-templates mode="BG-22"
-                              select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation"/>                     
+                              select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation"/>
          <xsl:apply-templates mode="BG-23"
                               select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax"/>
          <xsl:apply-templates mode="BG-24"
@@ -174,7 +174,7 @@
          <xsl:call-template name="code"/>
       </xr:VAT_accounting_currency_code>
    </xsl:template>
-   <xsl:template name="distinct-bt-7">      
+   <xsl:template name="distinct-bt-7">
       <xsl:param as="xs:string*" name="date-values"></xsl:param>
       <xsl:for-each select="$date-values">
          <xsl:call-template name="date"/>
@@ -281,8 +281,8 @@
       </xr:Buyer_accounting_reference>
    </xsl:template>
    <xsl:template mode="BT-20"
-                 match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description">      
-      <xsl:call-template name="text"/>      
+                 match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description">
+      <xsl:call-template name="text"/>
       <xsl:if test="position() != last()">
          <xsl:text>;</xsl:text>
       </xsl:if>
@@ -966,13 +966,13 @@
         <xd:desc/>
     </xd:doc>
     <xsl:template mode="BG-13"
-       match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction [ 
+       match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction [
                   exists( ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty) or
                   exists( ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString) or
                   exists( ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod)
                   ]">
       <xsl:variable name="bg-contents" as="item()*">
-          
+
           <xsl:apply-templates mode="BT-70" select="./ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:Name"/>
          <xsl:apply-templates mode="BT-71"
              select="./ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:ID[empty(following-sibling::ram:GlobalID/@schemeID)]"/>
@@ -1053,7 +1053,7 @@
          <xsl:call-template name="date"/>
       </xr:Invoicing_period_end_date>
    </xsl:template>
-    
+
    <xsl:template mode="BG-15"
                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress der Instanz in konkreter Syntax wird auf 7 Objekte der EN 16931 abgebildet. -->
@@ -1129,13 +1129,13 @@
          <xsl:call-template name="code"/>
       </xr:Deliver_to_country_code>
    </xsl:template>
-    
-    
+
+
     <!-- this one most probably gets never called/selected -->
    <xsl:template mode="BG-16"
                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans der Instanz in konkreter Syntax wird auf 6 Objekte der EN 16931 abgebildet. -->
-          
+
          <xsl:apply-templates mode="BT-81" select="./ram:TypeCode"/>
          <xsl:apply-templates mode="BT-82" select="./ram:Information"/>
          <xsl:apply-templates mode="BT-83"
@@ -1183,13 +1183,13 @@
          <xsl:apply-templates mode="BT-84" select="./ram:ProprietaryID"/>
          <xsl:apply-templates mode="BT-84" select="./ram:IBANID"/>
          <xsl:apply-templates mode="BT-85" select="./ram:AccountName"/>
-		 
+
 		 <!-- Anpassung, dass nur eine (richtige) BIC pro Bankverbindung angezeigt wird -->
 		 <xsl:apply-templates mode="BT-86" select="./../ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID"/>
 		 <!--
          <xr:Payment_service_provider_identifier>
             <xsl:attribute name="xr:id" select="'BT-86'"/>
-            <xsl:attribute name="xr:src" select="'/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID'"/>            
+            <xsl:attribute name="xr:src" select="'/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID'"/>
             <xsl:call-template name="distinct-bt-86">
                <xsl:with-param name="bic-values" select="distinct-values(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID)"/>
             </xsl:call-template>
@@ -1227,7 +1227,7 @@
          <xsl:call-template name="text"/>
       </xr:Payment_account_name>
    </xsl:template>
-   
+
    <!-- Anpassung, dass nur eine (richtige) BIC pro Bankverbindung angezeigt wird -->
    <xsl:template mode="BT-86"
                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID">
@@ -1236,8 +1236,8 @@
          <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
          <xsl:call-template name="text"/>
       </xr:Payment_service_provider_identifier>
-   </xsl:template> 
-   <xsl:template name="distinct-bt-86"     >      
+   </xsl:template>
+   <xsl:template name="distinct-bt-86"     >
       <xsl:param as="xs:string*" name="bic-values"></xsl:param>
       <xsl:for-each select="$bic-values">
          <xsl:call-template name="identifier"/>
@@ -1474,7 +1474,7 @@
          <xsl:apply-templates mode="BT-107" select="./ram:AllowanceTotalAmount"/>
          <xsl:apply-templates mode="BT-108" select="./ram:ChargeTotalAmount"/>
          <xsl:apply-templates mode="BT-109" select="./ram:TaxBasisTotalAmount"/>
-         <xsl:apply-templates mode="BT-110" select="./ram:TaxTotalAmount[@currencyID = parent::ram:SpecifiedTradeSettlementHeaderMonetarySummation/preceding-sibling::ram:InvoiceCurrencyCode]"/>         
+         <xsl:apply-templates mode="BT-110" select="./ram:TaxTotalAmount[@currencyID = parent::ram:SpecifiedTradeSettlementHeaderMonetarySummation/preceding-sibling::ram:InvoiceCurrencyCode]"/>
          <xsl:apply-templates mode="BT-111"
             select="./ram:TaxTotalAmount[@currencyID = parent::ram:SpecifiedTradeSettlementHeaderMonetarySummation/preceding-sibling::ram:TaxCurrencyCode]"/>
          <xsl:apply-templates mode="BT-112" select="./ram:GrandTotalAmount"/>
@@ -1712,7 +1712,7 @@
          <xsl:apply-templates mode="BG-29" select="./ram:SpecifiedLineTradeAgreement"/>
          <xsl:apply-templates mode="BG-30"
                               select="./ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax"/>
-         <xsl:apply-templates mode="BG-31" select="./ram:SpecifiedTradeProduct"/>         
+         <xsl:apply-templates mode="BG-31" select="./ram:SpecifiedTradeProduct"/>
       </xsl:variable>
       <xsl:if test="$bg-contents">
          <xr:INVOICE_LINE>
@@ -1949,7 +1949,7 @@
                <xsl:choose>
                   <xsl:when test="./ram:NetPriceProductTradePrice/ram:BasisQuantity and ./ram:GrossPriceProductTradePrice/ram:BasisQuantity">
                      <xsl:apply-templates mode="BT-149"
-                        select="./ram:GrossPriceProductTradePrice/ram:BasisQuantity"/>                        
+                        select="./ram:GrossPriceProductTradePrice/ram:BasisQuantity"/>
                   </xsl:when>
                   <xsl:otherwise>
                      <xsl:if test="./ram:NetPriceProductTradePrice/ram:BasisQuantity">
@@ -1971,7 +1971,7 @@
                <xsl:choose>
                   <xsl:when test="./ram:NetPriceProductTradePrice/ram:BasisQuantity/@unitCode and ./ram:GrossPriceProductTradePrice/ram:BasisQuantity/@unitCode">
                      <xsl:apply-templates mode="BT-150"
-                        select="./ram:GrossPriceProductTradePrice/ram:BasisQuantity/@unitCode"/>                        
+                        select="./ram:GrossPriceProductTradePrice/ram:BasisQuantity/@unitCode"/>
                   </xsl:when>
                   <xsl:otherwise>
                      <xsl:if test="./ram:NetPriceProductTradePrice/ram:BasisQuantity/@unitCode">
@@ -2018,7 +2018,7 @@
          <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
          <xsl:call-template name="unit_price_amount"/>
       </xr:Item_gross_price>
-   </xsl:template>  
+   </xsl:template>
    <xsl:template mode="BG-30"
                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax">
       <xsl:variable name="bg-contents" as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax der Instanz in konkreter Syntax wird auf 2 Objekte der EN 16931 abgebildet. -->

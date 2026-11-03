@@ -90,15 +90,15 @@ eu_einvoice.viewer = {
 			result === "Valid"
 				? "is-valid"
 				: result === "Invalid"
-					? "is-invalid"
-					: result === "Unsupported"
-						? "is-unsupported"
-						: "is-pending";
-		const icon_name =
-			result === "Valid" ? "file-check" : result === "Invalid" ? "file-x" : "file";
-		const $btn = $(`<span class="eu-einvoice-view-btn ${status_class}" role="button" tabindex="0" title="${__(
-			"View e-Invoice"
-		)}" aria-label="${__("View e-Invoice")}">
+				  ? "is-invalid"
+				  : result === "Unsupported"
+				    ? "is-unsupported"
+				    : "is-pending";
+		const icon_name = result === "Valid" ? "file-check" : result === "Invalid" ? "file-x" : "file";
+		const $btn =
+			$(`<span class="eu-einvoice-view-btn ${status_class}" role="button" tabindex="0" title="${__(
+				"View e-Invoice"
+			)}" aria-label="${__("View e-Invoice")}">
 			${frappe.utils.icon(icon_name, "sm")}
 		</span>`);
 		const open = (event) => {
@@ -124,10 +124,9 @@ eu_einvoice.viewer = {
 		frm.attachments.parent.find(".eu-einvoice-view-btn").remove();
 
 		const file_names = attachments.map((row) => row.name).filter(Boolean);
-		const by_file = await frappe.xcall(
-			"eu_einvoice.european_e_invoice.viewer.files_with_protocol",
-			{ identifiers: file_names }
-		);
+		const by_file = await frappe.xcall("eu_einvoice.european_e_invoice.viewer.files_with_protocol", {
+			identifiers: file_names,
+		});
 		if (!by_file || !Object.keys(by_file).length) {
 			return;
 		}
@@ -137,9 +136,9 @@ eu_einvoice.viewer = {
 			if (!result) {
 				return;
 			}
-			const $row = frm.attachments.parent.find(
-				`.attachment-row a.attachment-icon[href$="/file/${attachment.name}"]`
-			).closest(".attachment-row");
+			const $row = frm.attachments.parent
+				.find(`.attachment-row a.attachment-icon[href$="/file/${attachment.name}"]`)
+				.closest(".attachment-row");
 			if (!$row.length || $row.find(".eu-einvoice-view-btn").length) {
 				return;
 			}
@@ -175,10 +174,9 @@ eu_einvoice.viewer = {
 			return;
 		}
 
-		const by_file = await frappe.xcall(
-			"eu_einvoice.european_e_invoice.viewer.files_with_protocol",
-			{ identifiers: urls }
-		);
+		const by_file = await frappe.xcall("eu_einvoice.european_e_invoice.viewer.files_with_protocol", {
+			identifiers: urls,
+		});
 		const file_names = Object.keys(by_file || {});
 		if (!file_names.length) {
 			return;
@@ -215,10 +213,8 @@ $(document).on("form-refresh", (_event, frm) => {
 	if (!frm?.$wrapper) {
 		return;
 	}
-	frm.$wrapper
-		.off("attachments_change.eu_einvoice")
-		.on("attachments_change.eu_einvoice", () => {
-			eu_einvoice.viewer.decorate_form(frm);
-		});
+	frm.$wrapper.off("attachments_change.eu_einvoice").on("attachments_change.eu_einvoice", () => {
+		eu_einvoice.viewer.decorate_form(frm);
+	});
 	eu_einvoice.viewer.decorate_form(frm);
 });

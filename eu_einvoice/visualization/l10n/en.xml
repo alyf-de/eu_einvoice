@@ -45,7 +45,7 @@
   <entry key="xr:Invoice_total_amount_without_VAT" id="BT-109">Total amount</entry>
   <entry key="xr:Invoice_total_VAT_amount" id="BT-110">Total VAT</entry>
   <entry key="xr:Invoice_total_VAT_amount_in_accounting_currency" id="BT-111">Total VAT in accounting currency</entry>
-  <entry key="xr:Invoice_total_amount_with_VAT" id="BT-112">Total</entry> 
+  <entry key="xr:Invoice_total_amount_with_VAT" id="BT-112">Total</entry>
   <entry key="xr:Paid_amount" id="BT-113">Already paid</entry>
   <entry key="xr:Rounding_amount" id="BT-114">Rounding amount</entry>
   <entry key="xr:Amount_due_for_payment" id="BT-115">Amount due</entry>
@@ -236,7 +236,7 @@
   <entry key="amount-format">###,##0.00</entry>
   <entry key="percentage-format">##0.00</entry>
   <entry key="at-least-two-format">###,##0.#################</entry>
-  
+
   <entry key="sum-of-third-party-payment-amounts">Third party payment total</entry>
 
   <entry key="no-script">The display of content on this page is limited without JavaScript.</entry>
