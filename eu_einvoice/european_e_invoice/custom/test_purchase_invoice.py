@@ -160,6 +160,45 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 				with self.subTest(category=category, profile=profile):
 					self.assert_reverse_charge(invoice, profile, category)
 
+	def test_default_reverse_charge_category(self):
+		"""A default VAT category on the Code List counts like a mapped one."""
+		code_list = duty_tax_fee_category_codes.code_lists[0]
+		reverse_charge_code = frappe.db.get_value(
+			"Common Code", {"code_list": code_list, "common_code": "AE"}
+		)
+		frappe.db.set_value("Code List", code_list, "default_common_code", reverse_charge_code)
+		self.addCleanup(frappe.db.set_value, "Code List", code_list, "default_common_code", None)
+
+		invoice = self.make_invoice(
+			self.eu_supplier,
+			EInvoiceProfile.EN16931,
+			taxes=[vat_row(19), vat_row(19, add_deduct_tax="Deduct")],
+		)
+		self.assert_reverse_charge(invoice, EInvoiceProfile.EN16931, "AE")
+
+	def test_not_subject_to_vat_omits_vat_ids(self):
+		"""BR-O-02: no VAT IDs for seller and buyer with category O. A tax number (FC) stays."""
+		not_subject_category = frappe.get_doc(
+			doctype="Tax Category", title="_Test Not Subject to VAT"
+		).insert()
+		map_code(duty_tax_fee_category_codes, "O", "Tax Category", not_subject_category.name)
+		map_code(vat_exemption_reason_codes, "vatex-eu-o", "Tax Category", not_subject_category.name)
+
+		invoice = self.make_invoice(
+			self.domestic, EInvoiceProfile.EN16931, tax_category=not_subject_category.name
+		)
+		root = self.assert_valid_einvoice(invoice, EInvoiceProfile.EN16931)
+		self.assertEqual(root.findall(".//ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']", NS), [])
+
+		invoice.tax_id = "201/113/40209"
+		root = self.assert_valid_einvoice(invoice, EInvoiceProfile.EN16931)
+		self.assertEqual(
+			root.findtext(
+				".//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID='FC']", namespaces=NS
+			),
+			"201/113/40209",
+		)
+
 	def assert_reverse_charge(self, invoice, profile: EInvoiceProfile, category: str):
 		root = self.assert_valid_einvoice(invoice, profile)
 		self.assertEqual(root.find(LINE_TAX, NS).findtext("ram:CategoryCode", namespaces=NS), category)

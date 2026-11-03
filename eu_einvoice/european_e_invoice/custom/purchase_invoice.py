@@ -44,9 +44,9 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 		return frappe.get_doc("Supplier", self.invoice.supplier)
 
 	@cached_property
-	def document_vat_category(self) -> str | None:
-		"""Return the VAT category mapped to the invoice's Tax Category or tax template, if any."""
-		return duty_tax_fee_category_codes.get_code(self._document_lookup())
+	def document_vat_category(self) -> str:
+		"""Return the VAT category of the invoice's Tax Category or tax template, else the default."""
+		return duty_tax_fee_category_codes.get(self._document_lookup())
 
 	@cached_property
 	def is_reverse_charge(self) -> bool:
@@ -86,7 +86,7 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 			seller.address = frappe.get_doc("Address", self.invoice.supplier_address)
 
 		if self.invoice.tax_id:
-			seller.tax_registration = get_tax_registration(self.invoice.tax_id)
+			seller.tax_registration = self._get_tax_registration(self.invoice.tax_id)
 
 		if self.invoice.contact_person:
 			contact = frappe.get_doc("Contact", self.invoice.contact_person)
@@ -113,7 +113,7 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 			buyer.address = frappe.get_doc("Address", self.invoice.billing_address)
 
 		if company.tax_id:
-			buyer.tax_registration = get_tax_registration(company.tax_id)
+			buyer.tax_registration = self._get_tax_registration(company.tax_id)
 
 		# ponytail: no buyer contact (BG-9), a Purchase Invoice has no company contact. Optional everywhere.
 		if company.electronic_address_scheme and company.electronic_address:
@@ -127,6 +127,13 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 			buyer.electronic_address = ("EM", buyer.address.email_id)
 
 		return buyer
+
+	def _get_tax_registration(self, tax_id: str) -> tuple[str, str] | None:
+		scheme, tax_id = get_tax_registration(tax_id)
+		# BR-O-02: category O invoices must not contain VAT IDs (BT-31, BT-48). A tax number (FC) may stay.
+		if scheme == "VA" and self._has_not_subject_to_vat_line():
+			return None
+		return scheme, tax_id
 
 	def _get_buyer_id(self) -> str | None:
 		"""Return our customer number at the supplier (BT-46)."""
