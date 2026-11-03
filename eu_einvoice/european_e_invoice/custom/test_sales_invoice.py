@@ -93,6 +93,21 @@ class TestGetItemRate(IntegrationTestCase):
 		self.assertEqual(get_item_rate('{"VAT 5%": 5}', taxes), 19)
 		self.assertEqual(get_item_rate(None, taxes), 19)
 
+	def test_vat_on_previous_row_total_counts(self):
+		"""VAT on the lines plus a shipping charge taxes the lines as well."""
+		taxes = [
+			frappe._dict(account_head="Freight", charge_type="Actual", rate=0),
+			frappe._dict(account_head="VAT 19%", charge_type="On Previous Row Total", rate=19, row_id=1),
+		]
+		self.assertEqual(get_item_rate('{"VAT 19%": 19}', taxes), 19)
+
+	def test_deduct_rows_are_ignored(self):
+		taxes = [
+			frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19, add_deduct_tax="Add"),
+			frappe._dict(account_head="RC 19%", charge_type="On Net Total", rate=19, add_deduct_tax="Deduct"),
+		]
+		self.assertEqual(get_item_rate(None, taxes), 19)
+
 
 class TestVatExemptionReason(IntegrationTestCase):
 	def test_empty_header_tax_skips_exemption_for_zero_rated(self):
@@ -313,45 +328,6 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		self.assertEqual(buyer_fc_ids[0].text, "98/765/43210")
 
 
-class TestApplicableTradeTaxes(IntegrationTestCase):
-	def test_multi_tax_invoice_groups_and_basis_amounts(self):
-		"""Unused tax rows are dropped, the basis comes from the lines with the same category and rate."""
-		invoice = frappe._dict(
-			net_total=1000,
-			tax_category=None,
-			taxes_and_charges=None,
-			precision=lambda fieldname: 2,
-			taxes=[
-				# net_amount is ignored, ERPNext counts 0 % lines in as well
-				frappe._dict(
-					account_head="_Test VAT 19",
-					charge_type="On Net Total",
-					rate=19,
-					tax_amount=19,
-					net_amount=300,
-				),
-				frappe._dict(account_head="_Test VAT 7", charge_type="On Net Total", rate=7, tax_amount=7),
-				# no line with this rate, so the basis is calculated from tax amount and rate
-				frappe._dict(account_head="_Test VAT 5", charge_type="On Net Total", rate=5, tax_amount=0.5),
-				# no tax amount, but a line item uses this rate (net amount 0), so it is kept
-				frappe._dict(account_head="_Test VAT 3", charge_type="On Net Total", rate=3, tax_amount=0),
-				# no tax amount and no line item uses this rate, so there is nothing to declare
-				frappe._dict(account_head="_Test VAT 2", charge_type="On Net Total", rate=2, tax_amount=0),
-			],
-		)
-		generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
-		generator.doc = Document()
-		generator.item_tax_rates = {19, 7, 3, 0}
-		generator.line_net_amounts = {("S", 19): 100, ("S", 7): 100, ("S", 3): 0, ("E", 0): 100}
-
-		with patch.object(duty_tax_fee_category_codes, "get", return_value="S"):
-			self.assertTrue(generator._add_taxes_and_charges())
-
-		trade_taxes = generator.doc.trade.settlement.trade_tax.children
-		self.assertEqual([t.rate_applicable_percent._value for t in trade_taxes], [19, 7, 5, 3])
-		self.assertEqual([t.basis_amount._value for t in trade_taxes], [100, 100, 10, 0])
-
-
 class TestMixedVatInvoice(IntegrationTestCase):
 	"""Real Sales Invoices with several VAT categories and rates."""
 
@@ -478,14 +454,28 @@ class TestMixedVatInvoice(IntegrationTestCase):
 		self.assertEqual(get_vat_errors(xml), [])
 
 	def test_single_rate_is_unchanged(self):
-		"""One tax row and lines with one rate: a single breakdown over the net total."""
-		invoice = self._make_invoice([self.standard, self.standard], [self.vat_19])
+		"""Lines with one rate: a single breakdown over the net total; the unused 7 % row is dropped."""
+		invoice = self._make_invoice([self.standard, self.standard], [self.vat_19, self.vat_7])
 
 		breakdowns = get_vat_breakdowns(get_einvoice(invoice))
 
 		self.assertEqual(
 			[(b["category"], b["rate"], b["basis"], b["tax"]) for b in breakdowns], [("S", 19, 200, 38)]
 		)
+
+	def test_one_account_with_several_rates(self):
+		"""One VAT account, the reduced rate set by an Item Tax Template: one breakdown per rate."""
+		one_account_reduced = self._make_template("_Test Reduced on one account", {self.vat_19: 7})
+		invoice = self._make_invoice([self.standard, one_account_reduced, self.exempt], [self.vat_19])
+		self.assertEqual(invoice.taxes[0].tax_amount, 26)
+
+		xml = get_einvoice(invoice)
+
+		self.assertEqual(
+			[(b["category"], b["rate"], b["basis"], b["tax"]) for b in get_vat_breakdowns(xml)],
+			[("S", 19, 100, 19), ("S", 7, 100, 7), ("E", 0, 100, 0)],
+		)
+		self.assertEqual(get_vat_errors(xml), [])
 
 	def test_rates_as_charged_after_template_change(self):
 		"""Later changes of the Item Tax Template don't change the e-invoice of an existing invoice."""

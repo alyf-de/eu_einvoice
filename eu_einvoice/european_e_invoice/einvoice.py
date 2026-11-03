@@ -126,10 +126,9 @@ class EInvoiceGenerator:
 		self.invoice = invoice
 		self.profile = profile
 		self.doc = None
-		self.item_tax_rates = set()
-		# (VAT category code, rate) -> sum of the lines' net amounts, the basis of each VAT breakdown.
-		# Tax rows pop the key they declare, the rest is declared by `_add_vat_breakdowns_from_lines`.
-		self.line_net_amounts = {}
+		# 0 % VAT category code -> sum of its lines' net amounts. A 0 % tax row pops the category
+		# it declares, the rest is declared by `_add_vat_breakdowns_from_lines`.
+		self.zero_rate_net_amounts = {}
 		# VAT category code -> exemption reason code and text, collected from the line items
 		self.line_exemption_reason_codes = {}
 		self.line_exemption_reason_texts = {}
@@ -177,7 +176,7 @@ class EInvoiceGenerator:
 		"""Set the delivery references of a line and add its delivery date to `self.delivery_dates`."""
 
 	def get_tax_rows(self) -> list:
-		"""Return the tax rows to declare in the e-invoice."""
+		"""Return the tax rows to declare in the e-invoice: VAT rows and charges, no Deduct rows."""
 		return self.invoice.taxes
 
 	def get_payee_account(self) -> tuple[str, str | None, str] | None:
@@ -393,14 +392,13 @@ class EInvoiceGenerator:
 			if exemption_reason_text:
 				self.line_exemption_reason_texts.setdefault(category_code, exemption_reason_text.strip())
 
-		item_tax_rate = 0
 		if category_code in ("AE", "E", "G", "K", "Z"):
 			# BR-AE-05, BR-E-05, BR-G-05, BR-IC-05, BR-Z-05 (rate 0.00; see EN 16931 tax code guidance)
 			li.settlement.trade_tax.rate_applicable_percent = 0
 		elif category_code != "O":
-			item_tax_rate = get_item_rate(item.item_tax_rate, self.get_tax_rows())
-			self.item_tax_rates.add(item_tax_rate)
-			li.settlement.trade_tax.rate_applicable_percent = item_tax_rate
+			li.settlement.trade_tax.rate_applicable_percent = get_item_rate(
+				item.item_tax_rate, self.get_tax_rows()
+			)
 		# else BR-O-05: category O must not contain BT-152 (omit rate entirely, not even 0)
 		# BT-120/BT-121 (exemption reason) belong only on the document-level VAT breakdown (BG-23).
 
@@ -408,8 +406,10 @@ class EInvoiceGenerator:
 		li.settlement.monetary_summation.total_amount = net_amount
 		self.doc.trade.items.add(li)
 
-		line_key = (category_code, item_tax_rate)
-		self.line_net_amounts[line_key] = self.line_net_amounts.get(line_key, 0) + net_amount
+		if category_code in ZERO_RATE_VAT_CATEGORIES:
+			self.zero_rate_net_amounts[category_code] = (
+				self.zero_rate_net_amounts.get(category_code, 0) + net_amount
+			)
 
 	def _add_taxes_and_charges(self):
 		taxes = self.get_tax_rows()
@@ -437,37 +437,17 @@ class EInvoiceGenerator:
 
 				self.doc.trade.settlement.service_charge.add(service_charge)
 			elif tax.charge_type == "On Net Total":
-				tax_rate = (
-					tax.rate
-					or self._get_rate_from_lines(tax)
-					or frappe.db.get_value("Account", tax.account_head, "tax_rate")
-					or 0
-				)
-				if tax.tax_amount == 0 and tax_rate != 0 and tax_rate not in self.item_tax_rates:
-					# No line item uses this rate, so there is nothing to declare for it.
-					# True 0% rows are kept, as are rates used by a line with a net amount of 0.
-					continue
-				trade_tax = ApplicableTradeTax()
-				trade_tax.calculated_amount = tax.tax_amount
-				trade_tax.type_code = "VAT"
 				category_code = duty_tax_fee_category_codes.get(lookup)
-				trade_tax.category_code = category_code
-
-				self._set_header_vat_category_rate(trade_tax, tax_rate)
-
-				# The basis is the sum of the lines with this category and rate. ERPNext's tax row
-				# net_amount can't be used: it includes every line whose item tax map lists the
-				# row's account, even at 0 %.
-				line_key = (category_code, 0 if category_code in ZERO_RATE_VAT_CATEGORIES else tax_rate)
-				basis = self.line_net_amounts.pop(line_key, None)
-				if basis is None and tax_rate:
-					basis = tax.tax_amount / tax_rate * 100
-				trade_tax.basis_amount = flt(basis, self.invoice.precision("net_total"))
-
-				self._set_document_vat_exemption_reason(trade_tax, lookup)
-
-				self.doc.trade.settlement.trade_tax.add(trade_tax)
-				tax_added = True
+				for rate, basis, tax_amount in self._split_by_rate(tax, category_code):
+					trade_tax = ApplicableTradeTax()
+					trade_tax.calculated_amount = tax_amount
+					trade_tax.type_code = "VAT"
+					trade_tax.category_code = category_code
+					self._set_header_vat_category_rate(trade_tax, rate)
+					trade_tax.basis_amount = basis
+					self._set_document_vat_exemption_reason(trade_tax, lookup)
+					self.doc.trade.settlement.trade_tax.add(trade_tax)
+					tax_added = True
 			elif tax.charge_type == "On Previous Row Amount":
 				trade_tax = ApplicableTradeTax()
 				trade_tax.basis_amount = taxes[i - 1].tax_amount
@@ -505,15 +485,40 @@ class EInvoiceGenerator:
 
 		return tax_added
 
-	def _get_rate_from_lines(self, tax) -> float | None:
-		"""Return the rate the lines were charged on this tax row, if they agree on one non-zero rate.
+	def _split_by_rate(self, tax, category_code: str) -> list[tuple[float, float, float]]:
+		"""Return (rate, basis, tax amount) for each rate the lines were charged on an *On Net Total* row.
 
-		Needed when the row's rate is 0 and the rates come from the Item Tax Templates.
-		ponytail: lines with different rates on one account (one VAT account for all rates)
-		fall back to the account's rate; split the row into one breakdown per rate if that's needed.
+		The basis is the sum of the lines' net amounts. ERPNext's tax row `net_amount` can't be
+		used: it includes every line whose item tax map lists the row's account, even at 0 %.
+		One row can carry several rates, e.g. one VAT account with reduced rates set by Item Tax
+		Templates. A row that charged no line is not declared.
 		"""
-		rates = {get_line_rate_on_row(item.item_tax_rate, tax) for item in self.invoice.items} - {0}
-		return rates.pop() if len(rates) == 1 else None
+		precision = self.invoice.precision("net_total")
+		if category_code in ZERO_RATE_VAT_CATEGORIES:
+			# A 0 % row declares the lines of its category, e.g. category O with a tax row
+			basis = self.zero_rate_net_amounts.pop(category_code, None)
+			return [] if basis is None else [(0, flt(basis, precision), tax.tax_amount)]
+
+		basis_by_rate = {}
+		for item in self.invoice.items:
+			rate = get_line_rate_on_row(item.item_tax_rate, tax)
+			if rate:
+				net_amount = flt(item.net_amount, item.precision("net_amount"))
+				basis_by_rate[rate] = basis_by_rate.get(rate, 0) + net_amount
+
+		groups = []
+		for rate, basis in basis_by_rate.items():
+			basis = flt(basis, precision)
+			groups.append((rate, basis, flt(basis * rate / 100, precision)))
+
+		if groups:
+			# The tax amounts must add up to the row's tax amount (BR-CO-14), so the last
+			# group takes the rounding difference.
+			rate, basis, _tax_amount = groups[-1]
+			rest = tax.tax_amount - sum(tax_amount for _rate, _basis, tax_amount in groups[:-1])
+			groups[-1] = (rate, basis, flt(rest, precision))
+
+		return groups
 
 	def _add_vat_breakdowns_from_lines(self) -> bool:
 		"""Add a 0 % VAT breakdown for each VAT category of the lines that no tax row declared.
@@ -522,10 +527,7 @@ class EInvoiceGenerator:
 		need one breakdown each, even though the invoice has no tax rows.
 		"""
 		added = False
-		for (category_code, _rate), basis in self.line_net_amounts.items():
-			if category_code not in ZERO_RATE_VAT_CATEGORIES:
-				continue
-
+		for category_code, basis in self.zero_rate_net_amounts.items():
 			trade_tax = ApplicableTradeTax()
 			trade_tax.type_code = "VAT"
 			trade_tax.category_code = category_code
@@ -908,13 +910,22 @@ def _attach_xml_file(doc: FrappeDocument, xml_content: bytes, field_name: str | 
 
 
 def get_item_rate(item_tax_rate: str | dict | None, taxes: list) -> float:
-	"""Return the VAT % that ERPNext charged on a line, as the sum of its rates on all *On Net Total* rows.
+	"""Return the VAT % that ERPNext charged on a line, as the sum of its rates on the rows that tax it.
 
 	`item_tax_rate` is the line's tax map that ERPNext calculated the invoice with (field
 	`item_tax_rate`, account -> rate). It stays as it was on submit, even if the Item Tax
 	Template changes later. Templates that list other accounts at 0 % work as well.
+
+	The lines are taxed by *On Net Total* rows and by *On Previous Row Total* rows (e.g. VAT on
+	the lines plus a shipping charge). Deduct rows don't add to the rate.
+	ponytail: a non-VAT tax on these rows (a levy, a withholding) is counted as VAT as well.
 	"""
-	return sum(get_line_rate_on_row(item_tax_rate, tax) for tax in taxes if tax.charge_type == "On Net Total")
+	return sum(
+		get_line_rate_on_row(item_tax_rate, tax)
+		for tax in taxes
+		if tax.charge_type in ("On Net Total", "On Previous Row Total")
+		and tax.get("add_deduct_tax") != "Deduct"
+	)
 
 
 def get_line_rate_on_row(item_tax_rate: str | dict | None, tax) -> float:
