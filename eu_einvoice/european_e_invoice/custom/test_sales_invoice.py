@@ -8,6 +8,7 @@ import frappe
 from drafthorse.models.document import Document
 from drafthorse.pdf import attach_xml
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
+from erpnext.stock.doctype.item.test_item import make_item
 from frappe.tests import IntegrationTestCase
 from lxml import etree
 from pypdf import PdfReader, PdfWriter
@@ -357,6 +358,8 @@ class TestMixedVatInvoice(IntegrationTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
+		# One item per invoice row: by default, an item may appear only once per invoice
+		cls.items = [make_item(f"_Test E-Invoice Item {i}", {"is_stock_item": 0}).name for i in range(1, 4)]
 		cls.vat_19 = cls._make_tax_account("_Test USt 19", 19)
 		cls.vat_7 = cls._make_tax_account("_Test USt 7", 7)
 
@@ -418,9 +421,9 @@ class TestMixedVatInvoice(IntegrationTestCase):
 	def _make_invoice(self, templates: list[str], tax_accounts: list[str]):
 		invoice = create_sales_invoice(do_not_save=True, rate=100)
 		invoice.items = []
-		for template in templates:
+		for item_code, template in zip(self.items, templates, strict=False):
 			invoice.append(
-				"items", {"item_code": "_Test Item", "qty": 1, "rate": 100, "item_tax_template": template}
+				"items", {"item_code": item_code, "qty": 1, "rate": 100, "item_tax_template": template}
 			)
 		for account in tax_accounts:
 			# Rate 0 on the row: the rate comes from the Item Tax Template
