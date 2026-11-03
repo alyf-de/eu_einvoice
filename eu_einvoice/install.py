@@ -19,6 +19,9 @@ CODELIST_COLUMNS = {"code": "Code", "title": "Name", "description": "Remark"}
 def after_install():
 	make_custom_fields()
 	import_code_lists()
+	from eu_einvoice.european_e_invoice.protocol import ensure_default_protocol_doctypes
+
+	ensure_default_protocol_doctypes()
 
 
 def make_custom_fields():

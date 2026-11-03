@@ -70,3 +70,12 @@ eInvoice validation can be time-consuming. Use **E Invoice Settings** to configu
   - *Error Message*: Block save/submit and show errors
 
 If you use a separate field for the sales invoice number, configure the field name in **E Invoice Settings** -> **Sales Invoice Number**.
+
+### Protocol
+
+Optional audit trail for uploaded e-invoice files. On **E Invoice Settings** → *Protocol*:
+
+- Set *Create Protocol on Upload* to `"None"`, `"Only selected DocTypes"`, or `"All files"`.
+- Maintain *Protocol DocTypes* (defaults **E Invoice Import** and **Purchase Invoice**).
+
+See [Viewer and Protocol](/app/docs/en/eu_einvoice/viewer-and-protocol).

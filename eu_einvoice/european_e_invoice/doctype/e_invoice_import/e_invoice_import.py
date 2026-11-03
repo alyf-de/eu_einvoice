@@ -224,24 +224,45 @@ class EInvoiceImport(Document):
 	def _validate_schematron(self, xml_bytes):
 		self.validation_errors = ""
 		self.validation_warnings = ""
-		xml_string = xml_bytes.decode("utf-8")
 
-		try:
-			validation_errors, validation_warnings = get_validation_errors(
-				xml_string, EInvoiceProfile(self.profile)
-			)
-		except Exception:
-			frappe.log_error(
-				title="E Invoice schematron validation",
-				reference_doctype=self.doctype,
-				reference_name=self.name,
-			)
-			frappe.msgprint(
-				_("Could not validate E Invoice schematron. See Error Log for details."),
-				alert=True,
-				indicator="orange",
-			)
-			return
+		from eu_einvoice.european_e_invoice.protocol import (
+			reuse_validation_for_hashes,
+			store_validation_from_import,
+			xml_content_hash,
+		)
+
+		# Schematron at most once per content_hash + file_hash
+		content_hash = None
+		file_url = self.get("einvoice")
+		if file_url:
+			content_hash = frappe.db.get_value("File", {"file_url": file_url}, "content_hash")
+		reused = reuse_validation_for_hashes(content_hash, xml_content_hash(xml_bytes))
+		if reused:
+			validation_errors, validation_warnings, _result = reused
+		else:
+			xml_string = xml_bytes.decode("utf-8")
+			try:
+				profile = EInvoiceProfile(self.profile)
+				validation_errors, validation_warnings = get_validation_errors(xml_string, profile)
+				# Match outbound / protocol: XRechnung also requires EN 16931
+				if profile == EInvoiceProfile.XRECHNUNG:
+					basic_errors, basic_warnings = get_validation_errors(
+						xml_string, EInvoiceProfile.EN16931
+					)
+					validation_errors = list(validation_errors) + list(basic_errors)
+					validation_warnings = list(validation_warnings) + list(basic_warnings)
+			except Exception:
+				frappe.log_error(
+					title="E Invoice schematron validation",
+					reference_doctype=self.doctype,
+					reference_name=self.name,
+				)
+				frappe.msgprint(
+					_("Could not validate E Invoice schematron. See Error Log for details."),
+					alert=True,
+					indicator="orange",
+				)
+				return
 
 		if any(validation_errors):
 			self.e_invoice_is_correct = 0
@@ -251,6 +272,8 @@ class EInvoiceImport(Document):
 
 		if any(validation_warnings):
 			self.validation_warnings += "\n".join(validation_warnings)
+
+		store_validation_from_import(self, xml_bytes, validation_errors, validation_warnings)
 
 	def parse_seller(self, seller: TradeParty):
 		# stripped, because we use them to find the Supplier
@@ -597,8 +620,12 @@ def get_xml_bytes(einvoice: str) -> bytes:
 
 
 def relative_url_to_path(url: str) -> Path:
-	"""Convert a relative URL to a file path."""
-	return Path(get_site_path(url.lstrip("/"))).resolve()
+	"""Convert a relative File URL to a path that must stay under the site directory."""
+	path = Path(get_site_path(url.lstrip("/"))).resolve()
+	site_root = Path(get_site_path()).resolve()
+	if not path.is_relative_to(site_root):
+		frappe.throw(_("Invalid file path."))
+	return path
 
 
 @frappe.whitelist()

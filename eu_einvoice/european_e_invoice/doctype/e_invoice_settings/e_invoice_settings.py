@@ -16,11 +16,17 @@ class EInvoiceSettings(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_protocol_doctype.e_invoice_protocol_doctype import (
+			EInvoiceProtocolDocType,
+		)
+
 		attach_field_for_xml_file: DF.Autocomplete | None
 		auto_attach_xml: DF.Check
 		auto_name_format_for_xml_file: DF.Data | None
+		create_protocol_on_upload: DF.Literal["None", "Only selected DocTypes", "All files"]
 		error_action_on_save: DF.Literal["", "Warning Message", "Error Message"]
 		error_action_on_submit: DF.Literal["", "Warning Message", "Error Message"]
+		protocol_doctypes: DF.Table[EInvoiceProtocolDocType]
 		sales_invoice_number_field: DF.Autocomplete | None
 		validate_sales_invoice_on_save: DF.Check
 		validate_sales_invoice_on_submit: DF.Check
