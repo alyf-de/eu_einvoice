@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import frappe
+from frappe import _
 from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice import viewer as viewer_module
@@ -113,7 +114,7 @@ class TestEInvoiceViewer(IntegrationTestCase):
 		file_name = self._make_private_xml_file()
 
 		def deny_read(*_args, **_kwargs):
-			frappe.throw("No", frappe.PermissionError)
+			frappe.throw(_("No"), frappe.PermissionError)
 
 		with patch.object(frappe.model.document.Document, "check_permission", side_effect=deny_read):
 			with self.assertRaises(frappe.PermissionError):
