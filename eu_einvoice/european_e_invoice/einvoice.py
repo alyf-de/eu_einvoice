@@ -448,36 +448,33 @@ class EInvoiceGenerator:
 					self._set_document_vat_exemption_reason(trade_tax, lookup)
 					self.doc.trade.settlement.trade_tax.add(trade_tax)
 					tax_added = True
-			elif tax.charge_type == "On Previous Row Amount":
+			elif tax.charge_type in ("On Previous Row Amount", "On Previous Row Total"):
+				previous_row = taxes[i - 1]
+				if tax.charge_type == "On Previous Row Amount":
+					basis = previous_row.tax_amount
+				else:
+					basis = previous_row.total
+
 				trade_tax = ApplicableTradeTax()
-				trade_tax.basis_amount = taxes[i - 1].tax_amount
 				trade_tax.calculated_amount = tax.tax_amount
 
-				if taxes[i - 1].charge_type == "Actual":
+				if previous_row.charge_type == "Actual":
 					# VAT for a LogisticsServiceCharge
 					trade_tax.type_code = "VAT"
 				else:
 					# A tax or duty applied on and in addition to existing duties and taxes.
 					trade_tax.type_code = "SUR"
 
-				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
-				self._set_header_vat_category_rate(trade_tax, tax.rate)
-				self._set_document_vat_exemption_reason(trade_tax, lookup)
-				self.doc.trade.settlement.trade_tax.add(trade_tax)
-				tax_added = True
-			elif tax.charge_type == "On Previous Row Total":
-				trade_tax = ApplicableTradeTax()
-				trade_tax.basis_amount = taxes[i - 1].total
-				trade_tax.calculated_amount = tax.tax_amount
+				category_code = duty_tax_fee_category_codes.get(lookup)
+				if category_code in ZERO_RATE_VAT_CATEGORIES:
+					# One breakdown per 0 % category (e.g. BR-E-01): this row declares the lines too.
+					# A previous row's total already contains them.
+					line_basis = self.zero_rate_net_amounts.pop(category_code, 0)
+					if tax.charge_type == "On Previous Row Amount":
+						basis += line_basis
 
-				if taxes[i - 1].charge_type == "Actual":
-					# VAT for a LogisticsServiceCharge
-					trade_tax.type_code = "VAT"
-				else:
-					# A tax or duty applied on and in addition to existing duties and taxes.
-					trade_tax.type_code = "SUR"
-
-				trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
+				trade_tax.basis_amount = basis
+				trade_tax.category_code = category_code
 				self._set_header_vat_category_rate(trade_tax, tax.rate)
 				self._set_document_vat_exemption_reason(trade_tax, lookup)
 				self.doc.trade.settlement.trade_tax.add(trade_tax)
@@ -499,17 +496,25 @@ class EInvoiceGenerator:
 			basis = self.zero_rate_net_amounts.pop(category_code, None)
 			return [] if basis is None else [(0, flt(basis, precision), tax.tax_amount)]
 
+		# Sum the tax per line like ERPNext does, so the groups add up to the row's tax amount
+		round_per_line = frappe.db.get_single_value("Accounts Settings", "round_row_wise_tax")
 		basis_by_rate = {}
+		tax_by_rate = {}
 		for item in self.invoice.items:
 			rate = get_line_rate_on_row(item.item_tax_rate, tax)
 			if rate:
 				net_amount = flt(item.net_amount, item.precision("net_amount"))
-				basis_by_rate[rate] = basis_by_rate.get(rate, 0) + net_amount
+				line_tax = net_amount * rate / 100
+				if round_per_line:
+					line_tax = flt(line_tax, tax.precision("tax_amount"))
 
-		groups = []
-		for rate, basis in basis_by_rate.items():
-			basis = flt(basis, precision)
-			groups.append((rate, basis, flt(basis * rate / 100, precision)))
+				basis_by_rate[rate] = basis_by_rate.get(rate, 0) + net_amount
+				tax_by_rate[rate] = tax_by_rate.get(rate, 0) + line_tax
+
+		groups = [
+			(rate, flt(basis, precision), flt(tax_by_rate[rate], precision))
+			for rate, basis in basis_by_rate.items()
+		]
 
 		if groups:
 			# The tax amounts must add up to the row's tax amount (BR-CO-14), so the last

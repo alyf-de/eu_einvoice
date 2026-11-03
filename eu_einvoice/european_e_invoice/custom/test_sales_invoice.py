@@ -352,6 +352,7 @@ class TestMixedVatInvoice(IntegrationTestCase):
 			"_Test Innergemeinschaftliche Lieferung", {cls.vat_19: 0}, "Innergemeinschaftliche Lieferung"
 		)
 		cls.reverse_charge = cls._make_template("_Test Reverse Charge Leistung EU", {cls.vat_19: 0})
+		cls.reduced_on_19 = cls._make_template("_Test Reduced on one account", {cls.vat_19: 7})
 
 		for template, category, reason in (
 			(cls.exempt, "E", "vatex-eu-132"),
@@ -394,12 +395,16 @@ class TestMixedVatInvoice(IntegrationTestCase):
 			.name
 		)
 
-	def _make_invoice(self, templates: list[str], tax_accounts: list[str]):
+	def _make_invoice(
+		self, templates: list[str], tax_accounts: list[str], rates: list[float] | None = None, charges=()
+	):
+		"""One line per template, an *On Net Total* row per account, then the `charges` rows."""
+		rates = rates or [100] * len(templates)
 		invoice = create_sales_invoice(do_not_save=True, rate=100)
 		invoice.items = []
-		for item_code, template in zip(self.items, templates, strict=False):
+		for item_code, template, rate in zip(self.items, templates, rates, strict=False):
 			invoice.append(
-				"items", {"item_code": item_code, "qty": 1, "rate": 100, "item_tax_template": template}
+				"items", {"item_code": item_code, "qty": 1, "rate": rate, "item_tax_template": template}
 			)
 		for account in tax_accounts:
 			# Rate 0 on the row: the rate comes from the Item Tax Template
@@ -407,6 +412,8 @@ class TestMixedVatInvoice(IntegrationTestCase):
 				"taxes",
 				{"charge_type": "On Net Total", "account_head": account, "description": account, "rate": 0},
 			)
+		for charge in charges:
+			invoice.append("taxes", {"description": charge["account_head"], **charge})
 		invoice.insert()
 		# After insert: fetch_from company/customer.tax_id would overwrite values set earlier.
 		invoice.company_tax_id = "DE123456789"
@@ -465,8 +472,7 @@ class TestMixedVatInvoice(IntegrationTestCase):
 
 	def test_one_account_with_several_rates(self):
 		"""One VAT account, the reduced rate set by an Item Tax Template: one breakdown per rate."""
-		one_account_reduced = self._make_template("_Test Reduced on one account", {self.vat_19: 7})
-		invoice = self._make_invoice([self.standard, one_account_reduced, self.exempt], [self.vat_19])
+		invoice = self._make_invoice([self.standard, self.reduced_on_19, self.exempt], [self.vat_19])
 		self.assertEqual(invoice.taxes[0].tax_amount, 26)
 
 		xml = get_einvoice(invoice)
@@ -476,6 +482,46 @@ class TestMixedVatInvoice(IntegrationTestCase):
 			[("S", 19, 100, 19), ("S", 7, 100, 7), ("E", 0, 100, 0)],
 		)
 		self.assertEqual(get_vat_errors(xml), [])
+
+	@IntegrationTestCase.change_settings("Accounts Settings", {"round_row_wise_tax": 1})
+	def test_rates_on_one_account_rounded_per_line(self):
+		"""ERPNext rounds each line's tax: the breakdowns add up the same way, none gets negative."""
+		invoice = self._make_invoice(
+			[self.standard, self.standard, self.reduced_on_19], [self.vat_19], rates=[0.02, 0.02, 0.01]
+		)
+		self.assertEqual(invoice.taxes[0].tax_amount, 0)
+
+		breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual(
+			[(b["rate"], b["basis"], b["tax"]) for b in breakdowns], [(19, 0.04, 0), (7, 0.01, 0)]
+		)
+
+	def test_exempt_lines_with_exempt_freight(self):
+		"""Freight with VAT on a previous row of the exempt category: one breakdown for lines and freight."""
+		vat_exempt = self._make_tax_account("_Test USt frei", 0)
+		map_code(duty_tax_fee_category_codes, "E", "Account", vat_exempt)
+		freight = {
+			"charge_type": "Actual",
+			"account_head": "Freight and Forwarding Charges - _TC",
+			"tax_amount": 50,
+		}
+
+		for charge_type in ("On Previous Row Amount", "On Previous Row Total"):
+			with self.subTest(charge_type=charge_type):
+				vat_on_freight = {
+					"charge_type": charge_type,
+					"account_head": vat_exempt,
+					"rate": 0,
+					"row_id": 1,
+				}
+				invoice = self._make_invoice(
+					[self.exempt, self.exempt], [], charges=[freight, vat_on_freight]
+				)
+
+				breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+				self.assertEqual([(b["category"], b["basis"], b["tax"]) for b in breakdowns], [("E", 250, 0)])
 
 	def test_rates_as_charged_after_template_change(self):
 		"""Later changes of the Item Tax Template don't change the e-invoice of an existing invoice."""
