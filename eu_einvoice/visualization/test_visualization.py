@@ -40,6 +40,22 @@ class TestVisualization(UnitTestCase):
 		self.assertEqual(detect_einvoice_format(cii), EInvoiceFormat.CII)
 		self.assertEqual(detect_einvoice_format(ubl), EInvoiceFormat.UBL_INVOICE)
 
+	def test_detect_cii_requires_root_and_namespace(self):
+		# Root alone must not be treated as CII (empty docs would pass EN 16931).
+		self.assertIsNone(detect_einvoice_format(b"<CrossIndustryInvoice/>"))
+		self.assertIsNone(detect_einvoice_format(b'<CrossIndustryInvoice xmlns="urn:example:not-cii"/>'))
+		self.assertIsNone(
+			detect_einvoice_format(
+				b'<Other xmlns="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"/>'
+			)
+		)
+		self.assertEqual(
+			detect_einvoice_format(
+				b'<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"/>'
+			),
+			EInvoiceFormat.CII,
+		)
+
 	def test_detect_malformed_xml_returns_none(self):
 		self.assertIsNone(detect_einvoice_format(b"not xml <<<"))
 		self.assertIsNone(detect_einvoice_format("<root>unclosed"))

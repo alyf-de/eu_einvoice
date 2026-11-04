@@ -3,7 +3,6 @@
 
 from datetime import date
 from decimal import Decimal
-from pathlib import Path
 from unittest.mock import patch
 
 import frappe
@@ -19,7 +18,6 @@ from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import im
 	get_create_purchase_invoice_action,
 	is_ubl_xml,
 	payee_differs_from_seller,
-	relative_url_to_path,
 )
 
 UBL_INVOICE = b"""<?xml version="1.0" encoding="UTF-8"?>
@@ -53,15 +51,6 @@ UNSUPPORTED_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
 
 
 class TestEInvoiceImport(IntegrationTestCase):
-	def test_relative_url_to_path_stays_under_site(self):
-		path = relative_url_to_path("/private/files/does-not-need-to-exist.xml")
-		site_root = Path(frappe.get_site_path()).resolve()
-		self.assertTrue(path.is_relative_to(site_root))
-
-	def test_relative_url_to_path_rejects_traversal(self):
-		with self.assertRaises(frappe.ValidationError):
-			relative_url_to_path("../../../../../../etc/passwd")
-
 	def test_is_ubl_xml_detects_invoice_and_credit_note(self):
 		self.assertTrue(is_ubl_xml(fromstring(UBL_INVOICE)))
 		self.assertTrue(is_ubl_xml(fromstring(UBL_CREDIT_NOTE)))

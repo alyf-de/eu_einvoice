@@ -81,7 +81,7 @@ def detect_einvoice_format(xml_string: str | bytes) -> EInvoiceFormat | None:
 	local = qname.localname
 	ns = qname.namespace or ""
 
-	if local == CII_ROOT or ns == CII_NS:
+	if local == CII_ROOT and ns == CII_NS:
 		return EInvoiceFormat.CII
 	if ns.startswith(UBL_NAMESPACE_PREFIX):
 		if local == "Invoice":

@@ -92,7 +92,8 @@
    "fieldtype": "Link",
    "label": "File",
    "options": "File",
-   "read_only": 1
+   "read_only": 1,
+   "unique": 1
   },
   {
    "fieldname": "file_name",

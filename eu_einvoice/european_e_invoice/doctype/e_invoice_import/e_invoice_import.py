@@ -11,7 +11,7 @@ from drafthorse.models.document import Document as DrafthorseDocument
 from erpnext import get_default_company
 from erpnext.edi.doctype.code_list.code_list import get_docnames_for
 from facturx import get_xml_from_pdf
-from frappe import _, _dict, get_site_path
+from frappe import _, _dict
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from lxml.etree import QName, XMLSyntaxError, fromstring
@@ -234,7 +234,18 @@ class EInvoiceImport(Document):
 		# Schematron at most once per content_hash + file_hash + ruleset_hash
 		content_hash = None
 		file_url = self.get("einvoice")
-		if file_url:
+		if file_url and self.name:
+			# Prefer this import's attachment; file_url alone can match another copy
+			content_hash = frappe.db.get_value(
+				"File",
+				{
+					"file_url": file_url,
+					"attached_to_doctype": self.doctype,
+					"attached_to_name": self.name,
+				},
+				"content_hash",
+			)
+		if file_url and not content_hash:
 			content_hash = frappe.db.get_value("File", {"file_url": file_url}, "content_hash")
 		reused = reuse_validation_for_hashes(
 			content_hash,
@@ -595,10 +606,17 @@ def is_ubl_xml(root) -> bool:
 
 
 def get_xml_bytes(einvoice: str) -> bytes:
-	"""Reads the XML data from the attached XML or PDF file."""
-	file = relative_url_to_path(einvoice)
-	if file.suffix.lower() == ".pdf":
-		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes(), check_xsd=False)
+	"""Reads the XML data from the attached XML or PDF file via the **File** content API."""
+	file_name = frappe.db.get_value("File", {"file_url": einvoice}, "name")
+	if not file_name:
+		frappe.throw(_("File not found."))
+
+	file_doc = frappe.get_doc("File", file_name)
+	content = _file_content_as_bytes(file_doc)
+	suffix = Path(file_doc.file_name or einvoice).suffix.lower()
+
+	if suffix == ".pdf":
+		xml_filename, xml_bytes = get_xml_from_pdf(content, check_xsd=False)
 		if not xml_bytes:
 			frappe.throw(
 				msg=_(
@@ -607,13 +625,13 @@ def get_xml_bytes(einvoice: str) -> bytes:
 				title=_("Not an E-Invoice"),
 				primary_action=get_create_purchase_invoice_action(),
 			)
-	elif file.suffix.lower() == ".xml":
-		xml_bytes = file.read_bytes()
+	elif suffix == ".xml":
+		xml_bytes = content
 	else:
 		frappe.throw(
 			msg=_(
 				"The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
-			).format(file.suffix),
+			).format(suffix),
 			title=_("Unsupported file format"),
 			primary_action=get_create_purchase_invoice_action(),
 		)
@@ -621,13 +639,12 @@ def get_xml_bytes(einvoice: str) -> bytes:
 	return xml_bytes
 
 
-def relative_url_to_path(url: str) -> Path:
-	"""Convert a relative File URL to a path that must stay under the site directory."""
-	path = Path(get_site_path(url.lstrip("/"))).resolve()
-	site_root = Path(get_site_path()).resolve()
-	if not path.is_relative_to(site_root):
-		frappe.throw(_("Invalid file path."))
-	return path
+def _file_content_as_bytes(file_doc) -> bytes:
+	"""Return **File** contents as bytes (``get_content`` may decode text to ``str``)."""
+	content = file_doc.get_content()
+	if isinstance(content, str):
+		return content.encode("utf-8")
+	return content
 
 
 @frappe.whitelist()

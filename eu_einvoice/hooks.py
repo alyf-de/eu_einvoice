@@ -125,13 +125,13 @@ after_migrate = "eu_einvoice.european_e_invoice.protocol.ensure_default_protocol
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
-#
-# has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
-# }
+permission_query_conditions = {
+	"E Invoice Protocol": "eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol.get_permission_query_conditions",
+}
+
+has_permission = {
+	"E Invoice Protocol": "eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol.has_permission",
+}
 
 # DocType Class
 # ---------------
@@ -153,6 +153,14 @@ doc_events = {
 	"File": {
 		"after_insert": "eu_einvoice.european_e_invoice.protocol.maybe_create_protocol_stub",
 		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_attach",
+	},
+	# After frappe.core.doctype.file.utils.attach_files_to_document (* on_update):
+	# owned orphans are attached via db.set_value (no File.on_update).
+	"*": {
+		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_parent_attach",
+		"on_update_after_submit": (
+			"eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_parent_attach"
+		),
 	},
 }
 

@@ -7,15 +7,20 @@ from unittest.mock import MagicMock, patch
 import frappe
 from frappe.tests import IntegrationTestCase
 
-from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import EInvoiceImport
+from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
+	EInvoiceImport,
+	get_xml_bytes,
+)
 from eu_einvoice.european_e_invoice.protocol import (
 	UPLOAD_MODE_ALL,
 	UPLOAD_MODE_NONE,
 	UPLOAD_MODE_SELECTED,
 	_company_from_reference,
+	_read_xml_bytes_quiet,
 	create_protocol_stub_from_file,
 	maybe_create_protocol_stub,
 	maybe_validate_protocol_on_attach,
+	maybe_validate_protocol_on_parent_attach,
 	reuse_validation_for_hashes,
 	store_validation_from_import,
 	store_validation_result,
@@ -67,13 +72,14 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		file_name: str = "test-einvoice.xml",
 		attached_to_doctype: str | None = None,
 		attached_to_name: str | None = None,
+		is_private: int = 1,
 	) -> str:
 		file_doc = frappe.get_doc(
 			{
 				"doctype": "File",
 				"file_name": file_name,
 				"content": content,
-				"is_private": 1,
+				"is_private": is_private,
 				"attached_to_doctype": attached_to_doctype,
 				"attached_to_name": attached_to_name,
 			}
@@ -97,6 +103,21 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		settings.create_protocol_on_upload = mode
 		settings.flags.ignore_permissions = True
 		settings.save()
+
+	def test_read_xml_bytes_quiet_reads_public_file(self):
+		"""Public `/files/...` must use **File** ``get_content`` (not ``site/files``)."""
+		file_name = self._make_xml_file(is_private=0, file_name="public-protocol.xml")
+		file_doc = frappe.get_doc("File", file_name)
+		self.assertTrue(file_doc.file_url.startswith("/files/"))
+		xml_bytes = _read_xml_bytes_quiet(file_doc)
+		self.assertEqual(xml_bytes, CII_FIXTURE.read_bytes())
+
+	def test_get_xml_bytes_reads_public_file(self):
+		"""Viewer / Import helper must also read public files via **File** content API."""
+		file_name = self._make_xml_file(is_private=0, file_name="public-import.xml")
+		file_doc = frappe.get_doc("File", file_name)
+		self.assertTrue(file_doc.file_url.startswith("/files/"))
+		self.assertEqual(get_xml_bytes(file_doc.file_url), CII_FIXTURE.read_bytes())
 
 	def test_stub_creation_stores_hash_and_format(self):
 		file_name = self._make_xml_file()
@@ -179,6 +200,29 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 			enqueue.assert_called_once()
 			self.assertEqual(enqueue.call_args.kwargs["file_name"], file_doc.name)
 			self.assertIn("create_protocol_stub_from_file", enqueue.call_args.args[0])
+			self.assertTrue(enqueue.call_args.kwargs["deduplicate"])
+			self.assertEqual(
+				enqueue.call_args.kwargs["job_id"],
+				f"einvoice-protocol-stub-{file_doc.name}",
+			)
+
+	def test_stub_creation_is_idempotent_for_same_file(self):
+		"""Concurrent stub + validate jobs must not create a second protocol for one File."""
+		file_name = self._make_xml_file()
+		first = create_protocol_stub_from_file(file_name)
+		second = create_protocol_stub_from_file(file_name)
+		self.assertEqual(first.name, second.name)
+		self.assertEqual(frappe.db.count("E Invoice Protocol", {"file": file_name}), 1)
+
+	def test_protocol_file_field_is_unique(self):
+		file_name = self._make_xml_file()
+		create_protocol_stub_from_file(file_name)
+		dup = frappe.new_doc("E Invoice Protocol")
+		dup.result = "Pending"
+		dup.file = file_name
+		dup.flags.ignore_links = True
+		with self.assertRaises((frappe.UniqueValidationError, frappe.DuplicateEntryError)):
+			dup.insert(ignore_permissions=True)
 
 	def test_deleting_file_keeps_protocol(self):
 		"""Protocol is in ignore_links_on_delete - File delete must not require Protocol delete."""
@@ -194,6 +238,28 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		protocol = frappe.get_doc("E Invoice Protocol", protocol_name)
 		self.assertTrue(protocol.file_hash)
 		self.assertEqual(protocol.file_name, "test-einvoice.xml")
+
+	def test_cannot_delete_original_while_copies_exist(self):
+		"""ignore_links_on_delete would allow this; on_trash must still block dangling copied_from."""
+		first = self._make_xml_file()
+		create_protocol_stub_from_file(first)
+		validate_protocol_for_file(first)
+		original_name = frappe.db.get_value("E Invoice Protocol", {"file": first}, "name")
+
+		second = self._make_xml_file()
+		create_protocol_stub_from_file(second)
+		copy = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": second}, "name")
+		)
+		self.assertEqual(copy.copied_from, original_name)
+
+		with self.assertRaises(frappe.ValidationError):
+			frappe.delete_doc("E Invoice Protocol", original_name, force=False, ignore_permissions=True)
+		self.assertTrue(frappe.db.exists("E Invoice Protocol", original_name))
+
+		frappe.delete_doc("E Invoice Protocol", copy.name, force=False, ignore_permissions=True)
+		frappe.delete_doc("E Invoice Protocol", original_name, force=False, ignore_permissions=True)
+		self.assertFalse(frappe.db.exists("E Invoice Protocol", original_name))
 
 	def test_validation_copied_for_same_hashes(self):
 		"""Second File with the same content_hash + file_hash + ruleset_hash copies validation."""
@@ -408,6 +474,67 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 			maybe_validate_protocol_on_attach(file_doc)
 			enqueue.assert_called_once()
 			self.assertIn("validate_protocol_for_file", enqueue.call_args.args[0])
+			self.assertTrue(enqueue.call_args.kwargs["deduplicate"])
+			self.assertEqual(
+				enqueue.call_args.kwargs["job_id"],
+				f"einvoice-protocol-validate-{file_doc.name}",
+			)
+
+	def test_parent_attach_hook_validates_orphan_owned_via_set_value(self):
+		"""File Manager orphan attached through an Attach field skips File.on_update.
+
+		Frappe uses frappe.db.set_value in attach_files_to_document; parent on_update
+		must still enqueue Schematron for the Pending stub.
+		"""
+		file_name = self._make_xml_file()
+		create_protocol_stub_from_file(file_name)
+		file_doc = frappe.get_doc("File", file_name)
+		self.assertFalse(file_doc.attached_to_doctype)
+
+		# Same path as frappe.core.doctype.file.utils._attach_field_values
+		frappe.db.set_value(
+			"File",
+			file_name,
+			{
+				"attached_to_name": "PINV-ORPHAN-1",
+				"attached_to_doctype": "Purchase Invoice",
+				"attached_to_field": "supplier_invoice_file",
+			},
+		)
+
+		parent = frappe.new_doc("Purchase Invoice")
+		parent.name = "PINV-ORPHAN-1"
+		parent.supplier_invoice_file = file_doc.file_url
+		# No _doc_before_save => has_value_changed is True for set fields
+
+		with patch("eu_einvoice.european_e_invoice.protocol.frappe.enqueue") as enqueue:
+			maybe_validate_protocol_on_parent_attach(parent)
+			enqueue.assert_called_once()
+			self.assertIn("validate_protocol_for_file", enqueue.call_args.args[0])
+			self.assertEqual(enqueue.call_args.kwargs.get("file_name"), file_name)
+
+	def test_parent_attach_hook_skips_when_attach_unchanged(self):
+		file_name = self._make_xml_file()
+		file_doc = frappe.get_doc("File", file_name)
+		frappe.db.set_value(
+			"File",
+			file_name,
+			{
+				"attached_to_name": "PINV-ORPHAN-2",
+				"attached_to_doctype": "Purchase Invoice",
+				"attached_to_field": "supplier_invoice_file",
+			},
+		)
+
+		parent = frappe.new_doc("Purchase Invoice")
+		parent.name = "PINV-ORPHAN-2"
+		parent.supplier_invoice_file = file_doc.file_url
+		parent._doc_before_save = frappe.new_doc("Purchase Invoice")
+		parent._doc_before_save.supplier_invoice_file = file_doc.file_url
+
+		with patch("eu_einvoice.european_e_invoice.protocol.frappe.enqueue") as enqueue:
+			maybe_validate_protocol_on_parent_attach(parent)
+			enqueue.assert_not_called()
 
 	def test_attach_hook_updates_reference_when_already_settled(self):
 		file_name = self._make_xml_file()
@@ -494,13 +621,27 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 			maybe_validate_protocol_on_attach(file_doc)
 			enqueue.assert_not_called()
 
+	def _attach_file_to_import(self, file_name: str, import_name: str, fieldname: str = "einvoice"):
+		frappe.db.set_value(
+			"File",
+			file_name,
+			{
+				"attached_to_doctype": "E Invoice Import",
+				"attached_to_name": import_name,
+				"attached_to_field": fieldname,
+			},
+			update_modified=False,
+		)
+
 	def test_store_validation_from_import(self):
 		file_name = self._make_xml_file()
 		file_doc = frappe.get_doc("File", file_name)
 		xml_bytes = CII_FIXTURE.read_bytes()
+		import_name = "EII-STORE-1"
+		self._attach_file_to_import(file_name, import_name)
 		import_doc = frappe._dict(
 			doctype="E Invoice Import",
-			name="EII-STORE-1",
+			name=import_name,
 			einvoice=file_doc.file_url,
 			profile=EInvoiceProfile.EN16931.value,
 		)
@@ -512,16 +653,63 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertEqual(protocol.validation_errors, "BR-1: error")
 		self.assertEqual(protocol.validation_warnings, "BR-2: warn")
 		self.assertEqual(protocol.reference_doctype, "E Invoice Import")
-		self.assertEqual(protocol.reference_name, "EII-STORE-1")
+		self.assertEqual(protocol.reference_name, import_name)
 		self.assertEqual(protocol.invoice_profile, EInvoiceProfile.EN16931.value)
+
+	def test_store_validation_from_import_uses_this_imports_file(self):
+		"""Same file_url on two Files: update the import's attachment, not the other File's protocol."""
+		xml_bytes = CII_FIXTURE.read_bytes()
+		import_name = "EII-URL-COPY"
+		import_file_name = self._make_xml_file()
+		self._attach_file_to_import(import_file_name, import_name)
+		file_url = frappe.db.get_value("File", import_file_name, "file_url")
+		create_protocol_stub_from_file(import_file_name)
+		import_protocol_name = frappe.db.get_value("E Invoice Protocol", {"file": import_file_name}, "name")
+
+		# Newer File row reusing the same URL (create_attachment_copy). URL-only lookup
+		# often returns this row and would rewrite the wrong protocol without the fix.
+		other = frappe.get_doc("File", import_file_name).create_attachment_copy(
+			"E Invoice Import",
+			"EII-OTHER-DOC",
+			attached_to_field="einvoice",
+			ignore_permissions=True,
+		)
+		self.assertEqual(other.file_url, file_url)
+		self.assertNotEqual(other.name, import_file_name)
+		create_protocol_stub_from_file(other.name)
+		self.assertGreaterEqual(frappe.db.count("File", {"file_url": file_url}), 2)
+
+		import_doc = frappe._dict(
+			doctype="E Invoice Import",
+			name=import_name,
+			einvoice=file_url,
+			profile=EInvoiceProfile.EN16931.value,
+		)
+		store_validation_from_import(import_doc, xml_bytes, ["BR-copy: error"], [])
+
+		import_protocol = frappe.get_doc("E Invoice Protocol", import_protocol_name)
+		self.assertEqual(import_protocol.result, "Invalid")
+		self.assertEqual(import_protocol.validation_errors, "BR-copy: error")
+		self.assertEqual(import_protocol.reference_doctype, "E Invoice Import")
+		self.assertEqual(import_protocol.reference_name, import_name)
+		self.assertEqual(import_protocol.file, import_file_name)
+
+		# Sibling hash propagation may settle the other row; must not rewrite its File / reference
+		other_protocol = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": other.name}, "name")
+		)
+		self.assertEqual(other_protocol.file, other.name)
+		self.assertNotEqual(other_protocol.reference_name, import_name)
 
 	def test_store_validation_from_import_skips_when_disabled(self):
 		self._set_upload_mode(UPLOAD_MODE_NONE)
 		file_name = self._make_xml_file()
 		file_doc = frappe.get_doc("File", file_name)
+		import_name = "EII-SKIP"
+		self._attach_file_to_import(file_name, import_name)
 		import_doc = frappe._dict(
 			doctype="E Invoice Import",
-			name="EII-SKIP",
+			name=import_name,
 			einvoice=file_doc.file_url,
 			profile=EInvoiceProfile.EN16931.value,
 		)
@@ -563,7 +751,8 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertEqual(reused[2], original.result)
 
 	def test_import_xrechnung_runs_en16931_as_well(self):
-		file_name = self._make_xml_file()
+		# Protocol store resolves File via attachment on this import (file_url alone is not unique)
+		file_name = self._make_xml_file(attached_to_doctype="E Invoice Import", attached_to_name="EII-XR-1")
 		file_doc = frappe.get_doc("File", file_name)
 		import_doc = frappe.new_doc("E Invoice Import")
 		import_doc.name = "EII-XR-1"
@@ -593,3 +782,145 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertIn("xr-err", protocol.validation_errors)
 		self.assertIn("en-err", protocol.validation_errors)
 		self.assertEqual(protocol.invoice_profile, EInvoiceProfile.XRECHNUNG.value)
+
+
+class TestEInvoiceProtocolPermissions(IntegrationTestCase):
+	"""Accounts read is scoped to linked File / reference, not role-wide.
+
+	Uses dedicated users (not test@example.com) so System Manager is not in play.
+	"""
+
+	OWNER = "protocol_owner@example.com"
+	OTHER = "protocol_other@example.com"
+
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		for email, first_name in (
+			(cls.OWNER, "Protocol Owner"),
+			(cls.OTHER, "Protocol Other"),
+		):
+			if frappe.db.exists("User", email):
+				user = frappe.get_doc("User", email)
+			else:
+				user = frappe.get_doc(
+					{
+						"doctype": "User",
+						"email": email,
+						"first_name": first_name,
+						"send_welcome_email": 0,
+					}
+				).insert(ignore_permissions=True)
+			user.add_roles("Accounts User")
+			# Ensure System Manager never sneaks in on reused users
+			if "System Manager" in frappe.get_roles(email):
+				user.remove_roles("System Manager")
+
+	def setUp(self):
+		super().setUp()
+		frappe.set_user("Administrator")
+		frappe.db.delete("E Invoice Protocol")
+
+	def tearDown(self):
+		frappe.set_user("Administrator")
+		frappe.db.delete("E Invoice Protocol")
+		super().tearDown()
+
+	def _make_private_xml_owned_by(self, owner: str) -> str:
+		file_doc = frappe.get_doc(
+			{
+				"doctype": "File",
+				"file_name": "protocol-perm-test.xml",
+				"content": CII_FIXTURE.read_bytes(),
+				"is_private": 1,
+			}
+		)
+		with patch(
+			"eu_einvoice.european_e_invoice.protocol.maybe_create_protocol_stub",
+			return_value=None,
+		):
+			file_doc.insert(ignore_permissions=True)
+		frappe.db.set_value("File", file_doc.name, "owner", owner, update_modified=False)
+		return file_doc.name
+
+	def test_accounts_user_reads_own_unattached_private_stub(self):
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol import (
+			has_permission,
+		)
+
+		file_name = self._make_private_xml_owned_by(self.OWNER)
+		create_protocol_stub_from_file(file_name)
+		protocol = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name")
+		)
+
+		self.assertTrue(has_permission(protocol, "read", user=self.OWNER))
+		self.assertFalse(has_permission(protocol, "read", user=self.OTHER))
+
+	def test_list_hides_other_users_empty_company_stub(self):
+		"""Empty *Company* must not make private upload stubs visible to all Accounts users."""
+		file_name = self._make_private_xml_owned_by(self.OWNER)
+		create_protocol_stub_from_file(file_name)
+		protocol_name = frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name")
+
+		frappe.set_user(self.OTHER)
+		self.assertNotIn(
+			protocol_name,
+			frappe.get_list("E Invoice Protocol", pluck="name", limit=100),
+		)
+
+		frappe.set_user(self.OWNER)
+		self.assertIn(
+			protocol_name,
+			frappe.get_list("E Invoice Protocol", pluck="name", limit=100),
+		)
+
+	def test_accounts_denied_when_file_and_reference_gone(self):
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol import (
+			get_permission_query_conditions,
+			has_permission,
+		)
+
+		file_name = self._make_private_xml_owned_by(self.OWNER)
+		create_protocol_stub_from_file(file_name)
+		protocol = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name")
+		)
+		frappe.db.set_value(
+			"E Invoice Protocol",
+			protocol.name,
+			{"file": None, "reference_doctype": None, "reference_name": None},
+			update_modified=False,
+		)
+		protocol.reload()
+
+		self.assertFalse(has_permission(protocol, "read", user=self.OWNER))
+		self.assertTrue(has_permission(protocol, "read", user="Administrator"))
+		self.assertEqual(get_permission_query_conditions("Administrator"), "")
+
+	def test_read_allowed_via_readable_reference_without_file(self):
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol import (
+			has_permission,
+		)
+
+		frappe.get_doc("User", self.OWNER).add_roles("Purchase User")
+		company = frappe.db.get_value("Company", {}, "name")
+		import_doc = frappe.get_doc({"doctype": "E Invoice Import", "company": company}).insert(
+			ignore_permissions=True
+		)
+		self.addCleanup(lambda: frappe.delete_doc("E Invoice Import", import_doc.name, force=True))
+
+		protocol = frappe.get_doc(
+			{
+				"doctype": "E Invoice Protocol",
+				"result": "Pending",
+				"reference_doctype": "E Invoice Import",
+				"reference_name": import_doc.name,
+				"company": company,
+			}
+		)
+		protocol.flags.ignore_links = True
+		protocol.insert(ignore_permissions=True)
+
+		self.assertTrue(has_permission(protocol, "read", user=self.OWNER))
+		self.assertFalse(has_permission(protocol, "read", user=self.OTHER))

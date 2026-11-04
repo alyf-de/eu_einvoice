@@ -1,22 +1,13 @@
 # Copyright (c) 2026, ALYF GmbH and Contributors
 # See license.txt
 
-# import frappe
+# Permission tests live in european_e_invoice.test_protocol (TestEInvoiceProtocolPermissions)
+# to avoid DocType IntegrationTestCase fixture loading (Fiscal Year) on this suite.
 from frappe.tests import IntegrationTestCase
 
-
-# On IntegrationTestCase, the doctype test records and all
-# link-field test record dependencies are recursively loaded
-# Use these module variables to add/remove to/from that list
-EXTRA_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
-IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
-
+EXTRA_TEST_RECORD_DEPENDENCIES = []
+IGNORE_TEST_RECORD_DEPENDENCIES = []
 
 
 class IntegrationTestEInvoiceProtocol(IntegrationTestCase):
-	"""
-	Integration tests for EInvoiceProtocol.
-	Use this class for testing interactions between multiple components.
-	"""
-
 	pass
