@@ -583,6 +583,23 @@ class TestMixedVatInvoice(IntegrationTestCase):
 		)
 		self.assertEqual(get_vat_errors(xml), [])
 
+	def test_exemption_text_from_the_invoice(self):
+		"""The invoice's own exemption note comes after the Item Tax Template and before the settings."""
+		frappe.db.set_single_value("E Invoice Settings", "vat_exemption_reason_text", "Steuerschuldnerschaft")
+		invoice = self._make_invoice([self.intra_community, self.reverse_charge], [])
+		# Custom field of other apps (e.g. erpnext_germany), filled from the Sales Taxes and Charges Template
+		invoice.tax_exemption_reason = "Steuerschuldnerschaft des Leistungsempfängers"
+
+		breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual(
+			[(b["category"], b["reason"]) for b in breakdowns],
+			[
+				("K", "Innergemeinschaftliche Lieferung"),
+				("AE", "Steuerschuldnerschaft des Leistungsempfängers"),
+			],
+		)
+
 
 class TestXmlAttachmentNaming(IntegrationTestCase):
 	def test_auto_name_format_from_e_invoice_settings(self):

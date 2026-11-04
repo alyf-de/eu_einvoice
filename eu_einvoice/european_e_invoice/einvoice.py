@@ -581,9 +581,14 @@ class EInvoiceGenerator:
 		)
 		trade_tax.exemption_reason_code = exemption_reason_code.upper()
 
-		# BT-120: the text of the lines' Item Tax Template, else the default from the settings
+		# BT-120: the text of the lines' Item Tax Template, else the invoice's exemption note, else the
+		# default from the settings. `tax_exemption_reason` is not ours: erpnext_germany adds it (fetched
+		# from the Sales Taxes and Charges Template) and prints it. Read it only if it exists.
+		invoice_text = (self.invoice.get("tax_exemption_reason") or "").strip()
 		exemption_reason_text = (
-			self.line_exemption_reason_texts.get(category_code) or self.vat_exemption_reason_text
+			self.line_exemption_reason_texts.get(category_code)
+			or invoice_text
+			or self.vat_exemption_reason_text
 		)
 		if exemption_reason_text:
 			trade_tax.exemption_reason = exemption_reason_text
