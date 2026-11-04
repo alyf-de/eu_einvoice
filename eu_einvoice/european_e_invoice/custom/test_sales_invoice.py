@@ -497,6 +497,20 @@ class TestMixedVatInvoice(IntegrationTestCase):
 			[(b["rate"], b["basis"], b["tax"]) for b in breakdowns], [(19, 0.04, 0), (7, 0.01, 0)]
 		)
 
+	def test_rates_on_one_account_after_rounding_setting_changed(self):
+		"""The rounding setting may change after the invoice was saved: the split doesn't depend on it."""
+		invoice = self._make_invoice(
+			[self.standard, self.standard, self.reduced_on_19], [self.vat_19], rates=[0.02, 0.02, 1]
+		)
+		self.assertEqual(invoice.taxes[0].tax_amount, 0.08)
+
+		with self.change_settings("Accounts Settings", {"round_row_wise_tax": 1}):
+			breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual(
+			[(b["rate"], b["basis"], b["tax"]) for b in breakdowns], [(19, 0.04, 0.01), (7, 1, 0.07)]
+		)
+
 	def test_exempt_lines_with_exempt_freight(self):
 		"""Freight with VAT on a previous row of the exempt category: one breakdown for lines and freight."""
 		vat_exempt = self._make_tax_account("_Test USt frei", 0)

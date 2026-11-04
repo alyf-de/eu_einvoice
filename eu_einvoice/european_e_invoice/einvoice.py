@@ -496,32 +496,26 @@ class EInvoiceGenerator:
 			basis = self.zero_rate_net_amounts.pop(category_code, None)
 			return [] if basis is None else [(0, flt(basis, precision), tax.tax_amount)]
 
-		# Sum the tax per line like ERPNext does, so the groups add up to the row's tax amount
-		round_per_line = frappe.db.get_single_value("Accounts Settings", "round_row_wise_tax")
 		basis_by_rate = {}
-		tax_by_rate = {}
 		for item in self.invoice.items:
 			rate = get_line_rate_on_row(item.item_tax_rate, tax)
 			if rate:
 				net_amount = flt(item.net_amount, item.precision("net_amount"))
-				line_tax = net_amount * rate / 100
-				if round_per_line:
-					line_tax = flt(line_tax, tax.precision("tax_amount"))
-
 				basis_by_rate[rate] = basis_by_rate.get(rate, 0) + net_amount
-				tax_by_rate[rate] = tax_by_rate.get(rate, 0) + line_tax
 
-		groups = [
-			(rate, flt(basis, precision), flt(tax_by_rate[rate], precision))
-			for rate, basis in basis_by_rate.items()
-		]
+		groups = []
+		for rate, basis in basis_by_rate.items():
+			basis = flt(basis, precision)
+			groups.append((rate, basis, flt(basis * rate / 100, precision)))
 
 		if groups:
-			# The tax amounts must add up to the row's tax amount (BR-CO-14), so the last
-			# group takes the rounding difference.
-			rate, basis, _tax_amount = groups[-1]
-			rest = tax.tax_amount - sum(tax_amount for _rate, _basis, tax_amount in groups[:-1])
-			groups[-1] = (rate, basis, flt(rest, precision))
+			# The tax amounts must add up to the row's tax amount as stored (BR-CO-14). The group
+			# with the largest basis takes the rounding difference, e.g. from rounding each line's
+			# tax ("Round Tax Amount Row-wise"), so it stays small relative to that group's tax.
+			largest = max(range(len(groups)), key=lambda i: abs(groups[i][1]))
+			rate, basis, tax_amount = groups[largest]
+			difference = tax.tax_amount - sum(tax_amount for _rate, _basis, tax_amount in groups)
+			groups[largest] = (rate, basis, flt(tax_amount + difference, precision))
 
 		return groups
 
