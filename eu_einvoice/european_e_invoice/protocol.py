@@ -150,7 +150,13 @@ def maybe_validate_protocol_on_parent_attach(doc, method=None):
 
 
 def _maybe_validate_protocol_on_parent_attach(doc):
-	if doc.doctype in ("File", "E Invoice Protocol", "E Invoice Import"):
+	if doc.doctype in ("File", "E Invoice Protocol"):
+		return
+
+	# **E Invoice Import**: flush Schematron results after attach_files (before_save is too early).
+	# Do not enqueue attach-time Schematron for the *E Invoice* (`einvoice`) field file.
+	if doc.doctype == "E Invoice Import":
+		_flush_import_protocol_payload(doc)
 		return
 
 	settings = _get_protocol_settings()
@@ -174,6 +180,15 @@ def _maybe_validate_protocol_on_parent_attach(doc):
 	)
 	for file_name in file_names:
 		_maybe_validate_protocol_on_attach(frappe.get_doc("File", file_name))
+
+
+def _flush_import_protocol_payload(doc):
+	"""Persist deferred import validation onto the File attached in this save."""
+	payload = getattr(doc.flags, "einvoice_protocol_payload", None)
+	if not payload:
+		return
+	store_validation_from_import(doc, payload["xml_bytes"], payload["errors"], payload["warnings"])
+	doc.flags.einvoice_protocol_payload = None
 
 
 def _changed_attach_urls(doc) -> list[str]:
@@ -200,8 +215,9 @@ def _maybe_validate_protocol_on_attach(doc):
 	if doc.attached_to_doctype not in settings["protocol_doctypes"]:
 		return
 
-	# **E Invoice Import** fills the protocol from `_validate_schematron` (same request).
-	if doc.attached_to_doctype == "E Invoice Import":
+	# Import *E Invoice* (`einvoice`) is filled from `_validate_schematron` after attach.
+	# Other files on the same import (sidebar) still need attach-time validation.
+	if doc.attached_to_doctype == "E Invoice Import" and _is_import_einvoice_file(doc):
 		return
 
 	existing = _find_protocol_for_file(doc.name)
@@ -219,6 +235,17 @@ def _maybe_validate_protocol_on_attach(doc):
 		doc.name,
 		job_suffix="validate",
 	)
+
+
+def _is_import_einvoice_file(file_doc) -> bool:
+	"""True when this File is the import's *E Invoice* (`einvoice`) Attach field."""
+	if file_doc.attached_to_field == "einvoice":
+		return True
+	if file_doc.attached_to_field:
+		return False
+	# Sidebar attach leaves attached_to_field empty; only skip when URL matches einvoice.
+	einvoice_url = frappe.db.get_value("E Invoice Import", file_doc.attached_to_name, "einvoice")
+	return bool(einvoice_url and einvoice_url == file_doc.file_url)
 
 
 def create_protocol_stub_from_file(file_name: str):
@@ -287,8 +314,10 @@ def _validate_protocol_for_file(file_name: str):
 		_update_protocol_reference(protocol, file_doc)
 		return
 
-	profile_for_rules = protocol.invoice_profile or _cheap_profile(xml_bytes, einvoice_format)
-	ruleset_hash = _ruleset_hash_for_format(einvoice_format, profile_for_rules)
+	profile_label = protocol.invoice_profile or _cheap_profile(xml_bytes, einvoice_format)
+	# Lookup hash must match the profile actually used for Schematron (EN16931 fallback).
+	profile = _effective_cii_profile(profile_label) if einvoice_format == EInvoiceFormat.CII else None
+	ruleset_hash = _ruleset_hash_for_format(einvoice_format, profile_label)
 
 	# Serialize Schematron / copy for the same hashes so concurrent workers do not double-run
 	with frappe.db.advisory_lock(
@@ -310,18 +339,12 @@ def _validate_protocol_for_file(file_name: str):
 			return
 
 		# Schematron in this app is CII-oriented; UBL etc. cannot be checked yet
-		if einvoice_format != EInvoiceFormat.CII:
+		if einvoice_format != EInvoiceFormat.CII or profile is None:
 			_mark_unsupported(protocol, einvoice_format)
 			_update_protocol_reference(protocol, file_doc)
 			protocol.flags.ignore_links = True
 			protocol.save(ignore_permissions=True)
 			return
-
-		profile_label = protocol.invoice_profile or _cheap_profile(xml_bytes, einvoice_format)
-		try:
-			profile = EInvoiceProfile(profile_label) if profile_label else EInvoiceProfile.EN16931
-		except ValueError:
-			profile = EInvoiceProfile.EN16931
 
 		xml_string = xml_bytes.decode("utf-8")
 		errors, warnings = get_validation_errors(xml_string, profile)
@@ -469,7 +492,11 @@ def store_validation_result(
 
 
 def store_validation_from_import(import_doc, xml_bytes: bytes, errors: list[str], warnings: list[str]):
-	"""Called after **E Invoice Import** `_validate_schematron` (reuse its results)."""
+	"""Persist import Schematron results onto the File for *E Invoice* (`einvoice`).
+
+	Call after ``attach_files_to_document`` (parent ``on_update`` hook). Looking up
+	the File in ``before_save`` is too early: Frappe attaches owned uploads then.
+	"""
 	settings = _get_protocol_settings()
 	if settings["create_protocol_on_upload"] == UPLOAD_MODE_NONE:
 		return
@@ -484,6 +511,9 @@ def store_validation_from_import(import_doc, xml_bytes: bytes, errors: list[str]
 		attached_to_name=import_doc.name,
 		attached_to_field="einvoice",
 	)
+	# attach_files may still be pending in tests that call this directly: use the orphan.
+	if not file_doc:
+		file_doc = _find_orphan_file(file_url)
 
 	einvoice_format = detect_einvoice_format(xml_bytes)
 	store_validation_result(
@@ -635,11 +665,25 @@ def _resolve_original(protocol):
 	return current
 
 
-def _ruleset_hash_for_format(einvoice_format: EInvoiceFormat, profile: str | None) -> str:
-	"""Ruleset identity for reuse; empty when Schematron does not apply (non-CII)."""
+def _effective_cii_profile(profile_label: str | EInvoiceProfile | None) -> EInvoiceProfile:
+	"""Profile used for Schematron: missing / unrecognized labels fall back to EN 16931."""
+	if isinstance(profile_label, EInvoiceProfile):
+		return profile_label
+	try:
+		return EInvoiceProfile(profile_label) if profile_label else EInvoiceProfile.EN16931
+	except ValueError:
+		return EInvoiceProfile.EN16931
+
+
+def _ruleset_hash_for_format(einvoice_format: EInvoiceFormat, profile: str | EInvoiceProfile | None) -> str:
+	"""Ruleset identity for reuse; empty when Schematron does not apply (non-CII).
+
+	Uses the same effective profile as validation so a missing or unknown guideline
+	hashes as EN 16931 and can reuse a prior result instead of re-running Schematron.
+	"""
 	if einvoice_format != EInvoiceFormat.CII:
 		return ""
-	return get_ruleset_hash(profile)
+	return get_ruleset_hash(_effective_cii_profile(profile))
 
 
 def _find_original_validation(
@@ -877,6 +921,24 @@ def _find_attached_file(
 		attached_to_field=attached_to_field,
 	)
 	return frappe.get_doc("File", row.name) if row else None
+
+
+def _find_orphan_file(file_url: str | None):
+	"""Owned unattached File for this URL (same filters as Frappe attach_files)."""
+	if not file_url:
+		return None
+	name = frappe.db.get_value(
+		"File",
+		{
+			"file_url": file_url,
+			"attached_to_doctype": ["is", "not set"],
+			"attached_to_name": ["is", "not set"],
+			"attached_to_field": ["is", "not set"],
+			"owner": frappe.session.user,
+		},
+		"name",
+	)
+	return frappe.get_doc("File", name) if name else None
 
 
 def _sha256(data: bytes) -> str:

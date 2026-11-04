@@ -227,7 +227,6 @@ class EInvoiceImport(Document):
 
 		from eu_einvoice.european_e_invoice.protocol import (
 			reuse_validation_for_hashes,
-			store_validation_from_import,
 			xml_content_hash,
 		)
 
@@ -242,6 +241,18 @@ class EInvoiceImport(Document):
 					"file_url": file_url,
 					"attached_to_doctype": self.doctype,
 					"attached_to_name": self.name,
+				},
+				"content_hash",
+			)
+		if file_url and not content_hash:
+			# Owned orphan (File Manager upload) - attach_files links it in on_update
+			content_hash = frappe.db.get_value(
+				"File",
+				{
+					"file_url": file_url,
+					"attached_to_doctype": ["is", "not set"],
+					"attached_to_name": ["is", "not set"],
+					"owner": frappe.session.user,
 				},
 				"content_hash",
 			)
@@ -286,7 +297,12 @@ class EInvoiceImport(Document):
 		if any(validation_warnings):
 			self.validation_warnings += "\n".join(validation_warnings)
 
-		store_validation_from_import(self, xml_bytes, validation_errors, validation_warnings)
+		# Defer protocol write until after attach_files (parent on_update hook).
+		self.flags.einvoice_protocol_payload = {
+			"xml_bytes": xml_bytes,
+			"errors": list(validation_errors) if validation_errors else [],
+			"warnings": list(validation_warnings) if validation_warnings else [],
+		}
 
 	def parse_seller(self, seller: TradeParty):
 		# stripped, because we use them to find the Supplier

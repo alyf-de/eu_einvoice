@@ -16,7 +16,10 @@ from eu_einvoice.european_e_invoice.protocol import (
 	UPLOAD_MODE_NONE,
 	UPLOAD_MODE_SELECTED,
 	_company_from_reference,
+	_effective_cii_profile,
+	_flush_import_protocol_payload,
 	_read_xml_bytes_quiet,
+	_ruleset_hash_for_format,
 	create_protocol_stub_from_file,
 	maybe_create_protocol_stub,
 	maybe_validate_protocol_on_attach,
@@ -455,14 +458,24 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 			maybe_validate_protocol_on_attach(remote)
 			enqueue.assert_not_called()
 
-	def test_attach_hook_skips_e_invoice_import(self):
-		file_doc = frappe.get_doc(
-			"File",
-			self._make_xml_file(attached_to_doctype="E Invoice Import", attached_to_name="EII-1"),
-		)
+	def test_attach_hook_skips_import_einvoice_field(self):
+		file_name = self._make_xml_file(attached_to_doctype="E Invoice Import", attached_to_name="EII-1")
+		frappe.db.set_value("File", file_name, "attached_to_field", "einvoice", update_modified=False)
+		file_doc = frappe.get_doc("File", file_name)
 		with patch("eu_einvoice.european_e_invoice.protocol.frappe.enqueue") as enqueue:
 			maybe_validate_protocol_on_attach(file_doc)
 			enqueue.assert_not_called()
+
+	def test_attach_hook_enqueues_sidebar_file_on_e_invoice_import(self):
+		"""Sidebar CII on **E Invoice Import** is not filled by `_validate_schematron`."""
+		file_name = self._make_xml_file(attached_to_doctype="E Invoice Import", attached_to_name="EII-SIDE")
+		file_doc = frappe.get_doc("File", file_name)
+		self.assertFalse(file_doc.attached_to_field)
+		create_protocol_stub_from_file(file_name)
+		with patch("eu_einvoice.european_e_invoice.protocol.frappe.enqueue") as enqueue:
+			maybe_validate_protocol_on_attach(file_doc)
+			enqueue.assert_called_once()
+			self.assertIn("validate_protocol_for_file", enqueue.call_args.args[0])
 
 	def test_attach_hook_enqueues_validation_for_purchase_invoice(self):
 		file_doc = frappe.get_doc(
@@ -753,6 +766,7 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 	def test_import_xrechnung_runs_en16931_as_well(self):
 		# Protocol store resolves File via attachment on this import (file_url alone is not unique)
 		file_name = self._make_xml_file(attached_to_doctype="E Invoice Import", attached_to_name="EII-XR-1")
+		frappe.db.set_value("File", file_name, "attached_to_field", "einvoice", update_modified=False)
 		file_doc = frappe.get_doc("File", file_name)
 		import_doc = frappe.new_doc("E Invoice Import")
 		import_doc.name = "EII-XR-1"
@@ -775,6 +789,9 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertIn("xr-err", import_doc.validation_errors)
 		self.assertIn("en-err", import_doc.validation_errors)
 
+		# Protocol is written after attach (parent on_update), not in before_save
+		_flush_import_protocol_payload(import_doc)
+
 		protocol = frappe.get_doc(
 			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name")
 		)
@@ -782,6 +799,96 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		self.assertIn("xr-err", protocol.validation_errors)
 		self.assertIn("en-err", protocol.validation_errors)
 		self.assertEqual(protocol.invoice_profile, EInvoiceProfile.XRECHNUNG.value)
+
+	def test_ruleset_hash_uses_en16931_fallback_for_unknown_profile(self):
+		"""Lookup hash must match Schematron's EN 16931 fallback for missing/unknown profiles."""
+		en_hash = get_ruleset_hash(EInvoiceProfile.EN16931)
+		self.assertEqual(_effective_cii_profile(None), EInvoiceProfile.EN16931)
+		self.assertEqual(_effective_cii_profile("urn:unknown:guideline"), EInvoiceProfile.EN16931)
+		self.assertEqual(_ruleset_hash_for_format(EInvoiceFormat.CII, None), en_hash)
+		self.assertEqual(_ruleset_hash_for_format(EInvoiceFormat.CII, "urn:unknown:guideline"), en_hash)
+		self.assertEqual(_ruleset_hash_for_format(EInvoiceFormat.UBL_INVOICE, None), "")
+
+	def test_unknown_profile_reuses_prior_en16931_validation(self):
+		"""Second upload with unrecognized guideline must copy, not re-run Schematron."""
+		first = self._make_xml_file()
+		create_protocol_stub_from_file(first)
+		# Force unknown profile on the stub so lookup previously used an empty ruleset hash
+		protocol_name = frappe.db.get_value("E Invoice Protocol", {"file": first}, "name")
+		frappe.db.set_value(
+			"E Invoice Protocol",
+			protocol_name,
+			{"invoice_profile": "urn:unknown:guideline", "ruleset_hash": ""},
+			update_modified=False,
+		)
+
+		with patch(
+			"eu_einvoice.european_e_invoice.protocol.get_validation_errors",
+			return_value=(["only-once"], []),
+		) as schematron:
+			validate_protocol_for_file(first)
+			schematron.assert_called()
+
+		original = frappe.get_doc("E Invoice Protocol", protocol_name)
+		self.assertEqual(original.result, "Invalid")
+		self.assertEqual(original.invoice_profile, EInvoiceProfile.EN16931.value)
+		self.assertEqual(original.ruleset_hash, get_ruleset_hash(EInvoiceProfile.EN16931))
+
+		second = self._make_xml_file()
+		create_protocol_stub_from_file(second)
+		frappe.db.set_value(
+			"E Invoice Protocol",
+			frappe.db.get_value("E Invoice Protocol", {"file": second}, "name"),
+			{"invoice_profile": "urn:unknown:guideline", "result": "Pending", "ruleset_hash": ""},
+			update_modified=False,
+		)
+
+		with patch(
+			"eu_einvoice.european_e_invoice.protocol.get_validation_errors",
+			side_effect=AssertionError("Schematron must not run when effective ruleset matches"),
+		):
+			validate_protocol_for_file(second)
+
+		copied = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": second}, "name")
+		)
+		self.assertEqual(copied.result, "Invalid")
+		self.assertEqual(copied.copied_from, original.name)
+		self.assertEqual(copied.validation_errors, "only-once")
+
+	def test_import_protocol_store_waits_until_file_attached(self):
+		"""before_save must not write a settled protocol without File; flush after attach."""
+		file_name = self._make_xml_file()
+		file_doc = frappe.get_doc("File", file_name)
+		self.assertFalse(file_doc.attached_to_doctype)
+
+		import_doc = frappe.new_doc("E Invoice Import")
+		import_doc.name = "EII-DEFER-1"
+		import_doc.profile = EInvoiceProfile.EN16931.value
+		import_doc.einvoice = file_doc.file_url
+
+		with patch(
+			"eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.get_validation_errors",
+			return_value=(["deferred-err"], []),
+		):
+			import_doc._validate_schematron(CII_FIXTURE.read_bytes())
+
+		self.assertTrue(import_doc.flags.einvoice_protocol_payload)
+		# No attached File yet and store not flushed: no protocol for this file
+		self.assertFalse(frappe.db.exists("E Invoice Protocol", {"file": file_name, "result": "Invalid"}))
+
+		self._attach_file_to_import(file_name, import_doc.name)
+		maybe_validate_protocol_on_parent_attach(import_doc)
+
+		protocol = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name")
+		)
+		self.assertEqual(protocol.result, "Invalid")
+		self.assertEqual(protocol.validation_errors, "deferred-err")
+		self.assertEqual(protocol.content_hash, file_doc.content_hash)
+		self.assertEqual(protocol.reference_doctype, "E Invoice Import")
+		self.assertEqual(protocol.reference_name, import_doc.name)
+		self.assertIsNone(import_doc.flags.einvoice_protocol_payload)
 
 
 class TestEInvoiceProtocolPermissions(IntegrationTestCase):
