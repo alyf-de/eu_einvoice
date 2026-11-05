@@ -18,6 +18,7 @@ from eu_einvoice.european_e_invoice.protocol import (
 	_company_from_reference,
 	_effective_cii_profile,
 	_flush_import_protocol_payload,
+	_get_protocol_settings,
 	_read_xml_bytes_quiet,
 	_ruleset_hash_for_format,
 	create_protocol_stub_from_file,
@@ -548,6 +549,20 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		with patch("eu_einvoice.european_e_invoice.protocol.frappe.enqueue") as enqueue:
 			maybe_validate_protocol_on_parent_attach(parent)
 			enqueue.assert_not_called()
+
+	def test_error_log_does_not_recurse_when_settings_fail(self):
+		"""During migrate, settings can fail to load. Logging that error must not run the hook again."""
+		with patch(
+			"eu_einvoice.european_e_invoice.protocol._get_protocol_settings",
+			side_effect=frappe.db.ProgrammingError,
+		) as get_settings:
+			frappe.log_error(title="E Invoice protocol recursion test")
+
+		get_settings.assert_not_called()
+
+	def test_protocol_disabled_during_migrate(self):
+		with patch.dict(frappe.flags, {"in_migrate": True}):
+			self.assertEqual(_get_protocol_settings()["create_protocol_on_upload"], UPLOAD_MODE_NONE)
 
 	def test_attach_hook_updates_reference_when_already_settled(self):
 		file_name = self._make_xml_file()

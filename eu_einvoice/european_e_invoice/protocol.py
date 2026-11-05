@@ -159,14 +159,16 @@ def _maybe_validate_protocol_on_parent_attach(doc):
 		_flush_import_protocol_payload(doc)
 		return
 
+	# Check this first: most saves (e.g. Error Log) have no changed Attach field,
+	# so they never read settings. That also prevents a log_error loop if settings fail.
+	file_urls = _changed_attach_urls(doc)
+	if not file_urls:
+		return
+
 	settings = _get_protocol_settings()
 	if settings["create_protocol_on_upload"] == UPLOAD_MODE_NONE:
 		return
 	if doc.doctype not in settings["protocol_doctypes"]:
-		return
-
-	file_urls = _changed_attach_urls(doc)
-	if not file_urls:
 		return
 
 	file_names = frappe.get_all(
@@ -730,6 +732,10 @@ def _find_original_validation(
 def _get_protocol_settings() -> dict:
 	mode = UPLOAD_MODE_NONE
 	doctypes = list(DEFAULT_PROTOCOL_DOCTYPES)
+	# The settings tables may not be synced yet, and no uploads happen here.
+	if frappe.flags.in_migrate or frappe.flags.in_install:
+		return {"create_protocol_on_upload": mode, "protocol_doctypes": set(doctypes)}
+
 	if frappe.db.exists("DocType", "E Invoice Settings") and frappe.db.exists(
 		"E Invoice Settings", "E Invoice Settings"
 	):
