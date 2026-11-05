@@ -135,6 +135,8 @@ jobs:
         run: |
           pre-commit --version
           pre-commit install
+          # Build the hook environments now, so ruff etc. are ready during the session
+          pre-commit install-hooks
 
       - name: Install skills
         run: |

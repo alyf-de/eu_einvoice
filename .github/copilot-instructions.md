@@ -148,6 +148,12 @@ This repository uses pre-commit hooks that run automatically on `git commit`:
 - **eslint**: Lints JavaScript files
 - **commitlint**: Validates commit messages (conventional commits)
 
+Ruff is not installed in the bench virtualenv (`env/bin/python -m ruff` fails). To lint and format before a commit, run the hooks through pre-commit from the app directory:
+
+```bash
+pre-commit run --files path/to/file.py path/to/other_file.py
+```
+
 ### Commit Message Format
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```
