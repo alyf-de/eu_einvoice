@@ -86,6 +86,8 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual(doc.currency, "EUR")
 		self.assertEqual(doc.seller_name, "Seller GmbH")
 		self.assertEqual(doc.buyer_name, "Buyer GmbH")
+		self.assertIsNone(doc.seller_country)
+		self.assertIsNone(doc.buyer_country)
 		self.assertEqual(doc.profile, "EN 16931")
 		self.assertEqual(str(doc.issue_date), "2024-01-15")
 

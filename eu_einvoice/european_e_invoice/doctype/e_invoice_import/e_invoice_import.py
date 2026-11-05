@@ -279,7 +279,7 @@ class EInvoiceImport(Document):
 		self.set(f"{prefix}_address_line_1", str(address.line_one))
 		self.set(f"{prefix}_address_line_2", str(address.line_two))
 		self.set(f"{prefix}_postcode", str(address.postcode))
-		self.set(f"{prefix}_country", str(country))
+		self.set(f"{prefix}_country", country or None)
 
 	def parse_line_item(self, li: LineItem):
 		item = self.append("items")
