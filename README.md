@@ -20,6 +20,7 @@ You can also read the Markdown files in this repository:
 - [Setup](eu_einvoice/docs/en/eu_einvoice/setup.md)
 - [Sales Invoice](eu_einvoice/docs/en/eu_einvoice/sales-invoice.md)
 - [Purchase Invoice](eu_einvoice/docs/en/eu_einvoice/purchase-invoice.md)
+- [Viewer and Protocol](eu_einvoice/docs/en/eu_einvoice/viewer-and-protocol.md)
 - [Custom logic](eu_einvoice/docs/en/eu_einvoice/custom-logic.md)
 
 ## Installation
@@ -69,7 +70,7 @@ This app can use GitHub Actions for CI. The following workflows are configured:
 
 - [SaxonC](https://pypi.org/project/saxonche/) by Saxonica
 
-    Used for XSL transformation (validate XML against schematron).
+    Used for XSL transformation (validate XML against schematron, and HTML visualization).
 
 - [lxml](https://github.com/lxml/lxml) by Infrae
 
@@ -78,6 +79,10 @@ This app can use GitHub Actions for CI. The following workflows are configured:
 - [SchXslt](https://github.com/schxslt/schxslt) by David Maus
 
     Used to convert Schematron files to XSL.
+
+- [XRechnung Visualization](https://github.com/itplr-kosit/xrechnung-visualization) by KoSIT
+
+    Vendored XSL for HTML rendering of CII / UBL e-invoices (Apache License 2.0). See `eu_einvoice/visualization/README.md`.
 
 ## Sponsors
 

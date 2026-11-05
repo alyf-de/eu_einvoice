@@ -39,7 +39,9 @@ repos:
               .*node_modules.*|
               .*boilerplate.*|
               eu_einvoice/templates/includes/.*|
-              eu_einvoice/public/js/lib/.*
+              eu_einvoice/public/js/lib/.*|
+              eu_einvoice/visualization/FileSaver-v2\.0\.5\.js|
+              eu_einvoice/visualization/xrechnung-viewer\.js
           )$
 
   - repo: https://github.com/pre-commit/mirrors-eslint
@@ -60,7 +62,9 @@ repos:
               .*node_modules.*|
               .*boilerplate.*|
               eu_einvoice/templates/includes/.*|
-              eu_einvoice/public/js/lib/.*
+              eu_einvoice/public/js/lib/.*|
+              eu_einvoice/visualization/FileSaver-v2\.0\.5\.js|
+              eu_einvoice/visualization/xrechnung-viewer\.js
           )$
 
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook

@@ -19,5 +19,9 @@ frappe.ui.form.on("Sales Invoice", {
 				"_blank"
 			);
 		});
+
+		frm.page.add_menu_item(__("View e-Invoice"), () => {
+			eu_einvoice.viewer.open({ doctype: frm.doc.doctype, name: frm.doc.name });
+		});
 	},
 });

@@ -25,7 +25,7 @@ required_apps = ["frappe/erpnext"]
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/eu_einvoice/css/eu_einvoice.css"
+app_include_css = "/assets/eu_einvoice/css/eu_einvoice.css"
 app_include_js = ["/assets/eu_einvoice/js/utils.js", "/assets/eu_einvoice/js/queries.js"]
 
 # include js, css files in header of web template
@@ -91,6 +91,7 @@ jinja = {
 
 # before_install = "eu_einvoice.install.before_install"
 after_install = "eu_einvoice.install.after_install"
+after_migrate = "eu_einvoice.european_e_invoice.protocol.ensure_default_protocol_doctypes"
 
 # Uninstallation
 # ------------
@@ -124,13 +125,13 @@ after_install = "eu_einvoice.install.after_install"
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
-#
-# has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
-# }
+permission_query_conditions = {
+	"E Invoice Protocol": "eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol.get_permission_query_conditions",
+}
+
+has_permission = {
+	"E Invoice Protocol": "eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol.has_permission",
+}
 
 # DocType Class
 # ---------------
@@ -148,7 +149,19 @@ doc_events = {
 	"Sales Invoice": {
 		"validate": "eu_einvoice.european_e_invoice.einvoice.validate_doc",
 		"on_submit": "eu_einvoice.european_e_invoice.einvoice.attach_xml_on_submit",
-	}
+	},
+	"File": {
+		"after_insert": "eu_einvoice.european_e_invoice.protocol.maybe_create_protocol_stub",
+		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_attach",
+	},
+	# After frappe.core.doctype.file.utils.attach_files_to_document (* on_update):
+	# owned orphans are attached via db.set_value (no File.on_update).
+	"*": {
+		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_parent_attach",
+		"on_update_after_submit": (
+			"eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_parent_attach"
+		),
+	},
 }
 
 # E-invoice generator per doctype. Other apps can register their own doctypes here.
@@ -202,7 +215,8 @@ override_whitelisted_methods = {
 # Ignore links to specified DocTypes when deleting documents
 # -----------------------------------------------------------
 
-# ignore_links_on_delete = ["Communication", "ToDo"]
+# Keep Protocol rows when a referenced **File** / invoice / import is deleted
+ignore_links_on_delete = ["E Invoice Protocol"]
 
 # Request Events
 # ----------------
