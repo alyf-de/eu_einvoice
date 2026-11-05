@@ -18,6 +18,7 @@ from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import im
 	get_create_purchase_invoice_action,
 	is_ubl_xml,
 	payee_differs_from_seller,
+	should_map_purchase_invoice_item,
 )
 
 UBL_INVOICE = b"""<?xml version="1.0" encoding="UTF-8"?>
@@ -133,6 +134,24 @@ class TestEInvoiceImport(IntegrationTestCase):
 
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
+
+	def test_purchase_invoice_mapping_skips_zero_quantity_zero_amount_item(self):
+		row = frappe._dict(billed_quantity=0, total_amount=0, idx=1)
+
+		self.assertFalse(should_map_purchase_invoice_item(row))
+
+	def test_purchase_invoice_mapping_rejects_zero_quantity_nonzero_amount_item(self):
+		row = frappe._dict(billed_quantity=0, total_amount=1, idx=2)
+
+		with self.assertRaises(frappe.ValidationError) as cm:
+			should_map_purchase_invoice_item(row)
+
+		self.assertIn("Invoice line 2", str(cm.exception))
+
+	def test_purchase_invoice_mapping_keeps_nonzero_quantity_item(self):
+		row = frappe._dict(billed_quantity=1, total_amount=1, idx=1)
+
+		self.assertTrue(should_map_purchase_invoice_item(row))
 
 	def test_guess_supplier(self):
 		suffix = frappe.generate_hash(length=6)
