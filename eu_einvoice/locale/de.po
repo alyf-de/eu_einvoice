@@ -437,11 +437,14 @@ msgstr "Import der Code-Listen wurde eingereiht. Dies kann einige Minuten dauern
 msgid "Importing Code Lists"
 msgstr "Code-Listen werden importiert"
 
-<<<<<<< HEAD
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:84
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:165
 msgid "Invalid attachment file"
 msgstr "Ungültige Anhangsdatei"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:576
+msgid "Invoice line {0} has zero quantity but a non-zero amount."
+msgstr "Rechnungsposition {0} hat die Menge 0, aber einen von 0 verschiedenen Betrag."
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:688
 msgid "Legacy embed migration failed for {0}"
@@ -458,11 +461,6 @@ msgstr "Legacy-Anhang nicht migriert"
 #: eu_einvoice/custom_fields.py:166
 msgid "Legacy single-attachment field. Enable Multiple Attachment Embedding in E Invoice Settings to use the Embedded Documents table for one or more attachments."
 msgstr "Altes Einzelanhang-Feld. Aktivieren Sie in den E-Rechnungs-Einstellungen die Einbettung mehrerer Anhänge, um die Tabelle Eingebettete Dokumente für einen oder mehrere Anhänge zu nutzen."
-=======
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:610
-msgid "Invoice line {0} has zero quantity but a non-zero amount."
-msgstr "Rechnungsposition {0} hat die Menge 0, aber einen von 0 verschiedenen Betrag."
->>>>>>> 815762f (fix: skip zero-quantity zero-amount invoice rows (#360))
 
 #. Label of the line_total (Currency) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
