@@ -265,10 +265,6 @@ class EInvoiceImport(Document):
 		self.buyer_name = stripped_text(buyer.name)
 		self.buyer_electronic_address = stripped_text(buyer.electronic_address.uri_ID)
 		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
-<<<<<<< HEAD
-=======
-		self.buyer_id = stripped_text(buyer.id)
->>>>>>> e2444d3 (fix(import): keep empty values empty instead of "None" (#359))
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: PostalTradeAddress, prefix: str) -> _dict:

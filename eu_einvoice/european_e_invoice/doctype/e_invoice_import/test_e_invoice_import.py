@@ -131,7 +131,6 @@ class TestEInvoiceImport(IntegrationTestCase):
 
 		for fieldname in (
 			"buyer_name",
-			"buyer_id",
 			"buyer_electronic_address",
 			"buyer_electronic_address_scheme",
 			"buyer_city",
