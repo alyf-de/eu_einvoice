@@ -100,7 +100,7 @@ def has_permission(doc, ptype=None, user=None, debug=False):
 
 	Controllers can only deny. Role DocPerm still grants Accounts read; this narrows
 	it to rows whose File / reference document the user can already see. System
-	Manager keeps full audit access (including orphaned rows after File delete).
+	Manager keeps full access (including rare rows with no readable File/reference).
 	"""
 	ptype = ptype or "read"
 	# Do not tighten write/create/delete beyond DocPerm (Accounts have read only).
@@ -133,12 +133,11 @@ def has_permission(doc, ptype=None, user=None, debug=False):
 
 
 def get_permission_query_conditions(user=None, **_kwargs):
-	"""List protocols the user may read via **File** or via the reference document.
+	"""List protocols the user may read via **File** or via an existing reference.
 
-	Matches ``has_permission``: Accounts can open a protocol through a readable
-	reference even after the **File** row is deleted, so the Desk list must include
-	those rows. Unattached private upload stubs stay owner-scoped through **File**
-	permission query conditions. System Manager sees all rows for audit.
+	Matches ``has_permission``: the reference document must still exist (and be
+	readable). Unattached private upload stubs stay owner-scoped through **File**
+	permission query conditions. System Manager sees all rows.
 	"""
 	user = user or frappe.session.user
 	if user == "Administrator" or "System Manager" in frappe.get_roles(user):
@@ -172,17 +171,28 @@ def get_permission_query_conditions(user=None, **_kwargs):
 	openly_readable, owner_restricted = _split_doctypes_by_owner_constraint(readable_doctypes, user)
 	openly_readable, user_perm_restricted = _split_doctypes_by_user_permissions(openly_readable, user)
 
-	if openly_readable:
-		doctype_list = ", ".join(repr(dt) for dt in openly_readable)
-		conditions.append(f"(`tabE Invoice Protocol`.`reference_doctype` IN ({doctype_list}))")
+	# Only parents that can appear on protocols - avoid EXISTS against every readable DocType.
+	from eu_einvoice.european_e_invoice.protocol import _get_protocol_settings
+
+	protocol_doctypes = set(_get_protocol_settings()["protocol_doctypes"])
+
+	# Require an existing reference row (same as has_permission), not only doctype name.
+	for doctype in openly_readable:
+		if doctype not in protocol_doctypes or not frappe.db.table_exists(doctype):
+			continue
+		conditions.append(_scoped_reference_condition(doctype, user, "1=1"))
 
 	for doctype in owner_restricted:
+		if doctype not in protocol_doctypes or not frappe.db.table_exists(doctype):
+			continue
 		table = get_table_name(doctype, wrap_in_backticks=True)
 		conditions.append(
 			_scoped_reference_condition(doctype, user, f"{table}.`owner` = {frappe.db.escape(user)}")
 		)
 
 	for doctype, field_conditions in user_perm_restricted.items():
+		if doctype not in protocol_doctypes or not frappe.db.table_exists(doctype):
+			continue
 		conditions.append(_scoped_reference_condition(doctype, user, " AND ".join(field_conditions)))
 
 	if not conditions:

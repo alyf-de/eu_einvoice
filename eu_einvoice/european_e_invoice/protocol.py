@@ -133,6 +133,37 @@ def _is_attached_to_protocol_doctype(doc, settings: dict | None = None) -> bool:
 	return doc.attached_to_doctype in settings["protocol_doctypes"]
 
 
+def delete_protocol_for_file(doc, method=None):
+	"""File.on_trash: drop the 1:1 protocol row when its **File** is deleted.
+
+	Must never raise - File deletes must not fail. Clears *Copied From* on
+	dependents first so protocol ``on_trash`` does not block.
+	"""
+	try:
+		_delete_protocol_for_file(doc)
+	except Exception:
+		frappe.log_error(
+			title="E Invoice protocol delete (file trash)",
+			reference_doctype="File",
+			reference_name=getattr(doc, "name", None),
+		)
+
+
+def _delete_protocol_for_file(doc):
+	name = frappe.db.get_value("E Invoice Protocol", {"file": doc.name}, "name")
+	if not name:
+		return
+
+	frappe.db.set_value(
+		"E Invoice Protocol",
+		{"copied_from": name},
+		"copied_from",
+		None,
+		update_modified=False,
+	)
+	frappe.delete_doc("E Invoice Protocol", name, ignore_permissions=True)
+
+
 def maybe_validate_protocol_on_attach(doc, method=None):
 	"""File.on_update: run Schematron when attached to a configured DocType.
 

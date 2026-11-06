@@ -153,6 +153,7 @@ doc_events = {
 	"File": {
 		"after_insert": "eu_einvoice.european_e_invoice.protocol.maybe_create_protocol_stub",
 		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_attach",
+		"on_trash": "eu_einvoice.european_e_invoice.protocol.delete_protocol_for_file",
 	},
 	# After frappe.core.doctype.file.utils.attach_files_to_document (* on_update):
 	# owned orphans are attached via db.set_value (no File.on_update).
@@ -215,7 +216,8 @@ override_whitelisted_methods = {
 # Ignore links to specified DocTypes when deleting documents
 # -----------------------------------------------------------
 
-# Keep Protocol rows when a referenced **File** / invoice / import is deleted
+# Keep Protocol rows when a referenced invoice / import is deleted (File trash
+# deletes the protocol via delete_protocol_for_file).
 ignore_links_on_delete = ["E Invoice Protocol"]
 
 # Request Events

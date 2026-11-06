@@ -246,20 +246,35 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		with self.assertRaises((frappe.UniqueValidationError, frappe.DuplicateEntryError)):
 			dup.insert(ignore_permissions=True)
 
-	def test_deleting_file_keeps_protocol(self):
-		"""Protocol is in ignore_links_on_delete - File delete must not require Protocol delete."""
+	def test_deleting_file_deletes_protocol(self):
+		"""File.on_trash removes the linked protocol (1:1 with File)."""
 		file_name = self._make_xml_file()
 		create_protocol_stub_from_file(file_name)
 		protocol_name = frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name")
 		self.assertTrue(protocol_name)
 
-		# force=False: must rely on ignore_links_on_delete, not bypass
 		frappe.delete_doc("File", file_name, force=False, ignore_permissions=True)
 		self.assertFalse(frappe.db.exists("File", file_name))
-		self.assertTrue(frappe.db.exists("E Invoice Protocol", protocol_name))
-		protocol = frappe.get_doc("E Invoice Protocol", protocol_name)
-		self.assertTrue(protocol.file_hash)
-		self.assertEqual(protocol.file_name, "test-einvoice.xml")
+		self.assertFalse(frappe.db.exists("E Invoice Protocol", protocol_name))
+
+	def test_deleting_original_file_clears_copied_from_on_copies(self):
+		"""File trash must clear copied_from so the original protocol can be removed."""
+		first = self._make_xml_file()
+		create_protocol_stub_from_file(first)
+		validate_protocol_for_file(first)
+		original_name = frappe.db.get_value("E Invoice Protocol", {"file": first}, "name")
+
+		second = self._make_xml_file()
+		create_protocol_stub_from_file(second)
+		copy = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": second}, "name")
+		)
+		self.assertEqual(copy.copied_from, original_name)
+
+		frappe.delete_doc("File", first, force=False, ignore_permissions=True)
+		self.assertFalse(frappe.db.exists("E Invoice Protocol", original_name))
+		copy.reload()
+		self.assertFalse(copy.copied_from)
 
 	def test_cannot_delete_original_while_copies_exist(self):
 		"""ignore_links_on_delete would allow this; on_trash must still block dangling copied_from."""
@@ -1098,7 +1113,7 @@ class TestEInvoiceProtocolPermissions(IntegrationTestCase):
 		self.assertFalse(has_permission(protocol, "read", user=self.OTHER))
 
 	def test_list_includes_protocol_readable_via_reference_without_file(self):
-		"""Desk list must match has_permission when the File is gone but the reference remains."""
+		"""Desk list must match has_permission when a readable reference exists without a File."""
 		frappe.get_doc("User", self.OWNER).add_roles("Purchase User")
 		company = frappe.db.get_value("Company", {}, "name")
 		import_doc = frappe.get_doc({"doctype": "E Invoice Import", "company": company}).insert(
@@ -1125,6 +1140,40 @@ class TestEInvoiceProtocolPermissions(IntegrationTestCase):
 		)
 
 		frappe.set_user(self.OTHER)
+		self.assertNotIn(
+			protocol.name,
+			frappe.get_list("E Invoice Protocol", pluck="name", limit=100),
+		)
+
+	def test_list_hides_protocol_when_reference_gone(self):
+		"""List must not match on reference_doctype alone after the reference document is deleted."""
+		from eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol import (
+			has_permission,
+		)
+
+		frappe.get_doc("User", self.OWNER).add_roles("Purchase User")
+		company = frappe.db.get_value("Company", {}, "name")
+		import_doc = frappe.get_doc({"doctype": "E Invoice Import", "company": company}).insert(
+			ignore_permissions=True
+		)
+
+		protocol = frappe.get_doc(
+			{
+				"doctype": "E Invoice Protocol",
+				"result": "Pending",
+				"reference_doctype": "E Invoice Import",
+				"reference_name": import_doc.name,
+				"company": company,
+			}
+		)
+		protocol.flags.ignore_links = True
+		protocol.insert(ignore_permissions=True)
+
+		frappe.delete_doc("E Invoice Import", import_doc.name, force=True, ignore_permissions=True)
+		protocol.reload()
+
+		self.assertFalse(has_permission(protocol, "read", user=self.OWNER))
+		frappe.set_user(self.OWNER)
 		self.assertNotIn(
 			protocol.name,
 			frappe.get_list("E Invoice Protocol", pluck="name", limit=100),
