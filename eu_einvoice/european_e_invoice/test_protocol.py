@@ -276,6 +276,50 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		copy.reload()
 		self.assertFalse(copy.copied_from)
 
+	def test_reuse_skips_when_copied_from_source_missing(self):
+		"""Dangling Copied From must not be reused - Schematron has to run again."""
+		first = self._make_xml_file()
+		create_protocol_stub_from_file(first)
+		validate_protocol_for_file(first)
+		original = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": first}, "name")
+		)
+
+		second = self._make_xml_file()
+		create_protocol_stub_from_file(second)
+		copy = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": second}, "name")
+		)
+		self.assertEqual(copy.copied_from, original.name)
+
+		# Leave a dangling link as if a worker saved after the source was deleted.
+		frappe.db.delete("E Invoice Protocol", {"name": original.name})
+		copy.reload()
+		self.assertEqual(copy.copied_from, original.name)
+		self.assertFalse(frappe.db.exists("E Invoice Protocol", original.name))
+
+		self.assertIsNone(
+			reuse_validation_for_hashes(
+				copy.content_hash,
+				copy.file_hash,
+				ruleset_hash=copy.ruleset_hash,
+			)
+		)
+
+		third = self._make_xml_file()
+		create_protocol_stub_from_file(third)
+		with patch(
+			"eu_einvoice.european_e_invoice.protocol.get_validation_errors",
+			return_value=([], []),
+		) as schematron:
+			validate_protocol_for_file(third)
+		schematron.assert_called()
+		fresh = frappe.get_doc(
+			"E Invoice Protocol", frappe.db.get_value("E Invoice Protocol", {"file": third}, "name")
+		)
+		self.assertIn(fresh.result, ("Valid", "Invalid"))
+		self.assertFalse(fresh.copied_from)
+
 	def test_cannot_delete_original_while_copies_exist(self):
 		"""ignore_links_on_delete would allow this; on_trash must still block dangling copied_from."""
 		first = self._make_xml_file()

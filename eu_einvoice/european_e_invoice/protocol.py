@@ -6,6 +6,7 @@ import hashlib
 from pathlib import Path
 
 import frappe
+from frappe import _
 from frappe.utils import now_datetime
 from lxml.etree import fromstring
 
@@ -702,6 +703,9 @@ def propagate_validation_to_pending_siblings(source):
 		return
 
 	original = _resolve_original(source)
+	if not original:
+		# Source chain broken - callers must Schematron again instead of propagating.
+		return
 	# Pending stubs have no ruleset_hash yet; match on content + file hash only.
 	pending_names = frappe.get_all(
 		"E Invoice Protocol",
@@ -726,6 +730,8 @@ def propagate_validation_to_pending_siblings(source):
 def _apply_copied_validation(target, source):
 	"""Copy validation fields from source; set copied_from to the original protocol."""
 	original = _resolve_original(source)
+	if not original:
+		frappe.throw(_("Cannot copy validation: original E Invoice Protocol is missing"))
 	for fieldname in _COPIED_VALIDATION_FIELDS:
 		target.set(fieldname, original.get(fieldname))
 	target.copied_from = original.name
@@ -738,11 +744,17 @@ def _apply_copied_validation(target, source):
 
 
 def _resolve_original(protocol):
-	"""Follow copied_from until the protocol that actually ran Schematron."""
+	"""Follow copied_from until the protocol that actually ran Schematron.
+
+	Returns ``None`` when *Copied From* points at a missing row - that copy must
+	not be reused; Schematron has to run again.
+	"""
 	seen = set()
 	current = protocol
 	while current.copied_from and current.copied_from not in seen:
 		seen.add(current.name)
+		if not frappe.db.exists("E Invoice Protocol", current.copied_from):
+			return None
 		current = frappe.get_doc("E Invoice Protocol", current.copied_from)
 	return current
 
@@ -803,10 +815,13 @@ def _find_original_validation(
 	)
 	if not rows:
 		return None
-	# Prefer a row that actually ran Schematron (no copied_from)
-	originals = [row for row in rows if not row.copied_from]
-	name = (originals or rows)[0].name
-	return _resolve_original(frappe.get_doc("E Invoice Protocol", name))
+	# Prefer a row that actually ran Schematron (no copied_from); skip dangling copies.
+	candidates = [row for row in rows if not row.copied_from] + [row for row in rows if row.copied_from]
+	for row in candidates:
+		resolved = _resolve_original(frappe.get_doc("E Invoice Protocol", row.name))
+		if resolved:
+			return resolved
+	return None
 
 
 def _get_protocol_settings() -> dict:
