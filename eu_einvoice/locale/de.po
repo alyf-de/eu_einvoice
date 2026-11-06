@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: European e-Invoice VERSION\n"
 "Report-Msgid-Bugs-To: hallo@alyf.de\n"
-"POT-Creation-Date: 2026-11-03 19:16+0000\n"
+"POT-Creation-Date: 2026-11-06 09:00+0000\n"
 "PO-Revision-Date: 2026-02-05 11:13+0100\n"
 "Last-Translator: hallo@alyf.de\n"
 "Language: de\n"
@@ -186,11 +186,20 @@ msgstr "Berechnung Prozentsatz"
 msgid "Cannot create E Invoice."
 msgstr "E-Rechnung konnte nicht erstellt werden."
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.py:52
+#, python-brace-format
+msgid "Cannot delete {0} while other protocols still reference it via Copied From."
+msgstr "{0} kann nicht gelöscht werden, solange andere Protokolle noch über „Kopiert von“ darauf verweisen."
+
 #: eu_einvoice/european_e_invoice/einvoice.py:761
 msgid "Cannot validate E Invoice schematron."
 msgstr "E-Rechnung konnte nicht validiert werden."
 
-#: eu_einvoice/european_e_invoice/viewer.py:171
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.py:79
+msgid "Cannot validate: linked File is missing."
+msgstr "Validierung nicht möglich: verknüpfte Datei fehlt."
+
+#: eu_einvoice/european_e_invoice/viewer.py:200
 msgid "Cannot visualize a folder or remote file."
 msgstr "Ein Ordner oder eine Remote-Datei kann nicht visualisiert werden."
 
@@ -205,11 +214,11 @@ msgstr "Zuschläge gesamt"
 msgid "Configure this if you are storing  custom invoice numbers in a field other than <code>name</code>."
 msgstr "Konfigurieren Sie dies, wenn Sie benutzerdefinierte Rechnungsnummern in einem anderen Feld als <code>name</code> speichern."
 
-#: eu_einvoice/european_e_invoice/viewer.py:94
+#: eu_einvoice/european_e_invoice/viewer.py:93
 msgid "Could not render e-invoice visualization. See Error Log for details."
 msgstr "E-Rechnungs-Visualisierung konnte nicht gerendert werden. Details im Fehlerlog."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:259
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:285
 msgid "Could not validate E Invoice schematron. See Error Log for details."
 msgstr "E-Rechnung konnte nicht validiert werden. Details im Fehlerlog."
 
@@ -225,7 +234,7 @@ msgid "Create Protocol on Upload"
 msgstr "Protokoll beim Hochladen erstellen"
 
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:99
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:582
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:613
 msgid "Create Purchase Invoice"
 msgstr "Eingangsrechnung erstellen"
 
@@ -248,7 +257,7 @@ msgstr "Standard-Befreiungsgrund für Umsatzsteuer"
 
 #. Label of the detection_timestamp (Datetime) field in DocType 'E Invoice
 #. Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:56
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:58
 msgid "Detection Timestamp"
 msgstr "Erkennungs-Zeitstempel"
 
@@ -267,7 +276,7 @@ msgid "Due Payable"
 msgstr "Fälliger Betrag"
 
 #. Label of the einvoice_format (Data) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:74
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:76
 msgid "E Invoice Format"
 msgstr "E-Rechnungsformat"
 
@@ -280,7 +289,7 @@ msgstr "E-Rechnungsformat"
 msgid "E Invoice Import"
 msgstr "E-Rechnungs-Import"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:811
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:848
 #, python-brace-format
 msgid "E Invoice Import {0} does not exist"
 msgstr "E-Rechnungs-Import {0} existiert nicht"
@@ -308,7 +317,7 @@ msgstr "E-Rechnungs-Profil"
 
 #. Name of a DocType
 #. Label of a Workspace Sidebar Item
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:218
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:238
 #: eu_einvoice/workspace_sidebar/e_invoicing.json:27
 msgid "E Invoice Protocol"
 msgstr "E-Rechnungs-Protokoll"
@@ -379,7 +388,7 @@ msgid "Embedded Document"
 msgstr "Eingebettetes Dokument"
 
 #. Label of the error_count (Int) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:177
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:190
 msgid "Error Count"
 msgstr "Fehleranzahl"
 
@@ -399,9 +408,13 @@ msgstr "Feld '{0}' muss vom Typ 'Anhängen' sein. Aktueller Typ: {1}"
 msgid "File Section"
 msgstr "Datei-Abschnitt"
 
-#: eu_einvoice/european_e_invoice/viewer.py:175
+#: eu_einvoice/european_e_invoice/viewer.py:204
 msgid "File has no content."
 msgstr "Datei hat keinen Inhalt."
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:628
+msgid "File not found."
+msgstr "Datei nicht gefunden."
 
 #. Description of the 'Default VAT exemption reason' (Small Text) field in
 #. DocType 'E Invoice Settings'
@@ -421,12 +434,8 @@ msgstr "Import der Code-Listen wurde eingereiht. Dies kann einige Minuten dauern
 msgid "Importing Code Lists"
 msgstr "Code-Listen werden importiert"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:625
-msgid "Invalid file path."
-msgstr "Ungültiger Dateipfad."
-
 #. Label of the invoice_profile (Data) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:80
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:82
 msgid "Invoice Profile"
 msgstr "Rechnungsprofil"
 
@@ -442,12 +451,12 @@ msgstr "Mit {0} verknüpfen"
 
 #. Description of the 'Content Hash' (Data) field in DocType 'E Invoice
 #. Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:107
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:110
 msgid "MD5 of the stored blob"
 msgstr "MD5 des gespeicherten Blobs"
 
 #. Label of the message_count (Int) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:191
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:204
 msgid "Message Count"
 msgstr "Nachrichtenanzahl"
 
@@ -457,16 +466,20 @@ msgstr "Nachrichtenanzahl"
 msgid "Monetary Summation"
 msgstr "Gesamtbeträge"
 
-#: eu_einvoice/european_e_invoice/viewer.py:165
+#: eu_einvoice/european_e_invoice/viewer.py:174
 #, python-brace-format
 msgid "No e-invoice XML found for {0}"
 msgstr "Keine E-Rechnungs-XML für {0} gefunden"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:601
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:639
 msgid "No machine-readable data was found in the PDF file. You can create a regular Purchase Invoice manually instead."
 msgstr "In der PDF-Datei wurden keine maschinenlesbaren Daten gefunden. Sie können stattdessen eine reguläre Eingangsrechnung manuell erstellen."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:603
+#: eu_einvoice/european_e_invoice/viewer.py:190
+msgid "No permission to access this file."
+msgstr "Sie haben keine Berechtigung, auf diese Datei zuzugreifen."
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:641
 msgid "Not an E-Invoice"
 msgstr "Keine E-Rechnung"
 
@@ -475,6 +488,10 @@ msgstr "Keine E-Rechnung"
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json:70
 msgid "On submit, only for E Invoice Profile \"XRECHNUNG\""
 msgstr "Nur bei E-Rechnungs-Profil \"XRECHNUNG\" beim Buchen"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.py:77
+msgid "Only Pending protocols can be validated manually."
+msgstr "Nur ausstehende Protokolle können manuell validiert werden."
 
 #. Option for the 'Create Protocol on Upload' (Select) field in DocType 'E
 #. Invoice Settings'
@@ -549,11 +566,11 @@ msgstr "Protokoll-DocTypes"
 
 #. Description of the 'Copied From' (Link) field in DocType 'E Invoice
 #. Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:122
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:125
 msgid "Protocol that first ran Schematron for these Hash. Empty when this row is the original validation."
 msgstr "Protokoll, das Schematron zuerst für diesen Hash ausgeführt hat. Leer, wenn diese Zeile die ursprüngliche Validierung ist."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:805
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:842
 #, python-brace-format
 msgid "Purchase Invoice {0} is already linked to E Invoice Import {1}"
 msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
@@ -562,6 +579,10 @@ msgstr "Eingangsrechnung {0} ist bereits mit E-Rechnungs-Import {1} verknüpft"
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_item/e_invoice_item.json:134
 msgid "Purchase Order Row"
 msgstr "Bestellposition"
+
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.js:22
+msgid "Queuing validation..."
+msgstr "Validierung wird eingereiht…"
 
 #. Label of the rate_applicable_percent (Percent) field in DocType 'E Invoice
 #. Trade Tax'
@@ -573,8 +594,19 @@ msgstr "Anwendbarer Prozentsatz"
 msgid "Rendering e-invoice…"
 msgstr "E-Rechnung wird gerendert…"
 
+#. Label of the ruleset_hash (Data) field in DocType 'E Invoice Protocol'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:229
+msgid "Ruleset Hash"
+msgstr "Ruleset-Hash"
+
+#. Description of the 'Ruleset Hash' (Data) field in DocType 'E Invoice
+#. Protocol'
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:226
+msgid "SHA-256 of the Schematron stylesheet(s) used for this result. Part of the reuse key with Content Hash and XML Hash."
+msgstr "SHA-256 der für dieses Ergebnis verwendeten Schematron-Stylesheet(s). Teil des Wiederverwendungsschlüssels zusammen mit Inhalts-Hash und XML-Hash."
+
 #. Description of the 'XML Hash' (Data) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:115
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:118
 msgid "SHA-256 of the XML bytes that were validated (extracted from PDF when applicable)."
 msgstr "SHA-256 der validierten XML-Bytes (aus PDF extrahiert, falls zutreffend)."
 
@@ -665,7 +697,7 @@ msgstr "Lieferantenrechnungsdatei"
 msgid "Tax Basis Total"
 msgstr "Steuerbasis gesamt"
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:611
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:649
 #, python-brace-format
 msgid "The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
 msgstr "Das Format der hochgeladenen Datei ({0}) wird für E-Rechnungen nicht unterstützt. Bitte laden Sie eine gültige E-Rechnungsdatei hoch oder erstellen Sie stattdessen eine reguläre Eingangsrechnung manuell."
@@ -693,7 +725,7 @@ msgid "Unit Code"
 msgstr "Einheits-Code"
 
 #. Option for the 'Result' (Select) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:49
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:51
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol_list.js:14
 msgid "Unsupported"
 msgstr "Nicht unterstützt"
@@ -703,11 +735,11 @@ msgstr "Nicht unterstützt"
 msgid "Unsupported e-invoice format"
 msgstr "Nicht unterstütztes E-Rechnungsformat"
 
-#: eu_einvoice/european_e_invoice/viewer.py:91
+#: eu_einvoice/european_e_invoice/viewer.py:90
 msgid "Unsupported e-invoice format for visualization."
 msgstr "Nicht unterstütztes E-Rechnungsformat für die Visualisierung."
 
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:613
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:651
 msgid "Unsupported file format"
 msgstr "Nicht unterstütztes Dateiformat"
 
@@ -734,6 +766,10 @@ msgstr "Umsatzsteuerbefreiung (E-Rechnung)"
 msgid "VAT exemption reason"
 msgstr "Grund für Umsatzsteuerbefreiung"
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.js:17
+msgid "Validate"
+msgstr "Validieren"
+
 #. Label of the validate_sales_invoice_on_save (Check) field in DocType 'E
 #. Invoice Settings'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_settings/e_invoice_settings.json:31
@@ -748,7 +784,7 @@ msgstr "E-Rechnung beim Buchen validieren"
 
 #. Label of the validator_section (Section Break) field in DocType 'E Invoice
 #. Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:155
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:168
 msgid "Validation"
 msgstr "Validierung"
 
@@ -762,13 +798,13 @@ msgstr "Validierungsdetails"
 #. Label of the validation_errors (Text) field in DocType 'E Invoice Protocol'
 #: eu_einvoice/custom_fields.py:175
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json:325
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:202
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:215
 msgid "Validation Errors"
 msgstr "Validierungsfehler"
 
 #. Label of the validation_timestamp (Datetime) field in DocType 'E Invoice
 #. Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:63
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:65
 msgid "Validation Timestamp"
 msgstr "Validierungs-Zeitstempel"
 
@@ -777,29 +813,33 @@ msgstr "Validierungs-Zeitstempel"
 #. Protocol'
 #: eu_einvoice/custom_fields.py:185
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json:465
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:209
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:222
 msgid "Validation Warnings"
 msgstr "Validierungswarnungen"
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.js:28
+msgid "Validation queued. Refresh this form in a moment."
+msgstr "Validierung eingereiht. Bitte dieses Formular in Kürze aktualisieren."
+
 #. Label of the validator (Data) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:160
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:173
 msgid "Validator"
 msgstr "Validator"
 
 #. Label of the validator_version (Data) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:166
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:179
 msgid "Validator Version"
 msgstr "Validator-Version"
 
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.js:23
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.js:73
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.js:7
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.js:11
 #: eu_einvoice/public/js/utils.js:99 eu_einvoice/public/js/utils.js:101
 msgid "View e-Invoice"
 msgstr "E-Rechnung anzeigen"
 
 #. Label of the warning_count (Int) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:184
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:197
 msgid "Warning Count"
 msgstr "Warnungsanzahl"
 
@@ -817,7 +857,7 @@ msgid "When not None, create an <b>E Invoice Protocol</b> stub for e-invoice fil
 msgstr "Wenn nicht „Keine“, wird beim Hochladen ein Stub für das <b>E-Rechnungs-Protokoll</b> für E-Rechnungsdateien erstellt. Die Schematron-Validierung läuft, wenn die Datei an einen unten aufgeführten DocType angehängt wird. Die PDF-Erkennung wird in die Warteschlange gestellt."
 
 #. Label of the file_hash (Data) field in DocType 'E Invoice Protocol'
-#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:118
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_protocol/e_invoice_protocol.json:121
 msgid "XML Hash"
 msgstr "XML-Hash"
 
