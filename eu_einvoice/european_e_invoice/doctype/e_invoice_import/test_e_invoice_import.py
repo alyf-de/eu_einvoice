@@ -14,6 +14,7 @@ from lxml.etree import fromstring
 
 from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
 	EInvoiceImport,
+	create_purchase_invoice,
 	get_create_purchase_invoice_action,
 	is_ubl_xml,
 )
@@ -118,6 +119,30 @@ class TestEInvoiceImport(FrappeTestCase):
 
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
+
+	def test_create_purchase_invoice_skips_zero_quantity_zero_amount_item(self):
+		doc = frappe.get_doc(
+			doctype="E Invoice Import",
+			supplier="_Test Supplier",
+			company="_Test Company",
+			currency="EUR",
+			items=[
+				{"product_name": "Billed", "billed_quantity": 2, "net_rate": 5, "total_amount": 10},
+				{"product_name": "Info only", "billed_quantity": 0, "net_rate": 0, "total_amount": 0},
+			],
+		).insert()
+
+		invoice = create_purchase_invoice(doc.name)
+
+		self.assertEqual([row.qty for row in invoice.items], [2])
+
+		doc.append("items", {"product_name": "Broken", "billed_quantity": 0, "total_amount": 1})
+		doc.save()
+
+		with self.assertRaises(frappe.ValidationError) as cm:
+			create_purchase_invoice(doc.name)
+
+		self.assertIn("Invoice line 3", str(cm.exception))
 
 	def test_bank_details_from_payment_means_container(self):
 		"""drafthorse >= 2025.2 exposes payment instructions (BG-16) as a container."""
