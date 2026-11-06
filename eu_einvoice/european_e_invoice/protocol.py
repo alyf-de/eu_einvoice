@@ -106,12 +106,31 @@ def _maybe_create_protocol_stub(doc):
 	if not kind:
 		return
 
-	# PDF and XML: detect/queue off the request so uploads stay fast and safe
+	# Already on a protocol DocType: after_insert and on_update both fire. Queue the
+	# same validate job (ensures stub + Schematron) so one worker owns the File lock
+	# instead of racing a stub job against a validate job across transactions.
+	if _is_attached_to_protocol_doctype(doc, settings):
+		_enqueue_for_file(
+			"eu_einvoice.european_e_invoice.protocol.validate_protocol_for_file",
+			doc.name,
+			job_suffix="validate",
+		)
+		return
+
+	# Unattached upload (All files): lightweight Pending stub only
 	_enqueue_for_file(
 		"eu_einvoice.european_e_invoice.protocol.create_protocol_stub_from_file",
 		doc.name,
 		job_suffix="stub",
 	)
+
+
+def _is_attached_to_protocol_doctype(doc, settings: dict | None = None) -> bool:
+	"""True when this File is attached to a DocType that receives attach-time validation."""
+	if not doc.attached_to_doctype or not doc.attached_to_name:
+		return False
+	settings = settings or _get_protocol_settings()
+	return doc.attached_to_doctype in settings["protocol_doctypes"]
 
 
 def maybe_validate_protocol_on_attach(doc, method=None):
@@ -194,14 +213,35 @@ def _flush_import_protocol_payload(doc):
 
 
 def _changed_attach_urls(doc) -> list[str]:
-	"""Attach / Attach Image field values that changed on this save."""
+	"""Attach / Attach Image values that changed on this save (parent and child tables).
+
+	Matches Frappe's ``attach_files_to_document``, which also adopts orphans from
+	child-table Attach fields via ``db.set_value`` (no File events).
+	"""
 	urls: list[str] = []
-	for df in doc.meta.get("fields", {"fieldtype": ["in", ["Attach", "Attach Image"]]}):
-		if not doc.has_value_changed(df.fieldname):
-			continue
-		value = doc.get(df.fieldname) or ""
+
+	def _collect(container, fieldname: str):
+		if not container.has_value_changed(fieldname):
+			return
+		value = container.get(fieldname) or ""
 		if value.startswith(("/files", "/private/files", "http://", "https://")):
 			urls.append(value)
+
+	for df in doc.meta.get("fields", {"fieldtype": ["in", ["Attach", "Attach Image"]]}):
+		_collect(doc, df.fieldname)
+
+	for table_df in doc.meta.get("fields", {"fieldtype": "Table"}):
+		child_rows = doc.get(table_df.fieldname) or []
+		if not child_rows:
+			continue
+		child_meta = frappe.get_meta(table_df.options)
+		child_attach_fields = child_meta.get("fields", {"fieldtype": ["in", ["Attach", "Attach Image"]]})
+		if not child_attach_fields:
+			continue
+		for child_row in child_rows:
+			for child_df in child_attach_fields:
+				_collect(child_row, child_df.fieldname)
+
 	return urls
 
 
@@ -254,6 +294,9 @@ def create_protocol_stub_from_file(file_name: str):
 	"""Detect e-invoice XML and insert a protocol row for this File (1:1)."""
 	try:
 		return _create_protocol_stub_from_file(file_name)
+	except frappe.QueryTimeoutError:
+		# Let the background worker retry; wrappers must not swallow lock timeouts.
+		raise
 	except Exception:
 		frappe.log_error(
 			title="E Invoice protocol stub",
@@ -284,9 +327,15 @@ def _create_protocol_stub_from_file(file_name: str):
 
 
 def validate_protocol_for_file(file_name: str):
-	"""Run Schematron for a File and store results on its protocol row (or copy)."""
+	"""Ensure a protocol row exists, then run Schematron (or copy) for this File.
+
+	Used for attach-time work and for uploads that are already attached to a
+	protocol DocType, so stub creation and validation share one background job.
+	"""
 	try:
 		_validate_protocol_for_file(file_name)
+	except frappe.QueryTimeoutError:
+		raise
 	except Exception:
 		frappe.log_error(
 			title="E Invoice protocol validation",

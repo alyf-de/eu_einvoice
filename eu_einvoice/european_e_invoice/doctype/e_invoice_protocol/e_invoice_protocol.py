@@ -69,6 +69,25 @@ class EInvoiceProtocol(Document):
 
 		propagate_validation_to_pending_siblings(self)
 
+	@frappe.whitelist()
+	def enqueue_validation(self):
+		"""Queue Schematron for a Pending stub that still has a linked **File**."""
+		self.check_permission("read")
+		if self.result != "Pending":
+			frappe.throw(_("Only Pending protocols can be validated manually."))
+		if not self.file or not frappe.db.exists("File", self.file):
+			frappe.throw(_("Cannot validate: linked File is missing."))
+		frappe.has_permission("File", "read", doc=self.file, throw=True)
+
+		from eu_einvoice.european_e_invoice.protocol import _enqueue_for_file
+
+		_enqueue_for_file(
+			"eu_einvoice.european_e_invoice.protocol.validate_protocol_for_file",
+			self.file,
+			job_suffix="validate",
+		)
+		return {"queued": True, "file": self.file}
+
 
 def on_doctype_update():
 	# Upload reuse looks up by content_hash + file_hash + ruleset_hash.
@@ -114,24 +133,79 @@ def has_permission(doc, ptype=None, user=None, debug=False):
 
 
 def get_permission_query_conditions(user=None, **_kwargs):
-	"""List only protocols whose linked File the user may already list.
+	"""List protocols the user may read via **File** or via the reference document.
 
-	Reuses **File** permission query conditions so unattached private uploads stay
-	owner-scoped, attached files follow the reference document, and empty *Company*
-	rows are not broadly visible. System Manager sees all rows for audit.
+	Matches ``has_permission``: Accounts can open a protocol through a readable
+	reference even after the **File** row is deleted, so the Desk list must include
+	those rows. Unattached private upload stubs stay owner-scoped through **File**
+	permission query conditions. System Manager sees all rows for audit.
 	"""
 	user = user or frappe.session.user
 	if user == "Administrator" or "System Manager" in frappe.get_roles(user):
 		return ""
 
 	from frappe.core.doctype.file.file import (
+		_split_doctypes_by_owner_constraint,
+		_split_doctypes_by_user_permissions,
+	)
+	from frappe.core.doctype.file.file import (
 		get_permission_query_conditions as get_file_permission_query_conditions,
 	)
+	from frappe.permissions import get_doctypes_with_read
+	from frappe.utils import get_table_name
+
+	conditions = []
 
 	file_conditions = get_file_permission_query_conditions(user)
-	if not file_conditions:
-		return ""
+	if file_conditions:
+		conditions.append(
+			f"""(`tabE Invoice Protocol`.`file` IN (
+			SELECT `tabFile`.`name` FROM `tabFile` WHERE {file_conditions}
+		))"""
+		)
 
-	return f"""(`tabE Invoice Protocol`.`file` IN (
-		SELECT `tabFile`.`name` FROM `tabFile` WHERE {file_conditions}
-	))"""
+	candidate_doctypes = get_doctypes_with_read(user)
+	existing_doctypes = set(
+		frappe.get_all("DocType", filters={"name": ["in", candidate_doctypes]}, pluck="name")
+	)
+	readable_doctypes = [dt for dt in candidate_doctypes if dt in existing_doctypes]
+	openly_readable, owner_restricted = _split_doctypes_by_owner_constraint(readable_doctypes, user)
+	openly_readable, user_perm_restricted = _split_doctypes_by_user_permissions(openly_readable, user)
+
+	if openly_readable:
+		doctype_list = ", ".join(repr(dt) for dt in openly_readable)
+		conditions.append(f"(`tabE Invoice Protocol`.`reference_doctype` IN ({doctype_list}))")
+
+	for doctype in owner_restricted:
+		table = get_table_name(doctype, wrap_in_backticks=True)
+		conditions.append(
+			_scoped_reference_condition(doctype, user, f"{table}.`owner` = {frappe.db.escape(user)}")
+		)
+
+	for doctype, field_conditions in user_perm_restricted.items():
+		conditions.append(_scoped_reference_condition(doctype, user, " AND ".join(field_conditions)))
+
+	if not conditions:
+		return "1=0"
+	return "(" + " OR ".join(conditions) + ")"
+
+
+def _scoped_reference_condition(doctype: str, user: str, exists_condition: str) -> str:
+	"""Build `(reference_doctype = X AND (EXISTS(...) OR individually shared))`."""
+	from frappe.utils import get_table_name
+
+	table = get_table_name(doctype, wrap_in_backticks=True)
+	shared_names = frappe.share.get_shared(doctype, user)
+	shared_condition = ""
+	if shared_names:
+		shared_list = ", ".join(frappe.db.escape(name, percent=False) for name in shared_names)
+		shared_condition = f" OR `tabE Invoice Protocol`.`reference_name` IN ({shared_list})"
+
+	return f"""(`tabE Invoice Protocol`.`reference_doctype` = {frappe.db.escape(doctype)}
+		AND (
+			EXISTS (
+				SELECT 1 FROM {table}
+				WHERE {table}.`name` = `tabE Invoice Protocol`.`reference_name`
+				AND {exists_condition}
+			){shared_condition}
+		))"""
