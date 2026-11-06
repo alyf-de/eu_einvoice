@@ -442,6 +442,10 @@ msgstr "Code-Listen werden importiert"
 msgid "Invalid attachment file"
 msgstr "Ungültige Anhangsdatei"
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:576
+msgid "Invoice line {0} has zero quantity but a non-zero amount."
+msgstr "Rechnungsposition {0} hat die Menge 0, aber einen von 0 verschiedenen Betrag."
+
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:688
 msgid "Legacy embed migration failed for {0}"
 msgstr "Migration des alten Anhangs für {0} fehlgeschlagen"
@@ -836,4 +840,3 @@ msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:861
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
-
