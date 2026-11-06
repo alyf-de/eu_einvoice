@@ -357,7 +357,15 @@ msgstr ""
 msgid "Importing Code Lists"
 msgstr ""
 
+<<<<<<< HEAD
 #. Label of a Currency field in DocType 'E Invoice Import'
+=======
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:610
+msgid "Invoice line {0} has zero quantity but a non-zero amount."
+msgstr "Rechnungsposition {0} hat die Menge 0, aber einen von 0 verschiedenen Betrag."
+
+#. Label of the line_total (Currency) field in DocType 'E Invoice Import'
+>>>>>>> 815762f (fix: skip zero-quantity zero-amount invoice rows (#360))
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json
 msgid "Line Total"
 msgstr "Zeilensumme"
@@ -648,4 +656,3 @@ msgstr "{0} Zeile #{1}: Typ '{2}' wird in der E-Rechnung nicht unterstützt"
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:836
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr "{0}: Nur eine Zahlungsart wird in der E-Rechnung berücksichtigt."
-

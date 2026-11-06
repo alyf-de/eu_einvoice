@@ -512,6 +512,16 @@ def relative_url_to_path(url: str) -> Path:
 	return Path(get_site_path(url.lstrip("/"))).resolve()
 
 
+def should_map_purchase_invoice_item(source) -> bool:
+	if source.billed_quantity:
+		return True
+
+	if source.total_amount:
+		frappe.throw(_("Invoice line {0} has zero quantity but a non-zero amount.").format(source.idx))
+
+	return False
+
+
 @frappe.whitelist()
 def create_purchase_invoice(source_name: str, target_doc: Document | None = None):
 	def post_process(source, target: PurchaseInvoice):
@@ -559,6 +569,7 @@ def create_purchase_invoice(source_name: str, target_doc: Document | None = None
 					"net_rate": "rate",
 					"po_detail": "po_detail",
 				},
+				"condition": should_map_purchase_invoice_item,
 				"postprocess": process_item_row,
 			},
 			"E Invoice Trade Tax": {
