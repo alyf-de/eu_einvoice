@@ -314,6 +314,30 @@ class TestEInvoiceImport(IntegrationTestCase):
 
 		self.assertEqual(doc.company, "_Test Company")
 
+	def test_buyer_id_with_duplicate_customer_number_rows(self):
+		customer_number = f"C-{frappe.generate_hash(length=6)}"
+		supplier = frappe.get_doc(
+			doctype="Supplier",
+			supplier_name=f"Customer Number {customer_number}",
+			supplier_group=frappe.db.get_value("Supplier Group", {"is_group": 0}),
+			customer_numbers=[
+				{"company": "_Test Company", "customer_number": customer_number},
+				{"company": "_Test Company", "customer_number": customer_number},
+			],
+		).insert()
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_id = customer_number
+		doc.company = "_Test Company"
+		doc.guess_company_and_supplier()
+		self.assertEqual(doc.supplier, supplier.name)
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_id = customer_number
+		doc.supplier = supplier.name
+		doc.guess_company_and_supplier()
+		self.assertEqual(doc.company, "_Test Company")
+
 	def test_bank_details_from_payment_means_container(self):
 		"""drafthorse >= 2025.2 exposes payment instructions (BG-16) as a container."""
 		einvoice = Document()

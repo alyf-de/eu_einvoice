@@ -438,6 +438,7 @@ class EInvoiceImport(Document):
 				"Customer Number At Supplier",
 				filters={"customer_number": self.buyer_id, "company": self.company, "parenttype": "Supplier"},
 				pluck="parent",
+				distinct=True,
 				limit=2,
 			)
 			if len(suppliers) == 1:
@@ -448,6 +449,7 @@ class EInvoiceImport(Document):
 				"Customer Number At Supplier",
 				filters={"customer_number": self.buyer_id, "parent": self.supplier, "parenttype": "Supplier"},
 				pluck="company",
+				distinct=True,
 				limit=2,
 			)
 			if len(companies) == 1:
