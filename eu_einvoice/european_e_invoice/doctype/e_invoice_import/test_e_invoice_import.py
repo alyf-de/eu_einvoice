@@ -113,12 +113,14 @@ class TestEInvoiceImport(IntegrationTestCase):
 	def test_seller_identifiers_are_stripped(self):
 		seller = TradeParty()
 		seller.name = "\n  Seller GmbH  \n"
+		seller.id = " S-1 "
 		seller.tax_registrations.add(TaxRegistration(id=("VA", " DE123456789 ")))
 
 		doc = frappe.new_doc("E Invoice Import")
 		doc.parse_seller(seller)
 
 		self.assertEqual(doc.seller_name, "Seller GmbH")
+		self.assertEqual(doc.seller_id, "S-1")
 		self.assertEqual(doc.seller_tax_id, "DE123456789")
 
 	def test_empty_elements_do_not_become_none_string(self):
@@ -132,6 +134,7 @@ class TestEInvoiceImport(IntegrationTestCase):
 
 		for fieldname in (
 			"buyer_name",
+			"buyer_id",
 			"buyer_electronic_address",
 			"buyer_electronic_address_scheme",
 			"buyer_city",
@@ -233,9 +236,9 @@ class TestEInvoiceImport(IntegrationTestCase):
 		by_id = make_supplier(f"ID Match {suffix}", f"ID Match {suffix}")
 		self.assertEqual(guess(seller_name=by_id, seller_tax_id=f"DE{suffix}"), by_id)
 
-		# tax ID wins over an unrelated supplier whose ID equals the seller name
+		# tax ID wins over an unrelated supplier whose ID equals the seller ID
 		by_tax = make_supplier(f"SUP-{suffix}-4", f"Tax Match {suffix}", tax_id=f"DE-{suffix}")
-		self.assertEqual(guess(seller_name=by_id, seller_tax_id=f"DE-{suffix}"), by_tax)
+		self.assertEqual(guess(seller_id=by_id, seller_tax_id=f"DE-{suffix}"), by_tax)
 
 		# supplier found via the IBAN of its bank account
 		by_iban = make_supplier(f"SUP-{suffix}-5", f"IBAN Match {suffix}")
@@ -298,6 +301,42 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertFalse(payee_differs_from_seller(seller, party(" Seller GmbH\n")))
 		self.assertFalse(payee_differs_from_seller(seller, party("Bank Name", "S-1 ")))
 		self.assertFalse(payee_differs_from_seller(seller, party(" ")))  # blank name is no payee
+
+	def test_default_company_without_buyer_id(self):
+		frappe.defaults.set_user_default("company", "_Test Company")
+		self.addCleanup(frappe.defaults.clear_user_default, "company")
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_name = "Unknown Buyer GmbH"
+
+		doc.guess_company()
+		doc.guess_company_and_supplier()
+
+		self.assertEqual(doc.company, "_Test Company")
+
+	def test_buyer_id_with_duplicate_customer_number_rows(self):
+		customer_number = f"C-{frappe.generate_hash(length=6)}"
+		supplier = frappe.get_doc(
+			doctype="Supplier",
+			supplier_name=f"Customer Number {customer_number}",
+			supplier_group=frappe.db.get_value("Supplier Group", {"is_group": 0}),
+			customer_numbers=[
+				{"company": "_Test Company", "customer_number": customer_number},
+				{"company": "_Test Company", "customer_number": customer_number},
+			],
+		).insert()
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_id = customer_number
+		doc.company = "_Test Company"
+		doc.guess_company_and_supplier()
+		self.assertEqual(doc.supplier, supplier.name)
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_id = customer_number
+		doc.supplier = supplier.name
+		doc.guess_company_and_supplier()
+		self.assertEqual(doc.company, "_Test Company")
 
 	def test_bank_details_from_payment_means_container(self):
 		"""drafthorse >= 2025.2 exposes payment instructions (BG-16) as a container."""

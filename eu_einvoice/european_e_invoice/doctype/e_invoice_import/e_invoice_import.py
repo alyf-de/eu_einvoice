@@ -56,6 +56,7 @@ class EInvoiceImport(Document):
 		buyer_country: DF.Link | None
 		buyer_electronic_address: DF.Data | None
 		buyer_electronic_address_scheme: DF.Data | None
+		buyer_id: DF.Data | None
 		buyer_name: DF.Data | None
 		buyer_postcode: DF.Data | None
 		charge_total: DF.Currency
@@ -82,6 +83,7 @@ class EInvoiceImport(Document):
 		seller_country: DF.Link | None
 		seller_electronic_address: DF.Data | None
 		seller_electronic_address_scheme: DF.Data | None
+		seller_id: DF.Data | None
 		seller_name: DF.Data | None
 		seller_postcode: DF.Data | None
 		seller_tax_id: DF.Data | None
@@ -111,6 +113,7 @@ class EInvoiceImport(Document):
 			self.read_values_from_einvoice()
 			self.guess_supplier()
 			self.guess_company()
+			self.guess_company_and_supplier()
 			self.guess_uom()
 			self.guess_item_code()
 
@@ -252,6 +255,7 @@ class EInvoiceImport(Document):
 	def parse_seller(self, seller: TradeParty):
 		# stripped, because we use them to find the Supplier
 		self.seller_name = stripped_text(seller.name)
+		self.seller_id = stripped_text(seller.id)
 		self.seller_tax_id = (
 			stripped_text(seller.tax_registrations.children[0].id) or None
 			if seller.tax_registrations.children
@@ -265,6 +269,7 @@ class EInvoiceImport(Document):
 		self.buyer_name = stripped_text(buyer.name)
 		self.buyer_electronic_address = stripped_text(buyer.electronic_address.uri_ID)
 		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
+		self.buyer_id = stripped_text(buyer.id)
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: PostalTradeAddress, prefix: str) -> _dict:
@@ -387,6 +392,7 @@ class EInvoiceImport(Document):
 		# (identifier from the invoice, doctype, filters, field with the Supplier)
 		lookups = [
 			(self.seller_tax_id, "Supplier", {"tax_id": self.seller_tax_id}, "name"),
+			(self.seller_id, "Supplier", {"name": self.seller_id}, "name"),
 			(self.seller_name, "Supplier", {"supplier_name": self.seller_name}, "name"),
 			(self.seller_name, "Supplier", {"name": self.seller_name}, "name"),
 		]
@@ -420,7 +426,36 @@ class EInvoiceImport(Document):
 
 		if frappe.db.exists("Company", self.buyer_name):
 			self.company = self.buyer_name
-		else:
+
+	def guess_company_and_supplier(self):
+		"""Guess company and supplier based on buyer ID.
+
+		If the buyer ID is provided and we have already found either Company or
+		Supplier, we can find the other one.
+		"""
+		if self.buyer_id and self.company and not self.supplier:
+			suppliers = frappe.get_all(
+				"Customer Number At Supplier",
+				filters={"customer_number": self.buyer_id, "company": self.company, "parenttype": "Supplier"},
+				pluck="parent",
+				distinct=True,
+				limit=2,
+			)
+			if len(suppliers) == 1:
+				self.supplier = suppliers[0]
+
+		if self.buyer_id and self.supplier and not self.company:
+			companies = frappe.get_all(
+				"Customer Number At Supplier",
+				filters={"customer_number": self.buyer_id, "parent": self.supplier, "parenttype": "Supplier"},
+				pluck="company",
+				distinct=True,
+				limit=2,
+			)
+			if len(companies) == 1:
+				self.company = companies[0]
+
+		if not self.company:
 			self.company = get_default_company()
 
 	def guess_uom(self):
