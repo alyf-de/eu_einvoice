@@ -10,7 +10,7 @@ import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
 from drafthorse.models.document import Document, IncludedNote
 from drafthorse.models.party import TaxRegistration, URIUniversalCommunication
-from drafthorse.models.payment import PaymentTerms
+from drafthorse.models.payment import PaymentMeans, PaymentTerms
 from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
@@ -149,6 +149,8 @@ class EInvoiceGenerator:
 		self.item_tax_rates = set()
 		# VAT category code -> exemption reason code, collected from the line items
 		self.line_exemption_reason_codes = {}
+		# item id() -> duty/tax/fee category code; resolved once for BR-O-02 and line export
+		self._line_vat_category_codes = None
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -281,12 +283,12 @@ class EInvoiceGenerator:
 
 		if self.invoice.terms:
 			note = IncludedNote(subject_code="ABC")  # Conditions of sale or purchase
-			note.content.add(to_markdown(self.invoice.terms).strip())
+			note.content = to_markdown(self.invoice.terms).strip()
 			self.doc.header.notes.add(note)
 
 		if self.invoice.incoterm:
 			note = IncludedNote(subject_code="AAR")  # Terms of delivery
-			note.content.add(f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip())
+			note.content = f"{self.invoice.incoterm} {self.invoice.named_place or ''}".strip()
 			self.doc.header.notes.add(note)
 
 	def _set_seller(self):
@@ -319,6 +321,11 @@ class EInvoiceGenerator:
 		except ValueError:
 			seller_tax_id = self.invoice.company_tax_id.strip()
 			seller_vat_scheme = "FC"
+
+		# BR-O-02: category O invoices must not contain Seller VAT identifier (BT-31).
+		# Keep FC (BT-32, e.g. Steuernummer). Company Tax ID stays in ERPNext for other invoices.
+		if seller_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
 
 		self.doc.trade.agreement.seller.tax_registrations.add(
 			TaxRegistration(
@@ -414,6 +421,11 @@ class EInvoiceGenerator:
 				customer_tax_id = self.invoice.tax_id.strip()
 				customer_vat_scheme = "FC"
 
+		# BR-O-02: category O invoices must not contain Buyer VAT identifier (BT-48).
+		# Keep FC. Customer Tax ID stays in ERPNext for other invoices.
+		if customer_vat_scheme == "VA" and self._has_not_subject_to_vat_line():
+			return
+
 		self.doc.trade.agreement.buyer.tax_registrations.add(
 			TaxRegistration(
 				id=(customer_vat_scheme, customer_tax_id),
@@ -461,6 +473,27 @@ class EInvoiceGenerator:
 				elif self.buyer_contact.mobile_no:
 					self.doc.trade.agreement.buyer.contact.telephone.number = self.buyer_contact.mobile_no
 
+	def _get_line_lookup(self, item: SalesInvoiceItem) -> list[tuple[str, str | None]]:
+		return [
+			("Item Tax Template", item.item_tax_template),
+			("Account", item.income_account),
+			("Tax Category", self.invoice.tax_category),
+			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
+		]
+
+	def _resolve_line_vat_category_codes(self) -> dict[int, str | None]:
+		"""Resolve each line's VAT category once; reused for BR-O-02 and line export."""
+		if self._line_vat_category_codes is None:
+			self._line_vat_category_codes = {
+				id(item): duty_tax_fee_category_codes.get(self._get_line_lookup(item))
+				for item in self.invoice.items
+			}
+		return self._line_vat_category_codes
+
+	def _has_not_subject_to_vat_line(self) -> bool:
+		"""True if any invoice line will use VAT category O (Not subject to VAT)."""
+		return "O" in self._resolve_line_vat_category_codes().values()
+
 	def _add_line_item(self, item: SalesInvoiceItem):
 		li = LineItem()
 		li.document.line_id = str(item.idx)
@@ -492,14 +525,9 @@ class EInvoiceGenerator:
 				li.delivery.delivery_note.issue_date_time = getdate(posting_date)
 
 		li.settlement.trade_tax.type_code = "VAT"
-		lookup = [
-			("Item Tax Template", item.item_tax_template),
-			("Account", item.income_account),
-			("Tax Category", self.invoice.tax_category),
-			("Sales Taxes and Charges Template", self.invoice.taxes_and_charges),
-		]
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(lookup)
-		category_code = li.settlement.trade_tax.category_code._text
+		lookup = self._get_line_lookup(item)
+		category_code = self._resolve_line_vat_category_codes()[id(item)]
+		li.settlement.trade_tax.category_code = category_code
 		if category_code in EXEMPT_VAT_CATEGORIES:
 			# Only the line knows Item Tax Template and income Account; the rest is looked up again
 			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.
@@ -736,7 +764,9 @@ class EInvoiceGenerator:
 			self.doc.trade.settlement.terms.add(payment_terms)
 
 	def _add_payment_means(self):
-		self.doc.trade.settlement.payment_means.type_code = payment_means_codes.get(
+		# BG-16 may repeat, but we emit a single payment instruction
+		payment_means = PaymentMeans()
+		payment_means.type_code = payment_means_codes.get(
 			[("Payment Terms Template", self.invoice.payment_terms_template)]
 			+ [("Mode of Payment", term.mode_of_payment) for term in self.invoice.payment_schedule]
 		)
@@ -747,13 +777,15 @@ class EInvoiceGenerator:
 			if not iban:
 				continue
 
-			self.doc.trade.settlement.payment_means.payee_account.iban = iban
+			payment_means.payee_account.iban = iban
 
 			if self.profile >= EInvoiceProfile.EN16931:
-				self.doc.trade.settlement.payment_means.payee_account.account_name = self.invoice.company
-				self.doc.trade.settlement.payment_means.payee_institution.bic = bic
+				payment_means.payee_account.account_name = self.invoice.company
+				payment_means.payee_institution.bic = bic
 
 			break
+
+		self.doc.trade.settlement.payment_means.add(payment_means)
 
 	def _set_totals(self):
 		# [BR-DEC-09]-The allowed maximum number of decimals for the Sum of Invoice line net amount (BT-106) is 2.
@@ -816,6 +848,12 @@ def validate_doc(doc, event):
 		doc (SalesInvoice): The invoice being validated.
 		event (str): Frappe document event name (for example ``"validate"``).
 	"""
+	if not doc.einvoice_profile:
+		doc.einvoice_is_correct = 0
+		doc.validation_errors = ""
+		doc.validation_warnings = ""
+		return
+
 	for tax_row in doc.taxes:
 		if tax_row.charge_type == "On Item Quantity":
 			frappe.msgprint(
