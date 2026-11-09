@@ -48,6 +48,16 @@ class TestEInvoiceHooks(IntegrationTestCase):
 		self.assertIn(f"Added by hook for {invoice.name}", xml)
 
 
+class TestDownloadPdf(IntegrationTestCase):
+	def test_download_pdf_without_no_letterhead(self):
+		from eu_einvoice.european_e_invoice.einvoice import download_pdf
+
+		invoice = create_sales_invoice()
+		frappe.local.response = frappe._dict()
+		download_pdf("Sales Invoice", invoice.name, format="Standard")
+		self.assertTrue(frappe.local.response.filecontent)
+
+
 class TestGeneratorRegistry(IntegrationTestCase):
 	def test_sales_invoice_is_registered(self):
 		self.assertIs(get_generator_class("Sales Invoice"), SalesInvoiceGenerator)
