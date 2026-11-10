@@ -188,6 +188,9 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		# Item Tax Template. So the VAT breakdown must pick it up from the line items.
 		cls._map_code(duty_tax_fee_category_codes, "O", "Tax Category", cls.tax_category)
 		cls._map_code(vat_exemption_reason_codes, "vatex-eu-o", "Item Tax Template", cls.item_tax_template)
+		# Code List lookups use `request_cache`, which tests never clear. An earlier test can
+		# have cached "no such Code List" before we created it above.
+		frappe.local.request_cache.clear()
 
 	@staticmethod
 	def _map_code(retriever, code: str, doctype: str, name: str):
