@@ -185,9 +185,9 @@ class EInvoiceImport(Document):
 		self.profile = get_profile(doc.context.guideline_parameter.id._text).value
 		self._validate_schematron(xml_bytes)
 
-		self.id = str(doc.header.id)
+		self.id = stripped_text(doc.header.id)
 		self.issue_date = str(doc.header.issue_date_time)
-		self.currency = str(doc.trade.settlement.currency_code)
+		self.currency = stripped_text(doc.trade.settlement.currency_code)
 		self.parse_seller(doc.trade.agreement.seller)
 		self.flags.payee_differs = payee_differs_from_seller(
 			doc.trade.agreement.seller, doc.trade.settlement.payee
@@ -257,24 +257,24 @@ class EInvoiceImport(Document):
 			if seller.tax_registrations.children
 			else None
 		)
-		self.seller_electronic_address = str(seller.electronic_address.uri_ID._text)
+		self.seller_electronic_address = stripped_text(seller.electronic_address.uri_ID)
 		self.seller_electronic_address_scheme = str(seller.electronic_address.uri_ID._scheme_id)
 		self.parse_address(seller.address, "seller")
 
 	def parse_buyer(self, buyer: TradeParty):
-		self.buyer_name = str(buyer.name)
-		self.buyer_electronic_address = str(buyer.electronic_address.uri_ID._text)
+		self.buyer_name = stripped_text(buyer.name)
+		self.buyer_electronic_address = stripped_text(buyer.electronic_address.uri_ID)
 		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: PostalTradeAddress, prefix: str) -> _dict:
-		country = frappe.db.get_value("Country", {"code": str(address.country_id).lower()}, "name")
+		country = frappe.db.get_value("Country", {"code": stripped_text(address.country_id).lower()}, "name")
 
-		self.set(f"{prefix}_city", str(address.city_name))
-		self.set(f"{prefix}_address_line_1", str(address.line_one))
-		self.set(f"{prefix}_address_line_2", str(address.line_two))
-		self.set(f"{prefix}_postcode", str(address.postcode))
-		self.set(f"{prefix}_country", str(country))
+		self.set(f"{prefix}_city", stripped_text(address.city_name))
+		self.set(f"{prefix}_address_line_1", stripped_text(address.line_one))
+		self.set(f"{prefix}_address_line_2", stripped_text(address.line_two))
+		self.set(f"{prefix}_postcode", stripped_text(address.postcode))
+		self.set(f"{prefix}_country", country)
 
 	def parse_line_item(self, li: LineItem):
 		item = self.append("items")
@@ -283,8 +283,8 @@ class EInvoiceImport(Document):
 		basis_qty = float(li.agreement.net.basis_quantity._amount or "1")
 		rate = net_rate / basis_qty
 
-		product_name_full = str(li.product.name)
-		product_description = str(li.product.description)
+		product_name_full = stripped_text(li.product.name)
+		product_description = stripped_text(li.product.description)
 		if len(product_name_full) > 140:
 			item.product_name = product_name_full[:140]
 			item.product_description = product_name_full + " | " + product_description
