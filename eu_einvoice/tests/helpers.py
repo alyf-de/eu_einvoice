@@ -11,7 +11,7 @@ from unittest.mock import patch
 import frappe
 from frappe.utils import nowdate
 
-from eu_einvoice.european_e_invoice.custom.sales_invoice import EInvoiceGenerator
+from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
 from eu_einvoice.tests.scaffold import (
 	COMPANY_NAME,
 	COMPANY_TAX_ID,
@@ -172,43 +172,13 @@ def delete_embed_test_sales_invoice(sales_invoice_name: str) -> None:
 		doc = frappe.get_doc("Sales Invoice", sales_invoice_name)
 		if doc.docstatus == 1:
 			with ExitStack() as stack:
-				stack.enter_context(patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"))
+				stack.enter_context(patch("eu_einvoice.european_e_invoice.einvoice.validate_doc"))
 				if "pdf_on_submit" in frappe.get_installed_apps():
 					stack.enter_context(patch("pdf_on_submit.attach_pdf.execute"))
 				doc.cancel()
 		frappe.delete_doc("Sales Invoice", sales_invoice_name, force=True, ignore_permissions=True)
 
 
-def build_einvoice_generator(invoice) -> EInvoiceGenerator:
-	"""Build an ``EInvoiceGenerator`` with addresses and contacts loaded from *invoice*."""
-	seller_address = None
-	if invoice.company_address:
-		seller_address = frappe.get_doc("Address", invoice.company_address)
-
-	buyer_address = None
-	if invoice.customer_address:
-		buyer_address = frappe.get_doc("Address", invoice.customer_address)
-
-	shipping_address = None
-	if invoice.shipping_address_name:
-		shipping_address = frappe.get_doc("Address", invoice.shipping_address_name)
-
-	seller_contact = None
-	if invoice.get("company_contact_person"):
-		seller_contact = frappe.get_doc("Contact", invoice.company_contact_person)
-
-	buyer_contact = None
-	if invoice.contact_person:
-		buyer_contact = frappe.get_doc("Contact", invoice.contact_person)
-
-	return EInvoiceGenerator(
-		profile=EInvoiceProfile(invoice.einvoice_profile),
-		invoice=invoice,
-		company=frappe.get_doc("Company", invoice.company),
-		customer=frappe.get_doc("Customer", invoice.customer),
-		seller_address=seller_address,
-		buyer_address=buyer_address,
-		shipping_address=shipping_address,
-		seller_contact=seller_contact,
-		buyer_contact=buyer_contact,
-	)
+def build_einvoice_generator(invoice) -> SalesInvoiceGenerator:
+	"""Build a ``SalesInvoiceGenerator`` for *invoice* with its stored profile."""
+	return SalesInvoiceGenerator(invoice, EInvoiceProfile(invoice.einvoice_profile))

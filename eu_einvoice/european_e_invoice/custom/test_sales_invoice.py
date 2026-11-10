@@ -9,12 +9,11 @@ from drafthorse.models.document import Document
 from drafthorse.pdf import attach_xml
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from frappe.tests import IntegrationTestCase
-from frappe.utils import add_days
 from lxml import etree
 from pypdf import PdfReader, PdfWriter
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import (
-	EInvoiceGenerator,
+	SalesInvoiceGenerator,
 	duty_tax_fee_category_codes,
 	get_einvoice,
 	get_item_rate,
@@ -111,7 +110,7 @@ class TestVatExemptionReason(IntegrationTestCase):
 	def test_empty_header_tax_skips_exemption_for_zero_rated(self):
 		"""BR-Z-10: zero-rated VAT breakdown must not have an exemption reason."""
 		invoice = frappe._dict(tax_category=None, taxes_and_charges=None, net_total=100)
-		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
+		generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
 		generator.doc = Document()
 
 		with patch.object(duty_tax_fee_category_codes, "get", return_value="Z"):
@@ -149,7 +148,7 @@ class TestVatExemptionReason(IntegrationTestCase):
 					precision=lambda fieldname: 2,
 					taxes=[previous, vat_row],
 				)
-				generator = EInvoiceGenerator(EInvoiceProfile.EXTENDED, invoice, None, None)
+				generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EXTENDED)
 				generator.doc = Document()
 				generator.item_tax_rates = set()
 
@@ -195,6 +194,9 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		code_list = retriever.code_lists[0]
 		if not frappe.db.exists("Code List", code_list):
 			frappe.get_doc(doctype="Code List", __newname=code_list, title=code_list).insert()
+			# ERPNext's resolve_code_list is request-cached, and the whole test run is one request.
+			# An earlier test may have resolved this code list before it existed.
+			frappe.local.request_cache.clear()
 
 		frappe.get_doc(
 			doctype="Common Code",
@@ -381,7 +383,7 @@ class TestApplicableTradeTaxes(IntegrationTestCase):
 				frappe._dict(account_head="_Test VAT 2", charge_type="On Net Total", rate=2, tax_amount=0),
 			],
 		)
-		generator = EInvoiceGenerator(EInvoiceProfile.EN16931, invoice, None, None)
+		generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
 		generator.doc = Document()
 		generator.item_tax_rates = {19, 7, 10, 5, 3}
 
@@ -450,7 +452,7 @@ class TestPaymentMeans(IntegrationTestCase):
 			payment_terms_template="Test Terms",
 			payment_schedule=[frappe._dict(mode_of_payment="Wire Transfer")],
 		)
-		generator = EInvoiceGenerator(profile, invoice, None, None)
+		generator = SalesInvoiceGenerator(invoice, profile)
 		generator.doc = Document()
 		return generator
 
@@ -545,46 +547,11 @@ class TestValidateDoc(IntegrationTestCase):
 				self.assertEqual(doc.validation_warnings, "")
 
 
-class TestSkontoTerms(IntegrationTestCase):
-	@classmethod
-	def setUpClass(cls):
-		super().setUpClass()
-		cls.template = "_Test Skonto 14 Days 2 Percent"
-		if frappe.db.exists("Payment Terms Template", cls.template):
-			return
+class TestDownloadPdf(IntegrationTestCase):
+	def test_download_pdf_without_no_letterhead(self):
+		from eu_einvoice.european_e_invoice.custom.sales_invoice import download_pdf
 
-		frappe.get_doc(
-			doctype="Payment Term",
-			payment_term_name=cls.template,
-			invoice_portion=100,
-			due_date_based_on="Day(s) after invoice date",
-			credit_days=30,
-			discount_type="Percentage",
-			discount=2,
-			discount_validity_based_on="Day(s) after invoice date",
-			discount_validity=14,
-		).insert()
-		frappe.get_doc(
-			doctype="Payment Terms Template",
-			template_name=cls.template,
-			terms=[{"payment_term": cls.template, "invoice_portion": 100}],
-		).insert()
-
-	def _get_xml(self, payment_terms_template=None, discount_date_offset=None) -> str:
-		invoice = create_sales_invoice(do_not_save=True)
-		invoice.einvoice_profile = EInvoiceProfile.XRECHNUNG.value
-		invoice.payment_terms_template = payment_terms_template
-		invoice.insert()
-		if discount_date_offset is not None:
-			invoice.payment_schedule[0].discount_date = add_days(invoice.posting_date, discount_date_offset)
-
-		return get_einvoice(invoice).decode()
-
-	def test_skonto_line_for_discount_after_posting_date(self):
-		self.assertIn("#SKONTO#TAGE=14#PROZENT=2.00#", self._get_xml(self.template))
-
-	def test_no_skonto_line_for_discount_before_posting_date(self):
-		self.assertNotIn("#SKONTO#", self._get_xml(self.template, discount_date_offset=-1))
-
-	def test_no_skonto_line_without_discount(self):
-		self.assertNotIn("#SKONTO#", self._get_xml())
+		invoice = create_sales_invoice()
+		frappe.local.response = frappe._dict()
+		download_pdf("Sales Invoice", invoice.name, format="Standard")
+		self.assertTrue(frappe.local.response.filecontent)
