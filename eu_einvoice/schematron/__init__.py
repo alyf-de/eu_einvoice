@@ -6,9 +6,9 @@ from saxonche import PySaxonProcessor
 from eu_einvoice.utils import EInvoiceProfile
 
 PROFILE_TO_XSL = {
-	EInvoiceProfile.BASIC: "Factur-X_1.07.2_BASIC.xsl",
+	EInvoiceProfile.BASIC: "FACTUR-X_BASIC.xsl",
 	EInvoiceProfile.EN16931: "EN16931-CII-validation-preprocessed.xsl",
-	EInvoiceProfile.EXTENDED: "Factur-X_1.07.2_EXTENDED.xsl",
+	EInvoiceProfile.EXTENDED: "FACTUR-X_EXTENDED.xsl",
 	EInvoiceProfile.XRECHNUNG: "XRechnung-CII-validation.xsl",
 }
 
