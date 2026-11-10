@@ -575,7 +575,7 @@ class EInvoiceGenerator:
 					)  # the character "#" is not allowed in the free text
 					if ps.discount_type == "Percentage":
 						discount_days = date_diff(ps.discount_date, self.invoice.posting_date)
-						if discount_days < 0:
+						if discount_days > 0:
 							basis_amount = (
 								ps.payment_amount
 								if round(ps.payment_amount, 2) != round(self.invoice.outstanding_amount, 2)

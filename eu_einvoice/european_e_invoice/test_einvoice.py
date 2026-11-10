@@ -5,6 +5,7 @@ import frappe
 from drafthorse.models.document import Document, IncludedNote
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from frappe.tests.utils import FrappeTestCase
+from frappe.utils import add_days
 from pypdf import PdfWriter
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
@@ -131,3 +132,48 @@ class TestGeneratorRegistry(FrappeTestCase):
 	def test_attach_xml_to_pdf_keeps_pdf_of_unregistered_doctype(self):
 		pdf_data = b"%PDF-1.4 not an invoice"
 		self.assertIs(attach_xml_to_pdf("TODO-0001", pdf_data, doctype="ToDo"), pdf_data)
+
+
+class TestSkontoTerms(FrappeTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		cls.template = "_Test Skonto 14 Days 2 Percent"
+		if frappe.db.exists("Payment Terms Template", cls.template):
+			return
+
+		frappe.get_doc(
+			doctype="Payment Term",
+			payment_term_name=cls.template,
+			invoice_portion=100,
+			due_date_based_on="Day(s) after invoice date",
+			credit_days=30,
+			discount_type="Percentage",
+			discount=2,
+			discount_validity_based_on="Day(s) after invoice date",
+			discount_validity=14,
+		).insert()
+		frappe.get_doc(
+			doctype="Payment Terms Template",
+			template_name=cls.template,
+			terms=[{"payment_term": cls.template, "invoice_portion": 100}],
+		).insert()
+
+	def _get_xml(self, payment_terms_template=None, discount_date_offset=None) -> str:
+		invoice = create_sales_invoice(do_not_save=True)
+		invoice.einvoice_profile = EInvoiceProfile.XRECHNUNG.value
+		invoice.payment_terms_template = payment_terms_template
+		invoice.insert()
+		if discount_date_offset is not None:
+			invoice.payment_schedule[0].discount_date = add_days(invoice.posting_date, discount_date_offset)
+
+		return get_einvoice(invoice).decode()
+
+	def test_skonto_line_for_discount_after_posting_date(self):
+		self.assertIn("#SKONTO#TAGE=14#PROZENT=2.00#", self._get_xml(self.template))
+
+	def test_no_skonto_line_for_discount_before_posting_date(self):
+		self.assertNotIn("#SKONTO#", self._get_xml(self.template, discount_date_offset=-1))
+
+	def test_no_skonto_line_without_discount(self):
+		self.assertNotIn("#SKONTO#", self._get_xml())
