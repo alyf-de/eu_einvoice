@@ -5,7 +5,7 @@ import os
 import re
 from base64 import b64encode
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Literal
 
 import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
@@ -950,8 +950,8 @@ def download_pdf(
 	doctype: str,
 	name: str,
 	format: str | None = None,
-	doc: FrappeDocument | str | dict[str, Any] | None = None,
-	no_letterhead: str | int | None = None,
+	doc: FrappeDocument | None = None,
+	no_letterhead: bool | int = 0,
 	language: str | None = None,
 	letterhead: str | None = None,
 	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,

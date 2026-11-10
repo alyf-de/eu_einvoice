@@ -545,3 +545,13 @@ class TestValidateDoc(IntegrationTestCase):
 				self.assertEqual(doc.einvoice_is_correct, 0)
 				self.assertEqual(doc.validation_errors, "")
 				self.assertEqual(doc.validation_warnings, "")
+
+
+class TestDownloadPdf(IntegrationTestCase):
+	def test_download_pdf_without_no_letterhead(self):
+		from eu_einvoice.european_e_invoice.custom.sales_invoice import download_pdf
+
+		invoice = create_sales_invoice()
+		frappe.local.response = frappe._dict()
+		download_pdf("Sales Invoice", invoice.name, format="Standard")
+		self.assertTrue(frappe.local.response.filecontent)
