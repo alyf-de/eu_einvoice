@@ -556,5 +556,16 @@ class TestDownloadPdf(FrappeTestCase):
 
 		invoice = create_sales_invoice()
 		frappe.local.response = frappe._dict()
-		download_pdf("Sales Invoice", invoice.name, format="Standard")
+		# CI has no wkhtmltopdf binary, so render a blank page instead.
+		with patch("frappe.utils.pdf.get_pdf", return_value=self._blank_pdf()):
+			download_pdf("Sales Invoice", invoice.name, format="Standard")
+
 		self.assertTrue(frappe.local.response.filecontent)
+
+	@staticmethod
+	def _blank_pdf() -> bytes:
+		writer = PdfWriter()
+		writer.add_blank_page(width=595, height=842)
+		pdf = io.BytesIO()
+		writer.write(pdf)
+		return pdf.getvalue()
