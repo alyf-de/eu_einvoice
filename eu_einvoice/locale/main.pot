@@ -440,6 +440,10 @@ msgstr ""
 msgid "Invalid attachment file"
 msgstr ""
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:576
+msgid "Invoice line {0} has zero quantity but a non-zero amount."
+msgstr ""
+
 #: eu_einvoice/european_e_invoice/custom/sales_invoice_attachments.py:688
 msgid "Legacy embed migration failed for {0}"
 msgstr ""
@@ -831,4 +835,3 @@ msgstr ""
 #: eu_einvoice/european_e_invoice/custom/sales_invoice.py:861
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
-

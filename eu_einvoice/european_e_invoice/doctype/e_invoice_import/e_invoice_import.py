@@ -56,6 +56,7 @@ class EInvoiceImport(Document):
 		buyer_country: DF.Link | None
 		buyer_electronic_address: DF.Data | None
 		buyer_electronic_address_scheme: DF.Data | None
+		buyer_id: DF.Data | None
 		buyer_name: DF.Data | None
 		buyer_postcode: DF.Data | None
 		charge_total: DF.Currency
@@ -82,6 +83,7 @@ class EInvoiceImport(Document):
 		seller_country: DF.Link | None
 		seller_electronic_address: DF.Data | None
 		seller_electronic_address_scheme: DF.Data | None
+		seller_id: DF.Data | None
 		seller_name: DF.Data | None
 		seller_postcode: DF.Data | None
 		seller_tax_id: DF.Data | None
@@ -111,6 +113,7 @@ class EInvoiceImport(Document):
 			self.read_values_from_einvoice()
 			self.guess_supplier()
 			self.guess_company()
+			self.guess_company_and_supplier()
 			self.guess_uom()
 			self.guess_item_code()
 
@@ -185,9 +188,9 @@ class EInvoiceImport(Document):
 		self.profile = get_profile(doc.context.guideline_parameter.id._text).value
 		self._validate_schematron(xml_bytes)
 
-		self.id = str(doc.header.id)
+		self.id = stripped_text(doc.header.id)
 		self.issue_date = str(doc.header.issue_date_time)
-		self.currency = str(doc.trade.settlement.currency_code)
+		self.currency = stripped_text(doc.trade.settlement.currency_code)
 		self.parse_seller(doc.trade.agreement.seller)
 		self.flags.payee_differs = payee_differs_from_seller(
 			doc.trade.agreement.seller, doc.trade.settlement.payee
@@ -252,29 +255,31 @@ class EInvoiceImport(Document):
 	def parse_seller(self, seller: TradeParty):
 		# stripped, because we use them to find the Supplier
 		self.seller_name = stripped_text(seller.name)
+		self.seller_id = stripped_text(seller.id)
 		self.seller_tax_id = (
 			stripped_text(seller.tax_registrations.children[0].id) or None
 			if seller.tax_registrations.children
 			else None
 		)
-		self.seller_electronic_address = str(seller.electronic_address.uri_ID._text)
+		self.seller_electronic_address = stripped_text(seller.electronic_address.uri_ID)
 		self.seller_electronic_address_scheme = str(seller.electronic_address.uri_ID._scheme_id)
 		self.parse_address(seller.address, "seller")
 
 	def parse_buyer(self, buyer: TradeParty):
-		self.buyer_name = str(buyer.name)
-		self.buyer_electronic_address = str(buyer.electronic_address.uri_ID._text)
+		self.buyer_name = stripped_text(buyer.name)
+		self.buyer_electronic_address = stripped_text(buyer.electronic_address.uri_ID)
 		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
+		self.buyer_id = stripped_text(buyer.id)
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: PostalTradeAddress, prefix: str) -> _dict:
-		country = frappe.db.get_value("Country", {"code": str(address.country_id).lower()}, "name")
+		country = frappe.db.get_value("Country", {"code": stripped_text(address.country_id).lower()}, "name")
 
-		self.set(f"{prefix}_city", str(address.city_name))
-		self.set(f"{prefix}_address_line_1", str(address.line_one))
-		self.set(f"{prefix}_address_line_2", str(address.line_two))
-		self.set(f"{prefix}_postcode", str(address.postcode))
-		self.set(f"{prefix}_country", str(country))
+		self.set(f"{prefix}_city", stripped_text(address.city_name))
+		self.set(f"{prefix}_address_line_1", stripped_text(address.line_one))
+		self.set(f"{prefix}_address_line_2", stripped_text(address.line_two))
+		self.set(f"{prefix}_postcode", stripped_text(address.postcode))
+		self.set(f"{prefix}_country", country)
 
 	def parse_line_item(self, li: LineItem):
 		item = self.append("items")
@@ -283,8 +288,8 @@ class EInvoiceImport(Document):
 		basis_qty = float(li.agreement.net.basis_quantity._amount or "1")
 		rate = net_rate / basis_qty
 
-		product_name_full = str(li.product.name)
-		product_description = str(li.product.description)
+		product_name_full = stripped_text(li.product.name)
+		product_description = stripped_text(li.product.description)
 		if len(product_name_full) > 140:
 			item.product_name = product_name_full[:140]
 			item.product_description = product_name_full + " | " + product_description
@@ -387,6 +392,7 @@ class EInvoiceImport(Document):
 		# (identifier from the invoice, doctype, filters, field with the Supplier)
 		lookups = [
 			(self.seller_tax_id, "Supplier", {"tax_id": self.seller_tax_id}, "name"),
+			(self.seller_id, "Supplier", {"name": self.seller_id}, "name"),
 			(self.seller_name, "Supplier", {"supplier_name": self.seller_name}, "name"),
 			(self.seller_name, "Supplier", {"name": self.seller_name}, "name"),
 		]
@@ -420,7 +426,36 @@ class EInvoiceImport(Document):
 
 		if frappe.db.exists("Company", self.buyer_name):
 			self.company = self.buyer_name
-		else:
+
+	def guess_company_and_supplier(self):
+		"""Guess company and supplier based on buyer ID.
+
+		If the buyer ID is provided and we have already found either Company or
+		Supplier, we can find the other one.
+		"""
+		if self.buyer_id and self.company and not self.supplier:
+			suppliers = frappe.get_all(
+				"Customer Number At Supplier",
+				filters={"customer_number": self.buyer_id, "company": self.company, "parenttype": "Supplier"},
+				pluck="parent",
+				distinct=True,
+				limit=2,
+			)
+			if len(suppliers) == 1:
+				self.supplier = suppliers[0]
+
+		if self.buyer_id and self.supplier and not self.company:
+			companies = frappe.get_all(
+				"Customer Number At Supplier",
+				filters={"customer_number": self.buyer_id, "parent": self.supplier, "parenttype": "Supplier"},
+				pluck="company",
+				distinct=True,
+				limit=2,
+			)
+			if len(companies) == 1:
+				self.company = companies[0]
+
+		if not self.company:
 			self.company = get_default_company()
 
 	def guess_uom(self):
@@ -568,6 +603,16 @@ def relative_url_to_path(url: str) -> Path:
 	return Path(get_site_path(url.lstrip("/"))).resolve()
 
 
+def should_map_purchase_invoice_item(source) -> bool:
+	if source.billed_quantity:
+		return True
+
+	if source.total_amount:
+		frappe.throw(_("Invoice line {0} has zero quantity but a non-zero amount.").format(source.idx))
+
+	return False
+
+
 @frappe.whitelist()
 def create_purchase_invoice(source_name, target_doc=None):
 	def post_process(source, target: PurchaseInvoice):
@@ -615,6 +660,7 @@ def create_purchase_invoice(source_name, target_doc=None):
 					"net_rate": "rate",
 					"po_detail": "po_detail",
 				},
+				"condition": should_map_purchase_invoice_item,
 				"postprocess": process_item_row,
 			},
 			"E Invoice Trade Tax": {

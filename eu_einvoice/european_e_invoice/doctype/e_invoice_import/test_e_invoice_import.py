@@ -15,6 +15,7 @@ from lxml.etree import fromstring
 
 from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
 	EInvoiceImport,
+	create_purchase_invoice,
 	get_create_purchase_invoice_action,
 	is_ubl_xml,
 	payee_differs_from_seller,
@@ -41,6 +42,24 @@ CII_INVOICE = b"""<?xml version="1.0" encoding="UTF-8"?>
 		<ram:ID xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100">1</ram:ID>
 	</rsm:ExchangedDocument>
 </rsm:CrossIndustryInvoice>
+"""
+
+# Present but empty elements: lxml returns None as their text
+EMPTY_BUYER = b"""<ram:BuyerTradeParty
+	xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100">
+	<ram:ID/>
+	<ram:Name/>
+	<ram:PostalTradeAddress>
+		<ram:PostcodeCode/>
+		<ram:LineOne/>
+		<ram:LineTwo/>
+		<ram:CityName/>
+		<ram:CountryID/>
+	</ram:PostalTradeAddress>
+	<ram:URIUniversalCommunication>
+		<ram:URIID/>
+	</ram:URIUniversalCommunication>
+</ram:BuyerTradeParty>
 """
 
 UNSUPPORTED_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
@@ -86,19 +105,48 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual(doc.currency, "EUR")
 		self.assertEqual(doc.seller_name, "Seller GmbH")
 		self.assertEqual(doc.buyer_name, "Buyer GmbH")
+		self.assertIsNone(doc.seller_country)
+		self.assertIsNone(doc.buyer_country)
 		self.assertEqual(doc.profile, "EN 16931")
 		self.assertEqual(str(doc.issue_date), "2024-01-15")
 
 	def test_seller_identifiers_are_stripped(self):
 		seller = TradeParty()
 		seller.name = "\n  Seller GmbH  \n"
+		seller.id = " S-1 "
 		seller.tax_registrations.add(TaxRegistration(id=("VA", " DE123456789 ")))
 
 		doc = frappe.new_doc("E Invoice Import")
 		doc.parse_seller(seller)
 
 		self.assertEqual(doc.seller_name, "Seller GmbH")
+		self.assertEqual(doc.seller_id, "S-1")
 		self.assertEqual(doc.seller_tax_id, "DE123456789")
+
+	def test_empty_elements_do_not_become_none_string(self):
+		doc = frappe.new_doc("E Invoice Import")
+		doc.parse_buyer(TradeParty().from_etree(fromstring(EMPTY_BUYER)))
+
+		line_item = make_line_item()
+		line_item.product.name = None
+		line_item.product.description = None
+		doc.parse_line_item(line_item)
+
+		for fieldname in (
+			"buyer_name",
+			"buyer_id",
+			"buyer_electronic_address",
+			"buyer_electronic_address_scheme",
+			"buyer_city",
+			"buyer_address_line_1",
+			"buyer_address_line_2",
+			"buyer_postcode",
+		):
+			with self.subTest(fieldname=fieldname):
+				self.assertEqual(doc.get(fieldname), "")
+		self.assertIsNone(doc.buyer_country)
+		self.assertEqual(doc.items[0].product_name, "")
+		self.assertEqual(doc.items[0].product_description, "")
 
 	def _assert_unsupported_einvoice_throw(self, xml_bytes: bytes, message_snippet: str):
 		frappe.flags.mute_messages = False
@@ -132,6 +180,30 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertEqual([row.seller_product_id for row in doc.items], ["SUP-ART-1", "SUP-ART-2", None])
 		self.assertEqual([row.item for row in doc.items], [buyer_item, seller_item, None])
 
+	def test_create_purchase_invoice_skips_zero_quantity_zero_amount_item(self):
+		doc = frappe.get_doc(
+			doctype="E Invoice Import",
+			supplier="_Test Supplier",
+			company="_Test Company",
+			currency="EUR",
+			items=[
+				{"product_name": "Billed", "billed_quantity": 2, "net_rate": 5, "total_amount": 10},
+				{"product_name": "Info only", "billed_quantity": 0, "net_rate": 0, "total_amount": 0},
+			],
+		).insert()
+
+		invoice = create_purchase_invoice(doc.name)
+
+		self.assertEqual([row.qty for row in invoice.items], [2])
+
+		doc.append("items", {"product_name": "Broken", "billed_quantity": 0, "total_amount": 1})
+		doc.save()
+
+		with self.assertRaises(frappe.ValidationError) as cm:
+			create_purchase_invoice(doc.name)
+
+		self.assertIn("Invoice line 3", str(cm.exception))
+
 	def test_guess_supplier(self):
 		suffix = frappe.generate_hash(length=6)
 		group = frappe.db.get_value("Supplier Group", {"is_group": 0})
@@ -164,9 +236,9 @@ class TestEInvoiceImport(IntegrationTestCase):
 		by_id = make_supplier(f"ID Match {suffix}", f"ID Match {suffix}")
 		self.assertEqual(guess(seller_name=by_id, seller_tax_id=f"DE{suffix}"), by_id)
 
-		# tax ID wins over an unrelated supplier whose ID equals the seller name
+		# tax ID wins over an unrelated supplier whose ID equals the seller ID
 		by_tax = make_supplier(f"SUP-{suffix}-4", f"Tax Match {suffix}", tax_id=f"DE-{suffix}")
-		self.assertEqual(guess(seller_name=by_id, seller_tax_id=f"DE-{suffix}"), by_tax)
+		self.assertEqual(guess(seller_id=by_id, seller_tax_id=f"DE-{suffix}"), by_tax)
 
 		# supplier found via the IBAN of its bank account
 		by_iban = make_supplier(f"SUP-{suffix}-5", f"IBAN Match {suffix}")
@@ -229,6 +301,42 @@ class TestEInvoiceImport(IntegrationTestCase):
 		self.assertFalse(payee_differs_from_seller(seller, party(" Seller GmbH\n")))
 		self.assertFalse(payee_differs_from_seller(seller, party("Bank Name", "S-1 ")))
 		self.assertFalse(payee_differs_from_seller(seller, party(" ")))  # blank name is no payee
+
+	def test_default_company_without_buyer_id(self):
+		frappe.defaults.set_user_default("company", "_Test Company")
+		self.addCleanup(frappe.defaults.clear_user_default, "company")
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_name = "Unknown Buyer GmbH"
+
+		doc.guess_company()
+		doc.guess_company_and_supplier()
+
+		self.assertEqual(doc.company, "_Test Company")
+
+	def test_buyer_id_with_duplicate_customer_number_rows(self):
+		customer_number = f"C-{frappe.generate_hash(length=6)}"
+		supplier = frappe.get_doc(
+			doctype="Supplier",
+			supplier_name=f"Customer Number {customer_number}",
+			supplier_group=frappe.db.get_value("Supplier Group", {"is_group": 0}),
+			customer_numbers=[
+				{"company": "_Test Company", "customer_number": customer_number},
+				{"company": "_Test Company", "customer_number": customer_number},
+			],
+		).insert()
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_id = customer_number
+		doc.company = "_Test Company"
+		doc.guess_company_and_supplier()
+		self.assertEqual(doc.supplier, supplier.name)
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.buyer_id = customer_number
+		doc.supplier = supplier.name
+		doc.guess_company_and_supplier()
+		self.assertEqual(doc.company, "_Test Company")
 
 	def test_bank_details_from_payment_means_container(self):
 		"""drafthorse >= 2025.2 exposes payment instructions (BG-16) as a container."""

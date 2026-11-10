@@ -130,6 +130,8 @@ class EInvoiceGenerator:
 		self.item_tax_rates = set()
 		# VAT category code -> exemption reason code, collected from the line items
 		self.line_exemption_reason_codes = {}
+		# item id() -> duty/tax/fee category code; resolved once for BR-O-02 and line export
+		self._line_vat_category_codes = None
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
 
@@ -254,6 +256,20 @@ class EInvoiceGenerator:
 			(self.tax_template_doctype, self.invoice.taxes_and_charges),
 		]
 
+	def _resolve_line_vat_category_codes(self) -> dict[int, str | None]:
+		"""Resolve each line's VAT category once; reused for BR-O-02 and line export."""
+		if self._line_vat_category_codes is None:
+			document_lookup = self._document_lookup()
+			self._line_vat_category_codes = {
+				id(item): duty_tax_fee_category_codes.get(self.get_line_lookup(item) + document_lookup)
+				for item in self.invoice.items
+			}
+		return self._line_vat_category_codes
+
+	def _has_not_subject_to_vat_line(self) -> bool:
+		"""True if any invoice line will use VAT category O (Not subject to VAT)."""
+		return "O" in self._resolve_line_vat_category_codes().values()
+
 	def _set_context(self):
 		"""Set default context according to XRechnung 3.0.2"""
 		self.doc.context.business_parameter.id = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"
@@ -358,10 +374,8 @@ class EInvoiceGenerator:
 
 		li.settlement.trade_tax.type_code = "VAT"
 		line_lookup = self.get_line_lookup(item)
-		li.settlement.trade_tax.category_code = duty_tax_fee_category_codes.get(
-			line_lookup + self._document_lookup()
-		)
-		category_code = li.settlement.trade_tax.category_code._text
+		category_code = self._resolve_line_vat_category_codes()[id(item)]
+		li.settlement.trade_tax.category_code = category_code
 		if category_code in EXEMPT_VAT_CATEGORIES:
 			# Only the line knows Item Tax Template and Account; the rest is looked up again
 			# on the VAT breakdown. ponytail: first line wins, one breakdown holds only one reason.
@@ -660,6 +674,12 @@ def validate_doc(doc, event):
 		doc (SalesInvoice): The invoice being validated.
 		event (str): Frappe document event name (for example ``"validate"``).
 	"""
+	if not doc.einvoice_profile:
+		doc.einvoice_is_correct = 0
+		doc.validation_errors = ""
+		doc.validation_warnings = ""
+		return
+
 	for tax_row in doc.taxes:
 		if tax_row.charge_type == "On Item Quantity":
 			frappe.msgprint(
