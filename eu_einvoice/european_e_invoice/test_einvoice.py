@@ -1,3 +1,4 @@
+import io
 from unittest.mock import MagicMock, patch
 
 import frappe
@@ -5,6 +6,7 @@ from drafthorse.models.document import Document, IncludedNote
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_days
+from pypdf import PdfWriter
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
 from eu_einvoice.european_e_invoice.einvoice import (
@@ -83,6 +85,27 @@ class TestPartyTaxRegistration(FrappeTestCase):
 							get_code.assert_called_once_with(
 								[("Tax Category", None), ("Custom Tax Template", None)]
 							)
+
+
+class TestDownloadPdf(FrappeTestCase):
+	def test_download_pdf_without_no_letterhead(self):
+		from eu_einvoice.european_e_invoice.einvoice import download_pdf
+
+		invoice = create_sales_invoice()
+		frappe.local.response = frappe._dict()
+		# CI has no wkhtmltopdf binary, so render a blank page instead.
+		with patch("frappe.utils.pdf.get_pdf", return_value=self._blank_pdf()):
+			download_pdf("Sales Invoice", invoice.name, format="Standard")
+
+		self.assertTrue(frappe.local.response.filecontent)
+
+	@staticmethod
+	def _blank_pdf() -> bytes:
+		writer = PdfWriter()
+		writer.add_blank_page(width=595, height=842)
+		pdf = io.BytesIO()
+		writer.write(pdf)
+		return pdf.getvalue()
 
 
 class TestGeneratorRegistry(FrappeTestCase):
