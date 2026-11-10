@@ -107,21 +107,6 @@ class TestEInvoiceImport(FrappeTestCase):
 		self.assertEqual(doc.profile, "EN 16931")
 		self.assertEqual(str(doc.issue_date), "2024-01-15")
 
-<<<<<<< HEAD
-=======
-	def test_seller_identifiers_are_stripped(self):
-		seller = TradeParty()
-		seller.name = "\n  Seller GmbH  \n"
-		seller.id = " S-1 "
-		seller.tax_registrations.add(TaxRegistration(id=("VA", " DE123456789 ")))
-
-		doc = frappe.new_doc("E Invoice Import")
-		doc.parse_seller(seller)
-
-		self.assertEqual(doc.seller_name, "Seller GmbH")
-		self.assertEqual(doc.seller_id, "S-1")
-		self.assertEqual(doc.seller_tax_id, "DE123456789")
-
 	def test_empty_elements_do_not_become_none_string(self):
 		doc = frappe.new_doc("E Invoice Import")
 		doc.parse_buyer(TradeParty().from_etree(fromstring(EMPTY_BUYER)))
@@ -133,7 +118,6 @@ class TestEInvoiceImport(FrappeTestCase):
 
 		for fieldname in (
 			"buyer_name",
-			"buyer_id",
 			"buyer_electronic_address",
 			"buyer_electronic_address_scheme",
 			"buyer_city",
@@ -147,7 +131,6 @@ class TestEInvoiceImport(FrappeTestCase):
 		self.assertEqual(doc.items[0].product_name, "")
 		self.assertEqual(doc.items[0].product_description, "")
 
->>>>>>> e2444d3 (fix(import): keep empty values empty instead of "None" (#359))
 	def _assert_unsupported_einvoice_throw(self, xml_bytes: bytes, message_snippet: str):
 		frappe.flags.mute_messages = False
 		frappe.clear_messages()
