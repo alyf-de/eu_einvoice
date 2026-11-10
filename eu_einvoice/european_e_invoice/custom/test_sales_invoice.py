@@ -550,7 +550,7 @@ class TestValidateDoc(FrappeTestCase):
 				self.assertEqual(doc.validation_warnings, "")
 
 
-class TestDownloadPdf(IntegrationTestCase):
+class TestDownloadPdf(FrappeTestCase):
 	def test_download_pdf_without_no_letterhead(self):
 		from eu_einvoice.european_e_invoice.custom.sales_invoice import download_pdf
 
