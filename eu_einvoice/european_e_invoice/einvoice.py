@@ -5,7 +5,7 @@ import os
 import re
 from base64 import b64encode
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
@@ -16,7 +16,7 @@ from drafthorse.models.references import AdditionalReferencedDocument
 from drafthorse.models.trade import LogisticsServiceCharge
 from drafthorse.models.tradelines import LineItem
 from frappe import _
-from frappe.core.doctype.file.utils import find_file_by_url, get_safe_file_name
+from frappe.core.doctype.file.utils import find_file_by_url
 from frappe.core.utils import html2text
 from frappe.model.naming import parse_naming_series
 from frappe.utils import cstr
@@ -126,7 +126,7 @@ class EInvoiceGenerator:
 		self.item_tax_rates = set()
 		# VAT category code -> exemption reason code, collected from the line items
 		self.line_exemption_reason_codes = {}
-		# item id() -> duty/tax/fee category code; resolved once for BR-O-02 and line export
+		# item id() -> VAT category, shared by BR-O-02 and line export
 		self._line_vat_category_codes = None
 		self.delivery_dates = []
 		self.vat_exemption_reason_text = ""
@@ -251,20 +251,6 @@ class EInvoiceGenerator:
 			(self.tax_template_doctype, self.invoice.taxes_and_charges),
 		]
 
-	def _resolve_line_vat_category_codes(self) -> dict[int, str | None]:
-		"""Resolve each line's VAT category once; reused for BR-O-02 and line export."""
-		if self._line_vat_category_codes is None:
-			document_lookup = self._document_lookup()
-			self._line_vat_category_codes = {
-				id(item): duty_tax_fee_category_codes.get(self.get_line_lookup(item) + document_lookup)
-				for item in self.invoice.items
-			}
-		return self._line_vat_category_codes
-
-	def _has_not_subject_to_vat_line(self) -> bool:
-		"""True if any invoice line will use VAT category O (Not subject to VAT)."""
-		return "O" in self._resolve_line_vat_category_codes().values()
-
 	def _set_context(self):
 		"""Set default context according to XRechnung 3.0.2"""
 		self.doc.context.business_parameter.id = "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"
@@ -306,7 +292,9 @@ class EInvoiceGenerator:
 			target.id = party.id
 
 		if party.tax_registration:
-			target.tax_registrations.add(TaxRegistration(id=party.tax_registration))
+			# BR-O-02 forbids seller and buyer VAT IDs on category O invoices, but allows FC.
+			if party.tax_registration[0] != "VA" or not self._has_not_subject_to_vat_line():
+				target.tax_registrations.add(TaxRegistration(id=party.tax_registration))
 
 		if party.address:
 			self._write_address(target.address, party.address)
@@ -343,6 +331,21 @@ class EInvoiceGenerator:
 		name, address = ship_to
 		self.doc.trade.delivery.ship_to.name = name
 		self._write_address(self.doc.trade.delivery.ship_to.address, address)
+
+	def _resolve_line_vat_category_codes(self) -> dict[int, str | None]:
+		"""Resolve each line's VAT category once for BR-O-02 and line export."""
+		if self._line_vat_category_codes is None:
+			self._line_vat_category_codes = {
+				id(item): duty_tax_fee_category_codes.get(
+					self.get_line_lookup(item) + self._document_lookup()
+				)
+				for item in self.invoice.items
+			}
+		return self._line_vat_category_codes
+
+	def _has_not_subject_to_vat_line(self) -> bool:
+		"""Return whether any invoice line uses VAT category O."""
+		return "O" in self._resolve_line_vat_category_codes().values()
 
 	def _add_line_item(self, item):
 		li = LineItem()
@@ -930,8 +933,8 @@ def download_pdf(
 	doctype: str,
 	name: str,
 	format: str | None = None,
-	doc: FrappeDocument | None = None,
-	no_letterhead: bool | int = 0,
+	doc: FrappeDocument | str | dict[str, Any] | None = None,
+	no_letterhead: str | int | None = None,
 	language: str | None = None,
 	letterhead: str | None = None,
 	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,
@@ -1070,7 +1073,7 @@ def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str
 
 	Uses *pattern* when given, otherwise reads *Auto name format for XML file*
 	from **E Invoice Settings**. Falls back to `doc.name` when the pattern is
-	empty or fails to resolve. Result is sanitized via `get_safe_file_name`
+	empty or fails to resolve. Result is sanitized via `_get_safe_file_name`
 	(same rules as **File** attachments).
 	"""
 	if pattern is None:
@@ -1088,8 +1091,13 @@ def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str
 			)
 			base = ""
 		if base:
-			return get_safe_file_name(base)
-	return get_safe_file_name(doc.name)
+			return _get_safe_file_name(base)
+	return _get_safe_file_name(doc.name)
+
+
+def _get_safe_file_name(file_name: str) -> str:
+	"""Local-only; mirrors ``get_safe_file_name`` in Frappe v16+ file utils."""
+	return re.sub(r"[/\\%?#]", "_", file_name)
 
 
 def _no_series_counter(_key: str, _digits: int) -> str:

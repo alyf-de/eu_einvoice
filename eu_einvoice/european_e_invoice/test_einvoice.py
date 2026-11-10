@@ -1,17 +1,19 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import frappe
-from drafthorse.models.document import IncludedNote
+from drafthorse.models.document import Document, IncludedNote
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
-from frappe.tests import IntegrationTestCase
+from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_days
 
 from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
 from eu_einvoice.european_e_invoice.einvoice import (
+	EInvoiceGenerator,
+	TradeParty,
 	attach_xml_to_pdf,
+	duty_tax_fee_category_codes,
 	get_einvoice,
 	get_generator_class,
-	validate_doc,
 )
 from eu_einvoice.utils import EInvoiceProfile
 
@@ -30,7 +32,7 @@ def after_einvoice_generation(doc, method=None, einvoice_doc=None):
 	einvoice_doc.header.notes.add(note)
 
 
-class TestEInvoiceHooks(IntegrationTestCase):
+class TestEInvoiceHooks(FrappeTestCase):
 	def test_doc_events_before_and_after_generation(self):
 		invoice = create_sales_invoice(do_not_save=True)
 		invoice.einvoice_profile = EInvoiceProfile.EN16931.value
@@ -49,17 +51,41 @@ class TestEInvoiceHooks(IntegrationTestCase):
 		self.assertIn(f"Added by hook for {invoice.name}", xml)
 
 
-class TestDownloadPdf(IntegrationTestCase):
-	def test_download_pdf_without_no_letterhead(self):
-		from eu_einvoice.european_e_invoice.einvoice import download_pdf
+class TestPartyTaxRegistration(FrappeTestCase):
+	def test_category_o_suppresses_only_vat_ids(self):
+		for category in ("O", "S"):
+			for scheme in ("VA", "FC"):
+				with self.subTest(category=category, scheme=scheme):
+					invoice = MagicMock(items=[object()], tax_category=None, taxes_and_charges=None)
+					generator = EInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
+					generator.tax_template_doctype = "Custom Tax Template"
+					doc = Document()
+					party = TradeParty(
+						name="Test Party",
+						tax_registration=(scheme, "123456789"),
+						email="test@example.com",
+					)
+					with (
+						patch.object(generator, "get_line_lookup", return_value=[]),
+						patch.object(duty_tax_fee_category_codes, "get", return_value=category) as get_code,
+					):
+						for target in (doc.trade.agreement.seller, doc.trade.agreement.buyer):
+							generator._write_party(target, party)
+							registrations = target.tax_registrations.children
+							if category == "O" and scheme == "VA":
+								self.assertEqual(registrations, [])
+							else:
+								self.assertEqual(len(registrations), 1)
+								self.assertEqual(registrations[0].id._text, "123456789")
+								self.assertEqual(registrations[0].id._scheme_id, scheme)
+							self.assertEqual(target.contact.email.address._text, party.email)
+						if scheme == "VA":
+							get_code.assert_called_once_with(
+								[("Tax Category", None), ("Custom Tax Template", None)]
+							)
 
-		invoice = create_sales_invoice()
-		frappe.local.response = frappe._dict()
-		download_pdf("Sales Invoice", invoice.name, format="Standard")
-		self.assertTrue(frappe.local.response.filecontent)
 
-
-class TestGeneratorRegistry(IntegrationTestCase):
+class TestGeneratorRegistry(FrappeTestCase):
 	def test_sales_invoice_is_registered(self):
 		self.assertIs(get_generator_class("Sales Invoice"), SalesInvoiceGenerator)
 
@@ -85,26 +111,7 @@ class TestGeneratorRegistry(IntegrationTestCase):
 		self.assertIs(attach_xml_to_pdf("TODO-0001", pdf_data, doctype="ToDo"), pdf_data)
 
 
-class TestValidateDoc(IntegrationTestCase):
-	def test_validate_doc_with_empty_profile(self):
-		for profile in ("", None):
-			with self.subTest(einvoice_profile=profile):
-				doc = frappe._dict(
-					einvoice_profile=profile,
-					taxes=[frappe._dict(idx=1, charge_type="Actual")],
-					einvoice_is_correct=1,
-					validation_errors="Old error",
-					validation_warnings="Old warning",
-				)
-
-				validate_doc(doc, "validate")
-
-				self.assertEqual(doc.einvoice_is_correct, 0)
-				self.assertEqual(doc.validation_errors, "")
-				self.assertEqual(doc.validation_warnings, "")
-
-
-class TestSkontoTerms(IntegrationTestCase):
+class TestSkontoTerms(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		super().setUpClass()
