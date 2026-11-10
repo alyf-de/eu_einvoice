@@ -25,12 +25,14 @@ def get_errors_from_stylesheet(xml_string: str, stylesheet: str):
 
 def extract_failed_asserts(xml: bytes) -> tuple[list[str], list[str]]:
 	root = objectify.fromstring(xml)
+	# Asserts with flag "warning" or "information" do not make the invoice invalid.
 	failed_asserts = root.xpath(
-		"//svrl:failed-assert/svrl:text",
+		"//svrl:failed-assert[not(@flag = 'warning' or @flag = 'information')]/svrl:text",
 		namespaces={"svrl": "http://purl.oclc.org/dsdl/svrl"},
 	)
 	warnings = root.xpath(
-		"//svrl:successful-report/svrl:text",
+		"//svrl:failed-assert[@flag = 'warning' or @flag = 'information']/svrl:text"
+		" | //svrl:successful-report/svrl:text",
 		namespaces={"svrl": "http://purl.oclc.org/dsdl/svrl"},
 	)
 	errors = [failed_assert.text.strip() for failed_assert in failed_asserts if failed_assert.text]
