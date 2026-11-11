@@ -69,7 +69,7 @@ This app can use GitHub Actions for CI. The following workflows are configured:
 
     Used for general XML parsing.
 
-- [SchXslt](https://github.com/schxslt/schxslt) by David Maus
+- [SchXslt](https://codeberg.org/SchXslt/schxslt) by David Maus
 
     Used to convert Schematron files to XSL.
 
@@ -102,3 +102,7 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+This app is based on [ZUGFeRD](https://www.ferd-net.de/en/ueber-uns/ressourcen-1/veroeffentlichungen/disclaimer-and-rights-of-use-zugferd), DIN EN 16931-1:2017-06 and CEN/TS 16931-2:2017-06. Reproduction is permitted with the permission of CEN and DIN as copyright owners.
+
+The validation files in `eu_einvoice/schematron/` have their own licenses. See `eu_einvoice/schematron/LICENSE`.
