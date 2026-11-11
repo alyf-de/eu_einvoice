@@ -5,7 +5,7 @@ import os
 import re
 from base64 import b64encode
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
@@ -922,40 +922,6 @@ def as_base_64(content: str | bytes) -> str:
 	return b64encode(content).decode("utf-8")
 
 
-# Overrides frappe.utils.print_format.download_pdf, which allows guests (shared print links)
-# and checks print permission itself. The XML is only added if `get_einvoice` passes its read check.
-# nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
-@frappe.whitelist(allow_guest=True)
-def download_pdf(
-	doctype: str,
-	name: str,
-	format: str | None = None,
-	doc: FrappeDocument | None = None,
-	no_letterhead: bool | int = 0,
-	language: str | None = None,
-	letterhead: str | None = None,
-	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,
-):
-	from frappe.utils.print_format import download_pdf as frappe_download_pdf
-
-	# Regular Frappe PDF download
-	# Sets frappe.local.response.filecontent to the PDF data
-	frappe_download_pdf(doctype, name, format, doc, no_letterhead, language, letterhead, pdf_generator)
-
-	# If the doctype supports e-invoices, try to attach the XML to the PDF
-	if get_generator_class(doctype):
-		zugferd_pdf = None
-		try:
-			# If creating and attaching XML fails, we still want to return the original PDF.
-			zugferd_pdf = attach_xml_to_pdf(name, frappe.local.response.filecontent, doctype)
-		except Exception:
-			frappe.log_error(f"Error attaching XML to PDF for {doctype} {name}")
-
-		if zugferd_pdf:
-			# If attaching XML was successful, replace the original PDF with the ZUGFeRD PDF
-			frappe.local.response.filecontent = zugferd_pdf
-
-
 def _get_icc_profile_path() -> str:
 	"""Get the path to the ICC profile used by Ghostscript."""
 	import os
@@ -1063,6 +1029,14 @@ def attach_xml_to_pdf(invoice_id: str, pdf_data: bytes, doctype: str = "Sales In
 
 	xml_bytes = get_einvoice(invoice_id, doctype)
 	return attach_xml(pdf_data, xml_bytes, level)
+
+
+def attach_xml_after_print(doc: FrappeDocument, event: str, pdf: bytes) -> bytes:
+	try:
+		return attach_xml_to_pdf(doc.name, pdf, doc.doctype)
+	except Exception:
+		frappe.log_error(f"Error attaching XML to PDF for {doc.doctype} {doc.name}")
+		return pdf
 
 
 def get_xml_attachment_file_base_name(doc, *, pattern: str | None = None) -> str:
