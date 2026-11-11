@@ -1,4 +1,4 @@
-from frappe.tests import UnitTestCase
+from frappe.tests.utils import FrappeTestCase
 
 from eu_einvoice.schematron import extract_failed_asserts
 
@@ -23,7 +23,7 @@ SVRL_REPORT = b"""<?xml version="1.0" encoding="UTF-8"?>
 """
 
 
-class TestExtractFailedAsserts(UnitTestCase):
+class TestExtractFailedAsserts(FrappeTestCase):
 	def test_warning_flags_are_not_errors(self):
 		errors, warnings = extract_failed_asserts(SVRL_REPORT)
 
