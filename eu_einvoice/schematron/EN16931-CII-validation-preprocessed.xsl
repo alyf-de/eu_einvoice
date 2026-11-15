@@ -17,11 +17,11 @@
                     xmlns:skos="http://www.w3.org/2004/02/skos/core#">
       <dct:creator>
          <dct:Agent>
-            <skos:prefLabel>SchXslt/1.10.1 SAXON/HE 12.5</skos:prefLabel>
+            <skos:prefLabel>SchXslt/1.10.1 SAXON/HE 12.9</skos:prefLabel>
             <schxslt.compile.typed-variables xmlns="https://doi.org/10.5281/zenodo.1495494#">true</schxslt.compile.typed-variables>
          </dct:Agent>
       </dct:creator>
-      <dct:created>2024-11-25T08:41:54.472966+01:00</dct:created>
+      <dct:created>2026-11-10T17:41:26.185766+01:00</dct:created>
    </rdf:Description>
    <xsl:output indent="yes"/>
    <xsl:param name="schxslt.validate.initial-document-uri" as="xs:string?"/>
@@ -60,11 +60,11 @@
                      <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/">
                         <dct:creator>
                            <dct:Agent>
-                              <skos:prefLabel>SchXslt/1.10.1 SAXON/HE 12.5</skos:prefLabel>
+                              <skos:prefLabel>SchXslt/1.10.1 SAXON/HE 12.9</skos:prefLabel>
                               <schxslt.compile.typed-variables xmlns="https://doi.org/10.5281/zenodo.1495494#">true</schxslt.compile.typed-variables>
                            </dct:Agent>
                         </dct:creator>
-                        <dct:created>2024-11-25T08:41:54.472966+01:00</dct:created>
+                        <dct:created>2026-11-10T17:41:26.185766+01:00</dct:created>
                      </rdf:Description>
                   </dct:source>
                </svrl:metadata>
@@ -123,7 +123,7 @@
                </svrl:active-pattern>
             </xsl:for-each>
          </schxslt:pattern>
-         <schxslt:pattern id="d12e850">
+         <schxslt:pattern id="d12e837">
             <xsl:if test="exists(base-uri(root()))">
                <xsl:attribute name="documents" select="base-uri(root())"/>
             </xsl:if>
@@ -135,7 +135,7 @@
                </svrl:active-pattern>
             </xsl:for-each>
          </schxslt:pattern>
-         <schxslt:pattern id="d12e2677">
+         <schxslt:pattern id="d12e2790">
             <xsl:if test="exists(base-uri(root()))">
                <xsl:attribute name="documents" select="base-uri(root())"/>
             </xsl:if>
@@ -150,57 +150,8 @@
          <xsl:apply-templates mode="d12e32" select="root()"/>
       </schxslt:document>
    </xsl:template>
-   <xsl:template match="//ram:SpecifiedTradeAllowanceCharge"
-                 priority="111"
-                 mode="d12e32">
-      <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
-      <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e32']">
-            <schxslt:rule pattern="d12e32">
-               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:SpecifiedTradeAllowanceCharge" shadowed by preceding rule</xsl:comment>
-               <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
-                  <xsl:attribute name="context">//ram:SpecifiedTradeAllowanceCharge</xsl:attribute>
-                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
-                  <xsl:if test="exists($documentUri)">
-                     <xsl:attribute name="document" select="$documentUri"/>
-                  </xsl:if>
-               </svrl:suppressed-rule>
-            </schxslt:rule>
-            <xsl:next-match>
-               <xsl:with-param name="schxslt:patterns-matched"
-                               as="xs:string*"
-                               select="$schxslt:patterns-matched"/>
-            </xsl:next-match>
-         </xsl:when>
-         <xsl:otherwise>
-            <schxslt:rule pattern="d12e32">
-               <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
-                  <xsl:attribute name="context">//ram:SpecifiedTradeAllowanceCharge</xsl:attribute>
-                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
-                  <xsl:if test="exists($documentUri)">
-                     <xsl:attribute name="document" select="$documentUri"/>
-                  </xsl:if>
-               </svrl:fired-rule>
-               <xsl:if test="not((ram:ChargeIndicator))">
-                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                      location="{schxslt:location(.)}"
-                                      flag="fatal"
-                                      id="BR-66">
-                     <xsl:attribute name="test">(ram:ChargeIndicator)</xsl:attribute>
-                     <svrl:text>[BR-66]-Each Specified Trade Allowance Charge (BG-20)(BG-21) shall contain a Charge Indicator.</svrl:text>
-                  </svrl:failed-assert>
-               </xsl:if>
-            </schxslt:rule>
-            <xsl:next-match>
-               <xsl:with-param name="schxslt:patterns-matched"
-                               as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e32')"/>
-            </xsl:next-match>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:template>
    <xsl:template match="//ram:DesignatedProductClassification"
-                 priority="110"
+                 priority="114"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -249,7 +200,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:AdditionalReferencedDocument"
-                 priority="109"
+                 priority="113"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -298,7 +249,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableTradeSettlementFinancialCard"
-                 priority="108"
+                 priority="112"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -328,12 +279,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(string-length(ram:ID)&lt;=10)">
+               <xsl:if test="not(string-length(normalize-space(ram:ID)) &lt;= 10)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-51">
-                     <xsl:attribute name="test">string-length(ram:ID)&lt;=10</xsl:attribute>
+                     <xsl:attribute name="test">string-length(normalize-space(ram:ID)) &lt;= 10</xsl:attribute>
                      <svrl:text>[BR-51]-In accordance with card payments security standards an invoice should never include a full card primary account number (BT-97). At the moment PCI Security Standards Council has defined that the first 6 digits and last 4 digits are the maximum number of digits to be shown.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -346,16 +297,16 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   <xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayerPartyDebtorFinancialAccount"
-                 priority="107"
+   <xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount"
+                 priority="111"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
          <xsl:when test="$schxslt:patterns-matched[. = 'd12e32']">
             <schxslt:rule pattern="d12e32">
-               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayerPartyDebtorFinancialAccount" shadowed by preceding rule</xsl:comment>
+               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
-                  <xsl:attribute name="context">//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayerPartyDebtorFinancialAccount</xsl:attribute>
+                  <xsl:attribute name="context">//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
                   <xsl:if test="exists($documentUri)">
                      <xsl:attribute name="document" select="$documentUri"/>
@@ -371,18 +322,18 @@
          <xsl:otherwise>
             <schxslt:rule pattern="d12e32">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
-                  <xsl:attribute name="context">//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayerPartyDebtorFinancialAccount</xsl:attribute>
+                  <xsl:attribute name="context">//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
                   <xsl:if test="exists($documentUri)">
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not((ram:IBANID) or (ram:ProprietaryID))">
+               <xsl:if test="not(normalize-space(ram:IBANID) != '' or normalize-space(ram:ProprietaryID) != '')">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-50">
-                     <xsl:attribute name="test">(ram:IBANID) or (ram:ProprietaryID)</xsl:attribute>
+                     <xsl:attribute name="test">normalize-space(ram:IBANID) != '' or normalize-space(ram:ProprietaryID) != ''</xsl:attribute>
                      <svrl:text>[BR-50]-A Payment account identifier (BT-84) shall be present if Credit transfer (BG-16) information is provided in the Invoice.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -405,7 +356,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery"
-                 priority="106"
+                 priority="110"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -454,7 +405,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='false']"
-                 priority="105"
+                 priority="109"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -529,12 +480,12 @@
                      <svrl:text>[BR-CO-21]-Each Document level allowance (BG-20) shall contain a Document level allowance reason (BT-97) or a Document level allowance reason code (BT-98), or both.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2)">
+               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-DEC-01">
-                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2</xsl:attribute>
+                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2</xsl:attribute>
                      <svrl:text>[BR-DEC-01]-The allowed maximum number of decimals for the Document level allowance amount (BT-92) is 2.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -557,7 +508,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='true']"
-                 priority="104"
+                 priority="108"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -632,12 +583,12 @@
                      <svrl:text>[BR-CO-22]-Each Document level charge (BG-21) shall contain a Document level charge reason (BT-104) or a Document level charge reason code (BT-105), or both.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2)">
+               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-DEC-05">
-                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2</xsl:attribute>
+                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2</xsl:attribute>
                      <svrl:text>[BR-DEC-05]-The allowed maximum number of decimals for the Document level charge amount (BT-99) is 2.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -660,7 +611,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeSettlementHeaderMonetarySummation"
-                 priority="103"
+                 priority="107"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -735,48 +686,48 @@
                      <svrl:text>[BR-53]-If the VAT accounting currency code (BT-6) is present, then the Invoice total VAT amount in accounting currency (BT-111) shall be provided.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(xs:decimal(ram:LineTotalAmount) = round(xs:decimal(sum(../../ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)) * xs:decimal(100)) div xs:decimal(100))">
+               <xsl:if test="not(xs:decimal(ram:LineTotalAmount) = round(sum(../../ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount/xs:decimal(.)) * xs:decimal(100)) div xs:decimal(100))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-10">
-                     <xsl:attribute name="test">xs:decimal(ram:LineTotalAmount) = round(xs:decimal(sum(../../ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)) * xs:decimal(100)) div xs:decimal(100)</xsl:attribute>
+                     <xsl:attribute name="test">xs:decimal(ram:LineTotalAmount) = round(sum(../../ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount/xs:decimal(.)) * xs:decimal(100)) div xs:decimal(100)</xsl:attribute>
                      <svrl:text>[BR-CO-10]-Sum of Invoice line net amount (BT-106) = Σ Invoice line net amount (BT-131).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not((not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:ActualAmount)* 10 * 10 ) div 100))">
+               <xsl:if test="not((not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:ActualAmount[1]/xs:decimal(.))* 10 * 10 ) div 100))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-11">
-                     <xsl:attribute name="test">(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:ActualAmount)* 10 * 10 ) div 100)</xsl:attribute>
+                     <xsl:attribute name="test">(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:ActualAmount[1]/xs:decimal(.))* 10 * 10 ) div 100)</xsl:attribute>
                      <svrl:text>[BR-CO-11]-Sum of allowances on document level (BT-107) = Σ Document level allowance amount (BT-92).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not((not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()])and not (ram:ChargeTotalAmount)) or ram:ChargeTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:ActualAmount)* 10 * 10 ) div 100))">
+               <xsl:if test="not((not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()])and not (ram:ChargeTotalAmount)) or ram:ChargeTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:ActualAmount[1]/xs:decimal(.))* 10 * 10 ) div 100))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-12">
-                     <xsl:attribute name="test">(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()])and not (ram:ChargeTotalAmount)) or ram:ChargeTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:ActualAmount)* 10 * 10 ) div 100)</xsl:attribute>
+                     <xsl:attribute name="test">(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()])and not (ram:ChargeTotalAmount)) or ram:ChargeTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:ActualAmount[1]/xs:decimal(.))* 10 * 10 ) div 100)</xsl:attribute>
                      <svrl:text>[BR-CO-12]-Sum of charges on document level (BT-108) = Σ Document level charge amount (BT-99).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not((xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount) - xs:decimal(ram:AllowanceTotalAmount) + xs:decimal(ram:ChargeTotalAmount)) *10 * 10) div 100) or      ((xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount) - xs:decimal(ram:AllowanceTotalAmount)) *10 * 10) div 100)  and not (ram:ChargeTotalAmount)) or      ((xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount) + xs:decimal(ram:ChargeTotalAmount)) *10 * 10) div 100)  and not (ram:AllowanceTotalAmount)) or      ((xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount))  *10 * 10) div 100) and not (ram:ChargeTotalAmount) and not (ram:AllowanceTotalAmount)))">
+               <xsl:if test="not((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100)     or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount))     or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) and not(ram:AllowanceTotalAmount))     or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount) and not(ram:AllowanceTotalAmount)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-13">
-                     <xsl:attribute name="test">(xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount) - xs:decimal(ram:AllowanceTotalAmount) + xs:decimal(ram:ChargeTotalAmount)) *10 * 10) div 100) or      ((xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount) - xs:decimal(ram:AllowanceTotalAmount)) *10 * 10) div 100)  and not (ram:ChargeTotalAmount)) or      ((xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount) + xs:decimal(ram:ChargeTotalAmount)) *10 * 10) div 100)  and not (ram:AllowanceTotalAmount)) or      ((xs:decimal(ram:TaxBasisTotalAmount) = round((xs:decimal(ram:LineTotalAmount))  *10 * 10) div 100) and not (ram:ChargeTotalAmount) and not (ram:AllowanceTotalAmount))</xsl:attribute>
+                     <xsl:attribute name="test">(xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100)     or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount))     or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) and not(ram:AllowanceTotalAmount))     or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount) and not(ram:AllowanceTotalAmount))</xsl:attribute>
                      <svrl:text>[BR-CO-13]-Invoice total amount without VAT (BT-109) = Σ Invoice line net amount (BT-131) - Sum of allowances on document level (BT-107) + Sum of charges on document level (BT-108).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not((xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount) - xs:decimal(ram:TotalPrepaidAmount) + xs:decimal(ram:RoundingAmount)) or      ((xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount) + xs:decimal(ram:RoundingAmount)) and not (xs:decimal(ram:TotalPrepaidAmount))) or      ((xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount) - xs:decimal(ram:TotalPrepaidAmount)) and not (xs:decimal(ram:RoundingAmount))) or      ((xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount)) and not (xs:decimal(ram:TotalPrepaidAmount)) and not (xs:decimal(ram:RoundingAmount))))">
+               <xsl:if test="not((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1]) + xs:decimal(ram:RoundingAmount[1]))     or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) + xs:decimal(ram:RoundingAmount[1])) and not(ram:TotalPrepaidAmount))     or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1])) and not(ram:RoundingAmount))     or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1])) and not(ram:TotalPrepaidAmount) and not(ram:RoundingAmount)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-16">
-                     <xsl:attribute name="test">(xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount) - xs:decimal(ram:TotalPrepaidAmount) + xs:decimal(ram:RoundingAmount)) or      ((xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount) + xs:decimal(ram:RoundingAmount)) and not (xs:decimal(ram:TotalPrepaidAmount))) or      ((xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount) - xs:decimal(ram:TotalPrepaidAmount)) and not (xs:decimal(ram:RoundingAmount))) or      ((xs:decimal(ram:DuePayableAmount) = xs:decimal(ram:GrandTotalAmount)) and not (xs:decimal(ram:TotalPrepaidAmount)) and not (xs:decimal(ram:RoundingAmount)))</xsl:attribute>
+                     <xsl:attribute name="test">(xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1]) + xs:decimal(ram:RoundingAmount[1]))     or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) + xs:decimal(ram:RoundingAmount[1])) and not(ram:TotalPrepaidAmount))     or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1])) and not(ram:RoundingAmount))     or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1])) and not(ram:TotalPrepaidAmount) and not(ram:RoundingAmount))</xsl:attribute>
                      <svrl:text>[BR-CO-16]-Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) -Paid amount (BT-113) +Rounding amount (BT-114).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -825,21 +776,21 @@
                      <svrl:text>[BR-DEC-14]-The allowed maximum number of decimals for the Invoice total amount with VAT (BT-112) is 2.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and . = round(. * 100) div 100) or not (@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)])">
+               <xsl:if test="not(not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and xs:decimal(.) = round(xs:decimal(.) * 100) div 100) or not(@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)])">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-DEC-13">
-                     <xsl:attribute name="test">not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and . = round(. * 100) div 100) or not (@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)]</xsl:attribute>
+                     <xsl:attribute name="test">not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and xs:decimal(.) = round(xs:decimal(.) * 100) div 100) or not(@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)]</xsl:attribute>
                      <svrl:text>[BR-DEC-13]-The allowed maximum number of decimals for the Invoice total VAT amount (BT-110) is 2.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and . = round(. * 100) div 100) or not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)])">
+               <xsl:if test="not(not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and xs:decimal(.) = round(xs:decimal(.) * 100) div 100) or not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)])">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-DEC-15">
-                     <xsl:attribute name="test">not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and . = round(. * 100) div 100) or not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)]</xsl:attribute>
+                     <xsl:attribute name="test">not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and xs:decimal(.) = round(xs:decimal(.) * 100) div 100) or not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)]</xsl:attribute>
                      <svrl:text>[BR-DEC-15]-The allowed maximum number of decimals for the Invoice total VAT amount in accounting currency (BT-111) is 2.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -879,7 +830,7 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   <xsl:template match="/rsm:CrossIndustryInvoice" priority="102" mode="d12e32">
+   <xsl:template match="/rsm:CrossIndustryInvoice" priority="106" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
          <xsl:when test="$schxslt:patterns-matched[. = 'd12e32']">
@@ -1034,22 +985,13 @@
                      <svrl:text>[BR-63]-The Buyer electronic address (BT-49) shall have a Scheme identifier.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(every $Currency                                  in rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode                                 satisfies (                                     count ( rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=$Currency] ) eq 1 and                                     (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:GrandTotalAmount) = round(                                      (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:TaxBasisTotalAmount) +                                      (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:TaxTotalAmount[@currencyID=$Currency]))) * 10 * 10) div 100)) or                                 (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:GrandTotalAmount) = (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:TaxBasisTotalAmount))))">
+               <xsl:if test="not(every $Currency in /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode     satisfies     (     (     count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency]) = 1     and     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])     =     round(     (     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])     +     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency])[1])     ) * 100     ) div 100     )     or     (     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])     =     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])     )     ))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-15">
-                     <xsl:attribute name="test">every $Currency                                  in rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode                                 satisfies (                                     count ( rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=$Currency] ) eq 1 and                                     (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:GrandTotalAmount) = round(                                      (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:TaxBasisTotalAmount) +                                      (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:TaxTotalAmount[@currencyID=$Currency]))) * 10 * 10) div 100)) or                                 (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:GrandTotalAmount) = (//ram:SpecifiedTradeSettlementHeaderMonetarySummation/xs:decimal(ram:TaxBasisTotalAmount)))</xsl:attribute>
+                     <xsl:attribute name="test">every $Currency in /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode     satisfies     (     (     count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency]) = 1     and     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])     =     round(     (     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])     +     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency])[1])     ) * 100     ) div 100     )     or     (     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])     =     xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])     )     )</xsl:attribute>
                      <svrl:text>[BR-CO-15]-Invoice total amount with VAT (BT-112) = Invoice total amount without VAT (BT-109) + Invoice total VAT amount (BT-110).</svrl:text>
-                  </svrl:failed-assert>
-               </xsl:if>
-               <xsl:if test="not((number(//ram:DuePayableAmount) &gt; 0 and ((//ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime) or (//ram:SpecifiedTradePaymentTerms/ram:Description))) or not(number(//ram:DuePayableAmount)&gt;0))">
-                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                      location="{schxslt:location(.)}"
-                                      flag="fatal"
-                                      id="BR-CO-25">
-                     <xsl:attribute name="test">(number(//ram:DuePayableAmount) &gt; 0 and ((//ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime) or (//ram:SpecifiedTradePaymentTerms/ram:Description))) or not(number(//ram:DuePayableAmount)&gt;0)</xsl:attribute>
-                     <svrl:text>[BR-CO-25]-In case the Amount due for payment (BT-115) is positive, either the Payment due date (BT-9) or the Payment terms (BT-20) shall be present.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(((count(//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='S']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='S'])) &gt;=2 or not (//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='S'])) and      ((count(//ram:CategoryTradeTax[ram:CategoryCode='S']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='S'])) &gt;=2 or not (//ram:CategoryTradeTax[ram:CategoryCode='S'])))">
@@ -1119,18 +1061,18 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-01">
+                                      id="BR-IP-01">
                      <xsl:attribute name="test">((count(//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='L']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='L'])) &gt;=2 or not (//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='L'])) and      ((count(//ram:CategoryTradeTax[ram:CategoryCode='L']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='L'])) &gt;=2 or not (//ram:CategoryTradeTax[ram:CategoryCode='L']))</xsl:attribute>
-                     <svrl:text>[BR-AF-01]-An Invoice that contains an Invoice line (BG-25), a Document level allowance (BG-20) or a Document level charge (BG-21) where the VAT category code (BT-151, BT-95 or BT-102) is "IGIC" shall contain in the VAT breakdown (BG-23) at least one VAT category code (BT-118) equal with "IGIC".</svrl:text>
+                     <svrl:text>[BR-IP-01]-An Invoice that contains an Invoice line (BG-25), a Document level allowance (BG-20) or a Document level charge (BG-21) where the VAT category code (BT-151, BT-95 or BT-102) is "IGIC" shall contain in the VAT breakdown (BG-23) at least one VAT category code (BT-118) equal with "IGIC".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(((count(//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M'])) &gt;=2 or not (//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M'])) and      ((count(//ram:CategoryTradeTax[ram:CategoryCode='M']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M'])) &gt;=2 or not (//ram:CategoryTradeTax[ram:CategoryCode='M'])))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-01">
+                                      id="BR-IG-01">
                      <xsl:attribute name="test">((count(//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M'])) &gt;=2 or not (//ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M'])) and      ((count(//ram:CategoryTradeTax[ram:CategoryCode='M']) + count(//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='M'])) &gt;=2 or not (//ram:CategoryTradeTax[ram:CategoryCode='M']))</xsl:attribute>
-                     <svrl:text>[BR-AG-01]-An Invoice that contains an Invoice line (BG-25), a Document level allowance (BG-20) or a Document level charge (BG-21) where the VAT category code (BT-151, BT-95 or BT-102) is "IPSI" shall contain in the VAT breakdown (BG-23) at least one VAT category code (BT-118) equal with "IPSI".</svrl:text>
+                     <svrl:text>[BR-IG-01]-An Invoice that contains an Invoice line (BG-25), a Document level allowance (BG-20) or a Document level charge (BG-21) where the VAT category code (BT-151, BT-95 or BT-102) is "IPSI" shall contain in the VAT breakdown (BG-23) at least one VAT category code (BT-118) equal with "IPSI".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not((not(//ram:CountryID != 'IT') and //ram:CategoryCode ='B') or (not(//ram:CategoryCode ='B')))">
@@ -1161,7 +1103,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:IncludedSupplyChainTradeLineItem"
-                 priority="101"
+                 priority="105"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1309,7 +1251,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator = 'false']"
-                 priority="100"
+                 priority="104"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1375,12 +1317,12 @@
                      <svrl:text>[BR-CO-23]-Each Invoice line allowance (BG-27) shall contain an Invoice line allowance reason (BT-139) or an Invoice line allowance reason code (BT-140), or both.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2)">
+               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-DEC-24">
-                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2</xsl:attribute>
+                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2</xsl:attribute>
                      <svrl:text>[BR-DEC-24]-The allowed maximum number of decimals for the Invoice line allowance amount (BT-136) is 2.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -1403,7 +1345,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator = 'true']"
-                 priority="99"
+                 priority="103"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1469,12 +1411,12 @@
                      <svrl:text>[BR-CO-24]-Each Invoice line charge (BG-28) shall contain an Invoice line charge reason (BT-144) or an Invoice line charge reason code (BT-145), or both.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2)">
+               <xsl:if test="not(string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-DEC-27">
-                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount,'.'))&lt;=2</xsl:attribute>
+                     <xsl:attribute name="test">string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2</xsl:attribute>
                      <svrl:text>[BR-DEC-27]-The allowed maximum number of decimals for the Invoice line charge amount (BT-141) is 2.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -1497,7 +1439,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedLineTradeSettlement/ram:BillingSpecifiedPeriod"
-                 priority="98"
+                 priority="102"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1555,7 +1497,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod"
-                 priority="97"
+                 priority="101"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1613,7 +1555,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableProductCharacteristic"
-                 priority="96"
+                 priority="100"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1661,7 +1603,7 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   <xsl:template match="//ram:PayeeTradeParty" priority="95" mode="d12e32">
+   <xsl:template match="//ram:PayeeTradeParty" priority="99" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
          <xsl:when test="$schxslt:patterns-matched[. = 'd12e32']">
@@ -1709,7 +1651,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans"
-                 priority="94"
+                 priority="98"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1748,15 +1690,6 @@
                      <svrl:text>[BR-49]-A Payment instruction (BG-16) shall specify the Payment means type code (BT-81).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not((ram:PayeePartyCreditorFinancialAccount/ram:IBANID) or (ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) or (not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID) and not(ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)))">
-                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                      location="{schxslt:location(.)}"
-                                      flag="fatal"
-                                      id="BR-CO-27">
-                     <xsl:attribute name="test">(ram:PayeePartyCreditorFinancialAccount/ram:IBANID) or (ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) or (not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID) and not(ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID))</xsl:attribute>
-                     <svrl:text>[BR-CO-27]- Either the IBAN or a Proprietary ID (BT-84) shall be used.</svrl:text>
-                  </svrl:failed-assert>
-               </xsl:if>
             </schxslt:rule>
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
@@ -1767,7 +1700,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument"
-                 priority="93"
+                 priority="97"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1815,7 +1748,7 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   <xsl:template match="//ram:SellerTradeParty" priority="92" mode="d12e32">
+   <xsl:template match="//ram:SellerTradeParty" priority="96" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
          <xsl:when test="$schxslt:patterns-matched[. = 'd12e32']">
@@ -1863,7 +1796,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SellerTaxRepresentativeTradeParty"
-                 priority="91"
+                 priority="95"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1893,12 +1826,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not((ram:Name))">
+               <xsl:if test="not(normalize-space(ram:Name) != '')">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-18">
-                     <xsl:attribute name="test">(ram:Name)</xsl:attribute>
+                     <xsl:attribute name="test">normalize-space(ram:Name) != ''</xsl:attribute>
                      <svrl:text>[BR-18]-The Seller tax representative name (BT-62) shall be provided in the Invoice, if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -1911,12 +1844,12 @@
                      <svrl:text>[BR-19]-The Seller tax representative postal address (BG-12) shall be provided in the Invoice, if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not((ram:PostalTradeAddress/ram:CountryID))">
+               <xsl:if test="not(normalize-space(ram:PostalTradeAddress/ram:CountryID) != '')">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-20">
-                     <xsl:attribute name="test">(ram:PostalTradeAddress/ram:CountryID)</xsl:attribute>
+                     <xsl:attribute name="test">normalize-space(ram:PostalTradeAddress/ram:CountryID) != ''</xsl:attribute>
                      <svrl:text>[BR-20]-The Seller tax representative postal address (BG-12) shall contain a Tax representative country code (BT-69), if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -1939,7 +1872,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode]"
-                 priority="90"
+                 priority="94"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -1969,12 +1902,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(. = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount)*10*10)div 100))">
+               <xsl:if test="not(. = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount/xs:decimal(.))*10*10)div 100))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-14">
-                     <xsl:attribute name="test">. = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount)*10*10)div 100)</xsl:attribute>
+                     <xsl:attribute name="test">. = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount/xs:decimal(.))*10*10)div 100)</xsl:attribute>
                      <svrl:text>[BR-CO-14]-Invoice total VAT amount (BT-110) = Σ VAT category tax amount (BT-117).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -1988,7 +1921,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']"
-                 priority="89"
+                 priority="93"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2018,12 +1951,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH EL ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' ')))">
+               <xsl:if test="not(contains(' 1A AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' ')))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CO-09">
-                     <xsl:attribute name="test">contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH EL ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' '))</xsl:attribute>
+                     <xsl:attribute name="test">contains(' 1A AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' '))</xsl:attribute>
                      <svrl:text>[BR-CO-09]-The Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48) shall have a prefix in accordance with ISO code ISO 3166-1 alpha-2 by which the country of issue may be identified. Nevertheless, Greece may use the prefix ‘EL’.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -2037,7 +1970,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'AE'][upper-case(../ram:TypeCode) = 'VAT']"
-                 priority="88"
+                 priority="92"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2067,12 +2000,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not((../ram:BasisAmount -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100)))">
+               <xsl:if test="not((xs:decimal(../ram:BasisAmount) -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-AE-08">
-                     <xsl:attribute name="test">(../ram:BasisAmount -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/ram:ActualAmount)*10*10)div 100))</xsl:attribute>
+                     <xsl:attribute name="test">(xs:decimal(../ram:BasisAmount) -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'AE']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='AE']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100))</xsl:attribute>
                      <svrl:text>[BR-AE-08]-In a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Reverse charge" the VAT category taxable amount (BT-116) shall equal the sum of Invoice line net amounts (BT-131) minus the sum of Document level allowance amounts (BT-92) plus the sum of Document level charge amounts (BT-99) where the VAT category codes (BT-151, BT-95, BT-102) are "Reverse charge".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -2104,7 +2037,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'AE'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="87"
+                 priority="91"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2162,7 +2095,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'AE'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="86"
+                 priority="90"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2220,7 +2153,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'AE'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="85"
+                 priority="89"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2278,7 +2211,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'L'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="84"
+                 priority="88"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2308,31 +2241,31 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (../ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'L' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100)))">
+               <xsl:if test="not(every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (xs:decimal(../ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'L' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-08">
-                     <xsl:attribute name="test">every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (../ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'L' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100))</xsl:attribute>
-                     <svrl:text>[BR-AF-08]-For each different value of VAT category rate (BT-119) where the VAT category code (BT-118) is "IGIC", the VAT category taxable amount (BT-116) in a VAT breakdown (BG-23) shall equal the sum of Invoice line net amounts (BT-131) plus the sum of document level charge amounts (BT-99) minus the sum of document level allowance amounts (BT-92) where the VAT category code (BT-151, BT-102, BT-95) is "IGIC" and the VAT rate (BT-152, BT-103, BT-96) equals the VAT category rate (BT-119).</svrl:text>
+                                      id="BR-IP-08">
+                     <xsl:attribute name="test">every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (xs:decimal(../ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'L' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='L' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100))</xsl:attribute>
+                     <svrl:text>[BR-IP-08]-For each different value of VAT category rate (BT-119) where the VAT category code (BT-118) is "IGIC", the VAT category taxable amount (BT-116) in a VAT breakdown (BG-23) shall equal the sum of Invoice line net amounts (BT-131) plus the sum of document level charge amounts (BT-99) minus the sum of document level allowance amounts (BT-92) where the VAT category code (BT-151, BT-102, BT-95) is "IGIC" and the VAT rate (BT-152, BT-103, BT-96) equals the VAT category rate (BT-119).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(true())">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-09">
+                                      id="BR-IP-09">
                      <xsl:attribute name="test">true()</xsl:attribute>
-                     <svrl:text>[BR-AF-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IGIC" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
+                     <svrl:text>[BR-IP-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IGIC" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(not(ram:ExemptionReason) and not (ram:ExemptionReasonCode))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-10">
+                                      id="BR-IP-10">
                      <xsl:attribute name="test">not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)</xsl:attribute>
-                     <svrl:text>[BR-AF-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IGIC" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120).</svrl:text>
+                     <svrl:text>[BR-IP-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IGIC" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2345,7 +2278,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'L'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="83"
+                 priority="87"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2379,18 +2312,18 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-02">
+                                      id="BR-IP-02">
                      <xsl:attribute name="test">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']</xsl:attribute>
-                     <svrl:text>[BR-AF-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+                     <svrl:text>[BR-IP-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(ram:RateApplicablePercent &gt; 0)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-05">
+                                      id="BR-IP-05">
                      <xsl:attribute name="test">ram:RateApplicablePercent &gt; 0</xsl:attribute>
-                     <svrl:text>[BR-AF-05]-In an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IGIC" the invoiced item VAT rate (BT-152) shall be greater than 0 (zero).</svrl:text>
+                     <svrl:text>[BR-IP-05]-In an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IGIC" the invoiced item VAT rate (BT-152) shall be greater than 0 (zero).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2403,7 +2336,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'L'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="82"
+                 priority="86"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2437,18 +2370,18 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-03">
+                                      id="BR-IP-03">
                      <xsl:attribute name="test">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']</xsl:attribute>
-                     <svrl:text>[BR-AF-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+                     <svrl:text>[BR-IP-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(ram:RateApplicablePercent &gt; 0)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-06">
+                                      id="BR-IP-06">
                      <xsl:attribute name="test">ram:RateApplicablePercent &gt; 0</xsl:attribute>
-                     <svrl:text>[BR-AF-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
+                     <svrl:text>[BR-IP-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2461,7 +2394,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'L'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="81"
+                 priority="85"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2495,18 +2428,18 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-04">
+                                      id="BR-IP-04">
                      <xsl:attribute name="test">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']</xsl:attribute>
-                     <svrl:text>[BR-AF-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+                     <svrl:text>[BR-IP-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(ram:RateApplicablePercent &gt; 0)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AF-07">
+                                      id="BR-IP-07">
                      <xsl:attribute name="test">ram:RateApplicablePercent &gt; 0</xsl:attribute>
-                     <svrl:text>[BR-AF-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
+                     <svrl:text>[BR-IP-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2519,7 +2452,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'M'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="80"
+                 priority="84"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2549,31 +2482,31 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (../ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'M' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100)))">
+               <xsl:if test="not(every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (xs:decimal(../ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'M' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-08">
-                     <xsl:attribute name="test">every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (../ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'M' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100))</xsl:attribute>
-                     <svrl:text>[BR-AG-08]-For each different value of VAT category rate (BT-119) where the VAT category code (BT-118) is "IPSI", the VAT category taxable amount (BT-116) in a VAT breakdown (BG-23) shall equal the sum of Invoice line net amounts (BT-131) plus the sum of document level charge amounts (BT-99) minus the sum of document level allowance amounts (BT-92) where the VAT category code (BT-151, BT-102, BT-95) is "IPSI" and the VAT rate (BT-152, BT-103, BT-96) equals the VAT category rate (BT-119).</svrl:text>
+                                      id="BR-IG-08">
+                     <xsl:attribute name="test">every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (xs:decimal(../ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'M' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='M' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100))</xsl:attribute>
+                     <svrl:text>[BR-IG-08]-For each different value of VAT category rate (BT-119) where the VAT category code (BT-118) is "IPSI", the VAT category taxable amount (BT-116) in a VAT breakdown (BG-23) shall equal the sum of Invoice line net amounts (BT-131) plus the sum of document level charge amounts (BT-99) minus the sum of document level allowance amounts (BT-92) where the VAT category code (BT-151, BT-102, BT-95) is "IPSI" and the VAT rate (BT-152, BT-103, BT-96) equals the VAT category rate (BT-119).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(true())">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-09">
+                                      id="BR-IG-09">
                      <xsl:attribute name="test">true()</xsl:attribute>
-                     <svrl:text>[BR-AG-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IPSI" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
+                     <svrl:text>[BR-IG-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IPSI" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(not(ram:ExemptionReason) and not (ram:ExemptionReasonCode))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-10">
+                                      id="BR-IG-10">
                      <xsl:attribute name="test">not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)</xsl:attribute>
-                     <svrl:text>[BR-AG-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IPSI" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120). </svrl:text>
+                     <svrl:text>[BR-IG-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IPSI" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120). </svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2586,7 +2519,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'M'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="79"
+                 priority="83"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2620,18 +2553,18 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-02">
+                                      id="BR-IG-02">
                      <xsl:attribute name="test">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']</xsl:attribute>
-                     <svrl:text>[BR-AG-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+                     <svrl:text>[BR-IG-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(ram:RateApplicablePercent &gt;= 0)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-05">
+                                      id="BR-IG-05">
                      <xsl:attribute name="test">ram:RateApplicablePercent &gt;= 0</xsl:attribute>
-                     <svrl:text>[BR-AG-05]-In an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IPSI" the Invoiced item VAT rate (BT-152) shall be 0 (zero) or greater than zero.</svrl:text>
+                     <svrl:text>[BR-IG-05]-In an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "IPSI" the Invoiced item VAT rate (BT-152) shall be 0 (zero) or greater than zero.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2644,7 +2577,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'M'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="78"
+                 priority="82"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2678,18 +2611,18 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-03">
+                                      id="BR-IG-03">
                      <xsl:attribute name="test">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']</xsl:attribute>
-                     <svrl:text>[BR-AG-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+                     <svrl:text>[BR-IG-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(ram:RateApplicablePercent &gt; 0)">
+               <xsl:if test="not(ram:RateApplicablePercent &gt;= 0)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-06">
-                     <xsl:attribute name="test">ram:RateApplicablePercent &gt; 0</xsl:attribute>
-                     <svrl:text>[BR-AG-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
+                                      id="BR-IG-06">
+                     <xsl:attribute name="test">ram:RateApplicablePercent &gt;= 0</xsl:attribute>
+                     <svrl:text>[BR-IG-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2702,7 +2635,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'M'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="77"
+                 priority="81"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2736,18 +2669,18 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-04">
+                                      id="BR-IG-04">
                      <xsl:attribute name="test">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']</xsl:attribute>
-                     <svrl:text>[BR-AG-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+                     <svrl:text>[BR-IG-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not(ram:RateApplicablePercent &gt; 0)">
+               <xsl:if test="not(ram:RateApplicablePercent &gt;= 0)">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="BR-AG-07">
-                     <xsl:attribute name="test">ram:RateApplicablePercent &gt; 0</xsl:attribute>
-                     <svrl:text>[BR-AG-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
+                                      id="BR-IG-07">
+                     <xsl:attribute name="test">ram:RateApplicablePercent &gt;= 0</xsl:attribute>
+                     <svrl:text>[BR-IG-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
@@ -2760,7 +2693,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'E'][upper-case(../ram:TypeCode) = 'VAT']"
-                 priority="76"
+                 priority="80"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2790,12 +2723,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not((../ram:BasisAmount - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100)))">
+               <xsl:if test="not((xs:decimal(../ram:BasisAmount) - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-E-08">
-                     <xsl:attribute name="test">(../ram:BasisAmount - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/ram:ActualAmount)*10*10)div 100))</xsl:attribute>
+                     <xsl:attribute name="test">(xs:decimal(../ram:BasisAmount) - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'E']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='E']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100))</xsl:attribute>
                      <svrl:text>[BR-E-08]-In a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Exempt from VAT" the VAT category taxable amount (BT-116) shall equal the sum of Invoice line net amounts (BT-131) minus the sum of Document level allowance amounts (BT-92) plus the sum of Document level charge amounts (BT-99) where the VAT category codes (BT-151, BT-95, BT-102) are "Exempt from VAT".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -2827,7 +2760,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'E'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="75"
+                 priority="79"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2885,7 +2818,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'E'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="74"
+                 priority="78"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -2943,7 +2876,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'E'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="73"
+                 priority="77"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3001,7 +2934,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'G'][upper-case(../ram:TypeCode) = 'VAT']"
-                 priority="72"
+                 priority="76"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3031,12 +2964,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not((../ram:BasisAmount -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100)))">
+               <xsl:if test="not((xs:decimal(../ram:BasisAmount) -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-G-08">
-                     <xsl:attribute name="test">(../ram:BasisAmount -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/ram:ActualAmount)*10*10)div 100))</xsl:attribute>
+                     <xsl:attribute name="test">(xs:decimal(../ram:BasisAmount) -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'G']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='G']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100))</xsl:attribute>
                      <svrl:text>[BR-G-08]-In a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Export outside the EU" the VAT category taxable amount (BT-116) shall equal the sum of Invoice line net amounts (BT-131) minus the sum of Document level allowance amounts (BT-92) plus the sum of Document level charge amounts (BT-99) where the VAT category codes (BT-151, BT-95, BT-102) are "Export outside the EU".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -3068,7 +3001,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'G'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="71"
+                 priority="75"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3126,7 +3059,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'G'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="70"
+                 priority="74"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3184,7 +3117,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'G'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="69"
+                 priority="73"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3242,7 +3175,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[.= 'K'][upper-case(../ram:TypeCode) = 'VAT']"
-                 priority="68"
+                 priority="72"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3272,12 +3205,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not((../ram:BasisAmount - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100)))">
+               <xsl:if test="not((xs:decimal(../ram:BasisAmount) - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-IC-08">
-                     <xsl:attribute name="test">(../ram:BasisAmount - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount)*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/ram:ActualAmount)*10*10)div 100))</xsl:attribute>
+                     <xsl:attribute name="test">(xs:decimal(../ram:BasisAmount) - 1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount + 1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'K']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='K']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100))</xsl:attribute>
                      <svrl:text>[BR-IC-08]-In a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Intra-community supply" the VAT category taxable amount (BT-116) shall equal the sum of Invoice line net amounts (BT-131) minus the sum of Document level allowance amounts (BT-92) plus the sum of Document level charge amounts (BT-99) where the VAT category codes (BT-151, BT-95, BT-102) are "Intra-community supply".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -3327,7 +3260,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'K'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="67"
+                 priority="71"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3385,7 +3318,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'K'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="66"
+                 priority="70"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3443,7 +3376,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'K'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="65"
+                 priority="69"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3501,7 +3434,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'O'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="64"
+                 priority="68"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3531,12 +3464,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'O']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount))*10*10)div 100))">
+               <xsl:if test="not(xs:decimal(ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'O']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-O-08">
-                     <xsl:attribute name="test">ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'O']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount))*10*10)div 100)</xsl:attribute>
+                     <xsl:attribute name="test">xs:decimal(ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'O']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='O']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)</xsl:attribute>
                      <svrl:text>[BR-O-08]-In a VAT breakdown (BG-23) where the VAT category code (BT-118) is " Not subject to VAT" the VAT category taxable amount (BT-116) shall equal the sum of Invoice line net amounts (BT-131) minus the sum of Document level allowance amounts (BT-92) plus the sum of Document level charge amounts (BT-99) where the VAT category codes (BT-151, BT-95, BT-102) are "Not subject to VAT".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -3604,7 +3537,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'O'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="63"
+                 priority="67"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3634,12 +3567,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']))">
+               <xsl:if test="not(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-O-03">
-                     <xsl:attribute name="test">not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])</xsl:attribute>
+                     <xsl:attribute name="test">not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])</xsl:attribute>
                      <svrl:text>[BR-O-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Not subject to VAT" shall not contain the Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) or the Buyer VAT identifier (BT-48).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -3662,7 +3595,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'O'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="62"
+                 priority="66"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3692,12 +3625,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']))">
+               <xsl:if test="not(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-O-04">
-                     <xsl:attribute name="test">not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])</xsl:attribute>
+                     <xsl:attribute name="test">not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])</xsl:attribute>
                      <svrl:text>[BR-O-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Not subject to VAT" shall not contain the Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) or the Buyer VAT identifier (BT-48).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -3720,7 +3653,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'O'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="61"
+                 priority="65"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3750,12 +3683,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']))">
+               <xsl:if test="not(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-O-02">
-                     <xsl:attribute name="test">not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])</xsl:attribute>
+                     <xsl:attribute name="test">not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])</xsl:attribute>
                      <svrl:text>[BR-O-02]-An Invoice that contains an Invoice line (BG-25) where the Invoiced item VAT category code (BT-151) is "Not subject to VAT" shall not contain the Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) or the Buyer VAT identifier (BT-48).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -3778,7 +3711,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[.='S']"
-                 priority="60"
+                 priority="64"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3808,21 +3741,21 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (../ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'S' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100)))">
+               <xsl:if test="not(every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (xs:decimal(../ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'S' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-S-08">
-                     <xsl:attribute name="test">every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (../ram:BasisAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'S' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount)) * 10 * 10) div 100))</xsl:attribute>
+                     <xsl:attribute name="test">every $rate in ../ram:RateApplicablePercent/xs:decimal(.) satisfies (xs:decimal(../ram:BasisAmount) = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'S' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 10 * 10) div 100 + round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100 - round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='S' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate]/xs:decimal(ram:ActualAmount[1])) * 10 * 10) div 100))</xsl:attribute>
                      <svrl:text>[BR-S-08]-For each different value of VAT category rate (BT-119) where the VAT category code (BT-118) is "Standard rated", the VAT category taxable amount (BT-116) in a VAT breakdown (BG-23) shall equal the sum of Invoice line net amounts (BT-131) plus the sum of document level charge amounts (BT-99) minus the sum of document level allowance amounts (BT-92) where the VAT category code (BT-151, BT-102, BT-95) is "Standard rated" and the VAT rate (BT-152, BT-103, BT-96) equals the VAT category rate (BT-119).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
-               <xsl:if test="not((abs(xs:decimal(../ram:CalculatedAmount)) - 1 &lt; round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 ) and (abs(xs:decimal(../ram:CalculatedAmount)) + 1 &gt; round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 ))">
+               <xsl:if test="not((abs(xs:decimal(../ram:CalculatedAmount)) - 1 &lt; round(abs(xs:decimal(../ram:BasisAmount)) * xs:decimal(../ram:RateApplicablePercent)) div 100 ) and (abs(xs:decimal(../ram:CalculatedAmount)) + 1 &gt; round(abs(xs:decimal(../ram:BasisAmount)) * xs:decimal(../ram:RateApplicablePercent)) div 100 ))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-S-09">
-                     <xsl:attribute name="test">(abs(xs:decimal(../ram:CalculatedAmount)) - 1 &lt; round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 ) and (abs(xs:decimal(../ram:CalculatedAmount)) + 1 &gt; round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 )</xsl:attribute>
+                     <xsl:attribute name="test">(abs(xs:decimal(../ram:CalculatedAmount)) - 1 &lt; round(abs(xs:decimal(../ram:BasisAmount)) * xs:decimal(../ram:RateApplicablePercent)) div 100 ) and (abs(xs:decimal(../ram:CalculatedAmount)) + 1 &gt; round(abs(xs:decimal(../ram:BasisAmount)) * xs:decimal(../ram:RateApplicablePercent)) div 100 )</xsl:attribute>
                      <svrl:text>[BR-S-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "Standard rated" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -3845,7 +3778,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'S'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="59"
+                 priority="63"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3903,7 +3836,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'S'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="58"
+                 priority="62"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -3961,7 +3894,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'S'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="57"
+                 priority="61"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -4019,7 +3952,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'Z']"
-                 priority="56"
+                 priority="60"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -4049,12 +3982,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not((../ram:BasisAmount -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100)))">
+               <xsl:if test="not((xs:decimal(../ram:BasisAmount) -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-Z-08">
-                     <xsl:attribute name="test">(../ram:BasisAmount -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount))*10*10)div 100))</xsl:attribute>
+                     <xsl:attribute name="test">(xs:decimal(../ram:BasisAmount) -1 &lt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100)) and (../ram:BasisAmount +1 &gt; (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z']/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount))*10*10)div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=true() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100) - (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[(ram:ChargeIndicator/udt:Indicator cast as xs:boolean)=false() and ram:CategoryTradeTax/ram:CategoryCode='Z']/xs:decimal(ram:ActualAmount[1]))*10*10)div 100))</xsl:attribute>
                      <svrl:text>[BR-Z-08]-In a VAT breakdown (BG-23) where VAT category code (BT-118) is "Zero rated" the VAT category taxable amount (BT-116) shall equal the sum of Invoice line net amount (BT-131) minus the sum of Document level allowance amounts (BT-92) plus the sum of Document level charge amounts (BT-99) where the VAT category codes (BT-151, BT-95, BT-102) are "Zero rated".</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -4086,7 +4019,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false()]/ram:CategoryTradeTax[ram:CategoryCode = 'Z'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="55"
+                 priority="59"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -4144,7 +4077,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true()]/ram:CategoryTradeTax[ram:CategoryCode = 'Z'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="54"
+                 priority="58"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -4202,7 +4135,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'Z'][upper-case(ram:TypeCode) = 'VAT']"
-                 priority="53"
+                 priority="57"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -4260,7 +4193,7 @@
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax"
-                 priority="52"
+                 priority="56"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
@@ -4371,13 +4304,62 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   <xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext"
-                 priority="51"
+   <xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans"
+                 priority="55"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
+               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:SpecifiedTradeSettlementPaymentMeans" shadowed by preceding rule</xsl:comment>
+               <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">//ram:SpecifiedTradeSettlementPaymentMeans</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:suppressed-rule>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="$schxslt:patterns-matched"/>
+            </xsl:next-match>
+         </xsl:when>
+         <xsl:otherwise>
+            <schxslt:rule pattern="d12e837">
+               <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">//ram:SpecifiedTradeSettlementPaymentMeans</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:fired-rule>
+               <xsl:if test="not(not(ram:PayerSpecifiedDebtorFinancialInstitution))">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="warning"
+                                      id="CII-SR-464">
+                     <xsl:attribute name="test">not(ram:PayerSpecifiedDebtorFinancialInstitution)</xsl:attribute>
+                     <svrl:text>[CII-SR-464] - PayerSpecifiedDebtorFincancialInstitution should not be used.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
+            </xsl:next-match>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   <xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext"
+                 priority="54"
+                 mode="d12e32">
+      <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
+      <xsl:choose>
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext</xsl:attribute>
@@ -4394,7 +4376,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -4496,18 +4478,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument"
-                 priority="50"
+                 priority="53"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:ExchangedDocument" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocument</xsl:attribute>
@@ -4524,7 +4506,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocument</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -4707,18 +4689,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote"
-                 priority="49"
+                 priority="52"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote</xsl:attribute>
@@ -4735,7 +4717,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -4756,21 +4738,21 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem"
-                 priority="48"
+   <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument"
+                 priority="51"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
-               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem" shadowed by preceding rule</xsl:comment>
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
+               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
-                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem</xsl:attribute>
+                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
                   <xsl:if test="exists($documentUri)">
                      <xsl:attribute name="document" select="$documentUri"/>
@@ -4784,9 +4766,9 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
-                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem</xsl:attribute>
+                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
                   <xsl:if test="exists($documentUri)">
                      <xsl:attribute name="document" select="$documentUri"/>
@@ -4841,18 +4823,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument"
-                 priority="47"
+                 priority="50"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument</xsl:attribute>
@@ -4869,7 +4851,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -4935,18 +4917,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct"
-                 priority="46"
+                 priority="49"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct</xsl:attribute>
@@ -4963,7 +4945,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -5479,18 +5461,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic"
-                 priority="45"
+                 priority="48"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic</xsl:attribute>
@@ -5507,7 +5489,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -5537,18 +5519,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement"
-                 priority="44"
+                 priority="47"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement</xsl:attribute>
@@ -5565,7 +5547,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -6036,18 +6018,85 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
+            </xsl:next-match>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   <xsl:template match="//ram:SpecifiedTradeAllowanceCharge"
+                 priority="46"
+                 mode="d12e32">
+      <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
+      <xsl:choose>
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
+               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:SpecifiedTradeAllowanceCharge" shadowed by preceding rule</xsl:comment>
+               <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">//ram:SpecifiedTradeAllowanceCharge</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:suppressed-rule>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="$schxslt:patterns-matched"/>
+            </xsl:next-match>
+         </xsl:when>
+         <xsl:otherwise>
+            <schxslt:rule pattern="d12e837">
+               <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">//ram:SpecifiedTradeAllowanceCharge</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:fired-rule>
+               <xsl:if test="not((ram:ChargeIndicator))">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-463">
+                     <xsl:attribute name="test">(ram:ChargeIndicator)</xsl:attribute>
+                     <svrl:text>[CII-SR-463]-Each Specified Trade Allowance Charge (BG-20)(BG-21) shall contain a Charge Indicator.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:CategoryTradeTax) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-472">
+                     <xsl:attribute name="test">count(ram:CategoryTradeTax) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-472] - CategoryTradeTax shall occur at most once in a Specified Trade Allowance Charge.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:ActualAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-473">
+                     <xsl:attribute name="test">count(ram:ActualAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-473] - ActualAmount should exist maximum once</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge"
-                 priority="43"
+                 priority="45"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge</xsl:attribute>
@@ -6064,7 +6113,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -6085,18 +6134,76 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
+            </xsl:next-match>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument"
+                 priority="44"
+                 mode="d12e32">
+      <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
+      <xsl:choose>
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
+               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument" shadowed by preceding rule</xsl:comment>
+               <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:suppressed-rule>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="$schxslt:patterns-matched"/>
+            </xsl:next-match>
+         </xsl:when>
+         <xsl:otherwise>
+            <schxslt:rule pattern="d12e837">
+               <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:fired-rule>
+               <xsl:if test="not(normalize-space(ram:TypeCode) != '916' or count(ram:Name) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="warning"
+                                      id="CII-SR-475">
+                     <xsl:attribute name="test">normalize-space(ram:TypeCode) != '916' or count(ram:Name) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-475] - Only one AdditionalReferencedDocument Name BT-123 is allowed with TypeCode 916.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(normalize-space(ram:TypeCode) != '916' or count(ram:AttachmentBinaryObject) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="warning"
+                                      id="CII-SR-476">
+                     <xsl:attribute name="test">normalize-space(ram:TypeCode) != '916' or count(ram:AttachmentBinaryObject) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-476] - Only one AdditionalReferencedDocument AttachmentBinaryObject BT-125 is allowed with TypeCode 916.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery"
-                 priority="42"
+                 priority="43"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery</xsl:attribute>
@@ -6113,7 +6220,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -6368,18 +6475,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement"
-                 priority="41"
+                 priority="42"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement</xsl:attribute>
@@ -6396,7 +6503,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -6791,22 +6898,31 @@
                      <svrl:text>[CII-SR-454] - Only one ApplicableTradeTax should be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
+               <xsl:if test="not(count(ram:AdditionalReferencedDocument[normalize-space(ram:TypeCode) = '130']) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="warning"
+                                      id="CII-SR-474">
+                     <xsl:attribute name="test">count(ram:AdditionalReferencedDocument[normalize-space(ram:TypeCode) = '130']) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-474] - An invoice line shall not contain more than one AdditionalReferencedDocument with TypeCode 130.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
             </schxslt:rule>
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement"
-                 priority="40"
+                 priority="41"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement</xsl:attribute>
@@ -6823,7 +6939,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -7677,22 +7793,40 @@
                      <svrl:text>[CII-SR-460] - BuyerTradeParty URIUniversalCommunication should exist maximum once</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
+               <xsl:if test="not(not(ram:SellerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:SellerTradeParty/ram:DefinedTradeContact/ram:DepartmentName))">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="warning"
+                                      id="CII-SR-465">
+                     <xsl:attribute name="test">not(ram:SellerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:SellerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)</xsl:attribute>
+                     <svrl:text>[CII-SR-465] - Only one BT-41 element is allowed on an invoice.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(not(ram:BuyerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:BuyerTradeParty/ram:DefinedTradeContact/ram:DepartmentName))">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="warning"
+                                      id="CII-SR-466">
+                     <xsl:attribute name="test">not(ram:BuyerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:BuyerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)</xsl:attribute>
+                     <svrl:text>[CII-SR-466] - Only one BT-56 element is allowed on an invoice.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
             </schxslt:rule>
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery"
-                 priority="39"
+                 priority="40"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery</xsl:attribute>
@@ -7709,7 +7843,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -8009,18 +8143,18 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement"
-                 priority="38"
+                 priority="39"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement</xsl:attribute>
@@ -8037,7 +8171,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -8855,22 +8989,40 @@
                      <svrl:text>[CII-SR-462] - Only one DueDateTypeCode shall be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
+               <xsl:if test="not(count(ram:SpecifiedTradeSettlementPaymentMeans[(normalize-space(ram:TypeCode) = '30' or normalize-space(ram:TypeCode) = '58') and not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID or ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)]) = 0)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-470">
+                     <xsl:attribute name="test">count(ram:SpecifiedTradeSettlementPaymentMeans[(normalize-space(ram:TypeCode) = '30' or normalize-space(ram:TypeCode) = '58') and not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID or ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)]) = 0</xsl:attribute>
+                     <svrl:text>[CII-SR-470] - Either the IBAN or a Proprietary ID (BT-84) shall be used.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-497">
+                     <xsl:attribute name="test">count(ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-497] - Mandate reference identifier (BT-89) shall occur maximum once.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
             </schxslt:rule>
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation"
-                 priority="37"
+                 priority="38"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation</xsl:attribute>
@@ -8887,7 +9039,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -8985,20 +9137,182 @@
                      <svrl:text>[CII-SR-420] - NetIncludingTaxesLineTotalAmount should not be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
+               <xsl:if test="not(count(ram:LineTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-477">
+                     <xsl:attribute name="test">count(ram:LineTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-477] - LineTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:ChargeTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-478">
+                     <xsl:attribute name="test">count(ram:ChargeTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-478] - ChargeTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:AllowanceTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-479">
+                     <xsl:attribute name="test">count(ram:AllowanceTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-479] - AllowanceTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:TaxBasisTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-480">
+                     <xsl:attribute name="test">count(ram:TaxBasisTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-480] - TaxBasisTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:RoundingAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-481">
+                     <xsl:attribute name="test">count(ram:RoundingAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-481] - RoundingAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:GrandTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-482">
+                     <xsl:attribute name="test">count(ram:GrandTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-482] - GrandTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:InformationAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-483">
+                     <xsl:attribute name="test">count(ram:InformationAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-483] - InformationAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:TotalPrepaidAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-484">
+                     <xsl:attribute name="test">count(ram:TotalPrepaidAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-484] - TotalPrepaidAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:TotalDiscountAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-485">
+                     <xsl:attribute name="test">count(ram:TotalDiscountAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-485] - TotalDiscountAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:TotalAllowanceChargeAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-486">
+                     <xsl:attribute name="test">count(ram:TotalAllowanceChargeAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-486] - TotalAllowanceChargeAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:DuePayableAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-487">
+                     <xsl:attribute name="test">count(ram:DuePayableAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-487] - DuePayableAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:RetailValueExcludingTaxInformationAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-488">
+                     <xsl:attribute name="test">count(ram:RetailValueExcludingTaxInformationAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-488] - RetailValueExcludingTaxInformationAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:TotalDepositFeeInformationAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-489">
+                     <xsl:attribute name="test">count(ram:TotalDepositFeeInformationAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-489] - TotalDepositFeeInformationAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:ProductValueExcludingTobaccoTaxInformationAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-490">
+                     <xsl:attribute name="test">count(ram:ProductValueExcludingTobaccoTaxInformationAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-490] - ProductValueExcludingTobaccoTaxInformationAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:TotalRetailValueInformationAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-491">
+                     <xsl:attribute name="test">count(ram:TotalRetailValueInformationAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-491] - TotalRetailValueInformationAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:GrossLineTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-492">
+                     <xsl:attribute name="test">count(ram:GrossLineTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-492] - GrossLineTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:NetLineTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-493">
+                     <xsl:attribute name="test">count(ram:NetLineTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-493] - NetLineTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(ram:NetIncludingTaxesLineTotalAmount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-494">
+                     <xsl:attribute name="test">count(ram:NetIncludingTaxesLineTotalAmount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-494] - NetIncludingTaxesLineTotalAmount shall occur at most once in SpecifiedTradeSettlementHeaderMonetarySummation.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
             </schxslt:rule>
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-   <xsl:template match="/rsm:CrossIndustryInvoice" priority="36" mode="d12e32">
+   <xsl:template match="/rsm:CrossIndustryInvoice" priority="37" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice</xsl:attribute>
@@ -9015,7 +9329,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9050,22 +9364,67 @@
                      <svrl:text>[CII-SR-438] - ValuationBreakdownStatement should not be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
+               <xsl:if test="not(count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode[normalize-space(.) != normalize-space((//ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode)[1])]) = 0)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-467">
+                     <xsl:attribute name="test">count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode[normalize-space(.) != normalize-space((//ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode)[1])]) = 0</xsl:attribute>
+                     <svrl:text>[CII-SR-467] - All Payment means type codes (BT-81) shall have the same value across all SpecifiedTradeSettlementPaymentMeans.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:Information[normalize-space(.) != normalize-space((//ram:SpecifiedTradeSettlementPaymentMeans/ram:Information)[1])]) = 0)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-468">
+                     <xsl:attribute name="test">count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:Information[normalize-space(.) != normalize-space((//ram:SpecifiedTradeSettlementPaymentMeans/ram:Information)[1])]) = 0</xsl:attribute>
+                     <svrl:text>[CII-SR-468] - All Payment means texts (BT-82) shall have the same value across all SpecifiedTradeSettlementPaymentMeans.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(//ram:ApplicableHeaderTradeSettlement/ram:PaymentReference) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-469">
+                     <xsl:attribute name="test">count(//ram:ApplicableHeaderTradeSettlement/ram:PaymentReference) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-469] - Payment reference (BT-83) shall occur at most once in the document.</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:ApplicableTradeSettlementFinancialCard) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-495">
+                     <xsl:attribute name="test">count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:ApplicableTradeSettlementFinancialCard) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-495] - An Invoice shall contain maximum one Payment Card account (BG-18).</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount) &lt;= 1)">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-SR-496">
+                     <xsl:attribute name="test">count(//ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount) &lt;= 1</xsl:attribute>
+                     <svrl:text>[CII-SR-496] - An Invoice shall contain maximum one Payment Mandate (BG-19).</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
             </schxslt:rule>
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
    <xsl:template match="//*[ends-with(name(), 'DocumentContextParameter')]"
-                 priority="35"
+                 priority="36"
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//*[ends-with(name(), 'DocumentContextParameter')]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//*[ends-with(name(), 'DocumentContextParameter')]</xsl:attribute>
@@ -9082,7 +9441,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//*[ends-with(name(), 'DocumentContextParameter')]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9112,7 +9471,69 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
+            </xsl:next-match>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject"
+                 priority="35"
+                 mode="d12e32">
+      <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
+      <xsl:choose>
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
+               <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject" shadowed by preceding rule</xsl:comment>
+               <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:suppressed-rule>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="$schxslt:patterns-matched"/>
+            </xsl:next-match>
+         </xsl:when>
+         <xsl:otherwise>
+            <schxslt:rule pattern="d12e837">
+               <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
+                  <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject</xsl:attribute>
+                  <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
+                  <xsl:if test="exists($documentUri)">
+                     <xsl:attribute name="document" select="$documentUri"/>
+                  </xsl:if>
+               </svrl:fired-rule>
+               <xsl:if test="not(exists(@mimeCode))">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-DT-105">
+                     <xsl:attribute name="test">exists(@mimeCode)</xsl:attribute>
+                     <svrl:text>
+			[CII-DT-105] - Attached document Mime code (BT-125-1) shall be provided.
+		</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+               <xsl:if test="not(exists(@filename))">
+                  <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                      location="{schxslt:location(.)}"
+                                      flag="fatal"
+                                      id="CII-DT-106">
+                     <xsl:attribute name="test">exists(@filename)</xsl:attribute>
+                     <svrl:text>
+			[CII-DT-106] - Attached document Filename (BT-125-2) shall be provided.
+		</svrl:text>
+                  </svrl:failed-assert>
+               </xsl:if>
+            </schxslt:rule>
+            <xsl:next-match>
+               <xsl:with-param name="schxslt:patterns-matched"
+                               as="xs:string*"
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9122,8 +9543,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID | /rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID | /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineID | /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:SellerAssignedID" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID |            /rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID |            /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineID |            /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:SellerAssignedID</xsl:attribute>
@@ -9140,7 +9561,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID |            /rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID |            /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineID |            /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:SellerAssignedID</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9215,7 +9636,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9225,8 +9646,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:*[ends-with(name(), 'ID')]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'ID')]</xsl:attribute>
@@ -9243,7 +9664,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'ID')]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9255,43 +9676,43 @@
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="CII-DT-0010">
+                                      id="CII-DT-101">
                      <xsl:attribute name="test">not(@schemeName)</xsl:attribute>
-                     <svrl:text>[CII-DT-001] - schemeName should not be present</svrl:text>
+                     <svrl:text>[CII-DT-101] - schemeName should not be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(not(@schemeAgencyName))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="CII-DT-0020">
+                                      id="CII-DT-102">
                      <xsl:attribute name="test">not(@schemeAgencyName)</xsl:attribute>
-                     <svrl:text>[CII-DT-002] - schemeAgencyName should not be present</svrl:text>
+                     <svrl:text>[CII-DT-102] - schemeAgencyName should not be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(not(@schemeDataURI))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="CII-DT-0030">
+                                      id="CII-DT-103">
                      <xsl:attribute name="test">not(@schemeDataURI)</xsl:attribute>
-                     <svrl:text>[CII-DT-003] - schemeDataURI should not be present</svrl:text>
+                     <svrl:text>[CII-DT-103] - schemeDataURI should not be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
                <xsl:if test="not(not(@schemeURI))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
-                                      id="CII-DT-0040">
+                                      id="CII-DT-104">
                      <xsl:attribute name="test">not(@schemeURI)</xsl:attribute>
-                     <svrl:text>[CII-DT-004] - schemeURI should not be present</svrl:text>
+                     <svrl:text>[CII-DT-104] - schemeURI should not be present</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
             </schxslt:rule>
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9299,8 +9720,8 @@
    <xsl:template match="//ram:TypeCode" priority="32" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:TypeCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:TypeCode</xsl:attribute>
@@ -9317,7 +9738,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:TypeCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9347,7 +9768,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9357,8 +9778,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode</xsl:attribute>
@@ -9375,7 +9796,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9414,7 +9835,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9424,8 +9845,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode</xsl:attribute>
@@ -9442,7 +9863,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9490,7 +9911,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9500,8 +9921,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:*[ends-with(name(), 'ReferencedDocument')]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'ReferencedDocument')]</xsl:attribute>
@@ -9518,7 +9939,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'ReferencedDocument')]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9674,7 +10095,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9684,8 +10105,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:*[ends-with(name(), 'Amount') and not (self::ram:TaxTotalAmount)]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'Amount') and not (self::ram:TaxTotalAmount)]</xsl:attribute>
@@ -9702,7 +10123,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'Amount') and not (self::ram:TaxTotalAmount)]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9732,7 +10153,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9742,8 +10163,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:*[ends-with(name(), 'Quantity')]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'Quantity')]</xsl:attribute>
@@ -9760,7 +10181,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'Quantity')]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -9808,7 +10229,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -9818,8 +10239,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:*[ends-with(name(), 'TradeTax')]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'TradeTax')]</xsl:attribute>
@@ -9836,7 +10257,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:*[ends-with(name(), 'TradeTax')]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10100,7 +10521,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10108,8 +10529,8 @@
    <xsl:template match="//ram:BillingSpecifiedPeriod" priority="25" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:BillingSpecifiedPeriod" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:BillingSpecifiedPeriod</xsl:attribute>
@@ -10126,7 +10547,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:BillingSpecifiedPeriod</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10264,7 +10685,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10272,8 +10693,8 @@
    <xsl:template match="//ram:PostalTradeAddress" priority="24" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:PostalTradeAddress" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:PostalTradeAddress</xsl:attribute>
@@ -10290,7 +10711,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//ram:PostalTradeAddress</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10428,7 +10849,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10438,8 +10859,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e850']">
-            <schxslt:rule pattern="d12e850">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e837']">
+            <schxslt:rule pattern="d12e837">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//udt:DateTimeString[@format = '102']" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//udt:DateTimeString[@format = '102']</xsl:attribute>
@@ -10456,7 +10877,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e850">
+            <schxslt:rule pattern="d12e837">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
                   <xsl:attribute name="context">//udt:DateTimeString[@format = '102']</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10477,7 +10898,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e850')"/>
+                               select="($schxslt:patterns-matched, 'd12e837')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10487,8 +10908,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "rsm:ExchangedDocument/ram:TypeCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">rsm:ExchangedDocument/ram:TypeCode</xsl:attribute>
@@ -10505,7 +10926,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">rsm:ExchangedDocument/ram:TypeCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10513,12 +10934,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' 71 80 81 82 83 84 102 130 202 203 204 211 218 219 261 262 295 296 308 325 326 331 380 381 382 383 384 385 386 387 388 389 390 393 394 395 396 420 456 457 458 527 532 553 575 623 633 751 780 817 870 875 876 877 935 ', concat(' ', normalize-space(.), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' 71 80 81 82 83 84 102 130 202 203 204 211 218 219 261 262 295 296 308 325 326 331 380 381 382 383 384 385 386 387 388 389 390 393 394 395 396 420 456 457 458 471 472 473 500 501 502 503 527 532 553 575 623 633 751 780 817 870 875 876 877 935 ', concat(' ', normalize-space(.), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-01">
-                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' 71 80 81 82 83 84 102 130 202 203 204 211 218 219 261 262 295 296 308 325 326 331 380 381 382 383 384 385 386 387 388 389 390 393 394 395 396 420 456 457 458 527 532 553 575 623 633 751 780 817 870 875 876 877 935 ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' 71 80 81 82 83 84 102 130 202 203 204 211 218 219 261 262 295 296 308 325 326 331 380 381 382 383 384 385 386 387 388 389 390 393 394 395 396 420 456 457 458 471 472 473 500 501 502 503 527 532 553 575 623 633 751 780 817 870 875 876 877 935 ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-01]-The document type code MUST be coded by the invoice and credit note related code lists of UNTDID 1001.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10526,7 +10947,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10534,8 +10955,8 @@
    <xsl:template match="ram:TaxTotalAmount[@currencyID]" priority="21" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:TaxTotalAmount[@currencyID]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:TaxTotalAmount[@currencyID]</xsl:attribute>
@@ -10552,7 +10973,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:TaxTotalAmount[@currencyID]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10560,12 +10981,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(@currencyID), ' ')) and contains(' AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRO MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STD SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ZWL ', concat(' ', normalize-space(@currencyID), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(@currencyID), ' ')) and contains(' AED AFN ALL AMD AOA ARS AUD AWG AZN BAM BBD BDT BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNH CNY COP COU CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UYW UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XCG XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ', concat(' ', normalize-space(@currencyID), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-03">
-                     <xsl:attribute name="test">((not(contains(normalize-space(@currencyID), ' ')) and contains(' AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRO MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STD SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ZWL ', concat(' ', normalize-space(@currencyID), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(@currencyID), ' ')) and contains(' AED AFN ALL AMD AOA ARS AUD AWG AZN BAM BBD BDT BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNH CNY COP COU CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UYW UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XCG XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ', concat(' ', normalize-space(@currencyID), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-03]-currencyID MUST be coded using ISO code list 4217 alpha-3</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10573,7 +10994,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10581,8 +11002,8 @@
    <xsl:template match="ram:InvoiceCurrencyCode" priority="20" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:InvoiceCurrencyCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:InvoiceCurrencyCode</xsl:attribute>
@@ -10599,7 +11020,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:InvoiceCurrencyCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10607,12 +11028,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRO MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STD SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ZWL ', concat(' ', normalize-space(.), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD AOA ARS AUD AWG AZN BAM BBD BDT BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNH CNY COP COU CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UYW UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XCG XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ', concat(' ', normalize-space(.), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-04">
-                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRO MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STD SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ZWL ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD AOA ARS AUD AWG AZN BAM BBD BDT BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNH CNY COP COU CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UYW UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XCG XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-04]-Invoice currency code MUST be coded using ISO code list 4217 alpha-3</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10620,7 +11041,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10628,8 +11049,8 @@
    <xsl:template match="ram:TaxCurrencyCode" priority="19" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:TaxCurrencyCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:TaxCurrencyCode</xsl:attribute>
@@ -10646,7 +11067,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:TaxCurrencyCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10654,12 +11075,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRO MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STD SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ZWL ', concat(' ', normalize-space(.), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD AOA ARS AUD AWG AZN BAM BBD BDT BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNH CNY COP COU CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UYW UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XCG XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ', concat(' ', normalize-space(.), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-05">
-                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD ANG AOA ARS AUD AWG AZN BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRO MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STD SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ZWL ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' AED AFN ALL AMD AOA ARS AUD AWG AZN BAM BBD BDT BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD CAD CDF CHE CHF CHW CLF CLP CNH CNY COP COU CRC CUP CVE CZK DJF DKK DOP DZD EGP ERN ETB EUR FJD FKP GBP GEL GHS GIP GMD GNF GTQ GYD HKD HNL HTG HUF IDR ILS INR IQD IRR ISK JMD JOD JPY KES KGS KHR KMF KPW KRW KWD KYD KZT LAK LBP LKR LRD LSL LYD MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN NAD NGN NIO NOK NPR NZD OMR PAB PEN PGK PHP PKR PLN PYG QAR RON RSD RUB RWF SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SVC SYP SZL THB TJS TMT TND TOP TRY TTD TWD TZS UAH UGX USD USN UYI UYU UYW UZS VES VED VND VUV WST XAF XAG XAU XBA XBB XBC XBD XCD XCG XDR XOF XPD XPF XPT XSU XTS XUA XXX YER ZAR ZMW ZWG ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-05]-Tax currency code MUST be coded using ISO code list 4217 alpha-3</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10667,7 +11088,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10675,8 +11096,8 @@
    <xsl:template match="ram:DueDateTypeCode" priority="18" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:DueDateTypeCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:DueDateTypeCode</xsl:attribute>
@@ -10693,7 +11114,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:DueDateTypeCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10714,7 +11135,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10722,8 +11143,8 @@
    <xsl:template match="ram:ReferenceTypeCode" priority="17" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:ReferenceTypeCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ReferenceTypeCode</xsl:attribute>
@@ -10740,7 +11161,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ReferenceTypeCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10748,12 +11169,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' AAA AAB AAC AAD AAE AAF AAG AAH AAI AAJ AAK AAL AAM AAN AAO AAP AAQ AAR AAS AAT AAU AAV AAW AAX AAY AAZ ABA ABB ABC ABD ABE ABF ABG ABH ABI ABJ ABK ABL ABM ABN ABO ABP ABQ ABR ABS ABT ABU ABV ABW ABX ABY ABZ AC ACA ACB ACC ACD ACE ACF ACG ACH ACI ACJ ACK ACL ACN ACO ACP ACQ ACR ACT ACU ACV ACW ACX ACY ACZ ADA ADB ADC ADD ADE ADF ADG ADI ADJ ADK ADL ADM ADN ADO ADP ADQ ADT ADU ADV ADW ADX ADY ADZ AE AEA AEB AEC AED AEE AEF AEG AEH AEI AEJ AEK AEL AEM AEN AEO AEP AEQ AER AES AET AEU AEV AEW AEX AEY AEZ AF AFA AFB AFC AFD AFE AFF AFG AFH AFI AFJ AFK AFL AFM AFN AFO AFP AFQ AFR AFS AFT AFU AFV AFW AFX AFY AFZ AGA AGB AGC AGD AGE AGF AGG AGH AGI AGJ AGK AGL AGM AGN AGO AGP AGQ AGR AGS AGT AGU AGV AGW AGX AGY AGZ AHA AHB AHC AHD AHE AHF AHG AHH AHI AHJ AHK AHL AHM AHN AHO AHP AHQ AHR AHS AHT AHU AHV AHX AHY AHZ AIA AIB AIC AID AIE AIF AIG AIH AII AIJ AIK AIL AIM AIN AIO AIP AIQ AIR AIS AIT AIU AIV AIW AIX AIY AIZ AJA AJB AJC AJD AJE AJF AJG AJH AJI AJJ AJK AJL AJM AJN AJO AJP AJQ AJR AJS AJT AJU AJV AJW AJX AJY AJZ AKA AKB AKC AKD AKE AKF AKG AKH AKI AKJ AKK AKL AKM AKN AKO AKP AKQ AKR AKS AKT AKU AKV AKW AKX AKY AKZ ALA ALB ALC ALD ALE ALF ALG ALH ALI ALJ ALK ALL ALM ALN ALO ALP ALQ ALR ALS ALT ALU ALV ALW ALX ALY ALZ AMA AMB AMC AMD AME AMF AMG AMH AMI AMJ AMK AML AMM AMN AMO AMP AMQ AMR AMS AMT AMU AMV AMW AMX AMY AMZ ANA ANB ANC AND ANE ANF ANG ANH ANI ANJ ANK ANL ANM ANN ANO ANP ANQ ANR ANS ANT ANU ANV ANW ANX ANY AOA AOD AOE AOF AOG AOH AOI AOJ AOK AOL AOM AON AOO AOP AOQ AOR AOS AOT AOU AOV AOW AOX AOY AOZ AP APA APB APC APD APE APF APG APH API APJ APK APL APM APN APO APP APQ APR APS APT APU APV APW APX APY APZ AQA AQB AQC AQD AQE AQF AQG AQH AQI AQJ AQK AQL AQM AQN AQO AQP AQQ AQR AQS AQT AQU AQV AQW AQX AQY AQZ ARA ARB ARC ARD ARE ARF ARG ARH ARI ARJ ARK ARL ARM ARN ARO ARP ARQ ARR ARS ART ARU ARV ARW ARX ARY ARZ ASA ASB ASC ASD ASE ASF ASG ASH ASI ASJ ASK ASL ASM ASN ASO ASP ASQ ASR ASS AST ASU ASV ASW ASX ASY ASZ ATA ATB ATC ATD ATE ATF ATG ATH ATI ATJ ATK ATL ATM ATN ATO ATP ATQ ATR ATS ATT ATU ATV ATW ATX ATY ATZ AU AUA AUB AUC AUD AUE AUF AUG AUH AUI AUJ AUK AUL AUM AUN AUO AUP AUQ AUR AUS AUT AUU AUV AUW AUX AUY AUZ AV AVA AVB AVC AVD AVE AVF AVG AVH AVI AVJ AVK AVL AVM AVN AVO AVP AVQ AVR AVS AVT AVU AVV AVW AVX AVY AVZ AWA AWB AWC AWD AWE AWF AWG AWH AWI AWJ AWK AWL AWM AWN AWO AWP AWQ AWR AWS AWT AWU AWV AWW AWX AWY AWZ AXA AXB AXC AXD AXE AXF AXG AXH AXI AXJ AXK AXL AXM AXN AXO AXP AXQ AXR AXS BA BC BD BE BH BM BN BO BR BT BTP BW CAS CAT CAU CAV CAW CAX CAY CAZ CBA CBB CD CEC CED CFE CFF CFO CG CH CK CKN CM CMR CN CNO COF CP CR CRN CS CST CT CU CV CW CZ DA DAN DB DI DL DM DQ DR EA EB ED EE EEP EI EN EQ ER ERN ET EX FC FF FI FLW FN FO FS FT FV FX GA GC GD GDN GN HS HWB IA IB ICA ICE ICO II IL INB INN INO IP IS IT IV JB JE LA LAN LAR LB LC LI LO LRC LS MA MB MF MG MH MR MRN MS MSS MWB NA NF OH OI ON OP OR PB PC PD PE PF PI PK PL POR PP PQ PR PS PW PY RA RC RCN RE REN RF RR RT SA SB SD SE SEA SF SH SI SM SN SP SQ SRN SS STA SW SZ TB TCR TE TF TI TIN TL TN TP UAR UC UCN UN UO URI VA VC VGR VM VN VON VOR VP VR VS VT VV WE WM WN WR WS WY XA XC XP ZZZ ', concat(' ', normalize-space(.), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' AAA AAB AAC AAD AAE AAF AAG AAH AAI AAJ AAK AAL AAM AAN AAO AAP AAQ AAR AAS AAT AAU AAV AAW AAX AAY AAZ ABA ABB ABC ABD ABE ABF ABG ABH ABI ABJ ABK ABL ABM ABN ABO ABP ABQ ABR ABS ABT ABU ABV ABW ABX ABY ABZ AC ACA ACB ACC ACD ACE ACF ACG ACH ACI ACJ ACK ACL ACN ACO ACP ACQ ACR ACT ACU ACV ACW ACX ACY ACZ ADA ADB ADC ADD ADE ADF ADG ADI ADJ ADK ADL ADM ADN ADO ADP ADQ ADT ADU ADV ADW ADX ADY ADZ AE AEA AEB AEC AED AEE AEF AEG AEH AEI AEJ AEK AEL AEM AEN AEO AEP AEQ AER AES AET AEU AEV AEW AEX AEY AEZ AF AFA AFB AFC AFD AFE AFF AFG AFH AFI AFJ AFK AFL AFM AFN AFO AFP AFQ AFR AFS AFT AFU AFV AFW AFX AFY AFZ AGA AGB AGC AGD AGE AGF AGG AGH AGI AGJ AGK AGL AGM AGN AGO AGP AGQ AGR AGS AGT AGU AGV AGW AGX AGY AGZ AHA AHB AHC AHD AHE AHF AHG AHH AHI AHJ AHK AHL AHM AHN AHO AHP AHQ AHR AHS AHT AHU AHV AHX AHY AHZ AIA AIB AIC AID AIE AIF AIG AIH AII AIJ AIK AIL AIM AIN AIO AIP AIQ AIR AIS AIT AIU AIV AIW AIX AIY AIZ AJA AJB AJC AJD AJE AJF AJG AJH AJI AJJ AJK AJL AJM AJN AJO AJP AJQ AJR AJS AJT AJU AJV AJW AJX AJY AJZ AKA AKB AKC AKD AKE AKF AKG AKH AKI AKJ AKK AKL AKM AKN AKO AKP AKQ AKR AKS AKT AKU AKV AKW AKX AKY AKZ ALA ALB ALC ALD ALE ALF ALG ALH ALI ALJ ALK ALL ALM ALN ALO ALP ALQ ALR ALS ALT ALU ALV ALW ALX ALY ALZ AMA AMB AMC AMD AME AMF AMG AMH AMI AMJ AMK AML AMM AMN AMO AMP AMQ AMR AMS AMT AMU AMV AMW AMX AMY AMZ ANA ANB ANC AND ANE ANF ANG ANH ANI ANJ ANK ANL ANM ANN ANO ANP ANQ ANR ANS ANT ANU ANV ANW ANX ANY AOA AOD AOE AOF AOG AOH AOI AOJ AOK AOL AOM AON AOO AOP AOQ AOR AOS AOT AOU AOV AOW AOX AOY AOZ AP APA APB APC APD APE APF APG APH API APJ APK APL APM APN APO APP APQ APR APS APT APU APV APW APX APY APZ AQA AQB AQC AQD AQE AQF AQG AQH AQI AQJ AQK AQL AQM AQN AQO AQP AQQ AQR AQS AQT AQU AQV AQW AQX AQY AQZ ARA ARB ARC ARD ARE ARF ARG ARH ARI ARJ ARK ARL ARM ARN ARO ARP ARQ ARR ARS ART ARU ARV ARW ARX ARY ARZ ASA ASB ASC ASD ASE ASF ASG ASH ASI ASJ ASK ASL ASM ASN ASO ASP ASQ ASR ASS AST ASU ASV ASW ASX ASY ASZ ATA ATB ATC ATD ATE ATF ATG ATH ATI ATJ ATK ATL ATM ATN ATO ATP ATQ ATR ATS ATT ATU ATV ATW ATX ATY ATZ AU AUA AUB AUC AUD AUE AUF AUG AUH AUI AUJ AUK AUL AUM AUN AUO AUP AUQ AUR AUS AUT AUU AUV AUW AUX AUY AUZ AV AVA AVB AVC AVD AVE AVF AVG AVH AVI AVJ AVK AVL AVM AVN AVO AVP AVQ AVR AVS AVT AVU AVV AVW AVX AVY AVZ AWA AWB AWC AWD AWE AWF AWG AWH AWI AWJ AWK AWL AWM AWN AWO AWP AWQ AWR AWS AWT AWU AWV AWW AWX AWY AWZ AXA AXB AXC AXD AXE AXF AXG AXH AXI AXJ AXK AXL AXM AXN AXO AXP AXQ AXR AXS AXU BA BC BD BE BH BM BN BO BR BT BTP BW CAS CAT CAU CAV CAW CAX CAY CAZ CBA CBB CD CEC CED CFE CFF CFO CG CH CK CKN CM CMR CN CNO COF CP CR CRN CS CST CT CU CV CW CZ DA DAN DB DI DL DM DQ DR EA EB ED EE EEP EI EN EQ ER ERN ET EX FC FF FI FLW FN FO FS FT FV FX GA GC GD GDN GN HS HWB IA IB ICA ICE ICO II IL INB INN INO IP IS IT IV JB JE LA LAN LAR LB LC LI LO LRC LS MA MB MF MG MH MR MRN MS MSS MWB NA NF OH OI ON OP OR PB PC PD PE PF PI PK PL POR PP PQ PR PS PW PY RA RC RCN RE REN RF RR RT SA SB SD SE SEA SF SH SI SM SN SP SQ SRN SS STA SW SZ TB TCR TE TF TI TIN TL TN TP UAR UC UCN UN UO URI VA VC VGR VM VN VON VOR VP VR VS VT VV WE WM WN WR WS WY XA XC XP ZZZ ', concat(' ', normalize-space(.), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-07">
-                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' AAA AAB AAC AAD AAE AAF AAG AAH AAI AAJ AAK AAL AAM AAN AAO AAP AAQ AAR AAS AAT AAU AAV AAW AAX AAY AAZ ABA ABB ABC ABD ABE ABF ABG ABH ABI ABJ ABK ABL ABM ABN ABO ABP ABQ ABR ABS ABT ABU ABV ABW ABX ABY ABZ AC ACA ACB ACC ACD ACE ACF ACG ACH ACI ACJ ACK ACL ACN ACO ACP ACQ ACR ACT ACU ACV ACW ACX ACY ACZ ADA ADB ADC ADD ADE ADF ADG ADI ADJ ADK ADL ADM ADN ADO ADP ADQ ADT ADU ADV ADW ADX ADY ADZ AE AEA AEB AEC AED AEE AEF AEG AEH AEI AEJ AEK AEL AEM AEN AEO AEP AEQ AER AES AET AEU AEV AEW AEX AEY AEZ AF AFA AFB AFC AFD AFE AFF AFG AFH AFI AFJ AFK AFL AFM AFN AFO AFP AFQ AFR AFS AFT AFU AFV AFW AFX AFY AFZ AGA AGB AGC AGD AGE AGF AGG AGH AGI AGJ AGK AGL AGM AGN AGO AGP AGQ AGR AGS AGT AGU AGV AGW AGX AGY AGZ AHA AHB AHC AHD AHE AHF AHG AHH AHI AHJ AHK AHL AHM AHN AHO AHP AHQ AHR AHS AHT AHU AHV AHX AHY AHZ AIA AIB AIC AID AIE AIF AIG AIH AII AIJ AIK AIL AIM AIN AIO AIP AIQ AIR AIS AIT AIU AIV AIW AIX AIY AIZ AJA AJB AJC AJD AJE AJF AJG AJH AJI AJJ AJK AJL AJM AJN AJO AJP AJQ AJR AJS AJT AJU AJV AJW AJX AJY AJZ AKA AKB AKC AKD AKE AKF AKG AKH AKI AKJ AKK AKL AKM AKN AKO AKP AKQ AKR AKS AKT AKU AKV AKW AKX AKY AKZ ALA ALB ALC ALD ALE ALF ALG ALH ALI ALJ ALK ALL ALM ALN ALO ALP ALQ ALR ALS ALT ALU ALV ALW ALX ALY ALZ AMA AMB AMC AMD AME AMF AMG AMH AMI AMJ AMK AML AMM AMN AMO AMP AMQ AMR AMS AMT AMU AMV AMW AMX AMY AMZ ANA ANB ANC AND ANE ANF ANG ANH ANI ANJ ANK ANL ANM ANN ANO ANP ANQ ANR ANS ANT ANU ANV ANW ANX ANY AOA AOD AOE AOF AOG AOH AOI AOJ AOK AOL AOM AON AOO AOP AOQ AOR AOS AOT AOU AOV AOW AOX AOY AOZ AP APA APB APC APD APE APF APG APH API APJ APK APL APM APN APO APP APQ APR APS APT APU APV APW APX APY APZ AQA AQB AQC AQD AQE AQF AQG AQH AQI AQJ AQK AQL AQM AQN AQO AQP AQQ AQR AQS AQT AQU AQV AQW AQX AQY AQZ ARA ARB ARC ARD ARE ARF ARG ARH ARI ARJ ARK ARL ARM ARN ARO ARP ARQ ARR ARS ART ARU ARV ARW ARX ARY ARZ ASA ASB ASC ASD ASE ASF ASG ASH ASI ASJ ASK ASL ASM ASN ASO ASP ASQ ASR ASS AST ASU ASV ASW ASX ASY ASZ ATA ATB ATC ATD ATE ATF ATG ATH ATI ATJ ATK ATL ATM ATN ATO ATP ATQ ATR ATS ATT ATU ATV ATW ATX ATY ATZ AU AUA AUB AUC AUD AUE AUF AUG AUH AUI AUJ AUK AUL AUM AUN AUO AUP AUQ AUR AUS AUT AUU AUV AUW AUX AUY AUZ AV AVA AVB AVC AVD AVE AVF AVG AVH AVI AVJ AVK AVL AVM AVN AVO AVP AVQ AVR AVS AVT AVU AVV AVW AVX AVY AVZ AWA AWB AWC AWD AWE AWF AWG AWH AWI AWJ AWK AWL AWM AWN AWO AWP AWQ AWR AWS AWT AWU AWV AWW AWX AWY AWZ AXA AXB AXC AXD AXE AXF AXG AXH AXI AXJ AXK AXL AXM AXN AXO AXP AXQ AXR AXS BA BC BD BE BH BM BN BO BR BT BTP BW CAS CAT CAU CAV CAW CAX CAY CAZ CBA CBB CD CEC CED CFE CFF CFO CG CH CK CKN CM CMR CN CNO COF CP CR CRN CS CST CT CU CV CW CZ DA DAN DB DI DL DM DQ DR EA EB ED EE EEP EI EN EQ ER ERN ET EX FC FF FI FLW FN FO FS FT FV FX GA GC GD GDN GN HS HWB IA IB ICA ICE ICO II IL INB INN INO IP IS IT IV JB JE LA LAN LAR LB LC LI LO LRC LS MA MB MF MG MH MR MRN MS MSS MWB NA NF OH OI ON OP OR PB PC PD PE PF PI PK PL POR PP PQ PR PS PW PY RA RC RCN RE REN RF RR RT SA SB SD SE SEA SF SH SI SM SN SP SQ SRN SS STA SW SZ TB TCR TE TF TI TIN TL TN TP UAR UC UCN UN UO URI VA VC VGR VM VN VON VOR VP VR VS VT VV WE WM WN WR WS WY XA XC XP ZZZ ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' AAA AAB AAC AAD AAE AAF AAG AAH AAI AAJ AAK AAL AAM AAN AAO AAP AAQ AAR AAS AAT AAU AAV AAW AAX AAY AAZ ABA ABB ABC ABD ABE ABF ABG ABH ABI ABJ ABK ABL ABM ABN ABO ABP ABQ ABR ABS ABT ABU ABV ABW ABX ABY ABZ AC ACA ACB ACC ACD ACE ACF ACG ACH ACI ACJ ACK ACL ACN ACO ACP ACQ ACR ACT ACU ACV ACW ACX ACY ACZ ADA ADB ADC ADD ADE ADF ADG ADI ADJ ADK ADL ADM ADN ADO ADP ADQ ADT ADU ADV ADW ADX ADY ADZ AE AEA AEB AEC AED AEE AEF AEG AEH AEI AEJ AEK AEL AEM AEN AEO AEP AEQ AER AES AET AEU AEV AEW AEX AEY AEZ AF AFA AFB AFC AFD AFE AFF AFG AFH AFI AFJ AFK AFL AFM AFN AFO AFP AFQ AFR AFS AFT AFU AFV AFW AFX AFY AFZ AGA AGB AGC AGD AGE AGF AGG AGH AGI AGJ AGK AGL AGM AGN AGO AGP AGQ AGR AGS AGT AGU AGV AGW AGX AGY AGZ AHA AHB AHC AHD AHE AHF AHG AHH AHI AHJ AHK AHL AHM AHN AHO AHP AHQ AHR AHS AHT AHU AHV AHX AHY AHZ AIA AIB AIC AID AIE AIF AIG AIH AII AIJ AIK AIL AIM AIN AIO AIP AIQ AIR AIS AIT AIU AIV AIW AIX AIY AIZ AJA AJB AJC AJD AJE AJF AJG AJH AJI AJJ AJK AJL AJM AJN AJO AJP AJQ AJR AJS AJT AJU AJV AJW AJX AJY AJZ AKA AKB AKC AKD AKE AKF AKG AKH AKI AKJ AKK AKL AKM AKN AKO AKP AKQ AKR AKS AKT AKU AKV AKW AKX AKY AKZ ALA ALB ALC ALD ALE ALF ALG ALH ALI ALJ ALK ALL ALM ALN ALO ALP ALQ ALR ALS ALT ALU ALV ALW ALX ALY ALZ AMA AMB AMC AMD AME AMF AMG AMH AMI AMJ AMK AML AMM AMN AMO AMP AMQ AMR AMS AMT AMU AMV AMW AMX AMY AMZ ANA ANB ANC AND ANE ANF ANG ANH ANI ANJ ANK ANL ANM ANN ANO ANP ANQ ANR ANS ANT ANU ANV ANW ANX ANY AOA AOD AOE AOF AOG AOH AOI AOJ AOK AOL AOM AON AOO AOP AOQ AOR AOS AOT AOU AOV AOW AOX AOY AOZ AP APA APB APC APD APE APF APG APH API APJ APK APL APM APN APO APP APQ APR APS APT APU APV APW APX APY APZ AQA AQB AQC AQD AQE AQF AQG AQH AQI AQJ AQK AQL AQM AQN AQO AQP AQQ AQR AQS AQT AQU AQV AQW AQX AQY AQZ ARA ARB ARC ARD ARE ARF ARG ARH ARI ARJ ARK ARL ARM ARN ARO ARP ARQ ARR ARS ART ARU ARV ARW ARX ARY ARZ ASA ASB ASC ASD ASE ASF ASG ASH ASI ASJ ASK ASL ASM ASN ASO ASP ASQ ASR ASS AST ASU ASV ASW ASX ASY ASZ ATA ATB ATC ATD ATE ATF ATG ATH ATI ATJ ATK ATL ATM ATN ATO ATP ATQ ATR ATS ATT ATU ATV ATW ATX ATY ATZ AU AUA AUB AUC AUD AUE AUF AUG AUH AUI AUJ AUK AUL AUM AUN AUO AUP AUQ AUR AUS AUT AUU AUV AUW AUX AUY AUZ AV AVA AVB AVC AVD AVE AVF AVG AVH AVI AVJ AVK AVL AVM AVN AVO AVP AVQ AVR AVS AVT AVU AVV AVW AVX AVY AVZ AWA AWB AWC AWD AWE AWF AWG AWH AWI AWJ AWK AWL AWM AWN AWO AWP AWQ AWR AWS AWT AWU AWV AWW AWX AWY AWZ AXA AXB AXC AXD AXE AXF AXG AXH AXI AXJ AXK AXL AXM AXN AXO AXP AXQ AXR AXS AXU BA BC BD BE BH BM BN BO BR BT BTP BW CAS CAT CAU CAV CAW CAX CAY CAZ CBA CBB CD CEC CED CFE CFF CFO CG CH CK CKN CM CMR CN CNO COF CP CR CRN CS CST CT CU CV CW CZ DA DAN DB DI DL DM DQ DR EA EB ED EE EEP EI EN EQ ER ERN ET EX FC FF FI FLW FN FO FS FT FV FX GA GC GD GDN GN HS HWB IA IB ICA ICE ICO II IL INB INN INO IP IS IT IV JB JE LA LAN LAR LB LC LI LO LRC LS MA MB MF MG MH MR MRN MS MSS MWB NA NF OH OI ON OP OR PB PC PD PE PF PI PK PL POR PP PQ PR PS PW PY RA RC RCN RE REN RF RR RT SA SB SD SE SEA SF SH SI SM SN SP SQ SRN SS STA SW SZ TB TCR TE TF TI TIN TL TN TP UAR UC UCN UN UO URI VA VC VGR VM VN VON VOR VP VR VS VT VV WE WM WN WR WS WY XA XC XP ZZZ ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-07]-Object identifier identification scheme identifier MUST be coded using a restriction of UNTDID 1153.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10761,7 +11182,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10769,8 +11190,8 @@
    <xsl:template match="ram:SubjectCode" priority="16" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:SubjectCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SubjectCode</xsl:attribute>
@@ -10787,7 +11208,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SubjectCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10808,7 +11229,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10818,8 +11239,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "//ram:GlobalID[@schemeID][not(ancestor::ram:SpecifiedTradeProduct) and not(ancestor::ram:ShipToTradeParty)]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">//ram:GlobalID[@schemeID][not(ancestor::ram:SpecifiedTradeProduct) and not(ancestor::ram:ShipToTradeParty)]</xsl:attribute>
@@ -10836,7 +11257,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">//ram:GlobalID[@schemeID][not(ancestor::ram:SpecifiedTradeProduct) and not(ancestor::ram:ShipToTradeParty)]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10844,12 +11265,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-10">
-                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-10]-Any identifier identification scheme identifier MUST be coded using one of the ISO 6523 ICD list.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10857,7 +11278,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10867,8 +11288,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:ID[@schemeID][not(ancestor::ram:SpecifiedTaxRegistration)]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ID[@schemeID][not(ancestor::ram:SpecifiedTaxRegistration)]</xsl:attribute>
@@ -10885,7 +11306,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ID[@schemeID][not(ancestor::ram:SpecifiedTaxRegistration)]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10893,12 +11314,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-11">
-                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-11]-Any registration identifier identification scheme identifier MUST be coded using one of the ISO 6523 ICD list.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10906,7 +11327,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10914,8 +11335,8 @@
    <xsl:template match="ram:ClassCode[@listID]" priority="13" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:ClassCode[@listID]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ClassCode[@listID]</xsl:attribute>
@@ -10932,7 +11353,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ClassCode[@listID]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10940,12 +11361,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(@listID), ' ')) and contains(' AA AB AC AD AE AF AG AH AI AJ AK AL AM AN AO AP AQ AR AS AT AU AV AW AX AY AZ BA BB BC BD BE BF BG BH BI BJ BK BL BM BN BO BP BQ BR BS BT BU BV BW BX BY BZ CC CG CL CR CV DR DW EC EF EMD EN FS GB GN GMN GS HS IB IN IS IT IZ MA MF MN MP NB ON PD PL PO PV QS RC RN RU RY SA SG SK SN SRS SRT SRU SRV SRW SRX SRY SRZ SS SSA SSB SSC SSD SSE SSF SSG SSH SSI SSJ SSK SSL SSM SSN SSO SSP SSQ SSR SSS SST SSU SSV SSW SSX SSY SSZ ST STA STB STC STD STE STF STG STH STI STJ STK STL STM STN STO STP STQ STR STS STT STU STV STW STX STY STZ SUA SUB SUC SUD SUE SUF SUG SUH SUI SUJ SUK SUL SUM TG TSN TSO TSP TSQ TSR TSS TST TSU UA UP VN VP VS VX ZZZ ', concat(' ', normalize-space(@listID), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(@listID), ' ')) and contains(' AA AB AC AD AE AF AG AH AI AJ AK AL AM AN AO AP AQ AR AS AT AU AV AW AX AY AZ BA BB BC BD BE BF BG BH BI BJ BK BL BM BN BO BP BQ BR BS BT BU BV BW BX BY BZ CC CG CL CR CV DR DW EC EF EMD EN FS GB GN GMN GS HS IB IN IS IT IZ MA MF MN MP NB ON PD PL PO PPI PV QS RC RN RU RY SA SG SK SN SRS SRT SRU SRV SRW SRX SRY SRZ SS SSA SSB SSC SSD SSE SSF SSG SSH SSI SSJ SSK SSL SSM SSN SSO SSP SSQ SSR SSS SST SSU SSV SSW SSX SSY SSZ ST STA STB STC STD STE STF STG STH STI STJ STK STL STM STN STO STP STQ STR STS STT STU STV STW STX STY STZ SUA SUB SUC SUD SUE SUF SUG SUH SUI SUJ SUK SUL SUM TG TSN TSO TSP TSQ TSR TSS TST TSU UA UP VN VP VS VX ZZZ ', concat(' ', normalize-space(@listID), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-13">
-                     <xsl:attribute name="test">((not(contains(normalize-space(@listID), ' ')) and contains(' AA AB AC AD AE AF AG AH AI AJ AK AL AM AN AO AP AQ AR AS AT AU AV AW AX AY AZ BA BB BC BD BE BF BG BH BI BJ BK BL BM BN BO BP BQ BR BS BT BU BV BW BX BY BZ CC CG CL CR CV DR DW EC EF EMD EN FS GB GN GMN GS HS IB IN IS IT IZ MA MF MN MP NB ON PD PL PO PV QS RC RN RU RY SA SG SK SN SRS SRT SRU SRV SRW SRX SRY SRZ SS SSA SSB SSC SSD SSE SSF SSG SSH SSI SSJ SSK SSL SSM SSN SSO SSP SSQ SSR SSS SST SSU SSV SSW SSX SSY SSZ ST STA STB STC STD STE STF STG STH STI STJ STK STL STM STN STO STP STQ STR STS STT STU STV STW STX STY STZ SUA SUB SUC SUD SUE SUF SUG SUH SUI SUJ SUK SUL SUM TG TSN TSO TSP TSQ TSR TSS TST TSU UA UP VN VP VS VX ZZZ ', concat(' ', normalize-space(@listID), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(@listID), ' ')) and contains(' AA AB AC AD AE AF AG AH AI AJ AK AL AM AN AO AP AQ AR AS AT AU AV AW AX AY AZ BA BB BC BD BE BF BG BH BI BJ BK BL BM BN BO BP BQ BR BS BT BU BV BW BX BY BZ CC CG CL CR CV DR DW EC EF EMD EN FS GB GN GMN GS HS IB IN IS IT IZ MA MF MN MP NB ON PD PL PO PPI PV QS RC RN RU RY SA SG SK SN SRS SRT SRU SRV SRW SRX SRY SRZ SS SSA SSB SSC SSD SSE SSF SSG SSH SSI SSJ SSK SSL SSM SSN SSO SSP SSQ SSR SSS SST SSU SSV SSW SSX SSY SSZ ST STA STB STC STD STE STF STG STH STI STJ STK STL STM STN STO STP STQ STR STS STT STU STV STW STX STY STZ SUA SUB SUC SUD SUE SUF SUG SUH SUI SUJ SUK SUL SUM TG TSN TSO TSP TSQ TSR TSS TST TSU UA UP VN VP VS VX ZZZ ', concat(' ', normalize-space(@listID), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-13]-Item classification identifier identification scheme identifier MUST be coded using one of the UNTDID 7143 list.</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -10953,7 +11374,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -10961,8 +11382,8 @@
    <xsl:template match="ram:CountryID" priority="12" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:CountryID" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:CountryID</xsl:attribute>
@@ -10979,7 +11400,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:CountryID</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -10987,12 +11408,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-14">
-                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-14]-Country codes in an invoice MUST be coded using ISO code list 3166-1</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -11000,7 +11421,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11008,8 +11429,8 @@
    <xsl:template match="ram:OriginTradeCountry/ram:ID" priority="11" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:OriginTradeCountry/ram:ID" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:OriginTradeCountry/ram:ID</xsl:attribute>
@@ -11026,7 +11447,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:OriginTradeCountry/ram:ID</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11034,12 +11455,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-15">
-                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' 1A AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', normalize-space(.), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-15]-Country codes in an invoice MUST be coded using ISO code list 3166-1</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -11047,7 +11468,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11057,8 +11478,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode</xsl:attribute>
@@ -11075,7 +11496,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11096,7 +11517,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11106,8 +11527,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:CategoryTradeTax/ram:CategoryCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:CategoryTradeTax/ram:CategoryCode</xsl:attribute>
@@ -11124,7 +11545,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:CategoryTradeTax/ram:CategoryCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11145,7 +11566,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11155,8 +11576,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:ApplicableTradeTax/ram:CategoryCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ApplicableTradeTax/ram:CategoryCode</xsl:attribute>
@@ -11173,7 +11594,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ApplicableTradeTax/ram:CategoryCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11194,7 +11615,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11204,8 +11625,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator = false()]/ram:ReasonCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator = false()]/ram:ReasonCode</xsl:attribute>
@@ -11222,7 +11643,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator = false()]/ram:ReasonCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11243,7 +11664,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11253,8 +11674,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator = true()]/ram:ReasonCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator = true()]/ram:ReasonCode</xsl:attribute>
@@ -11271,7 +11692,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator = true()]/ram:ReasonCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11292,7 +11713,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11302,8 +11723,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:SpecifiedTradeProduct/ram:GlobalID[@schemeID]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeProduct/ram:GlobalID[@schemeID]</xsl:attribute>
@@ -11320,7 +11741,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:SpecifiedTradeProduct/ram:GlobalID[@schemeID]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11328,12 +11749,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-21">
-                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-21]-Item standard identifier scheme identifier MUST belong to the ISO 6523 ICD
       code list</svrl:text>
                   </svrl:failed-assert>
@@ -11342,7 +11763,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11350,8 +11771,8 @@
    <xsl:template match="ram:ExemptionReasonCode" priority="4" mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:ExemptionReasonCode" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ExemptionReasonCode</xsl:attribute>
@@ -11368,7 +11789,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ExemptionReasonCode</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11376,12 +11797,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' VATEX-EU-79-C VATEX-EU-132 VATEX-EU-132-1A VATEX-EU-132-1B VATEX-EU-132-1C VATEX-EU-132-1D VATEX-EU-132-1E VATEX-EU-132-1F VATEX-EU-132-1G VATEX-EU-132-1H VATEX-EU-132-1I VATEX-EU-132-1J VATEX-EU-132-1K VATEX-EU-132-1L VATEX-EU-132-1M VATEX-EU-132-1N VATEX-EU-132-1O VATEX-EU-132-1P VATEX-EU-132-1Q VATEX-EU-143 VATEX-EU-143-1A VATEX-EU-143-1B VATEX-EU-143-1C VATEX-EU-143-1D VATEX-EU-143-1E VATEX-EU-143-1F VATEX-EU-143-1FA VATEX-EU-143-1G VATEX-EU-143-1H VATEX-EU-143-1I VATEX-EU-143-1J VATEX-EU-143-1K VATEX-EU-143-1L VATEX-EU-144 VATEX-EU-146-1E VATEX-EU-159 VATEX-EU-309 VATEX-EU-148 VATEX-EU-148-A VATEX-EU-148-B VATEX-EU-148-C VATEX-EU-148-D VATEX-EU-148-E VATEX-EU-148-F VATEX-EU-148-G VATEX-EU-151 VATEX-EU-151-1A VATEX-EU-151-1AA VATEX-EU-151-1B VATEX-EU-151-1C VATEX-EU-151-1D VATEX-EU-151-1E VATEX-EU-G VATEX-EU-O VATEX-EU-IC VATEX-EU-AE VATEX-EU-D VATEX-EU-F VATEX-EU-I VATEX-EU-J VATEX-FR-FRANCHISE VATEX-FR-CNWVAT ', concat(' ', normalize-space(upper-case(.)), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(.), ' ')) and contains(' VATEX-EU-79-C VATEX-EU-132 VATEX-EU-132-1A VATEX-EU-132-1B VATEX-EU-132-1C VATEX-EU-132-1D VATEX-EU-132-1E VATEX-EU-132-1F VATEX-EU-132-1G VATEX-EU-132-1H VATEX-EU-132-1I VATEX-EU-132-1J VATEX-EU-132-1K VATEX-EU-132-1L VATEX-EU-132-1M VATEX-EU-132-1N VATEX-EU-132-1O VATEX-EU-132-1P VATEX-EU-132-1Q VATEX-EU-135-1 VATEX-EU-143 VATEX-EU-143-1A VATEX-EU-143-1B VATEX-EU-143-1C VATEX-EU-143-1D VATEX-EU-143-1E VATEX-EU-143-1F VATEX-EU-143-1FA VATEX-EU-143-1G VATEX-EU-143-1H VATEX-EU-143-1I VATEX-EU-143-1J VATEX-EU-143-1K VATEX-EU-143-1L VATEX-EU-144 VATEX-EU-146-1E VATEX-EU-159 VATEX-EU-309 VATEX-EU-148 VATEX-EU-148-A VATEX-EU-148-B VATEX-EU-148-C VATEX-EU-148-D VATEX-EU-148-E VATEX-EU-148-F VATEX-EU-148-G VATEX-EU-151 VATEX-EU-151-1A VATEX-EU-151-1AA VATEX-EU-151-1B VATEX-EU-151-1C VATEX-EU-151-1D VATEX-EU-151-1E VATEX-EU-G VATEX-EU-O VATEX-EU-IC VATEX-EU-AE VATEX-EU-D VATEX-EU-F VATEX-EU-I VATEX-EU-J VATEX-FR-FRANCHISE VATEX-FR-CNWVAT VATEX-EU-153 VATEX-FR-CGI261-1 VATEX-FR-CGI261-2 VATEX-FR-CGI261-3 VATEX-FR-CGI261-4 VATEX-FR-CGI261-5 VATEX-FR-CGI261-7 VATEX-FR-CGI261-8 VATEX-FR-CGI261A VATEX-FR-CGI261B VATEX-FR-CGI261C-1 VATEX-FR-CGI261C-2 VATEX-FR-CGI261C-3 VATEX-FR-CGI261D-1 VATEX-FR-CGI261D-1BIS VATEX-FR-CGI261D-2 VATEX-FR-CGI261D-3 VATEX-FR-CGI261D-4 VATEX-FR-CGI261E-1 VATEX-FR-CGI261E-2 VATEX-FR-CGI277A VATEX-FR-CGI275 VATEX-FR-298SEXDECIESA VATEX-FR-CGI295 VATEX-FR-AE VATEX-ES-N1 VATEX-ES-N2 VATEX-ES-IVA20 VATEX-ES-IVA21 VATEX-ES-IVA22 VATEX-ES-IVA23/24 VATEX-ES-IVA25 VATEX-ES-IVA140BIS VATEX-ES-OTROS VATEX-ES-IGIC1TR VATEX-ES-IGIC11 VATEX-ES-IGIC12 VATEX-ES-IGIC13 VATEX-ES-IGIC25 VATEX-ES-IGIC47 VATEX-ES-IGIC90 VATEX-ES-IPSI7 VATEX-ES-IPSI8 ', concat(' ', normalize-space(upper-case(.)), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-22">
-                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' VATEX-EU-79-C VATEX-EU-132 VATEX-EU-132-1A VATEX-EU-132-1B VATEX-EU-132-1C VATEX-EU-132-1D VATEX-EU-132-1E VATEX-EU-132-1F VATEX-EU-132-1G VATEX-EU-132-1H VATEX-EU-132-1I VATEX-EU-132-1J VATEX-EU-132-1K VATEX-EU-132-1L VATEX-EU-132-1M VATEX-EU-132-1N VATEX-EU-132-1O VATEX-EU-132-1P VATEX-EU-132-1Q VATEX-EU-143 VATEX-EU-143-1A VATEX-EU-143-1B VATEX-EU-143-1C VATEX-EU-143-1D VATEX-EU-143-1E VATEX-EU-143-1F VATEX-EU-143-1FA VATEX-EU-143-1G VATEX-EU-143-1H VATEX-EU-143-1I VATEX-EU-143-1J VATEX-EU-143-1K VATEX-EU-143-1L VATEX-EU-144 VATEX-EU-146-1E VATEX-EU-159 VATEX-EU-309 VATEX-EU-148 VATEX-EU-148-A VATEX-EU-148-B VATEX-EU-148-C VATEX-EU-148-D VATEX-EU-148-E VATEX-EU-148-F VATEX-EU-148-G VATEX-EU-151 VATEX-EU-151-1A VATEX-EU-151-1AA VATEX-EU-151-1B VATEX-EU-151-1C VATEX-EU-151-1D VATEX-EU-151-1E VATEX-EU-G VATEX-EU-O VATEX-EU-IC VATEX-EU-AE VATEX-EU-D VATEX-EU-F VATEX-EU-I VATEX-EU-J VATEX-FR-FRANCHISE VATEX-FR-CNWVAT ', concat(' ', normalize-space(upper-case(.)), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(.), ' ')) and contains(' VATEX-EU-79-C VATEX-EU-132 VATEX-EU-132-1A VATEX-EU-132-1B VATEX-EU-132-1C VATEX-EU-132-1D VATEX-EU-132-1E VATEX-EU-132-1F VATEX-EU-132-1G VATEX-EU-132-1H VATEX-EU-132-1I VATEX-EU-132-1J VATEX-EU-132-1K VATEX-EU-132-1L VATEX-EU-132-1M VATEX-EU-132-1N VATEX-EU-132-1O VATEX-EU-132-1P VATEX-EU-132-1Q VATEX-EU-135-1 VATEX-EU-143 VATEX-EU-143-1A VATEX-EU-143-1B VATEX-EU-143-1C VATEX-EU-143-1D VATEX-EU-143-1E VATEX-EU-143-1F VATEX-EU-143-1FA VATEX-EU-143-1G VATEX-EU-143-1H VATEX-EU-143-1I VATEX-EU-143-1J VATEX-EU-143-1K VATEX-EU-143-1L VATEX-EU-144 VATEX-EU-146-1E VATEX-EU-159 VATEX-EU-309 VATEX-EU-148 VATEX-EU-148-A VATEX-EU-148-B VATEX-EU-148-C VATEX-EU-148-D VATEX-EU-148-E VATEX-EU-148-F VATEX-EU-148-G VATEX-EU-151 VATEX-EU-151-1A VATEX-EU-151-1AA VATEX-EU-151-1B VATEX-EU-151-1C VATEX-EU-151-1D VATEX-EU-151-1E VATEX-EU-G VATEX-EU-O VATEX-EU-IC VATEX-EU-AE VATEX-EU-D VATEX-EU-F VATEX-EU-I VATEX-EU-J VATEX-FR-FRANCHISE VATEX-FR-CNWVAT VATEX-EU-153 VATEX-FR-CGI261-1 VATEX-FR-CGI261-2 VATEX-FR-CGI261-3 VATEX-FR-CGI261-4 VATEX-FR-CGI261-5 VATEX-FR-CGI261-7 VATEX-FR-CGI261-8 VATEX-FR-CGI261A VATEX-FR-CGI261B VATEX-FR-CGI261C-1 VATEX-FR-CGI261C-2 VATEX-FR-CGI261C-3 VATEX-FR-CGI261D-1 VATEX-FR-CGI261D-1BIS VATEX-FR-CGI261D-2 VATEX-FR-CGI261D-3 VATEX-FR-CGI261D-4 VATEX-FR-CGI261E-1 VATEX-FR-CGI261E-2 VATEX-FR-CGI277A VATEX-FR-CGI275 VATEX-FR-298SEXDECIESA VATEX-FR-CGI295 VATEX-FR-AE VATEX-ES-N1 VATEX-ES-N2 VATEX-ES-IVA20 VATEX-ES-IVA21 VATEX-ES-IVA22 VATEX-ES-IVA23/24 VATEX-ES-IVA25 VATEX-ES-IVA140BIS VATEX-ES-OTROS VATEX-ES-IGIC1TR VATEX-ES-IGIC11 VATEX-ES-IGIC12 VATEX-ES-IGIC13 VATEX-ES-IGIC25 VATEX-ES-IGIC47 VATEX-ES-IGIC90 VATEX-ES-IPSI7 VATEX-ES-IPSI8 ', concat(' ', normalize-space(upper-case(.)), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-22]-Tax exemption reason code identifier scheme identifier MUST belong to the CEF VATEX code list</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -11389,7 +11810,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11399,8 +11820,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:BasisQuantity[@unitCode] | ram:BilledQuantity[@unitCode]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:BasisQuantity[@unitCode] | ram:BilledQuantity[@unitCode]</xsl:attribute>
@@ -11417,7 +11838,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:BasisQuantity[@unitCode] | ram:BilledQuantity[@unitCode]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11438,7 +11859,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11448,8 +11869,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:AttachmentBinaryObject[@mimeCode]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:AttachmentBinaryObject[@mimeCode]</xsl:attribute>
@@ -11466,7 +11887,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:AttachmentBinaryObject[@mimeCode]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11487,7 +11908,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11497,8 +11918,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:URIUniversalCommunication/ram:URIID[@schemeID]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:URIUniversalCommunication/ram:URIID[@schemeID]</xsl:attribute>
@@ -11515,7 +11936,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:URIUniversalCommunication/ram:URIID[@schemeID]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11523,12 +11944,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0007 0009 0037 0060 0088 0096 0097 0106 0130 0135 0142 0147 0151 0170 0177 0183 0184 0188 0190 0191 0192 0193 0194 0195 0196 0198 0199 0200 0201 0202 0203 0204 0205 0208 0209 0210 0211 0212 0213 0215 0216 0217 0218 0219 0220 0221 0225 0230 0235 9901 9910 9913 9914 9915 9918 9919 9920 9922 9923 9924 9925 9926 9927 9928 9929 9930 9931 9932 9933 9934 9935 9936 9937 9938 9939 9940 9941 9942 9943 9944 9945 9946 9947 9948 9949 9950 9951 9952 9953 9957 9959 AN AQ AS AU EM ', concat(' ', normalize-space(@schemeID), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0007 0009 0037 0060 0088 0096 0097 0106 0130 0135 0142 0147 0151 0154 0158 0170 0177 0183 0184 0188 0190 0191 0192 0193 0194 0195 0196 0198 0199 0200 0201 0202 0203 0204 0205 0208 0209 0210 0211 0212 0213 0215 0216 0217 0218 0221 0225 0230 0235 0240 0244 0242 0245 0246 0248 9910 9913 9914 9915 9918 9919 9920 9922 9923 9924 9925 9926 9927 9928 9929 9930 9931 9932 9933 9934 9935 9936 9937 9938 9939 9940 9941 9942 9943 9944 9945 9946 9947 9948 9949 9950 9951 9952 9953 9957 9959 9960 AN AQ AS AU EM ', concat(' ', normalize-space(@schemeID), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-25">
-                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0007 0009 0037 0060 0088 0096 0097 0106 0130 0135 0142 0147 0151 0170 0177 0183 0184 0188 0190 0191 0192 0193 0194 0195 0196 0198 0199 0200 0201 0202 0203 0204 0205 0208 0209 0210 0211 0212 0213 0215 0216 0217 0218 0219 0220 0221 0225 0230 0235 9901 9910 9913 9914 9915 9918 9919 9920 9922 9923 9924 9925 9926 9927 9928 9929 9930 9931 9932 9933 9934 9935 9936 9937 9938 9939 9940 9941 9942 9943 9944 9945 9946 9947 9948 9949 9950 9951 9952 9953 9957 9959 AN AQ AS AU EM ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0007 0009 0037 0060 0088 0096 0097 0106 0130 0135 0142 0147 0151 0154 0158 0170 0177 0183 0184 0188 0190 0191 0192 0193 0194 0195 0196 0198 0199 0200 0201 0202 0203 0204 0205 0208 0209 0210 0211 0212 0213 0215 0216 0217 0218 0221 0225 0230 0235 0240 0244 0242 0245 0246 0248 9910 9913 9914 9915 9918 9919 9920 9922 9923 9924 9925 9926 9927 9928 9929 9930 9931 9932 9933 9934 9935 9936 9937 9938 9939 9940 9941 9942 9943 9944 9945 9946 9947 9948 9949 9950 9951 9952 9953 9957 9959 9960 AN AQ AS AU EM ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-25]-Endpoint identifier scheme identifier MUST belong to the CEF EAS code list</svrl:text>
                   </svrl:failed-assert>
                </xsl:if>
@@ -11536,7 +11957,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>
@@ -11546,8 +11967,8 @@
                  mode="d12e32">
       <xsl:param name="schxslt:patterns-matched" as="xs:string*"/>
       <xsl:choose>
-         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2677']">
-            <schxslt:rule pattern="d12e2677">
+         <xsl:when test="$schxslt:patterns-matched[. = 'd12e2790']">
+            <schxslt:rule pattern="d12e2790">
                <xsl:comment xmlns:svrl="http://purl.oclc.org/dsdl/svrl">WARNING: Rule for context "ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID[@schemeID]" shadowed by preceding rule</xsl:comment>
                <svrl:suppressed-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID[@schemeID]</xsl:attribute>
@@ -11564,7 +11985,7 @@
             </xsl:next-match>
          </xsl:when>
          <xsl:otherwise>
-            <schxslt:rule pattern="d12e2677">
+            <schxslt:rule pattern="d12e2790">
                <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" flag="fatal">
                   <xsl:attribute name="context">ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID[@schemeID]</xsl:attribute>
                   <xsl:variable name="documentUri" as="xs:anyURI?" select="document-uri()"/>
@@ -11572,12 +11993,12 @@
                      <xsl:attribute name="document" select="$documentUri"/>
                   </xsl:if>
                </svrl:fired-rule>
-               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' ')))))">
+               <xsl:if test="not(((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' ')))))">
                   <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                                       location="{schxslt:location(.)}"
                                       flag="fatal"
                                       id="BR-CL-26">
-                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
+                     <xsl:attribute name="test">((not(contains(normalize-space(@schemeID), ' ')) and contains(' 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 0090 0091 0093 0094 0095 0096 0097 0098 0099 0100 0101 0102 0104 0105 0106 0107 0108 0109 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 0180 0183 0184 0185 0186 0187 0188 0189 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 0250 0251 ', concat(' ', normalize-space(@schemeID), ' '))))</xsl:attribute>
                      <svrl:text>[BR-CL-26]-Delivery location identifier scheme identifier MUST belong to the ISO 6523 ICD
       code list</svrl:text>
                   </svrl:failed-assert>
@@ -11586,7 +12007,7 @@
             <xsl:next-match>
                <xsl:with-param name="schxslt:patterns-matched"
                                as="xs:string*"
-                               select="($schxslt:patterns-matched, 'd12e2677')"/>
+                               select="($schxslt:patterns-matched, 'd12e2790')"/>
             </xsl:next-match>
          </xsl:otherwise>
       </xsl:choose>

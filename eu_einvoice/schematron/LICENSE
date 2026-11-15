@@ -1,20 +1,23 @@
-File: Factur-X_1.07.2_BASIC_codedb.xml
-License: Unclear. We assume Apache License, Version 2.0
+File: FACTUR-X_BASIC_codedb.xml
+License: Apache License, Version 2.0
 Author: FNFE-MPE | FeRD
 
-File: Factur-X_1.07.2_EXTENDED_codedb.xml
-License: Unclear. We assume Apache License, Version 2.0
+File: FACTUR-X_EXTENDED_codedb.xml
+License: Apache License, Version 2.0
 Author: FNFE-MPE | FeRD
 
-File: Factur-X_1.07.2_BASIC.xsl
-Converted from: Factur-X_1.07.2_BASIC.sch
-License: Unclear. We assume Apache License, Version 2.0
+File: FACTUR-X_BASIC.xsl
+Converted from: FACTUR-X_BASIC.sch
+License: Apache License, Version 2.0
 Author: FNFE-MPE | FeRD
 
-File: Factur-X_1.07.2_EXTENDED.xsl
-Converted from: Factur-X_1.07.2_EXTENDED.sch
-License: Unclear. We assume Apache License, Version 2.0
+File: FACTUR-X_EXTENDED.xsl
+Converted from: FACTUR-X_EXTENDED.sch
+License: Apache License, Version 2.0
 Author: FNFE-MPE | FeRD
+
+The FeRD files are ZUGFeRD technical artifacts (Schematron). For the terms, see
+https://www.ferd-net.de/en/ueber-uns/ressourcen-1/veroeffentlichungen/disclaimer-and-rights-of-use-zugferd
 
 File: XRechnung-CII-validation.xsl
 License: Apache License, Version 2.0

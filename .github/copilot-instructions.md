@@ -15,6 +15,10 @@ Use the bench to check your work. Do not rely on reading the code alone:
 - **When you change code**: Before you finish, run the tests of each module you changed (see [Testing](#testing)). If you changed a DocType JSON file or added a patch, run `bench --site test_site migrate` first. Put the commands and their results in the PR description.
 - **When you review a pull request**: Before you report a suspected bug, try to confirm it on the bench. Run the related tests, or reproduce the problem with `bench --site test_site execute`. In your comment, say if and how you confirmed the problem.
 
+## Commits and Pull Requests
+
+Write the PR title and commit messages as [Conventional Commits](https://www.conventionalcommits.org/), e.g. `fix(import): handle missing tax categories`. PRs are squash-merged, so the PR title becomes the commit on `develop`.
+
 ## Code Style & Formatting
 
 ### Python
@@ -148,22 +152,11 @@ This repository uses pre-commit hooks that run automatically on `git commit`:
 - **eslint**: Lints JavaScript files
 - **commitlint**: Validates commit messages (conventional commits)
 
-### Commit Message Format
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
+Ruff is not installed in the bench virtualenv (`env/bin/python -m ruff` fails). To lint and format before a commit, run the hooks through pre-commit from the app directory:
+
+```bash
+pre-commit run --files path/to/file.py path/to/other_file.py
 ```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`, `build`
-
-Examples:
-- `feat: add e-invoice import functionality`
-- `fix(import): handle missing tax categories`
-- `docs: update installation instructions`
 
 ## Project Structure
 
