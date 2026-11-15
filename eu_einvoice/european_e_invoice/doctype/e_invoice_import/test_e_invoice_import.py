@@ -4,7 +4,7 @@
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import frappe
@@ -139,12 +139,12 @@ class TestEInvoiceImport(IntegrationTestCase):
 
 		doc = frappe.new_doc("E Invoice Import")
 		doc.einvoice = "/private/files/invoice.pdf"
-		with NamedTemporaryFile(suffix=".pdf") as pdf_file:
-			writer.write(pdf_file)
-			pdf_file.flush()
+		with TemporaryDirectory() as directory:
+			pdf_path = Path(directory) / "invoice.pdf"
+			writer.write(pdf_path)
 			with patch(
 				"eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.relative_url_to_path",
-				return_value=Path(pdf_file.name),
+				return_value=pdf_path,
 			):
 				with self.assertRaises(frappe.ValidationError) as cm:
 					doc.read_values_from_einvoice()
