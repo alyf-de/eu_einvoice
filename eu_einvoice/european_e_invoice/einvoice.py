@@ -5,7 +5,7 @@ import os
 import re
 from base64 import b64encode
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Literal
 
 import frappe
 from drafthorse.models.accounting import ApplicableTradeTax, AppliedTradeTax
@@ -580,7 +580,7 @@ class EInvoiceGenerator:
 					)  # the character "#" is not allowed in the free text
 					if ps.discount_type == "Percentage":
 						discount_days = date_diff(ps.discount_date, self.invoice.posting_date)
-						if discount_days < 0:
+						if discount_days > 0:
 							basis_amount = (
 								ps.payment_amount
 								if round(ps.payment_amount, 2) != round(self.invoice.outstanding_amount, 2)
@@ -951,8 +951,8 @@ def download_pdf(
 	doctype: str,
 	name: str,
 	format: str | None = None,
-	doc: FrappeDocument | str | dict[str, Any] | None = None,
-	no_letterhead: str | int | None = None,
+	doc: FrappeDocument | None = None,
+	no_letterhead: bool | int = 0,
 	language: str | None = None,
 	letterhead: str | None = None,
 	pdf_generator: Literal["wkhtmltopdf", "chrome"] | None = None,

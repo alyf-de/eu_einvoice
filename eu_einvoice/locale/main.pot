@@ -364,6 +364,10 @@ msgstr ""
 msgid "Invoice Number Field"
 msgstr ""
 
+#: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.py:610
+msgid "Invoice line {0} has zero quantity but a non-zero amount."
+msgstr ""
+
 #. Label of the line_total (Currency) field in DocType 'E Invoice Import'
 #: eu_einvoice/european_e_invoice/doctype/e_invoice_import/e_invoice_import.json:404
 msgid "Line Total"
@@ -689,4 +693,3 @@ msgstr ""
 #, python-brace-format
 msgid "{0}: Only one mode of payment will be considered in the e-invoice."
 msgstr ""
-
