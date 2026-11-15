@@ -39,10 +39,11 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Email Address (takes precedence over Company > Email)
     - Phone (takes precedence over Company > Phone No)
     - Department
-- Company Tax ID
+- Company Tax ID (omitted as Seller VAT identifier BT-31 when a line uses VAT category "O"; non-VAT values are still written as BT-32)
 - Customer
     - Electronic Address Scheme
     - Electronic Address
+    - Supplier Numbers (Seller identifier BT-29; required for BR-CO-26 when BT-31 is omitted)
 - Customer Name
 - Buyer Reference (fetched from **Sales Order** or **Customer**)
 - Customer Address
@@ -68,7 +69,7 @@ The following fields of the **Sales Invoice** are currently considered for the e
     - Country
 - Customer's Purchase Order
 - Customer's Purchase Order Date
-- Customer's Tax ID
+- Customer's Tax ID (omitted as Buyer VAT identifier BT-48 when a line uses VAT category "O")
 - Items:
     - Item Name
     - Description

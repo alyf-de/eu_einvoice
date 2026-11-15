@@ -34,22 +34,48 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
-        options: --health-cmd="mariadb-admin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        options: --health-cmd="mariadb-admin ping" --health-interval=5s --health-timeout=2s --health-retries=3 --tmpfs=/var/lib/mysql:rw,noexec,nosuid,size=2g
 
     steps:
       - name: Clone
         uses: actions/checkout@v6
 
+      - name: Find versions
+        id: versions
+        run: |
+          # pyproject.toml pins e.g. frappe = ">=15.117.0,<16.0.0", so we use version-15.
+          # A "-dev" pin like ">=17.0.0-dev,<18.0.0" means the develop branch.
+          FRAPPE_MIN_VERSION=$(grep -oP '^frappe = ">=\K[^,"]+' pyproject.toml)
+          FRAPPE_MAJOR=${FRAPPE_MIN_VERSION%%.*}
+          if [[ $FRAPPE_MIN_VERSION == *-dev ]]; then
+            echo "frappe-branch=develop" >> $GITHUB_OUTPUT
+          else
+            echo "frappe-branch=version-$FRAPPE_MAJOR" >> $GITHUB_OUTPUT
+          fi
+
+          case $FRAPPE_MAJOR in
+            15) PYTHON_VERSION=3.10; NODE_VERSION=18 ;;
+            *)  PYTHON_VERSION=3.14; NODE_VERSION=24 ;;
+          esac
+          echo "python=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+          echo "node=$NODE_VERSION" >> $GITHUB_OUTPUT
+
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.14'
+          python-version: ${{ steps.versions.outputs.python }}
 
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: ${{ steps.versions.outputs.node }}
           check-latest: true
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          # Copilot sessions can't restore caches from PR runs and don't save their own
+          enable-cache: false
 
       - name: Install MariaDB Client
         run: |
@@ -58,27 +84,68 @@ jobs:
 
       - name: Setup
         run: |
-          pip install frappe-bench
-          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" ~/frappe-bench
+          uv tool install frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch ${{ steps.versions.outputs.frappe-branch }} --python "$(which python)" ~/frappe-bench
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
+          # The database is thrown away after the session, so skip the fsync on every commit
+          mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL innodb_flush_log_at_trx_commit = 0"
+          mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL sync_binlog = 0"
 
-      - name: Install
+      - name: Get apps
         working-directory: /home/runner/frappe-bench
         run: |
-          bench get-app --resolve-deps --soft-link eu_einvoice $GITHUB_WORKSPACE
-          bench setup requirements --dev
-          bench new-site --db-root-password root --admin-password admin test_site
+          bench get-app --branch ${{ steps.versions.outputs.frappe-branch }} --skip-assets erpnext
+          bench get-app --soft-link --skip-assets eu_einvoice $GITHUB_WORKSPACE
+        env:
+          CI: 'Yes'
+
+      - name: Setup requirements
+        working-directory: /home/runner/frappe-bench
+        run: bench setup requirements --dev
+        env:
+          CI: 'Yes'
+
+      - name: Build assets
+        working-directory: /home/runner/frappe-bench
+        run: bench build
+        env:
+          CI: 'Yes'
+
+      - name: Create site
+        working-directory: /home/runner/frappe-bench
+        run: bench new-site --db-root-password root --admin-password admin test_site
+        env:
+          CI: 'Yes'
+
+      - name: Install apps
+        working-directory: /home/runner/frappe-bench
+        run: |
           bench --site test_site install-app eu_einvoice
-          bench build
+          bench --site test_site set-config allow_tests true
+          bench --site test_site set-config developer_mode 1
         env:
           CI: 'Yes'
 
       - name: Install pre-commit
-        run: pip install pre-commit
+        run: uv tool install pre-commit
 
       - name: Activate pre-commit
         working-directory: /home/runner/frappe-bench/apps/eu_einvoice
         run: |
           pre-commit --version
           pre-commit install
+          # Build the hook environments now, so ruff etc. are ready during the session
+          pre-commit install-hooks
+
+      - name: Install skills
+        run: |
+          # Pin to a commit, skill text goes straight into the agent's context
+          SKILLS_SHA=5dc2f984081f6d8e23559af03b0e7c2799245d79
+          for skill in frappe-app-dev frappe-code-review code-style technical-writing; do
+            gh skill install frappe/skills skills/$skill --pin $SKILLS_SHA
+          done
+          # Keep the installed skills out of Copilot's commits
+          echo ".agents/skills/" >> .git/info/exclude
+        env:
+          GH_TOKEN: ${{ github.token }}

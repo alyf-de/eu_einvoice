@@ -188,10 +188,13 @@ class EInvoiceImport(Document):
 		self.profile = get_profile(doc.context.guideline_parameter.id._text).value
 		self._validate_schematron(xml_bytes)
 
-		self.id = str(doc.header.id)
+		self.id = stripped_text(doc.header.id)
 		self.issue_date = str(doc.header.issue_date_time)
-		self.currency = str(doc.trade.settlement.currency_code)
+		self.currency = stripped_text(doc.trade.settlement.currency_code)
 		self.parse_seller(doc.trade.agreement.seller)
+		self.flags.payee_differs = payee_differs_from_seller(
+			doc.trade.agreement.seller, doc.trade.settlement.payee
+		)
 		self.parse_buyer(doc.trade.agreement.buyer)
 
 		buyer_reference = doc.trade.agreement.buyer_order.issuer_assigned_id._text
@@ -250,30 +253,33 @@ class EInvoiceImport(Document):
 			self.validation_warnings += "\n".join(validation_warnings)
 
 	def parse_seller(self, seller: TradeParty):
-		self.seller_name = str(seller.name)
-		self.seller_id = str(seller.id)
+		# stripped, because we use them to find the Supplier
+		self.seller_name = stripped_text(seller.name)
+		self.seller_id = stripped_text(seller.id)
 		self.seller_tax_id = (
-			seller.tax_registrations.children[0].id._text if seller.tax_registrations.children else None
+			stripped_text(seller.tax_registrations.children[0].id) or None
+			if seller.tax_registrations.children
+			else None
 		)
-		self.seller_electronic_address = str(seller.electronic_address.uri_ID._text)
+		self.seller_electronic_address = stripped_text(seller.electronic_address.uri_ID)
 		self.seller_electronic_address_scheme = str(seller.electronic_address.uri_ID._scheme_id)
 		self.parse_address(seller.address, "seller")
 
 	def parse_buyer(self, buyer: TradeParty):
-		self.buyer_name = str(buyer.name)
-		self.buyer_electronic_address = str(buyer.electronic_address.uri_ID._text)
+		self.buyer_name = stripped_text(buyer.name)
+		self.buyer_electronic_address = stripped_text(buyer.electronic_address.uri_ID)
 		self.buyer_electronic_address_scheme = str(buyer.electronic_address.uri_ID._scheme_id)
-		self.buyer_id = str(buyer.id)
+		self.buyer_id = stripped_text(buyer.id)
 		self.parse_address(buyer.address, "buyer")
 
 	def parse_address(self, address: PostalTradeAddress, prefix: str) -> _dict:
-		country = frappe.db.get_value("Country", {"code": str(address.country_id).lower()}, "name")
+		country = frappe.db.get_value("Country", {"code": stripped_text(address.country_id).lower()}, "name")
 
-		self.set(f"{prefix}_city", str(address.city_name))
-		self.set(f"{prefix}_address_line_1", str(address.line_one))
-		self.set(f"{prefix}_address_line_2", str(address.line_two))
-		self.set(f"{prefix}_postcode", str(address.postcode))
-		self.set(f"{prefix}_country", str(country))
+		self.set(f"{prefix}_city", stripped_text(address.city_name))
+		self.set(f"{prefix}_address_line_1", stripped_text(address.line_one))
+		self.set(f"{prefix}_address_line_2", stripped_text(address.line_two))
+		self.set(f"{prefix}_postcode", stripped_text(address.postcode))
+		self.set(f"{prefix}_country", country)
 
 	def parse_line_item(self, li: LineItem):
 		item = self.append("items")
@@ -282,8 +288,8 @@ class EInvoiceImport(Document):
 		basis_qty = float(li.agreement.net.basis_quantity._amount or "1")
 		rate = net_rate / basis_qty
 
-		product_name_full = str(li.product.name)
-		product_description = str(li.product.description)
+		product_name_full = stripped_text(li.product.name)
+		product_description = stripped_text(li.product.description)
 		if len(product_name_full) > 140:
 			item.product_name = product_name_full[:140]
 			item.product_description = product_name_full + " | " + product_description
@@ -372,22 +378,47 @@ class EInvoiceImport(Document):
 		self.billing_period_end = period.end._value
 
 	def guess_supplier(self):
+		"""Find the Supplier, strongest identifier first.
+
+		A step only counts if it finds exactly one Supplier, otherwise we try the next one.
+		The payee IBAN comes last, and is ignored if the payee differs from the seller (BG-10).
+		"""
 		if self.supplier:
 			return
 
-		if self.seller_id and frappe.db.exists("Supplier", self.seller_id):
-			self.supplier = self.seller_id
-			return
+		iban = (self.payee_iban or "").replace(" ", "").upper()
+		iban_spaced = " ".join(iban[i : i + 4] for i in range(0, len(iban), 4))  # as printed on paper
 
-		if self.seller_name and frappe.db.exists("Supplier", self.seller_name):
-			self.supplier = self.seller_name
-			return
+		# (identifier from the invoice, doctype, filters, field with the Supplier)
+		lookups = [
+			(self.seller_tax_id, "Supplier", {"tax_id": self.seller_tax_id}, "name"),
+			(self.seller_id, "Supplier", {"name": self.seller_id}, "name"),
+			(self.seller_name, "Supplier", {"supplier_name": self.seller_name}, "name"),
+			(self.seller_name, "Supplier", {"name": self.seller_name}, "name"),
+		]
+		if not self.flags.payee_differs:  # otherwise the IBAN does not identify the seller
+			lookups.append(
+				(
+					iban,
+					"Bank Account",
+					{
+						"party_type": "Supplier",
+						"party": ["is", "set"],
+						"disabled": 0,
+						"iban": ["in", [iban, iban_spaced]],
+					},
+					"party",
+				)
+			)
 
-		if self.seller_tax_id and (
-			supplier := frappe.db.get_value("Supplier", {"tax_id": self.seller_tax_id}, "name")
-		):
-			self.supplier = supplier
-			return
+		for identifier, doctype, filters, fieldname in lookups:
+			if not identifier:
+				continue  # not in the invoice, would match empty fields
+
+			suppliers = frappe.get_all(doctype, filters, pluck=fieldname, distinct=True, limit=2)
+			if len(suppliers) == 1:
+				self.supplier = suppliers[0]
+				return
 
 	def guess_company(self):
 		if self.company:
@@ -503,6 +534,24 @@ def flt_or_none(value) -> float | None:
 	return float(value) if value is not None else None
 
 
+def payee_differs_from_seller(seller: TradeParty, payee: TradeParty) -> bool:
+	"""Same test as schematron rule BR-17: a payee with a name, but no name or ID shared with the seller."""
+
+	def same(a, b):
+		return bool(stripped_text(a)) and stripped_text(a) == stripped_text(b)
+
+	return bool(stripped_text(payee.name)) and not (
+		same(payee.name, seller.name)
+		or same(payee.id, seller.id)
+		or same(payee.legal_organization.id, seller.legal_organization.id)
+	)
+
+
+def stripped_text(element) -> str:
+	"""Text of a drafthorse element without surrounding whitespace, empty if missing."""
+	return (element._text or "").strip()
+
+
 # OASIS UBL 2.x document namespaces (Invoice-2, CreditNote-2, ...)
 UBL_NAMESPACE_PREFIX = "urn:oasis:names:specification:ubl:"
 
@@ -552,6 +601,16 @@ def relative_url_to_path(url: str) -> Path:
 	return Path(get_site_path(url.lstrip("/"))).resolve()
 
 
+def should_map_purchase_invoice_item(source) -> bool:
+	if source.billed_quantity:
+		return True
+
+	if source.total_amount:
+		frappe.throw(_("Invoice line {0} has zero quantity but a non-zero amount.").format(source.idx))
+
+	return False
+
+
 @frappe.whitelist()
 def create_purchase_invoice(source_name, target_doc=None):
 	def post_process(source, target: PurchaseInvoice):
@@ -599,6 +658,7 @@ def create_purchase_invoice(source_name, target_doc=None):
 					"net_rate": "rate",
 					"po_detail": "po_detail",
 				},
+				"condition": should_map_purchase_invoice_item,
 				"postprocess": process_item_row,
 			},
 			"E Invoice Trade Tax": {
