@@ -4,6 +4,7 @@ name: Linters
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, edited]
     paths-ignore:
       - '**.md'
       - '**.html'
@@ -43,6 +44,11 @@ jobs:
         run: |
           npm install @commitlint/cli @commitlint/config-conventional
           npx commitlint --verbose --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
+
+      - name: Check PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$PR_TITLE" | npx commitlint --verbose
 
   linter:
     name: 'Semgrep Rules'

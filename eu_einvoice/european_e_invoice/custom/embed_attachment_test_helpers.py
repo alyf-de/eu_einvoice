@@ -13,7 +13,8 @@ import yaml
 from drafthorse.models.document import Document
 from lxml import etree
 
-from eu_einvoice.european_e_invoice.custom.sales_invoice import EInvoiceGenerator, as_base_64
+from eu_einvoice.european_e_invoice.custom.sales_invoice import SalesInvoiceGenerator
+from eu_einvoice.european_e_invoice.einvoice import EInvoiceGenerator, as_base_64
 from eu_einvoice.utils import EInvoiceProfile
 
 _SCENARIOS_PATH = Path(__file__).with_name("embed_attachment_scenarios.yaml")
@@ -98,14 +99,9 @@ def make_sales_invoice_doc(**kwargs) -> frappe._dict:
 	)
 
 
-def make_embed_generator(invoice) -> EInvoiceGenerator:
-	"""Return an ``EInvoiceGenerator`` with an empty Drafthorse document for unit tests."""
-	generator = EInvoiceGenerator(
-		profile=EInvoiceProfile.EN16931,
-		invoice=invoice,
-		company=frappe._dict(name="Test Co"),
-		customer=frappe._dict(name="Test Customer", supplier_numbers=[]),
-	)
+def make_embed_generator(invoice) -> SalesInvoiceGenerator:
+	"""Return a ``SalesInvoiceGenerator`` with an empty Drafthorse document for unit tests."""
+	generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
 	generator.doc = Document()
 	return generator
 

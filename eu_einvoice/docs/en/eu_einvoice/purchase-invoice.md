@@ -7,7 +7,7 @@ roles:
   - System Manager
 ---
 
-To import a new eInvoice, create a new **E Invoice Import** and upload the XML or PDF file.
+To import a new eInvoice, create a new **E Invoice Import** and upload the XML or PDF file. Only CII XML and ZUGFeRD / Factur-X PDF are supported. UBL invoices cannot be imported.
 
 The app extracts the E-Invoice Profile and validates the XML against the corresponding schematron rules.
 

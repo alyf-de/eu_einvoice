@@ -59,7 +59,7 @@ def create_invoice_with_legacy_embed(
 	if submit or cancel:
 		sales_invoice.reload()
 		with ExitStack() as stack:
-			stack.enter_context(patch("eu_einvoice.european_e_invoice.custom.sales_invoice.validate_doc"))
+			stack.enter_context(patch("eu_einvoice.european_e_invoice.einvoice.validate_doc"))
 			if "pdf_on_submit" in frappe.get_installed_apps():
 				# Avoid site PDF attach (wkhtmltopdf) when submitting fixtures for bulk migrate.
 				stack.enter_context(patch("pdf_on_submit.attach_pdf.execute"))
