@@ -8,6 +8,7 @@ import frappe
 from drafthorse.models.document import Document
 from drafthorse.pdf import attach_xml
 from erpnext.accounts.doctype.sales_invoice.test_sales_invoice import create_sales_invoice
+from erpnext.stock.doctype.item.test_item import make_item
 from frappe.tests import IntegrationTestCase
 from lxml import etree
 from pypdf import PdfReader, PdfWriter
@@ -28,6 +29,47 @@ NAMESPACES = {"ram": "urn:un:unece:uncefact:data:standard:ReusableAggregateBusin
 VAT_RULES = r"BR-(O|E|AE|G|IC|Z|S)-\d+|BR-4[5-9]|BR-DE-14|BR-CO-17"
 
 
+def map_code(retriever, code: str, doctype: str, name: str):
+	"""Link `code` of the retriever's first code list to a record."""
+	code_list = retriever.code_lists[0]
+	if not frappe.db.exists("Code List", code_list):
+		frappe.get_doc(doctype="Code List", __newname=code_list, title=code_list).insert()
+		# ERPNext's resolve_code_list is request-cached, and the whole test run is one request.
+		# An earlier test may have resolved this code list before it existed.
+		frappe.local.request_cache.clear()
+
+	frappe.get_doc(
+		doctype="Common Code",
+		code_list=code_list,
+		title=code,
+		common_code=code,
+		applies_to=[{"link_doctype": doctype, "link_name": name}],
+	).insert()
+
+
+def get_vat_breakdowns(xml: bytes) -> list[dict]:
+	"""Return category, rate, basis, tax amount and exemption reason of each VAT breakdown (BG-23)."""
+	root = ET.fromstring(xml)
+	breakdowns = []
+	for tax in root.findall(".//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax", NAMESPACES):
+		breakdowns.append(
+			{
+				"category": tax.findtext("ram:CategoryCode", namespaces=NAMESPACES),
+				"rate": float(tax.findtext("ram:RateApplicablePercent", namespaces=NAMESPACES)),
+				"basis": float(tax.findtext("ram:BasisAmount", namespaces=NAMESPACES)),
+				"tax": float(tax.findtext("ram:CalculatedAmount", namespaces=NAMESPACES)),
+				"reason_code": tax.findtext("ram:ExemptionReasonCode", namespaces=NAMESPACES),
+				"reason": tax.findtext("ram:ExemptionReason", namespaces=NAMESPACES),
+			}
+		)
+	return breakdowns
+
+
+def get_vat_errors(xml: bytes) -> list[str]:
+	errors, _warnings = get_validation_errors(xml.decode(), EInvoiceProfile.EN16931)
+	return [error for error in errors if re.search(VAT_RULES, error)]
+
+
 class TestGetItemRate(IntegrationTestCase):
 	def _taxes(self):
 		return [
@@ -35,74 +77,36 @@ class TestGetItemRate(IntegrationTestCase):
 			frappe._dict(account_head="VAT 7%", charge_type="On Net Total", rate=0),
 		]
 
-	def _template(self, rows):
-		doc = MagicMock()
-		doc.taxes = [frappe._dict(row) for row in rows]
-		return doc
+	def test_other_accounts_at_zero_percent(self):
+		self.assertEqual(get_item_rate('{"VAT 19%": 0, "VAT 7%": 7}', self._taxes()), 7)
 
-	def test_skips_zero_rate_without_not_applicable_field(self):
-		template = self._template(
-			[
-				{"tax_type": "VAT 19%", "tax_rate": 0},
-				{"tax_type": "VAT 7%", "tax_rate": 7},
-			]
-		)
-		meta = MagicMock()
-		meta.get_field.return_value = None
-		with (
-			patch("frappe.get_cached_doc", return_value=template),
-			patch("frappe.get_meta", return_value=meta),
-		):
-			self.assertEqual(get_item_rate("7 %", self._taxes()), 7)
-
-	def test_skips_not_applicable_row_when_field_exists(self):
-		template = self._template(
-			[
-				{"tax_type": "VAT 19%", "tax_rate": 0, "not_applicable": 1},
-				{"tax_type": "VAT 7%", "tax_rate": 7, "not_applicable": 0},
-			]
-		)
-		meta = MagicMock()
-		meta.get_field.return_value = MagicMock()
-		with (
-			patch("frappe.get_cached_doc", return_value=template),
-			patch("frappe.get_meta", return_value=meta),
-		):
-			self.assertEqual(get_item_rate("7 %", self._taxes()), 7)
+	def test_other_accounts_not_applicable(self):
+		self.assertEqual(get_item_rate('{"VAT 19%": "N/A", "VAT 7%": 7}', self._taxes()), 7)
 
 	def test_all_matching_rows_not_applicable_returns_zero(self):
-		"""The template says no invoice tax applies, so the line is 0% - not the fallback rate."""
-		template = self._template([{"tax_type": "VAT 19%", "tax_rate": 0, "not_applicable": 1}])
-		meta = MagicMock()
-		meta.get_field.return_value = MagicMock()
+		"""The template says no invoice tax applies, so the line is 0% - not the row's rate."""
 		taxes = [frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19)]
-		with (
-			patch("frappe.get_cached_doc", return_value=template),
-			patch("frappe.get_meta", return_value=meta),
-		):
-			self.assertEqual(get_item_rate("Exempt", taxes), 0)
+		self.assertEqual(get_item_rate('{"VAT 19%": "N/A"}', taxes), 0)
 
-	def test_all_matching_rows_zero_rated_returns_zero_without_not_applicable_field(self):
-		template = self._template([{"tax_type": "VAT 19%", "tax_rate": 0}])
-		meta = MagicMock()
-		meta.get_field.return_value = None
+	def test_row_rate_applies_when_map_does_not_list_the_account(self):
 		taxes = [frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19)]
-		with (
-			patch("frappe.get_cached_doc", return_value=template),
-			patch("frappe.get_meta", return_value=meta),
-		):
-			self.assertEqual(get_item_rate("Exempt", taxes), 0)
+		self.assertEqual(get_item_rate('{"VAT 5%": 5}', taxes), 19)
+		self.assertEqual(get_item_rate(None, taxes), 19)
 
-	def test_falls_back_to_single_tax_row_when_template_does_not_match(self):
-		template = self._template([{"tax_type": "VAT 5%", "tax_rate": 5}])
-		meta = MagicMock()
-		meta.get_field.return_value = None
-		taxes = [frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19)]
-		with (
-			patch("frappe.get_cached_doc", return_value=template),
-			patch("frappe.get_meta", return_value=meta),
-		):
-			self.assertEqual(get_item_rate("5 %", taxes), 19)
+	def test_vat_on_previous_row_total_counts(self):
+		"""VAT on the lines plus a shipping charge taxes the lines as well."""
+		taxes = [
+			frappe._dict(account_head="Freight", charge_type="Actual", rate=0),
+			frappe._dict(account_head="VAT 19%", charge_type="On Previous Row Total", rate=19, row_id=1),
+		]
+		self.assertEqual(get_item_rate('{"VAT 19%": 19}', taxes), 19)
+
+	def test_deduct_rows_are_ignored(self):
+		taxes = [
+			frappe._dict(account_head="VAT 19%", charge_type="On Net Total", rate=19, add_deduct_tax="Add"),
+			frappe._dict(account_head="RC 19%", charge_type="On Net Total", rate=19, add_deduct_tax="Deduct"),
+		]
+		self.assertEqual(get_item_rate(None, taxes), 19)
 
 
 class TestVatExemptionReason(IntegrationTestCase):
@@ -185,25 +189,8 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 
 		# The category comes from the Tax Category, the exemption reason only from the line's
 		# Item Tax Template. So the VAT breakdown must pick it up from the line items.
-		cls._map_code(duty_tax_fee_category_codes, "O", "Tax Category", cls.tax_category)
-		cls._map_code(vat_exemption_reason_codes, "vatex-eu-o", "Item Tax Template", cls.item_tax_template)
-
-	@staticmethod
-	def _map_code(retriever, code: str, doctype: str, name: str):
-		code_list = retriever.code_lists[0]
-		if not frappe.db.exists("Code List", code_list):
-			frappe.get_doc(doctype="Code List", __newname=code_list, title=code_list).insert()
-			# ERPNext's resolve_code_list is request-cached, and the whole test run is one request.
-			# An earlier test may have resolved this code list before it existed.
-			frappe.local.request_cache.clear()
-
-		frappe.get_doc(
-			doctype="Common Code",
-			code_list=code_list,
-			title=code,
-			common_code=code,
-			applies_to=[{"link_doctype": doctype, "link_name": name}],
-		).insert()
+		map_code(duty_tax_fee_category_codes, "O", "Tax Category", cls.tax_category)
+		map_code(vat_exemption_reason_codes, "vatex-eu-o", "Item Tax Template", cls.item_tax_template)
 
 	def test_einvoice_for_category_o(self):
 		for profile in (EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
@@ -274,7 +261,7 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 			company="_Test Company",
 			account_type="Tax",
 		).insert()
-		self._map_code(vat_exemption_reason_codes, "vatex-eu-g", "Account", account.name)
+		map_code(vat_exemption_reason_codes, "vatex-eu-g", "Account", account.name)
 
 		invoice = create_sales_invoice(do_not_save=True, rate=100)
 		invoice.tax_category = self.tax_category
@@ -341,57 +328,277 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		self.assertEqual(buyer_fc_ids[0].text, "98/765/43210")
 
 
-class TestApplicableTradeTaxes(IntegrationTestCase):
-	def test_multi_tax_invoice_groups_and_basis_amounts(self):
-		"""Unused tax rows are dropped, the basis comes from net_amount before any fallback."""
-		invoice = frappe._dict(
-			net_total=1000,
-			tax_category=None,
-			taxes_and_charges=None,
-			precision=lambda fieldname: 2,
-			taxes=[
-				# basis from the ERPNext tax row net_amount
-				frappe._dict(
-					account_head="_Test VAT 19",
-					charge_type="On Net Total",
-					rate=19,
-					tax_amount=19,
-					net_amount=100,
-				),
-				# basis from the custom field of older ERPNext versions
-				frappe._dict(
-					account_head="_Test VAT 7",
-					charge_type="On Net Total",
-					rate=7,
-					tax_amount=7,
-					custom_net_amount=100,
-				),
-				# net_amount exists as a field, but is empty, so it is calculated as well
-				frappe._dict(
-					account_head="_Test VAT 10",
-					charge_type="On Net Total",
-					rate=10,
-					tax_amount=10,
-					net_amount=0,
-				),
-				# no net amount known, so it is calculated from tax amount and rate
-				frappe._dict(account_head="_Test VAT 5", charge_type="On Net Total", rate=5, tax_amount=0.5),
-				# no tax amount, but a line item uses this rate (net amount 0), so it is kept
-				frappe._dict(account_head="_Test VAT 3", charge_type="On Net Total", rate=3, tax_amount=0),
-				# no tax amount and no line item uses this rate, so there is nothing to declare
-				frappe._dict(account_head="_Test VAT 2", charge_type="On Net Total", rate=2, tax_amount=0),
+class TestMixedVatInvoice(IntegrationTestCase):
+	"""Real Sales Invoices with several VAT categories and rates."""
+
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		# One item per invoice row: by default, an item may appear only once per invoice
+		cls.items = [make_item(f"_Test E-Invoice Item {i}", {"is_stock_item": 0}).name for i in range(1, 4)]
+		cls.vat_19 = cls._make_tax_account("_Test USt 19", 19)
+		cls.vat_7 = cls._make_tax_account("_Test USt 7", 7)
+
+		# Like older German setups: each template lists the other accounts at 0 %, not as N/A
+		cls.standard = cls._make_template("_Test Regelsatz", {cls.vat_19: 19, cls.vat_7: 0})
+		cls.reduced = cls._make_template("_Test Ermaessigt", {cls.vat_19: 0, cls.vat_7: 7})
+		# Like ERPNext's current German setup: the other accounts are Not Applicable
+		cls.standard_na = cls._make_template("_Test Regelsatz NA", {cls.vat_19: 19, cls.vat_7: None})
+		cls.reduced_na = cls._make_template("_Test Ermaessigt NA", {cls.vat_19: None, cls.vat_7: 7})
+		cls.exempt = cls._make_template(
+			"_Test Steuerfrei", {cls.vat_19: 0, cls.vat_7: 0}, "Steuerfrei nach Paragraph 4 Nr. 14 UStG"
+		)
+		cls.intra_community = cls._make_template(
+			"_Test Innergemeinschaftliche Lieferung", {cls.vat_19: 0}, "Innergemeinschaftliche Lieferung"
+		)
+		cls.reverse_charge = cls._make_template("_Test Reverse Charge Leistung EU", {cls.vat_19: 0})
+		cls.reduced_on_19 = cls._make_template("_Test Reduced on one account", {cls.vat_19: 7})
+
+		for template, category, reason in (
+			(cls.exempt, "E", "vatex-eu-132"),
+			(cls.intra_community, "K", "vatex-eu-ic"),
+			(cls.reverse_charge, "AE", "vatex-eu-ae"),
+		):
+			map_code(duty_tax_fee_category_codes, category, "Item Tax Template", template)
+			map_code(vat_exemption_reason_codes, reason, "Item Tax Template", template)
+
+	@staticmethod
+	def _make_tax_account(account_name: str, tax_rate: float) -> str:
+		return (
+			frappe.get_doc(
+				doctype="Account",
+				account_name=account_name,
+				parent_account="Duties and Taxes - _TC",
+				company="_Test Company",
+				account_type="Tax",
+				tax_rate=tax_rate,
+			)
+			.insert()
+			.name
+		)
+
+	@staticmethod
+	def _make_template(title: str, rates: dict[str, float], exemption_reason: str | None = None) -> str:
+		return (
+			frappe.get_doc(
+				doctype="Item Tax Template",
+				title=title,
+				company="_Test Company",
+				# A rate of None marks the account as Not Applicable
+				taxes=[
+					{"tax_type": account, "tax_rate": rate or 0, "not_applicable": rate is None}
+					for account, rate in rates.items()
+				],
+				vat_exemption_reason_text=exemption_reason,
+			)
+			.insert()
+			.name
+		)
+
+	def _make_invoice(
+		self, templates: list[str], tax_accounts: list[str], rates: list[float] | None = None, charges=()
+	):
+		"""One line per template, an *On Net Total* row per account, then the `charges` rows."""
+		rates = rates or [100] * len(templates)
+		invoice = create_sales_invoice(do_not_save=True, rate=100)
+		invoice.items = []
+		for item_code, template, rate in zip(self.items, templates, rates, strict=False):
+			invoice.append(
+				"items", {"item_code": item_code, "qty": 1, "rate": rate, "item_tax_template": template}
+			)
+		for account in tax_accounts:
+			# Rate 0 on the row: the rate comes from the Item Tax Template
+			invoice.append(
+				"taxes",
+				{"charge_type": "On Net Total", "account_head": account, "description": account, "rate": 0},
+			)
+		for charge in charges:
+			invoice.append("taxes", {"description": charge["account_head"], **charge})
+		invoice.insert()
+		# After insert: fetch_from company/customer.tax_id would overwrite values set earlier.
+		invoice.company_tax_id = "DE123456789"
+		invoice.tax_id = "FR12345678901"
+		return invoice
+
+	def test_standard_reduced_and_exempt(self):
+		"""Each rate's basis is the sum of its own lines, the exempt line gets its own breakdown."""
+		expected = [
+			{"category": "S", "rate": 19, "basis": 100, "tax": 19, "reason_code": None, "reason": None},
+			{"category": "S", "rate": 7, "basis": 100, "tax": 7, "reason_code": None, "reason": None},
+			{
+				"category": "E",
+				"rate": 0,
+				"basis": 100,
+				"tax": 0,
+				"reason_code": "VATEX-EU-132",
+				"reason": "Steuerfrei nach Paragraph 4 Nr. 14 UStG",
+			},
+		]
+		for standard, reduced in ((self.standard, self.reduced), (self.standard_na, self.reduced_na)):
+			with self.subTest(standard=standard):
+				invoice = self._make_invoice([standard, reduced, self.exempt], [self.vat_19, self.vat_7])
+				self.assertEqual([tax.tax_amount for tax in invoice.taxes], [19, 7])
+
+				xml = get_einvoice(invoice)
+
+				self.assertEqual(get_vat_breakdowns(xml), expected)
+				self.assertEqual(get_vat_errors(xml), [])
+
+	def test_rates_from_lines_when_accounts_have_no_rate(self):
+		"""Tax rows at 0 % on accounts without a rate take the rate their lines were charged with."""
+		for account in (self.vat_19, self.vat_7):
+			frappe.db.set_value("Account", account, "tax_rate", 0)
+			self.addCleanup(
+				frappe.db.set_value, "Account", account, "tax_rate", 19 if account == self.vat_19 else 7
+			)
+
+		invoice = self._make_invoice([self.standard, self.reduced], [self.vat_19, self.vat_7])
+		xml = get_einvoice(invoice)
+
+		self.assertEqual(
+			[(b["rate"], b["basis"], b["tax"]) for b in get_vat_breakdowns(xml)], [(19, 100, 19), (7, 100, 7)]
+		)
+		self.assertEqual(get_vat_errors(xml), [])
+
+	def test_single_rate_is_unchanged(self):
+		"""Lines with one rate: a single breakdown over the net total; the unused 7 % row is dropped."""
+		invoice = self._make_invoice([self.standard, self.standard], [self.vat_19, self.vat_7])
+
+		breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual(
+			[(b["category"], b["rate"], b["basis"], b["tax"]) for b in breakdowns], [("S", 19, 200, 38)]
+		)
+
+	def test_one_account_with_several_rates(self):
+		"""One VAT account, the reduced rate set by an Item Tax Template: one breakdown per rate."""
+		invoice = self._make_invoice([self.standard, self.reduced_on_19, self.exempt], [self.vat_19])
+		self.assertEqual(invoice.taxes[0].tax_amount, 26)
+
+		xml = get_einvoice(invoice)
+
+		self.assertEqual(
+			[(b["category"], b["rate"], b["basis"], b["tax"]) for b in get_vat_breakdowns(xml)],
+			[("S", 19, 100, 19), ("S", 7, 100, 7), ("E", 0, 100, 0)],
+		)
+		self.assertEqual(get_vat_errors(xml), [])
+
+	@IntegrationTestCase.change_settings("Accounts Settings", {"round_row_wise_tax": 1})
+	def test_rates_on_one_account_rounded_per_line(self):
+		"""ERPNext rounds each line's tax: the breakdowns add up the same way, none gets negative."""
+		invoice = self._make_invoice(
+			[self.standard, self.standard, self.reduced_on_19], [self.vat_19], rates=[0.02, 0.02, 0.01]
+		)
+		self.assertEqual(invoice.taxes[0].tax_amount, 0)
+
+		breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual(
+			[(b["rate"], b["basis"], b["tax"]) for b in breakdowns], [(19, 0.04, 0), (7, 0.01, 0)]
+		)
+
+	def test_rates_on_one_account_after_rounding_setting_changed(self):
+		"""The rounding setting may change after the invoice was saved: the split doesn't depend on it."""
+		invoice = self._make_invoice(
+			[self.standard, self.standard, self.reduced_on_19], [self.vat_19], rates=[0.02, 0.02, 1]
+		)
+		self.assertEqual(invoice.taxes[0].tax_amount, 0.08)
+
+		with self.change_settings("Accounts Settings", {"round_row_wise_tax": 1}):
+			breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual(
+			[(b["rate"], b["basis"], b["tax"]) for b in breakdowns], [(19, 0.04, 0.01), (7, 1, 0.07)]
+		)
+
+	def test_exempt_lines_with_exempt_freight(self):
+		"""Freight with VAT on a previous row of the exempt category: one breakdown for lines and freight."""
+		vat_exempt = self._make_tax_account("_Test USt frei", 0)
+		map_code(duty_tax_fee_category_codes, "E", "Account", vat_exempt)
+		freight = {
+			"charge_type": "Actual",
+			"account_head": "Freight and Forwarding Charges - _TC",
+			"tax_amount": 50,
+		}
+
+		for charge_type in ("On Previous Row Amount", "On Previous Row Total"):
+			with self.subTest(charge_type=charge_type):
+				vat_on_freight = {
+					"charge_type": charge_type,
+					"account_head": vat_exempt,
+					"rate": 0,
+					"row_id": 1,
+				}
+				invoice = self._make_invoice(
+					[self.exempt, self.exempt], [], charges=[freight, vat_on_freight]
+				)
+
+				breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+				self.assertEqual([(b["category"], b["basis"], b["tax"]) for b in breakdowns], [("E", 250, 0)])
+
+	def test_rates_as_charged_after_template_change(self):
+		"""Later changes of the Item Tax Template don't change the e-invoice of an existing invoice."""
+		invoice = self._make_invoice([self.reduced], [self.vat_7])
+		template = frappe.get_doc("Item Tax Template", self.reduced)
+		template.taxes[1].tax_rate = 5
+		template.save()
+		self.addCleanup(
+			frappe.db.set_value, "Item Tax Template Detail", template.taxes[1].name, "tax_rate", 7
+		)
+
+		breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual([(b["rate"], b["basis"], b["tax"]) for b in breakdowns], [(7, 100, 7)])
+
+	def test_intra_community_supply_and_reverse_charge(self):
+		"""Two 0 % categories without any tax row need one breakdown each."""
+		frappe.db.set_single_value("E Invoice Settings", "vat_exemption_reason_text", "Steuerschuldnerschaft")
+		invoice = self._make_invoice([self.intra_community, self.reverse_charge, self.reverse_charge], [])
+		invoice.shipping_address_name = invoice.customer_address  # BR-IC-12
+
+		xml = get_einvoice(invoice)
+
+		self.assertEqual(
+			get_vat_breakdowns(xml),
+			[
+				{
+					"category": "K",
+					"rate": 0,
+					"basis": 100,
+					"tax": 0,
+					"reason_code": "VATEX-EU-IC",
+					"reason": "Innergemeinschaftliche Lieferung",
+				},
+				# no text on the template, so the default from E Invoice Settings is used
+				{
+					"category": "AE",
+					"rate": 0,
+					"basis": 200,
+					"tax": 0,
+					"reason_code": "VATEX-EU-AE",
+					"reason": "Steuerschuldnerschaft",
+				},
 			],
 		)
-		generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.EN16931)
-		generator.doc = Document()
-		generator.item_tax_rates = {19, 7, 10, 5, 3}
+		self.assertEqual(get_vat_errors(xml), [])
 
-		with patch.object(duty_tax_fee_category_codes, "get", return_value="S"):
-			self.assertTrue(generator._add_taxes_and_charges())
+	def test_exemption_text_from_the_invoice(self):
+		"""The invoice's own exemption note comes after the Item Tax Template and before the settings."""
+		frappe.db.set_single_value("E Invoice Settings", "vat_exemption_reason_text", "Steuerschuldnerschaft")
+		invoice = self._make_invoice([self.intra_community, self.reverse_charge], [])
+		# Custom field of other apps (e.g. erpnext_germany), filled from the Sales Taxes and Charges Template
+		invoice.tax_exemption_reason = "Steuerschuldnerschaft des Leistungsempfängers"
 
-		trade_taxes = generator.doc.trade.settlement.trade_tax.children
-		self.assertEqual([t.rate_applicable_percent._value for t in trade_taxes], [19, 7, 10, 5, 3])
-		self.assertEqual([t.basis_amount._value for t in trade_taxes], [100, 100, 100, 10, 0])
+		breakdowns = get_vat_breakdowns(get_einvoice(invoice))
+
+		self.assertEqual(
+			[(b["category"], b["reason"]) for b in breakdowns],
+			[
+				("K", "Innergemeinschaftliche Lieferung"),
+				("AE", "Steuerschuldnerschaft des Leistungsempfängers"),
+			],
+		)
 
 
 class TestXmlAttachmentNaming(IntegrationTestCase):
