@@ -1,6 +1,8 @@
 from frappe.tests import UnitTestCase
+from saxonche import PySaxonApiError
 
-from eu_einvoice.schematron import extract_failed_asserts
+from eu_einvoice.schematron import extract_failed_asserts, get_validation_errors
+from eu_einvoice.utils import EInvoiceProfile
 
 SVRL_REPORT = b"""<?xml version="1.0" encoding="UTF-8"?>
 <svrl:schematron-output xmlns:svrl="http://purl.oclc.org/dsdl/svrl">
@@ -29,3 +31,9 @@ class TestExtractFailedAsserts(UnitTestCase):
 
 		self.assertEqual(errors, ["Fatal assert", "Assert without flag"])
 		self.assertEqual(warnings, ["Warning assert", "Information assert", "Report"])
+
+
+class TestGetValidationErrors(UnitTestCase):
+	def test_doctype_is_rejected(self):
+		with self.assertRaises(PySaxonApiError):
+			get_validation_errors("<!DOCTYPE invoice><invoice/>", EInvoiceProfile.EN16931)

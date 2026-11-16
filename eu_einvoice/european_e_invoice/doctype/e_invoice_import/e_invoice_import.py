@@ -14,7 +14,7 @@ from facturx import get_xml_from_pdf
 from frappe import _, _dict, get_site_path
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from lxml.etree import QName, XMLSyntaxError, fromstring
+from lxml.etree import QName, XMLParser, XMLSyntaxError, fromstring
 
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile, get_profile
@@ -159,10 +159,7 @@ class EInvoiceImport(Document):
 
 	def read_values_from_einvoice(self) -> None:
 		xml_bytes = self.get_xml_bytes()
-		try:
-			root = fromstring(xml_bytes)
-		except XMLSyntaxError:
-			frappe.throw(_("The uploaded file does not contain valid XML data."))
+		root = parse_xml_without_doctype(xml_bytes)
 
 		if is_ubl_xml(root):
 			frappe.throw(
@@ -563,6 +560,25 @@ def get_create_purchase_invoice_action() -> dict:
 		"label": _("Create Purchase Invoice"),
 		"client_action": "eu_einvoice.utils.new_purchase_invoice",
 	}
+
+
+def parse_xml_without_doctype(xml_bytes: bytes):
+	"""Return the root element of an XML file from a third party.
+
+	EN 16931 invoices do not need a DOCTYPE. We reject it, so that no parser processes DTDs or entities.
+	"""
+	parser = XMLParser(resolve_entities=False, load_dtd=False, dtd_validation=False, no_network=True)
+	try:
+		root = fromstring(xml_bytes, parser)
+	except XMLSyntaxError:
+		frappe.throw(_("The uploaded file does not contain valid XML data."))
+
+	if root.getroottree().docinfo.doctype:
+		frappe.throw(
+			_("The uploaded file contains a document type definition (DOCTYPE). This is not allowed.")
+		)
+
+	return root
 
 
 def is_ubl_xml(root) -> bool:
