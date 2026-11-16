@@ -3,6 +3,8 @@
 
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import frappe
@@ -12,6 +14,7 @@ from drafthorse.models.payment import PaymentMeans
 from drafthorse.models.tradelines import LineItem
 from frappe.tests.utils import FrappeTestCase
 from lxml.etree import fromstring
+from pypdf import PdfWriter
 
 from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
 	EInvoiceImport,
@@ -109,6 +112,52 @@ class TestEInvoiceImport(FrappeTestCase):
 		self.assertIsNone(doc.buyer_country)
 		self.assertEqual(doc.profile, "EN 16931")
 		self.assertEqual(str(doc.issue_date), "2024-01-15")
+
+	def test_read_values_from_einvoice_rejects_doctype(self):
+		"""EN 16931 invoices do not need a DOCTYPE, so DTDs and entities of third-party files are not processed."""
+		doctypes = (
+			b"<!DOCTYPE invoice>",
+			b'<!DOCTYPE invoice [<!ENTITY seller "Seller GmbH">]>',
+			b'<!DOCTYPE invoice SYSTEM "invoice.dtd">',
+		)
+		for doctype in doctypes:
+			with self.subTest(doctype=doctype):
+				doc = frappe.new_doc("E Invoice Import")
+				with patch.object(
+					EInvoiceImport, "get_xml_bytes", return_value=make_cii_invoice_xml_with_prolog(doctype)
+				):
+					with self.assertRaises(frappe.ValidationError) as cm:
+						doc.read_values_from_einvoice()
+
+				self.assertIn("DOCTYPE", str(cm.exception))
+				self.assertIsNone(doc.id)
+
+	def test_read_values_from_einvoice_rejects_doctype_in_pdf(self):
+		writer = PdfWriter()
+		writer.add_blank_page(width=595, height=842)
+		writer.add_attachment("factur-x.xml", make_cii_invoice_xml_with_prolog(b"<!DOCTYPE invoice>"))
+
+		doc = frappe.new_doc("E Invoice Import")
+		doc.einvoice = "/private/files/invoice.pdf"
+		with TemporaryDirectory() as directory:
+			pdf_path = Path(directory) / "invoice.pdf"
+			writer.write(pdf_path)
+			with patch(
+				"eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.relative_url_to_path",
+				return_value=pdf_path,
+			):
+				with self.assertRaises(frappe.ValidationError) as cm:
+					doc.read_values_from_einvoice()
+
+		self.assertIn("DOCTYPE", str(cm.exception))
+
+	def test_read_values_from_einvoice_accepts_doctype_in_comment(self):
+		doc = frappe.new_doc("E Invoice Import")
+		xml_bytes = make_cii_invoice_xml_with_prolog(b"<!-- <!DOCTYPE invoice> -->")
+		with patch.object(EInvoiceImport, "get_xml_bytes", return_value=xml_bytes):
+			doc.read_values_from_einvoice()
+
+		self.assertEqual(doc.id, "INV-CII-1")
 
 	def test_seller_identifiers_are_stripped(self):
 		seller = TradeParty()
@@ -383,3 +432,10 @@ def make_cii_invoice_xml(invoice_id: str, seller_name: str, buyer_name: str) -> 
 	summation.grand_total = Decimal("119.00")
 	summation.due_amount = Decimal("119.00")
 	return einvoice.serialize(schema=None)
+
+
+def make_cii_invoice_xml_with_prolog(prolog: bytes) -> bytes:
+	"""Return a CII invoice with `prolog` between the XML declaration and the root element."""
+	xml_bytes = make_cii_invoice_xml("INV-CII-1", "Seller GmbH", "Buyer GmbH")
+	xml_declaration, root = xml_bytes.split(b"?>", 1)
+	return xml_declaration + b"?>" + prolog + root

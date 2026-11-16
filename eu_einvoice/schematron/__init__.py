@@ -12,6 +12,11 @@ PROFILE_TO_XSL = {
 	EInvoiceProfile.XRECHNUNG: "XRechnung-CII-validation.xsl",
 }
 
+# Invoices do not need a DOCTYPE. With this parser feature, Saxon does not process DTDs or entities.
+DISALLOW_DOCTYPE = (
+	"http://saxon.sf.net/feature/parserFeature?uri=http%3A//apache.org/xml/features/disallow-doctype-decl"
+)
+
 
 def get_validation_errors(xml_string: str, profile: EInvoiceProfile):
 	return get_errors_from_stylesheet(xml_string, PROFILE_TO_XSL[profile])
@@ -42,6 +47,7 @@ def extract_failed_asserts(xml: bytes) -> tuple[list[str], list[str]]:
 
 def get_validation_report(xml_string: str, stylesheet_file: str) -> bytes:
 	with PySaxonProcessor(license=False) as proc:
+		proc.set_configuration_property(DISALLOW_DOCTYPE, "true")
 		xslt30_processor = proc.new_xslt30_processor()
 		input_node = proc.parse_xml(xml_text=xml_string)
 		executable = xslt30_processor.compile_stylesheet(stylesheet_file=stylesheet_file)
