@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 from frappe.tests.utils import FrappeTestCase
-=======
-from frappe.tests import UnitTestCase
 from saxonche import PySaxonApiError
->>>>>>> 797acf2 (fix(import): reject incoming e-invoice XML that contains a DOCTYPE (#376))
 
 from eu_einvoice.schematron import extract_failed_asserts, get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile
@@ -37,7 +33,7 @@ class TestExtractFailedAsserts(FrappeTestCase):
 		self.assertEqual(warnings, ["Warning assert", "Information assert", "Report"])
 
 
-class TestGetValidationErrors(UnitTestCase):
+class TestGetValidationErrors(FrappeTestCase):
 	def test_doctype_is_rejected(self):
 		with self.assertRaises(PySaxonApiError):
 			get_validation_errors("<!DOCTYPE invoice><invoice/>", EInvoiceProfile.EN16931)
