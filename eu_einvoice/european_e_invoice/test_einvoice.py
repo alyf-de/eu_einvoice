@@ -49,14 +49,19 @@ class TestEInvoiceHooks(IntegrationTestCase):
 		self.assertIn(f"Added by hook for {invoice.name}", xml)
 
 
-class TestDownloadPdf(IntegrationTestCase):
-	def test_download_pdf_without_no_letterhead(self):
-		from eu_einvoice.european_e_invoice.einvoice import download_pdf
+class TestAfterPrint(IntegrationTestCase):
+	def test_pdf_embeds_xml(self):
+		from io import BytesIO
 
-		invoice = create_sales_invoice()
-		frappe.local.response = frappe._dict()
-		download_pdf("Sales Invoice", invoice.name, format="Standard")
-		self.assertTrue(frappe.local.response.filecontent)
+		from pypdf import PdfReader
+
+		invoice = create_sales_invoice(do_not_save=True)
+		invoice.einvoice_profile = EInvoiceProfile.EN16931.value
+		invoice.insert()
+
+		pdf = frappe.get_print("Sales Invoice", invoice.name, as_pdf=True)
+
+		self.assertTrue(PdfReader(BytesIO(pdf)).attachments)
 
 
 class TestGeneratorRegistry(IntegrationTestCase):

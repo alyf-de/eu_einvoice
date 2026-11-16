@@ -13,7 +13,6 @@ from eu_einvoice.european_e_invoice.einvoice import (  # noqa: F401
 	attach_xml_on_submit,
 	attach_xml_to_pdf,
 	download_einvoice,
-	download_pdf,
 	duty_tax_fee_category_codes,
 	get_einvoice,
 	get_item_rate,
