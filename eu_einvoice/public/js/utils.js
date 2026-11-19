@@ -74,10 +74,26 @@ eu_einvoice.viewer = {
 	},
 
 	/**
+	 * DocTypes that may show protocol status icons on attachments.
+	 * Set from bootinfo (PROTOCOL_PARENT_DOCTYPES); avoids global Desk noise.
+	 */
+	_protocol_parent_doctypes: function () {
+		return frappe.boot?.eu_einvoice?.protocol_parent_doctypes || [];
+	},
+
+	_should_decorate: function (frm) {
+		if (!frm || frm.is_new() || !frm.$wrapper || !frm.doctype) {
+			return false;
+		}
+		return eu_einvoice.viewer._protocol_parent_doctypes().includes(frm.doctype);
+	},
+
+	/**
 	 * Add a file status icon next to attachment / Attach-field labels when a protocol exists.
+	 * Gated to protocol parent DocTypes via bootinfo (not every Desk form).
 	 */
 	decorate_form: function (frm) {
-		if (!frm || frm.is_new() || !frm.$wrapper) {
+		if (!eu_einvoice.viewer._should_decorate(frm)) {
 			return;
 		}
 		eu_einvoice.viewer._decorate_sidebar_attachments(frm);
@@ -209,12 +225,14 @@ eu_einvoice.viewer = {
 	},
 };
 
-$(document).on("form-refresh", (_event, frm) => {
-	if (!frm?.$wrapper) {
-		return;
-	}
-	frm.$wrapper.off("attachments_change.eu_einvoice").on("attachments_change.eu_einvoice", () => {
+$(document)
+	.off("form-refresh.eu_einvoice")
+	.on("form-refresh.eu_einvoice", (_event, frm) => {
+		if (!eu_einvoice.viewer._should_decorate(frm)) {
+			return;
+		}
+		frm.$wrapper.off("attachments_change.eu_einvoice").on("attachments_change.eu_einvoice", () => {
+			eu_einvoice.viewer.decorate_form(frm);
+		});
 		eu_einvoice.viewer.decorate_form(frm);
 	});
-	eu_einvoice.viewer.decorate_form(frm);
-});

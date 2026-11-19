@@ -1,4 +1,4 @@
-"""E Invoice Protocol: upload stubs and attach-time validation."""
+"""E Invoice Protocol: attach-time Schematron validation for Import and Purchase Invoice."""
 
 from __future__ import annotations
 
@@ -6,13 +6,13 @@ import hashlib
 from pathlib import Path
 
 import frappe
-from frappe import _
 from frappe.utils import now_datetime
-from lxml.etree import fromstring
+from lxml.etree import XMLParser, fromstring
 
 from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
 	_file_content_as_bytes,
 )
+from eu_einvoice.saxon import UnsafeXMLError
 from eu_einvoice.schematron import (
 	PROFILE_TO_XSL,
 	get_ruleset_hash,
@@ -22,11 +22,16 @@ from eu_einvoice.schematron import (
 from eu_einvoice.utils import EInvoiceProfile, get_profile
 from eu_einvoice.visualization import EInvoiceFormat, detect_einvoice_format
 
-UPLOAD_MODE_NONE = "None"
-UPLOAD_MODE_SELECTED = "Only selected DocTypes"
-UPLOAD_MODE_ALL = "All files"
+# Untrusted invoice XML: never resolve DTDs / entities when reading profile labels.
+_SAFE_XML_PARSER = XMLParser(
+	resolve_entities=False,
+	load_dtd=False,
+	dtd_validation=False,
+	no_network=True,
+)
 
-DEFAULT_PROTOCOL_DOCTYPES = ("E Invoice Import", "Purchase Invoice")
+# Parents that receive attach-time protocol validation (hard-coded; no settings table).
+PROTOCOL_PARENT_DOCTYPES = ("E Invoice Import", "Purchase Invoice")
 
 XML_EXTENSIONS = {".xml"}
 PDF_EXTENSIONS = {".pdf"}
@@ -35,113 +40,16 @@ PDF_MIME_PREFIXES = ("application/pdf",)
 
 VALIDATOR_NAME = "Schematron (SaxonC)"
 
-# Serialize protocol create / Schematron across workers (MariaDB GET_LOCK)
-FILE_LOCK_TIMEOUT = 120
-HASH_LOCK_TIMEOUT = 300
-
-# Results that finish the validation phase (copied/propagated; Schematron not re-run)
-SETTLED_RESULTS = ("Valid", "Invalid", "Unsupported")
-
-# Fields copied from an already-validated protocol for the same hashes + ruleset
-_COPIED_VALIDATION_FIELDS = (
-	"result",
-	"validation_timestamp",
-	"einvoice_format",
-	"invoice_profile",
-	"ruleset_hash",
-	"validator",
-	"validator_version",
-	"error_count",
-	"warning_count",
-	"message_count",
-	"validation_errors",
-	"validation_warnings",
-)
-
-
-def ensure_default_protocol_doctypes():
-	"""Seed default Protocol DocTypes on **E Invoice Settings** when the table is empty."""
-	if not frappe.db.exists("DocType", "E Invoice Settings"):
-		return
-	if not frappe.db.exists("DocType", "E Invoice Protocol DocType"):
-		return
-
-	settings = frappe.get_single("E Invoice Settings")
-	if settings.get("protocol_doctypes"):
-		return
-
-	for doctype in DEFAULT_PROTOCOL_DOCTYPES:
-		settings.append("protocol_doctypes", {"document_type": doctype})
-	settings.flags.ignore_permissions = True
-	settings.save()
-
-
-def maybe_create_protocol_stub(doc, method=None):
-	"""File.after_insert: optional lightweight protocol stub (no Schematron).
-
-	Must never raise - File hooks must not fail uploads.
-	"""
-	try:
-		_maybe_create_protocol_stub(doc)
-	except Exception:
-		frappe.log_error(
-			title="E Invoice protocol stub (hook)",
-			reference_doctype="File",
-			reference_name=getattr(doc, "name", None),
-		)
-
-
-def _maybe_create_protocol_stub(doc):
-	if doc.is_folder or doc.is_remote_file:
-		return
-
-	settings = _get_protocol_settings()
-	if settings["create_protocol_on_upload"] == UPLOAD_MODE_NONE:
-		return
-
-	if settings["create_protocol_on_upload"] == UPLOAD_MODE_SELECTED:
-		if doc.attached_to_doctype not in settings["protocol_doctypes"]:
-			return
-
-	kind = _candidate_kind(doc)
-	if not kind:
-		return
-
-	# Already on a protocol DocType: after_insert and on_update both fire. Queue the
-	# same validate job (ensures stub + Schematron) so one worker owns the File lock
-	# instead of racing a stub job against a validate job across transactions.
-	if _is_attached_to_protocol_doctype(doc, settings):
-		_enqueue_for_file(
-			"eu_einvoice.european_e_invoice.protocol.validate_protocol_for_file",
-			doc.name,
-			job_suffix="validate",
-		)
-		return
-
-	# Unattached upload (All files): lightweight Pending stub only
-	_enqueue_for_file(
-		"eu_einvoice.european_e_invoice.protocol.create_protocol_stub_from_file",
-		doc.name,
-		job_suffix="stub",
-	)
-
-
-def _is_attached_to_protocol_doctype(doc, settings: dict | None = None) -> bool:
-	"""True when this File is attached to a DocType that receives attach-time validation."""
-	if not doc.attached_to_doctype or not doc.attached_to_name:
-		return False
-	settings = settings or _get_protocol_settings()
-	return doc.attached_to_doctype in settings["protocol_doctypes"]
-
 
 def delete_protocol_for_file(doc, method=None):
 	"""File.on_trash: drop the 1:1 protocol row when its **File** is deleted.
 
-	Must never raise - File deletes must not fail. Clears *Copied From* on
-	dependents first so protocol ``on_trash`` does not block.
+	Must never raise - File deletes must not fail.
 	"""
 	try:
-		_delete_protocol_for_file(doc)
+		name = frappe.db.get_value("E Invoice Protocol", {"file": doc.name}, "name")
+		if name:
+			frappe.delete_doc("E Invoice Protocol", name, ignore_permissions=True)
 	except Exception:
 		frappe.log_error(
 			title="E Invoice protocol delete (file trash)",
@@ -150,23 +58,8 @@ def delete_protocol_for_file(doc, method=None):
 		)
 
 
-def _delete_protocol_for_file(doc):
-	name = frappe.db.get_value("E Invoice Protocol", {"file": doc.name}, "name")
-	if not name:
-		return
-
-	frappe.db.set_value(
-		"E Invoice Protocol",
-		{"copied_from": name},
-		"copied_from",
-		None,
-		update_modified=False,
-	)
-	frappe.delete_doc("E Invoice Protocol", name, ignore_permissions=True)
-
-
 def maybe_validate_protocol_on_attach(doc, method=None):
-	"""File.on_update: run Schematron when attached to a configured DocType.
+	"""File.on_update: run Schematron when attached to Import or Purchase Invoice.
 
 	Must never raise - File hooks must not fail saves.
 	Does not cover owned orphans attached via Attach fields (those use
@@ -187,7 +80,7 @@ def maybe_validate_protocol_on_parent_attach(doc, method=None):
 	"""Parent on_update: validate Files linked via Attach after Frappe attaches them.
 
 	Frappe's ``attach_files_to_document`` owns orphans with ``frappe.db.set_value``,
-	which does not run File events. Register on ``*`` so this runs after that hook.
+	which does not run File events. Registered only for Import and Purchase Invoice.
 	Must never raise - parent saves must not fail.
 	"""
 	try:
@@ -201,25 +94,17 @@ def maybe_validate_protocol_on_parent_attach(doc, method=None):
 
 
 def _maybe_validate_protocol_on_parent_attach(doc):
-	if doc.doctype in ("File", "E Invoice Protocol"):
-		return
-
 	# **E Invoice Import**: flush Schematron results after attach_files (before_save is too early).
 	# Do not enqueue attach-time Schematron for the *E Invoice* (`einvoice`) field file.
 	if doc.doctype == "E Invoice Import":
 		_flush_import_protocol_payload(doc)
 		return
 
-	# Check this first: most saves (e.g. Error Log) have no changed Attach field,
-	# so they never read settings. That also prevents a log_error loop if settings fail.
-	file_urls = _changed_attach_urls(doc)
-	if not file_urls:
+	if doc.doctype not in PROTOCOL_PARENT_DOCTYPES:
 		return
 
-	settings = _get_protocol_settings()
-	if settings["create_protocol_on_upload"] == UPLOAD_MODE_NONE:
-		return
-	if doc.doctype not in settings["protocol_doctypes"]:
+	file_urls = _changed_attach_urls(doc)
+	if not file_urls:
 		return
 
 	file_names = frappe.get_all(
@@ -282,11 +167,7 @@ def _maybe_validate_protocol_on_attach(doc):
 		return
 	if not doc.attached_to_doctype or not doc.attached_to_name:
 		return
-
-	settings = _get_protocol_settings()
-	if settings["create_protocol_on_upload"] == UPLOAD_MODE_NONE:
-		return
-	if doc.attached_to_doctype not in settings["protocol_doctypes"]:
+	if doc.attached_to_doctype not in PROTOCOL_PARENT_DOCTYPES:
 		return
 
 	# Import *E Invoice* (`einvoice`) is filled from `_validate_schematron` after attach.
@@ -295,7 +176,8 @@ def _maybe_validate_protocol_on_attach(doc):
 		return
 
 	existing = _find_protocol_for_file(doc.name)
-	if existing and existing.result in SETTLED_RESULTS:
+	if existing:
+		# Any existing protocol finishes validation; Schematron is not re-run on re-attach.
 		_update_protocol_reference(existing, doc)
 		return
 
@@ -307,7 +189,6 @@ def _maybe_validate_protocol_on_attach(doc):
 	_enqueue_for_file(
 		"eu_einvoice.european_e_invoice.protocol.validate_protocol_for_file",
 		doc.name,
-		job_suffix="validate",
 	)
 
 
@@ -322,52 +203,10 @@ def _is_import_einvoice_file(file_doc) -> bool:
 	return bool(einvoice_url and einvoice_url == file_doc.file_url)
 
 
-def create_protocol_stub_from_file(file_name: str):
-	"""Detect e-invoice XML and insert a protocol row for this File (1:1)."""
-	try:
-		return _create_protocol_stub_from_file(file_name)
-	except frappe.QueryTimeoutError:
-		# Let the background worker retry; wrappers must not swallow lock timeouts.
-		raise
-	except Exception:
-		frappe.log_error(
-			title="E Invoice protocol stub",
-			reference_doctype="File",
-			reference_name=file_name,
-		)
-		return None
-
-
-def _create_protocol_stub_from_file(file_name: str):
-	file_doc = frappe.get_doc("File", file_name)
-	if file_doc.is_folder or file_doc.is_remote_file:
-		return
-
-	xml_bytes = _read_xml_bytes_quiet(file_doc)
-	if not xml_bytes:
-		return
-
-	einvoice_format = detect_einvoice_format(xml_bytes)
-	if not einvoice_format:
-		return
-
-	with frappe.db.advisory_lock(_file_lock_key(file_name), timeout=FILE_LOCK_TIMEOUT):
-		existing = _find_protocol_for_file(file_name)
-		if existing:
-			return existing
-		return _insert_protocol_stub(file_doc, xml_bytes, einvoice_format)
-
-
 def validate_protocol_for_file(file_name: str):
-	"""Ensure a protocol row exists, then run Schematron (or copy) for this File.
-
-	Used for attach-time work and for uploads that are already attached to a
-	protocol DocType, so stub creation and validation share one background job.
-	"""
+	"""Create or update the protocol for this File and run Schematron once."""
 	try:
 		_validate_protocol_for_file(file_name)
-	except frappe.QueryTimeoutError:
-		raise
 	except Exception:
 		frappe.log_error(
 			title="E Invoice protocol validation",
@@ -387,63 +226,60 @@ def _validate_protocol_for_file(file_name: str):
 	if not einvoice_format:
 		return
 
-	content_hash = file_doc.content_hash
-	file_hash = _sha256(xml_bytes)
-	protocol = _ensure_protocol_for_file(file_doc)
-	if not protocol:
-		return
-
-	if protocol.result in SETTLED_RESULTS:
+	protocol = _find_protocol_for_file(file_name)
+	if protocol:
 		_update_protocol_reference(protocol, file_doc)
 		return
 
-	profile_label = protocol.invoice_profile or _cheap_profile(xml_bytes, einvoice_format)
-	# Lookup hash must match the profile actually used for Schematron (EN16931 fallback).
+	profile_label = _cheap_profile(xml_bytes, einvoice_format)
 	profile = _effective_cii_profile(profile_label) if einvoice_format == EInvoiceFormat.CII else None
-	ruleset_hash = _ruleset_hash_for_format(einvoice_format, profile_label)
 
-	# Serialize Schematron / copy for the same hashes so concurrent workers do not double-run
-	with frappe.db.advisory_lock(
-		_hash_lock_key(content_hash, file_hash, ruleset_hash),
-		timeout=HASH_LOCK_TIMEOUT,
-	):
-		protocol.reload()
-		if protocol.result in SETTLED_RESULTS:
-			_update_protocol_reference(protocol, file_doc)
-			return
-
-		# Copy from an original validation for the same hashes + ruleset
-		source = _find_original_validation(content_hash, file_hash, ruleset_hash, exclude=protocol.name)
-		if source:
-			_apply_copied_validation(protocol, source)
-			_update_protocol_reference(protocol, file_doc)
+	# Schematron in this app is CII-oriented; UBL etc. cannot be checked yet
+	if einvoice_format != EInvoiceFormat.CII or profile is None:
+		if not protocol:
+			protocol = _new_protocol_doc(file_doc, xml_bytes, einvoice_format, profile_label)
+		_mark_unsupported(protocol, einvoice_format)
+		if file_doc.attached_to_doctype:
+			protocol.reference_doctype = file_doc.attached_to_doctype
+			protocol.reference_name = file_doc.attached_to_name
+			protocol.company = _company_from_reference(
+				file_doc.attached_to_doctype, file_doc.attached_to_name
+			)
+		if protocol.is_new():
+			_insert_protocol_doc(protocol)
+		else:
 			protocol.flags.ignore_links = True
 			protocol.save(ignore_permissions=True)
-			return
+		return
 
-		# Schematron in this app is CII-oriented; UBL etc. cannot be checked yet
-		if einvoice_format != EInvoiceFormat.CII or profile is None:
-			_mark_unsupported(protocol, einvoice_format)
-			_update_protocol_reference(protocol, file_doc)
-			protocol.flags.ignore_links = True
-			protocol.save(ignore_permissions=True)
-			return
-
-		xml_string = xml_bytes.decode("utf-8")
+	xml_string = xml_bytes.decode("utf-8")
+	try:
 		errors, warnings = get_validation_errors(xml_string, profile)
 		if profile == EInvoiceProfile.XRECHNUNG:
 			basic_errors, basic_warnings = get_validation_errors(xml_string, EInvoiceProfile.EN16931)
 			errors = list(errors) + list(basic_errors)
 			warnings = list(warnings) + list(basic_warnings)
-
+	except UnsafeXMLError as exc:
+		# detect_einvoice_format may still accept DOCTYPE XML; record Invalid instead of
+		# only writing an Error Log (and formerly leaving a Pending stub).
 		store_validation_result(
 			file_doc=file_doc,
 			xml_bytes=xml_bytes,
 			einvoice_format=einvoice_format.value,
 			invoice_profile=profile.value,
-			errors=errors,
-			warnings=warnings,
+			errors=[str(exc)],
+			warnings=[],
 		)
+		return
+
+	store_validation_result(
+		file_doc=file_doc,
+		xml_bytes=xml_bytes,
+		einvoice_format=einvoice_format.value,
+		invoice_profile=profile.value,
+		errors=errors,
+		warnings=warnings,
+	)
 
 
 def store_validation_result(
@@ -488,73 +324,41 @@ def store_validation_result(
 	file_hash = _sha256(xml_bytes)
 	ruleset_hash = get_ruleset_hash(invoice_profile) if invoice_profile else ""
 
+	stylesheet = ""
+	if invoice_profile:
+		try:
+			stylesheet = PROFILE_TO_XSL.get(EInvoiceProfile(invoice_profile), "")
+		except ValueError:
+			stylesheet = ""
+
+	validator_label = VALIDATOR_NAME
+	if stylesheet:
+		validator_label = f"{VALIDATOR_NAME} / {stylesheet}"
+
+	values = {
+		"result": "Invalid" if errors else "Valid",
+		"validation_timestamp": now_datetime(),
+		"einvoice_format": einvoice_format,
+		"invoice_profile": invoice_profile,
+		"file": file_name,
+		"file_name": display_name,
+		"content_hash": content_hash,
+		"file_hash": file_hash,
+		"ruleset_hash": ruleset_hash,
+		"reference_doctype": attached_doctype,
+		"reference_name": attached_name,
+		"company": _company_from_reference(attached_doctype, attached_name),
+		"validator": validator_label,
+		"validator_version": get_validator_version(invoice_profile),
+		"error_count": len(errors),
+		"warning_count": len(warnings),
+		"message_count": len(errors) + len(warnings),
+		"validation_errors": "\n".join(errors) if errors else "",
+		"validation_warnings": "\n".join(warnings) if warnings else "",
+	}
+
 	def _persist():
 		protocol = _find_protocol_for_file(file_name) if file_name else None
-
-		# Prefer copying an existing original validation for these hashes + ruleset
-		if not protocol or protocol.result == "Pending":
-			source = _find_original_validation(
-				content_hash,
-				file_hash,
-				ruleset_hash,
-				exclude=protocol.name if protocol else None,
-			)
-			if source:
-				company = _company_from_reference(attached_doctype, attached_name)
-				if not protocol:
-					protocol = frappe.new_doc("E Invoice Protocol")
-					protocol.detection_timestamp = now_datetime()
-					protocol.file = file_name
-					protocol.file_name = display_name
-					protocol.content_hash = content_hash
-					protocol.file_hash = file_hash
-					protocol.reference_doctype = attached_doctype
-					protocol.reference_name = attached_name
-					protocol.company = company
-					_apply_copied_validation(protocol, source)
-					return _insert_protocol_doc(protocol)
-				_apply_copied_validation(protocol, source)
-				protocol.reference_doctype = attached_doctype
-				protocol.reference_name = attached_name
-				protocol.company = company
-				protocol.flags.ignore_links = True
-				protocol.save(ignore_permissions=True)
-				return protocol
-
-		stylesheet = ""
-		if invoice_profile:
-			try:
-				stylesheet = PROFILE_TO_XSL.get(EInvoiceProfile(invoice_profile), "")
-			except ValueError:
-				stylesheet = ""
-
-		validator_label = VALIDATOR_NAME
-		if stylesheet:
-			validator_label = f"{VALIDATOR_NAME} / {stylesheet}"
-
-		values = {
-			"result": "Invalid" if errors else "Valid",
-			"validation_timestamp": now_datetime(),
-			"einvoice_format": einvoice_format,
-			"invoice_profile": invoice_profile,
-			"file": file_name,
-			"file_name": display_name,
-			"content_hash": content_hash,
-			"file_hash": file_hash,
-			"ruleset_hash": ruleset_hash,
-			"copied_from": None,
-			"reference_doctype": attached_doctype,
-			"reference_name": attached_name,
-			"company": _company_from_reference(attached_doctype, attached_name),
-			"validator": validator_label,
-			"validator_version": get_validator_version(invoice_profile),
-			"error_count": len(errors),
-			"warning_count": len(warnings),
-			"message_count": len(errors) + len(warnings),
-			"validation_errors": "\n".join(errors) if errors else "",
-			"validation_warnings": "\n".join(warnings) if warnings else "",
-		}
-
 		if protocol:
 			protocol.update(values)
 			if not protocol.detection_timestamp:
@@ -568,9 +372,6 @@ def store_validation_result(
 		doc.update(values)
 		return _insert_protocol_doc(doc)
 
-	if file_name:
-		with frappe.db.advisory_lock(_file_lock_key(file_name), timeout=FILE_LOCK_TIMEOUT):
-			return _persist()
 	return _persist()
 
 
@@ -580,12 +381,6 @@ def store_validation_from_import(import_doc, xml_bytes: bytes, errors: list[str]
 	Call after ``attach_files_to_document`` (parent ``on_update`` hook). Looking up
 	the File in ``before_save`` is too early: Frappe attaches owned uploads then.
 	"""
-	settings = _get_protocol_settings()
-	if settings["create_protocol_on_upload"] == UPLOAD_MODE_NONE:
-		return
-	if "E Invoice Import" not in settings["protocol_doctypes"]:
-		return
-
 	file_url = import_doc.get("einvoice")
 	# Prefer the File attached to this import - file_url alone can match another doc's copy
 	file_doc = _find_attached_file(
@@ -612,43 +407,20 @@ def store_validation_from_import(import_doc, xml_bytes: bytes, errors: list[str]
 	)
 
 
-def xml_content_hash(xml_bytes: bytes) -> str:
-	"""SHA-256 of XML bytes (stored as protocol file_hash)."""
-	return _sha256(xml_bytes)
-
-
-def reuse_validation_for_hashes(
-	content_hash: str | None,
-	file_hash: str | None,
-	*,
-	ruleset_hash: str | None = None,
-	invoice_profile: str | None = None,
-) -> tuple[list[str], list[str], str] | None:
-	"""Return (errors, warnings, result) from an original protocol for these hashes + ruleset."""
-	if ruleset_hash is None:
-		ruleset_hash = get_ruleset_hash(invoice_profile) if invoice_profile else ""
-	protocol = _find_original_validation(content_hash, file_hash, ruleset_hash)
-	if not protocol:
-		return None
-	errors = [line for line in (protocol.validation_errors or "").split("\n") if line]
-	warnings = [line for line in (protocol.validation_warnings or "").split("\n") if line]
-	return errors, warnings, protocol.result
-
-
-def _ensure_protocol_for_file(file_doc):
-	"""Return the protocol for this File, creating a stub if needed (file-locked)."""
-	with frappe.db.advisory_lock(_file_lock_key(file_doc.name), timeout=FILE_LOCK_TIMEOUT):
-		protocol = _find_protocol_for_file(file_doc.name)
-		if protocol:
-			return protocol
-
-		xml_bytes = _read_xml_bytes_quiet(file_doc)
-		if not xml_bytes:
-			return None
-		einvoice_format = detect_einvoice_format(xml_bytes)
-		if not einvoice_format:
-			return None
-		return _insert_protocol_stub(file_doc, xml_bytes, einvoice_format)
+def _new_protocol_doc(file_doc, xml_bytes: bytes, einvoice_format: EInvoiceFormat, profile_label: str | None):
+	"""Build an unsaved protocol shell; caller must set *Result* before insert."""
+	doc = frappe.new_doc("E Invoice Protocol")
+	doc.detection_timestamp = now_datetime()
+	doc.einvoice_format = einvoice_format.value
+	doc.invoice_profile = profile_label
+	doc.file = file_doc.name
+	doc.file_name = file_doc.file_name
+	doc.content_hash = file_doc.content_hash
+	doc.file_hash = _sha256(xml_bytes)
+	doc.reference_doctype = file_doc.attached_to_doctype
+	doc.reference_name = file_doc.attached_to_name
+	doc.company = _company_from_reference(doc.reference_doctype, doc.reference_name)
+	return doc
 
 
 def _mark_unsupported(protocol, einvoice_format: EInvoiceFormat):
@@ -664,7 +436,6 @@ def _mark_unsupported(protocol, einvoice_format: EInvoiceFormat):
 	protocol.message_count = 0
 	protocol.validation_errors = ""
 	protocol.validation_warnings = ""
-	protocol.copied_from = None
 
 
 def _update_protocol_reference(protocol, file_doc):
@@ -689,76 +460,6 @@ def _company_from_reference(doctype: str | None, name: str | None) -> str | None
 	return frappe.db.get_value(doctype, name, "company")
 
 
-def propagate_validation_to_pending_siblings(source):
-	"""Copy validation onto other Pending protocols with the same content + file + ruleset hashes.
-
-	Covers the case where a File Manager upload left a Pending stub, then attaching
-	the same blob created a new **File** that was validated.
-	"""
-	if getattr(source.flags, "skip_validation_propagate", False):
-		return
-	if source.result not in SETTLED_RESULTS:
-		return
-	if not source.content_hash or not source.file_hash:
-		return
-
-	original = _resolve_original(source)
-	if not original:
-		# Source chain broken - callers must Schematron again instead of propagating.
-		return
-	# Pending stubs have no ruleset_hash yet; match on content + file hash only.
-	pending_names = frappe.get_all(
-		"E Invoice Protocol",
-		filters={
-			"content_hash": original.content_hash,
-			"file_hash": original.file_hash,
-			"result": "Pending",
-			"name": ("!=", source.name),
-		},
-		pluck="name",
-	)
-	for name in pending_names:
-		if name == original.name:
-			continue
-		target = frappe.get_doc("E Invoice Protocol", name)
-		_apply_copied_validation(target, original)
-		target.flags.ignore_links = True
-		target.flags.skip_validation_propagate = True
-		target.save(ignore_permissions=True)
-
-
-def _apply_copied_validation(target, source):
-	"""Copy validation fields from source; set copied_from to the original protocol."""
-	original = _resolve_original(source)
-	if not original:
-		frappe.throw(_("Cannot copy validation: original E Invoice Protocol is missing"))
-	for fieldname in _COPIED_VALIDATION_FIELDS:
-		target.set(fieldname, original.get(fieldname))
-	target.copied_from = original.name
-	if not target.file_hash:
-		target.file_hash = original.file_hash
-	if not target.content_hash:
-		target.content_hash = original.content_hash
-	if not target.ruleset_hash:
-		target.ruleset_hash = original.ruleset_hash
-
-
-def _resolve_original(protocol):
-	"""Follow copied_from until the protocol that actually ran Schematron.
-
-	Returns ``None`` when *Copied From* points at a missing row - that copy must
-	not be reused; Schematron has to run again.
-	"""
-	seen = set()
-	current = protocol
-	while current.copied_from and current.copied_from not in seen:
-		seen.add(current.name)
-		if not frappe.db.exists("E Invoice Protocol", current.copied_from):
-			return None
-		current = frappe.get_doc("E Invoice Protocol", current.copied_from)
-	return current
-
-
 def _effective_cii_profile(profile_label: str | EInvoiceProfile | None) -> EInvoiceProfile:
 	"""Profile used for Schematron: missing / unrecognized labels fall back to EN 16931."""
 	if isinstance(profile_label, EInvoiceProfile):
@@ -770,76 +471,10 @@ def _effective_cii_profile(profile_label: str | EInvoiceProfile | None) -> EInvo
 
 
 def _ruleset_hash_for_format(einvoice_format: EInvoiceFormat, profile: str | EInvoiceProfile | None) -> str:
-	"""Ruleset identity for reuse; empty when Schematron does not apply (non-CII).
-
-	Uses the same effective profile as validation so a missing or unknown guideline
-	hashes as EN 16931 and can reuse a prior result instead of re-running Schematron.
-	"""
+	"""Ruleset identity for audit; empty when Schematron does not apply (non-CII)."""
 	if einvoice_format != EInvoiceFormat.CII:
 		return ""
 	return get_ruleset_hash(_effective_cii_profile(profile))
-
-
-def _find_original_validation(
-	content_hash: str | None,
-	file_hash: str | None,
-	ruleset_hash: str | None,
-	*,
-	exclude: str | None = None,
-):
-	"""Find a completed protocol for these hashes + ruleset; prefer a non-copy row.
-
-	Older settled rows without `ruleset_hash` are kept as history and are not reused
-	when the current bundled stylesheets differ (or when the field was empty).
-	"""
-	if not content_hash or not file_hash:
-		return None
-	if ruleset_hash is None:
-		return None
-
-	filters = {
-		"content_hash": content_hash,
-		"file_hash": file_hash,
-		"ruleset_hash": ruleset_hash,
-		"result": ("in", list(SETTLED_RESULTS)),
-	}
-	if exclude:
-		filters["name"] = ("!=", exclude)
-
-	rows = frappe.get_all(
-		"E Invoice Protocol",
-		filters=filters,
-		fields=["name", "copied_from"],
-		order_by="creation asc",
-		limit=20,
-	)
-	if not rows:
-		return None
-	# Prefer a row that actually ran Schematron (no copied_from); skip dangling copies.
-	candidates = [row for row in rows if not row.copied_from] + [row for row in rows if row.copied_from]
-	for row in candidates:
-		resolved = _resolve_original(frappe.get_doc("E Invoice Protocol", row.name))
-		if resolved:
-			return resolved
-	return None
-
-
-def _get_protocol_settings() -> dict:
-	mode = UPLOAD_MODE_NONE
-	doctypes = list(DEFAULT_PROTOCOL_DOCTYPES)
-	# The settings tables may not be synced yet, and no uploads happen here.
-	if frappe.flags.in_migrate or frappe.flags.in_install:
-		return {"create_protocol_on_upload": mode, "protocol_doctypes": set(doctypes)}
-
-	if frappe.db.exists("DocType", "E Invoice Settings") and frappe.db.exists(
-		"E Invoice Settings", "E Invoice Settings"
-	):
-		settings = frappe.get_cached_doc("E Invoice Settings")
-		mode = settings.get("create_protocol_on_upload") or UPLOAD_MODE_NONE
-		rows = settings.get("protocol_doctypes") or []
-		if rows:
-			doctypes = [row.document_type for row in rows if row.document_type]
-	return {"create_protocol_on_upload": mode, "protocol_doctypes": set(doctypes)}
 
 
 def _candidate_kind(doc) -> str | None:
@@ -876,7 +511,7 @@ def _read_xml_bytes_quiet(file_doc) -> bytes | None:
 def _cheap_profile(xml_bytes: bytes, einvoice_format: EInvoiceFormat) -> str | None:
 	"""Read profile / guideline without Schematron."""
 	try:
-		root = fromstring(xml_bytes)
+		root = fromstring(xml_bytes, parser=_SAFE_XML_PARSER)
 	except Exception:
 		return None
 
@@ -913,55 +548,16 @@ def _find_protocol_for_file(file_name: str | None):
 	return frappe.get_doc("E Invoice Protocol", name) if name else None
 
 
-def _enqueue_for_file(method: str, file_name: str, *, job_suffix: str):
+def _enqueue_for_file(method: str, file_name: str):
 	"""Enqueue a per-File job; dedupe so workers do not pile up for the same file."""
 	frappe.enqueue(
 		method,
 		queue="short",
 		enqueue_after_commit=True,
 		file_name=file_name,
-		job_id=f"einvoice-protocol-{job_suffix}-{file_name}",
+		job_id=f"einvoice-protocol-validate-{file_name}",
 		deduplicate=True,
 	)
-
-
-def _file_lock_key(file_name: str) -> str:
-	return f"einvoice-protocol-file:{file_name}"
-
-
-def _hash_lock_key(content_hash: str | None, file_hash: str | None, ruleset_hash: str | None) -> str:
-	return f"einvoice-protocol-hash:{content_hash}:{file_hash}:{ruleset_hash or ''}"
-
-
-def _insert_protocol_stub(file_doc, xml_bytes: bytes, einvoice_format: EInvoiceFormat):
-	"""Build and insert a protocol stub. Caller must hold the file advisory lock."""
-	content_hash = file_doc.content_hash
-	file_hash = _sha256(xml_bytes)
-	profile = _cheap_profile(xml_bytes, einvoice_format)
-	ruleset_hash = _ruleset_hash_for_format(einvoice_format, profile)
-
-	doc = frappe.new_doc("E Invoice Protocol")
-	doc.result = "Pending"
-	doc.detection_timestamp = now_datetime()
-	doc.einvoice_format = einvoice_format.value
-	doc.invoice_profile = profile
-	doc.file = file_doc.name
-	doc.file_name = file_doc.file_name
-	doc.content_hash = content_hash
-	doc.file_hash = file_hash
-	doc.reference_doctype = file_doc.attached_to_doctype
-	doc.reference_name = file_doc.attached_to_name
-	doc.company = _company_from_reference(doc.reference_doctype, doc.reference_name)
-
-	# Same blob + XML + ruleset already settled elsewhere: copy result, skip Schematron
-	source = _find_original_validation(content_hash, file_hash, ruleset_hash)
-	if source:
-		_apply_copied_validation(doc, source)
-	elif einvoice_format != EInvoiceFormat.CII:
-		# Schematron in this app is CII-oriented
-		_mark_unsupported(doc, einvoice_format)
-
-	return _insert_protocol_doc(doc)
 
 
 def _insert_protocol_doc(doc):

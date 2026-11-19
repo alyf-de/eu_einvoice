@@ -8,6 +8,7 @@ from frappe.utils import parse_json
 
 from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import get_xml_bytes
 from eu_einvoice.european_e_invoice.einvoice import get_einvoice, get_generator_class
+from eu_einvoice.saxon import UnsafeXMLError
 from eu_einvoice.visualization import render_einvoice_html
 
 # Bound IN-filter size for File / Protocol lookups (DoS via huge identifier lists).
@@ -54,7 +55,7 @@ def files_with_protocol(identifiers: str | list) -> dict[str, str]:
 		fields=["file", "result"],
 		limit=len(file_names),
 	)
-	return {row.file: row.result or "Pending" for row in rows if row.file}
+	return {row.file: row.result for row in rows if row.file and row.result}
 
 
 @frappe.whitelist(methods=["GET", "POST"])
@@ -86,6 +87,8 @@ def render_from_file(file_name: str, lang: str | None = None) -> dict:
 def _safe_render(xml_bytes: bytes, lang: str | None) -> str:
 	try:
 		return render_einvoice_html(xml_bytes, lang=_viewer_lang(lang))
+	except UnsafeXMLError:
+		frappe.throw(_("XML with a DOCTYPE declaration cannot be visualized."))
 	except ValueError:
 		frappe.throw(_("Unsupported e-invoice format for visualization."))
 	except Exception:

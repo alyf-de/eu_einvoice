@@ -13,6 +13,5 @@ frappe.listview_settings["E Invoice Protocol"] = {
 		if (doc.result === "Unsupported") {
 			return [__("Unsupported"), "grey", "result,=,Unsupported"];
 		}
-		return [__("Pending"), "orange", "result,=,Pending"];
 	},
 };

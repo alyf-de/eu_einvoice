@@ -19,7 +19,6 @@
   "content_hash",
   "file_hash",
   "ruleset_hash",
-  "copied_from",
   "reference_section",
   "reference_doctype",
   "column_break_ref",
@@ -43,12 +42,11 @@
    "label": "Status"
   },
   {
-   "default": "Pending",
    "fieldname": "result",
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Result",
-   "options": "Pending\nValid\nInvalid\nUnsupported",
+   "options": "Valid\nInvalid\nUnsupported",
    "read_only": 1,
    "reqd": 1
   },
@@ -119,14 +117,6 @@
    "fieldname": "file_hash",
    "fieldtype": "Data",
    "label": "XML Hash",
-   "read_only": 1
-  },
-  {
-   "description": "Protocol that first ran Schematron for these Hash. Empty when this row is the original validation.",
-   "fieldname": "copied_from",
-   "fieldtype": "Link",
-   "label": "Copied From",
-   "options": "E Invoice Protocol",
    "read_only": 1
   },
   {
@@ -232,7 +222,7 @@
  ],
  "link_display_mode": "Search",
  "links": [],
- "modified": "2026-11-03 23:03:04.499599",
+ "modified": "2026-11-19 13:12:41.182394",
  "modified_by": "Administrator",
  "module": "European e-Invoice",
  "name": "E Invoice Protocol",

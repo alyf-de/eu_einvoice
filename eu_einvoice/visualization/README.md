@@ -1,10 +1,12 @@
 # XRechnung Visualization (vendored)
 
 HTML visualization stylesheets from
-[itplr-kosit/xrechnung-visualization](https://github.com/itplr-kosit/xrechnung-visualization)
-(Apache License 2.0).
+[itplr-kosit/xrechnung-visualization](https://github.com/itplr-kosit/xrechnung-visualization).
+Upstream license: Apache-2.0 (`LICENSE` in this folder).
 
 **Pinned release:** `v2026-10-13` (compatible with XRechnung 3.0)
+
+Vendored KoSIT files are excluded from whitespace / prettier / eslint hooks so a refresh can stay byte-identical to the upstream tag.
 
 ## Included files
 

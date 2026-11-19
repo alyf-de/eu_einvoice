@@ -73,9 +73,6 @@ If you use a separate field for the sales invoice number, configure the field na
 
 ### Protocol
 
-Optional audit trail for uploaded e-invoice files. On **E Invoice Settings** → *Protocol*:
-
-- Set *Create Protocol on Upload* to `"None"`, `"Only selected DocTypes"`, or `"All files"`.
-- Maintain *Protocol DocTypes* (defaults **E Invoice Import** and **Purchase Invoice**).
+**E Invoice Protocol** is created automatically when an e-invoice **File** is attached to **E Invoice Import** or **Purchase Invoice**. There is nothing to configure on **E Invoice Settings** for protocol.
 
 See [Viewer and Protocol](/app/docs/en/eu_einvoice/viewer-and-protocol).

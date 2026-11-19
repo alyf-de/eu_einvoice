@@ -28,6 +28,9 @@ required_apps = ["frappe/erpnext"]
 app_include_css = "/assets/eu_einvoice/css/eu_einvoice.css"
 app_include_js = ["/assets/eu_einvoice/js/utils.js", "/assets/eu_einvoice/js/queries.js"]
 
+# Desk boot: protocol parent DocTypes for gated attachment decoration
+extend_bootinfo = "eu_einvoice.boot.boot_session"
+
 # include js, css files in header of web template
 # web_include_css = "/assets/eu_einvoice/css/eu_einvoice.css"
 # web_include_js = "/assets/eu_einvoice/js/eu_einvoice.js"
@@ -91,7 +94,6 @@ jinja = {
 
 # before_install = "eu_einvoice.install.before_install"
 after_install = "eu_einvoice.install.after_install"
-after_migrate = "eu_einvoice.european_e_invoice.protocol.ensure_default_protocol_doctypes"
 
 # Uninstallation
 # ------------
@@ -123,15 +125,8 @@ after_migrate = "eu_einvoice.european_e_invoice.protocol.ensure_default_protocol
 
 # Permissions
 # -----------
-# Permissions evaluated in scripted ways
-
-permission_query_conditions = {
-	"E Invoice Protocol": "eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol.get_permission_query_conditions",
-}
-
-has_permission = {
-	"E Invoice Protocol": "eu_einvoice.european_e_invoice.doctype.e_invoice_protocol.e_invoice_protocol.has_permission",
-}
+# **E Invoice Protocol** uses role permissions on the DocType plus *Company*
+# User Permissions. No custom has_permission / permission_query_conditions.
 
 # DocType Class
 # ---------------
@@ -151,13 +146,15 @@ doc_events = {
 		"on_submit": "eu_einvoice.european_e_invoice.einvoice.attach_xml_on_submit",
 	},
 	"File": {
-		"after_insert": "eu_einvoice.european_e_invoice.protocol.maybe_create_protocol_stub",
 		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_attach",
 		"on_trash": "eu_einvoice.european_e_invoice.protocol.delete_protocol_for_file",
 	},
-	# After frappe.core.doctype.file.utils.attach_files_to_document (* on_update):
+	# After frappe.core.doctype.file.utils.attach_files_to_document:
 	# owned orphans are attached via db.set_value (no File.on_update).
-	"*": {
+	"E Invoice Import": {
+		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_parent_attach",
+	},
+	"Purchase Invoice": {
 		"on_update": "eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_parent_attach",
 		"on_update_after_submit": (
 			"eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_parent_attach"

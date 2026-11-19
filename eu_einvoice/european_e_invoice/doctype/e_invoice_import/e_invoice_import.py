@@ -14,7 +14,7 @@ from facturx import get_xml_from_pdf
 from frappe import _, _dict
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from lxml.etree import QName, XMLSyntaxError, fromstring
+from lxml.etree import QName, XMLParser, XMLSyntaxError, fromstring
 
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile, get_profile
@@ -159,10 +159,7 @@ class EInvoiceImport(Document):
 
 	def read_values_from_einvoice(self) -> None:
 		xml_bytes = self.get_xml_bytes()
-		try:
-			root = fromstring(xml_bytes)
-		except XMLSyntaxError:
-			frappe.throw(_("The uploaded file does not contain valid XML data."))
+		root = parse_xml_without_doctype(xml_bytes)
 
 		if is_ubl_xml(root):
 			frappe.throw(
@@ -225,68 +222,27 @@ class EInvoiceImport(Document):
 		self.validation_errors = ""
 		self.validation_warnings = ""
 
-		from eu_einvoice.european_e_invoice.protocol import (
-			reuse_validation_for_hashes,
-			xml_content_hash,
-		)
-
-		# Schematron at most once per content_hash + file_hash + ruleset_hash
-		content_hash = None
-		file_url = self.get("einvoice")
-		if file_url and self.name:
-			# Prefer this import's attachment; file_url alone can match another copy
-			content_hash = frappe.db.get_value(
-				"File",
-				{
-					"file_url": file_url,
-					"attached_to_doctype": self.doctype,
-					"attached_to_name": self.name,
-				},
-				"content_hash",
+		xml_string = xml_bytes.decode("utf-8")
+		try:
+			profile = EInvoiceProfile(self.profile)
+			validation_errors, validation_warnings = get_validation_errors(xml_string, profile)
+			# Match outbound / protocol: XRechnung also requires EN 16931
+			if profile == EInvoiceProfile.XRECHNUNG:
+				basic_errors, basic_warnings = get_validation_errors(xml_string, EInvoiceProfile.EN16931)
+				validation_errors = list(validation_errors) + list(basic_errors)
+				validation_warnings = list(validation_warnings) + list(basic_warnings)
+		except Exception:
+			frappe.log_error(
+				title="E Invoice schematron validation",
+				reference_doctype=self.doctype,
+				reference_name=self.name,
 			)
-		if file_url and not content_hash:
-			# Owned orphan (File Manager upload) - attach_files links it in on_update
-			content_hash = frappe.db.get_value(
-				"File",
-				{
-					"file_url": file_url,
-					"attached_to_doctype": ["is", "not set"],
-					"attached_to_name": ["is", "not set"],
-					"owner": frappe.session.user,
-				},
-				"content_hash",
+			frappe.msgprint(
+				_("Could not validate E Invoice schematron. See Error Log for details."),
+				alert=True,
+				indicator="orange",
 			)
-		if file_url and not content_hash:
-			content_hash = frappe.db.get_value("File", {"file_url": file_url}, "content_hash")
-		reused = reuse_validation_for_hashes(
-			content_hash,
-			xml_content_hash(xml_bytes),
-			invoice_profile=self.get("profile"),
-		)
-		if reused:
-			validation_errors, validation_warnings, _result = reused
-		else:
-			xml_string = xml_bytes.decode("utf-8")
-			try:
-				profile = EInvoiceProfile(self.profile)
-				validation_errors, validation_warnings = get_validation_errors(xml_string, profile)
-				# Match outbound / protocol: XRechnung also requires EN 16931
-				if profile == EInvoiceProfile.XRECHNUNG:
-					basic_errors, basic_warnings = get_validation_errors(xml_string, EInvoiceProfile.EN16931)
-					validation_errors = list(validation_errors) + list(basic_errors)
-					validation_warnings = list(validation_warnings) + list(basic_warnings)
-			except Exception:
-				frappe.log_error(
-					title="E Invoice schematron validation",
-					reference_doctype=self.doctype,
-					reference_name=self.name,
-				)
-				frappe.msgprint(
-					_("Could not validate E Invoice schematron. See Error Log for details."),
-					alert=True,
-					indicator="orange",
-				)
-				return
+			return
 
 		if any(validation_errors):
 			self.e_invoice_is_correct = 0
@@ -613,6 +569,25 @@ def get_create_purchase_invoice_action() -> dict:
 		"label": _("Create Purchase Invoice"),
 		"client_action": "eu_einvoice.utils.new_purchase_invoice",
 	}
+
+
+def parse_xml_without_doctype(xml_bytes: bytes):
+	"""Return the root element of an XML file from a third party.
+
+	EN 16931 invoices do not need a DOCTYPE. We reject it, so that no parser processes DTDs or entities.
+	"""
+	parser = XMLParser(resolve_entities=False, load_dtd=False, dtd_validation=False, no_network=True)
+	try:
+		root = fromstring(xml_bytes, parser)
+	except XMLSyntaxError:
+		frappe.throw(_("The uploaded file does not contain valid XML data."))
+
+	if root.getroottree().docinfo.doctype:
+		frappe.throw(
+			_("The uploaded file contains a document type definition (DOCTYPE). This is not allowed.")
+		)
+
+	return root
 
 
 def is_ubl_xml(root) -> bool:

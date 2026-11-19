@@ -7,11 +7,8 @@ const js = require("@eslint/js");
 
 export default [
 	{
-		// Vendored KoSIT XRechnung visualization (AMD / FileSaver); do not lint upstream.
-		ignores: [
-			"eu_einvoice/visualization/FileSaver-v2.0.5.js",
-			"eu_einvoice/visualization/xrechnung-viewer.js",
-		],
+		// Vendored KoSIT XRechnung visualization; keep upstream files unlinted.
+		ignores: ["eu_einvoice/visualization/**"],
 	},
 	js.configs.recommended,
 	{

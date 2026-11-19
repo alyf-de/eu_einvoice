@@ -2,17 +2,30 @@ from __future__ import annotations
 
 import hashlib
 from functools import lru_cache
-from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 from lxml import objectify
-from saxonche import PySaxonProcessor
 
+from eu_einvoice.saxon import get_saxon_version, transform_to_string
 from eu_einvoice.utils import EInvoiceProfile
-from eu_einvoice.xml_security import strip_xml_doctype
+
+# Re-export for callers / tests that still import from schematron
+__all__ = [
+	"PROFILE_TO_XSL",
+	"extract_failed_asserts",
+	"get_errors_from_stylesheet",
+	"get_ruleset_hash",
+	"get_saxon_version",
+	"get_validation_errors",
+	"get_validation_report",
+	"get_validator_version",
+	"stylesheets_for_profile",
+]
 
 SCHEMATRON_DIR = Path(__file__).parent
 
+# Bundled stylesheet file names. Exact ruleset pins live in README.md and in
+# ruleset_hash (SHA-256 of these files) - do not keep a second hand-written version table.
 PROFILE_TO_XSL = {
 	EInvoiceProfile.BASIC: "FACTUR-X_BASIC.xsl",
 	EInvoiceProfile.EN16931: "EN16931-CII-validation-preprocessed.xsl",
@@ -20,46 +33,19 @@ PROFILE_TO_XSL = {
 	EInvoiceProfile.XRECHNUNG: "XRechnung-CII-validation.xsl",
 }
 
-# Ruleset pins for the bundled stylesheets (see README.md). Not the app version.
-PROFILE_TO_RULESET_VERSION = {
-	EInvoiceProfile.BASIC: "Factur-X 1.07.2 BASIC",
-	EInvoiceProfile.EN16931: "EN 16931 CII (ConnectingEurope)",
-	EInvoiceProfile.EXTENDED: "Factur-X 1.07.2 EXTENDED",
-	# XR-MAJOR-MINOR-VERSION in XRechnung-CII-validation.xsl
-	EInvoiceProfile.XRECHNUNG: "XRechnung 3.0",
-}
-
 
 def get_validation_errors(xml_string: str, profile: EInvoiceProfile):
 	return get_errors_from_stylesheet(xml_string, PROFILE_TO_XSL[profile])
 
 
-@lru_cache(maxsize=1)
-def get_saxon_version() -> str:
-	"""Return the installed SaxonC engine version (package or processor)."""
-	try:
-		with PySaxonProcessor(license=False) as proc:
-			if proc.version:
-				return str(proc.version)
-	except Exception:
-		pass
-	try:
-		return f"saxonche {version('saxonche')}"
-	except PackageNotFoundError:
-		return "SaxonC unknown"
-
-
 def get_validator_version(profile: EInvoiceProfile | str | None = None) -> str:
-	"""Human-readable ruleset + SaxonC version for audit logs / protocol."""
-	ruleset = None
-	if profile is not None:
-		try:
-			profile_enum = profile if isinstance(profile, EInvoiceProfile) else EInvoiceProfile(profile)
-			ruleset = PROFILE_TO_RULESET_VERSION.get(profile_enum)
-		except ValueError:
-			ruleset = None
-	if not ruleset:
-		ruleset = "Schematron (bundled)"
+	"""Stylesheet file name(s) + SaxonC version for audit logs / protocol.
+
+	Exact ruleset identity is ``ruleset_hash``; this string only names which
+	bundled files ran so Schematron updates need not touch a second version map.
+	"""
+	names = stylesheets_for_profile(profile)
+	ruleset = ", ".join(names) if names else "Schematron (bundled)"
 	return f"{ruleset}; {get_saxon_version()}"
 
 
@@ -127,12 +113,5 @@ def extract_failed_asserts(xml: bytes) -> tuple[list[str], list[str]]:
 
 
 def get_validation_report(xml_string: str, stylesheet_file: str) -> bytes:
-	# Same SaxonC XXE/SSRF surface as visualization - never parse untrusted DOCTYPE.
-	xml_string = strip_xml_doctype(xml_string)
-	with PySaxonProcessor(license=False) as proc:
-		xslt30_processor = proc.new_xslt30_processor()
-		input_node = proc.parse_xml(xml_text=xml_string)
-		executable = xslt30_processor.compile_stylesheet(stylesheet_file=stylesheet_file)
-		report = executable.transform_to_string(xdm_node=input_node)
-
-	return report.encode("utf-8")
+	# DOCTYPE / DTD rejected by shared Saxon DISALLOW_DOCTYPE (see eu_einvoice.saxon).
+	return transform_to_string(xml_string, stylesheet_file).encode("utf-8")

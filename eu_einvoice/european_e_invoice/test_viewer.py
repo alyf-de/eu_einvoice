@@ -9,12 +9,7 @@ from frappe import _
 from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice import viewer as viewer_module
-from eu_einvoice.european_e_invoice.protocol import (
-	UPLOAD_MODE_ALL,
-	UPLOAD_MODE_NONE,
-	create_protocol_stub_from_file,
-	store_validation_result,
-)
+from eu_einvoice.european_e_invoice.protocol import store_validation_result
 from eu_einvoice.european_e_invoice.viewer import (
 	_protocol_for_file,
 	_xml_from_document,
@@ -36,18 +31,10 @@ class TestEInvoiceViewer(IntegrationTestCase):
 		super().setUp()
 		frappe.set_user("Administrator")
 		frappe.db.delete("E Invoice Protocol")
-		settings = frappe.get_single("E Invoice Settings")
-		settings.create_protocol_on_upload = UPLOAD_MODE_ALL
-		settings.flags.ignore_permissions = True
-		settings.save()
 
 	def tearDown(self):
 		frappe.set_user("Administrator")
 		frappe.db.delete("E Invoice Protocol")
-		settings = frappe.get_single("E Invoice Settings")
-		settings.create_protocol_on_upload = UPLOAD_MODE_NONE
-		settings.flags.ignore_permissions = True
-		settings.save()
 		super().tearDown()
 
 	def _make_private_xml_file(self) -> str:
@@ -61,16 +48,14 @@ class TestEInvoiceViewer(IntegrationTestCase):
 			}
 		)
 		with patch(
-			"eu_einvoice.european_e_invoice.protocol.maybe_create_protocol_stub",
+			"eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_attach",
 			return_value=None,
 		):
 			file_doc.insert(ignore_permissions=True)
 		return file_doc.name
 
-	def test_files_with_protocol_for_readable_file(self):
-		file_name = self._make_private_xml_file()
+	def _store_valid_protocol(self, file_name: str):
 		file_doc = frappe.get_doc("File", file_name)
-		create_protocol_stub_from_file(file_name)
 		store_validation_result(
 			file_doc=file_doc,
 			xml_bytes=CII_FIXTURE.read_bytes(),
@@ -79,6 +64,11 @@ class TestEInvoiceViewer(IntegrationTestCase):
 			errors=[],
 			warnings=[],
 		)
+
+	def test_files_with_protocol_for_readable_file(self):
+		file_name = self._make_private_xml_file()
+		file_doc = frappe.get_doc("File", file_name)
+		self._store_valid_protocol(file_name)
 
 		result = files_with_protocol([file_name])
 		self.assertEqual(result.get(file_name), "Valid")
@@ -89,7 +79,7 @@ class TestEInvoiceViewer(IntegrationTestCase):
 	def test_files_with_protocol_hides_unreadable_files(self):
 		"""When File get_list returns nothing, no protocol status is leaked."""
 		file_name = self._make_private_xml_file()
-		create_protocol_stub_from_file(file_name)
+		self._store_valid_protocol(file_name)
 
 		with patch(
 			"eu_einvoice.european_e_invoice.viewer.frappe.get_list",
@@ -100,7 +90,7 @@ class TestEInvoiceViewer(IntegrationTestCase):
 	def test_files_with_protocol_without_protocol_permission(self):
 		"""Missing Protocol read must not raise during attachment decoration."""
 		file_name = self._make_private_xml_file()
-		create_protocol_stub_from_file(file_name)
+		self._store_valid_protocol(file_name)
 
 		with patch(
 			"eu_einvoice.european_e_invoice.viewer.frappe.has_permission",
@@ -111,7 +101,7 @@ class TestEInvoiceViewer(IntegrationTestCase):
 	def test_protocol_for_file_without_protocol_permission(self):
 		"""Viewer may omit the protocol link when the caller cannot read Protocol."""
 		file_name = self._make_private_xml_file()
-		create_protocol_stub_from_file(file_name)
+		self._store_valid_protocol(file_name)
 
 		with patch(
 			"eu_einvoice.european_e_invoice.viewer.frappe.has_permission",
@@ -148,11 +138,7 @@ class TestEInvoiceViewer(IntegrationTestCase):
 				render_from_file(file_name)
 
 	def test_xml_from_document_denies_unreadable_attach_url(self):
-		"""Attach URLs must not be read from disk without File permission.
-
-		A draft can keep another private file's URL after a failed attachment
-		insert; visualization must not bypass File checks via Path.read_bytes.
-		"""
+		"""Attach URLs must not be read from disk without File permission."""
 		file_name = self._make_private_xml_file()
 		file_url = frappe.db.get_value("File", file_name, "file_url")
 		doc = frappe._dict(
@@ -195,7 +181,7 @@ class TestEInvoiceViewer(IntegrationTestCase):
 			}
 		)
 		with patch(
-			"eu_einvoice.european_e_invoice.protocol.maybe_create_protocol_stub",
+			"eu_einvoice.european_e_invoice.protocol.maybe_validate_protocol_on_attach",
 			return_value=None,
 		):
 			file_doc.insert(ignore_permissions=True)
