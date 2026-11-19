@@ -70,3 +70,9 @@ eInvoice validation can be time-consuming. Use **E Invoice Settings** to configu
   - *Error Message*: Block save/submit and show errors
 
 If you use a separate field for the sales invoice number, configure the field name in **E Invoice Settings** -> **Sales Invoice Number**.
+
+### Protocol
+
+**E Invoice Protocol** is created automatically when an e-invoice **File** is attached to **E Invoice Import** or **Purchase Invoice**. There is nothing to configure on **E Invoice Settings** for protocol.
+
+See [Viewer and Protocol](/app/docs/en/eu_einvoice/viewer-and-protocol).

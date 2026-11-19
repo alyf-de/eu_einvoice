@@ -6,6 +6,10 @@ const globals = require("globals");
 const js = require("@eslint/js");
 
 export default [
+	{
+		// Vendored KoSIT XRechnung visualization; keep upstream files unlinted.
+		ignores: ["eu_einvoice/visualization/**"],
+	},
 	js.configs.recommended,
 	{
 		languageOptions: {

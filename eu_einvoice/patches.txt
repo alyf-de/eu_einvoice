@@ -9,3 +9,4 @@ execute:from eu_einvoice.install import make_custom_fields; make_custom_fields()
 eu_einvoice.patches.set_profile_in_sales_invoice # 3
 eu_einvoice.patches.set_profile_in_import
 eu_einvoice.patches.set_default_settings
+eu_einvoice.patches.clear_pending_protocol_result

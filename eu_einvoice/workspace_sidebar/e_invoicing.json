@@ -19,6 +19,19 @@
    "type": "Link"
   },
   {
+   "child": 1,
+   "collapsible": 1,
+   "icon": "shield-check",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "E Invoice Protocol",
+   "link_to": "E Invoice Protocol",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+
+  {
    "child": 0,
    "collapsible": 1,
    "icon": "receipt-euro",
