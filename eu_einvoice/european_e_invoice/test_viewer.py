@@ -11,6 +11,7 @@ from frappe.tests import IntegrationTestCase
 from eu_einvoice.european_e_invoice import viewer as viewer_module
 from eu_einvoice.european_e_invoice.protocol import store_validation_result
 from eu_einvoice.european_e_invoice.viewer import (
+	_protocol_for_document,
 	_protocol_for_file,
 	_xml_from_document,
 	files_with_protocol,
@@ -188,3 +189,23 @@ class TestEInvoiceViewer(IntegrationTestCase):
 
 		with self.assertRaises(frappe.ValidationError):
 			render_from_file(file_doc.name)
+
+	def test_protocol_for_document_requires_matching_xml_hash(self):
+		"""Generated / different preview XML must not open another attachment's protocol."""
+		file_name = self._make_private_xml_file()
+		self._store_valid_protocol(file_name)
+		frappe.db.set_value(
+			"File",
+			file_name,
+			{"attached_to_doctype": "Sales Invoice", "attached_to_name": "SI-VIEWER-TEST"},
+			update_modified=False,
+		)
+
+		doc = frappe._dict(doctype="Sales Invoice", name="SI-VIEWER-TEST")
+		# Same bytes as the attached protocol → link is fine.
+		self.assertEqual(
+			_protocol_for_document(doc, CII_FIXTURE.read_bytes()),
+			frappe.db.get_value("E Invoice Protocol", {"file": file_name}, "name"),
+		)
+		# Fresh / other XML (typical Sales Invoice generator path) → no unrelated Open Protocol.
+		self.assertIsNone(_protocol_for_document(doc, b'<?xml version="1.0"?><other/>'))

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+
 import frappe
 from frappe import _
 from frappe.utils import parse_json
@@ -67,7 +69,7 @@ def render_from_document(doctype: str, name: str, lang: str | None = None) -> di
 	xml_bytes = _xml_from_document(doc)
 	return {
 		"html": _safe_render(xml_bytes, lang),
-		"protocol": _protocol_for_document(doc),
+		"protocol": _protocol_for_document(doc, xml_bytes),
 	}
 
 
@@ -120,8 +122,15 @@ def _protocol_for_file(file_name: str | None) -> str | None:
 	return names[0] if names else None
 
 
-def _protocol_for_document(doc) -> str | None:
-	"""Resolve protocol via known Attach fields or Files attached to this document."""
+def _protocol_for_document(doc, xml_bytes: bytes) -> str | None:
+	"""Return a protocol for this document only when its XML hash matches the preview.
+
+	**Sales Invoice** (and other generators) build fresh XML via ``get_einvoice``, while
+	attachments may still have their own protocols. Matching on *XML Hash* (`file_hash`)
+	avoids **Open Protocol** pointing at an unrelated attachment.
+	"""
+	file_hash = hashlib.sha256(xml_bytes).hexdigest()
+
 	for fieldname in ("einvoice", "supplier_invoice_file"):
 		file_url = doc.get(fieldname)
 		if not file_url:
@@ -135,9 +144,13 @@ def _protocol_for_document(doc) -> str | None:
 		)
 		if not file_names:
 			continue
-		protocol = _protocol_for_file(file_names[0])
-		if protocol:
-			return protocol
+		names = _get_protocol_list(
+			filters={"file": file_names[0], "file_hash": file_hash},
+			pluck="name",
+			limit=1,
+		)
+		if names:
+			return names[0]
 
 	attached = frappe.get_list(
 		"File",
@@ -148,7 +161,7 @@ def _protocol_for_document(doc) -> str | None:
 	if not attached:
 		return None
 	names = _get_protocol_list(
-		filters={"file": ("in", attached)},
+		filters={"file": ("in", attached), "file_hash": file_hash},
 		pluck="name",
 		order_by="creation desc",
 		limit=1,
