@@ -13,6 +13,7 @@ from eu_einvoice.visualization import (
 	render_einvoice_html,
 	transform_xml,
 )
+from eu_einvoice.xml_text import decode_xml_bytes
 
 FIXTURES = Path(__file__).parent / "test_instances"
 HOSTNAME_PATH = Path("/etc/hostname")
@@ -124,3 +125,22 @@ class TestVisualization(UnitTestCase):
 		poisoned = _cii_with_xxe_note("http://127.0.0.1:9/should-not-connect")
 		with self.assertRaises(UnsafeXMLError):
 			render_einvoice_html(poisoned, lang="en")
+
+	def test_render_decodes_iso_8859_1_bytes(self):
+		"""Regression: raw File bytes may be ISO-8859-1; UTF-8 decode must not run first."""
+		payload = (
+			b'<?xml version="1.0" encoding="ISO-8859-1"?>'
+			b'<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100">'
+			b"<rsm:ExchangedDocument>"
+			b'<ram:ID xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100">'
+			b"\xe4"
+			b"</ram:ID></rsm:ExchangedDocument></rsm:CrossIndustryInvoice>"
+		)
+		self.assertIn("\xe4", decode_xml_bytes(payload))
+		try:
+			render_einvoice_html(payload, lang="en")
+		except UnicodeDecodeError:
+			self.fail("ISO-8859-1 invoice bytes must not be decoded as UTF-8")
+		except Exception:
+			# Incomplete CII may fail XSLT; the bug under test is the decode step only.
+			pass

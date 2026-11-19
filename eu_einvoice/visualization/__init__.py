@@ -8,6 +8,7 @@ from pathlib import Path
 from lxml.etree import QName, XMLParser, fromstring
 
 from eu_einvoice.saxon import transform_to_string
+from eu_einvoice.xml_text import decode_xml_bytes
 
 VISUALIZATION_DIR = Path(__file__).parent
 VISUALIZATION_VERSION = "v2026-10-13"
@@ -88,7 +89,7 @@ def transform_xml(xml_string: str, stylesheet_name: str) -> str:
 def render_einvoice_html(xml_string: str | bytes, lang: str = "de") -> str:
 	"""Two-step KoSIT visualization: source XML -> XR intermediate -> HTML."""
 	if isinstance(xml_string, bytes):
-		xml_string = xml_string.decode("utf-8")
+		xml_string = decode_xml_bytes(xml_string)
 
 	einvoice_format = detect_einvoice_format(xml_string)
 	if not einvoice_format:

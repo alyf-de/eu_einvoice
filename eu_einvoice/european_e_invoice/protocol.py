@@ -21,6 +21,7 @@ from eu_einvoice.schematron import (
 )
 from eu_einvoice.utils import EInvoiceProfile, get_profile
 from eu_einvoice.visualization import EInvoiceFormat, detect_einvoice_format
+from eu_einvoice.xml_text import decode_xml_bytes
 
 # Untrusted invoice XML: never resolve DTDs / entities when reading profile labels.
 _SAFE_XML_PARSER = XMLParser(
@@ -252,7 +253,7 @@ def _validate_protocol_for_file(file_name: str):
 			protocol.save(ignore_permissions=True)
 		return
 
-	xml_string = xml_bytes.decode("utf-8")
+	xml_string = decode_xml_bytes(xml_bytes)
 	try:
 		errors, warnings = get_validation_errors(xml_string, profile)
 		if profile == EInvoiceProfile.XRECHNUNG:

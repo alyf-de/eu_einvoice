@@ -18,6 +18,7 @@ from lxml.etree import QName, XMLParser, XMLSyntaxError, fromstring
 
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile, get_profile
+from eu_einvoice.xml_text import decode_xml_bytes
 
 if TYPE_CHECKING:
 	from drafthorse.models.accounting import ApplicableTradeTax, MonetarySummation
@@ -222,7 +223,7 @@ class EInvoiceImport(Document):
 		self.validation_errors = ""
 		self.validation_warnings = ""
 
-		xml_string = xml_bytes.decode("utf-8")
+		xml_string = decode_xml_bytes(xml_bytes)
 		try:
 			profile = EInvoiceProfile(self.profile)
 			validation_errors, validation_warnings = get_validation_errors(xml_string, profile)
