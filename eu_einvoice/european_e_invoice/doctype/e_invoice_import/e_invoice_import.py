@@ -631,9 +631,17 @@ def get_xml_bytes(einvoice: str) -> bytes:
 
 
 def _file_content_as_bytes(file_doc) -> bytes:
-	"""Return **File** contents as bytes (``get_content`` may decode text to ``str``)."""
-	content = file_doc.get_content()
+	"""Return raw **File** bytes without guessing a text encoding.
+
+	``File.get_content()`` defaults to decoding via ``FILE_ENCODING_OPTIONS``
+	(e.g. Windows-1250 / utf-8-sig). Re-encoding that ``str`` as UTF-8 can garble
+	XML declared as another charset and drops a UTF-8 BOM, so ``file_hash`` would
+	not match the stored payload. Empty ``encodings`` keeps on-disk bytes unchanged
+	(same approach as ERPNext EDI / code list imports).
+	"""
+	content = file_doc.get_content(encodings=())
 	if isinstance(content, str):
+		# In-memory ``content`` on a new File can still be str.
 		return content.encode("utf-8")
 	return content
 

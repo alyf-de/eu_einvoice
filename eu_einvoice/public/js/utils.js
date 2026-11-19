@@ -63,7 +63,13 @@ eu_einvoice.viewer = {
 		const iframe = document.createElement("iframe");
 		// No allow-same-origin: srcdoc would share Desk origin and enable parent XSS.
 		// allow-scripts: KoSIT tab UI. allow-downloads: embedded attachment save.
-		iframe.setAttribute("sandbox", "allow-scripts allow-downloads");
+		// allow-popups (+ escape): KoSIT External_document_location uses target="_blank";
+		// without this, supporting-document links do nothing. Escape so the new tab is a
+		// normal browser window (inherited sandbox would break external pages).
+		iframe.setAttribute(
+			"sandbox",
+			"allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox"
+		);
 		iframe.setAttribute("referrerpolicy", "no-referrer");
 		iframe.style.width = "100%";
 		iframe.style.height = "70vh";

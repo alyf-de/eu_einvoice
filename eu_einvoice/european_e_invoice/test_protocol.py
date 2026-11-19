@@ -7,7 +7,10 @@ from unittest.mock import patch
 import frappe
 from frappe.tests import IntegrationTestCase
 
-from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import get_xml_bytes
+from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
+	_file_content_as_bytes,
+	get_xml_bytes,
+)
 from eu_einvoice.european_e_invoice.protocol import (
 	PROTOCOL_PARENT_DOCTYPES,
 	_changed_attach_urls,
@@ -91,6 +94,20 @@ class TestEInvoiceProtocol(IntegrationTestCase):
 		file_name = self._make_xml_file(is_private=0, file_name="public-import.xml")
 		file_doc = frappe.get_doc("File", file_name)
 		self.assertEqual(get_xml_bytes(file_doc.file_url), CII_FIXTURE.read_bytes())
+
+	def test_file_content_as_bytes_preserves_bom_and_declared_charset(self):
+		"""Regression: default File.get_content() re-decodes text and rewrites bytes as UTF-8."""
+		# UTF-8 BOM must stay so file_hash matches the stored blob.
+		with_bom = b"\xef\xbb\xbf<?xml version='1.0' encoding='UTF-8'?><root/>"
+		# Latin-1 ä (0xe4); re-encoding as UTF-8 would become c3 a4 and garble the invoice.
+		latin1 = b'<?xml version="1.0" encoding="ISO-8859-1"?><root>\xe4</root>'
+		for payload, name in ((with_bom, "bom.xml"), (latin1, "latin1.xml")):
+			with self.subTest(file_name=name):
+				file_name = self._make_file(content=payload, file_name=name, is_private=0)
+				file_doc = frappe.get_doc("File", file_name)
+				# Force a disk read (clear in-memory content left from insert).
+				file_doc.content = None
+				self.assertEqual(_file_content_as_bytes(file_doc), payload)
 
 	def test_store_validation_persists_schematron_messages(self):
 		file_name = self._make_xml_file()

@@ -20,7 +20,7 @@ The viewer uses the [KoSIT XRechnung visualization](https://github.com/itplr-kos
 
 The HTML preview is for human readability. It is not a legal archive format; keep the original XML (or PDF with embedded XML).
 
-The preview runs in a sandboxed iframe (`allow-scripts` and `allow-downloads` only - not `allow-same-origin`) so invoice HTML cannot access Desk. A Content-Security-Policy meta tag further restricts network and script sources inside the iframe.
+The preview runs in a sandboxed iframe (`allow-scripts`, `allow-downloads`, and `allow-popups` / `allow-popups-to-escape-sandbox` for KoSIT supporting-document links - not `allow-same-origin`) so invoice HTML cannot access Desk. A Content-Security-Policy meta tag further restricts network and script sources inside the iframe.
 
 ## Protocol
 
