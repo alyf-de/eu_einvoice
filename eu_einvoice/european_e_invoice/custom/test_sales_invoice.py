@@ -316,6 +316,28 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		br_o_02 = [error for error in errors if "BR-O-02" in error]
 		self.assertEqual(br_o_02, [])
 
+	def test_category_o_seller_identified_by_legal_registration(self):
+		"""BR-CO-26: without BT-31, the commercial register entry (BT-30) identifies the seller."""
+		invoice = create_sales_invoice(do_not_save=True, rate=100)
+		invoice.tax_category = self.tax_category
+		invoice.items[0].item_tax_template = self.item_tax_template
+		invoice.insert()
+		# After insert: fetch_from company.tax_id would overwrite a value set earlier.
+		invoice.company_tax_id = "DE123456789"
+
+		for legal_registration in (None, ("", "HRB 12345, Amtsgericht Köln")):
+			with self.subTest(legal_registration=legal_registration):
+				with patch.object(
+					SalesInvoiceGenerator, "_get_seller_legal_registration", return_value=legal_registration
+				):
+					xml = get_einvoice(invoice)
+				errors, _warnings = get_validation_errors(xml.decode(), EInvoiceProfile.EN16931)
+				br_co_26 = [error for error in errors if "BR-CO-26" in error]
+				if legal_registration:
+					self.assertEqual(br_co_26, [])
+				else:
+					self.assertNotEqual(br_co_26, [])
+
 	def test_category_o_keeps_seller_and_buyer_tax_registration_fc(self):
 		"""BR-O-02 only forbids VA (BT-31 / BT-48); FC may remain for seller and buyer."""
 		invoice = create_sales_invoice(do_not_save=True, rate=100)
@@ -442,6 +464,32 @@ class TestXmlAttachmentNaming(IntegrationTestCase):
 		doc = frappe._dict(name="SINV-00001", po_no="A/B", doctype="Sales Invoice")
 		base = get_xml_attachment_file_base_name(doc, pattern="{po_no}")
 		self.assertEqual(base, "A_B")
+
+
+class TestSellerLegalRegistration(IntegrationTestCase):
+	def _get(self, **register_fields):
+		return SalesInvoiceGenerator._get_seller_legal_registration(frappe._dict(register_fields))
+
+	def test_register_type_number_and_court(self):
+		self.assertEqual(
+			self._get(register_type="HRB", register_number="12345", register_court="Köln"),
+			("", "HRB 12345, Amtsgericht Köln"),
+		)
+
+	def test_without_court(self):
+		self.assertEqual(self._get(register_type="HRA", register_number="678"), ("", "HRA 678"))
+
+	def test_without_register_type(self):
+		self.assertEqual(
+			self._get(register_number=" 12345 ", register_court="Berlin (Charlottenburg)"),
+			("", "12345, Amtsgericht Berlin (Charlottenburg)"),
+		)
+
+	def test_without_register_number(self):
+		self.assertIsNone(self._get(register_type="HRB", register_court="Köln"))
+
+	def test_without_register_fields(self):
+		self.assertIsNone(self._get())
 
 
 class TestPaymentMeans(IntegrationTestCase):
