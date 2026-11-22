@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from xml.etree import ElementTree as ET
 
 import frappe
 from drafthorse.models.document import IncludedNote
@@ -16,6 +17,7 @@ from eu_einvoice.european_e_invoice.einvoice import (
 from eu_einvoice.utils import EInvoiceProfile
 
 HOOK_PATH = "eu_einvoice.european_e_invoice.test_einvoice"
+NAMESPACES = {"ram": "urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"}
 
 
 def before_einvoice_generation(doc, method=None):
@@ -147,3 +149,36 @@ class TestSkontoTerms(IntegrationTestCase):
 
 	def test_no_skonto_line_without_discount(self):
 		self.assertNotIn("#SKONTO#", self._get_xml())
+
+
+class TestLegalRegistration(IntegrationTestCase):
+	def _get_legal_organization(self, legal_registration):
+		get_seller = SalesInvoiceGenerator.get_seller
+
+		def get_seller_with_legal_registration(generator):
+			seller = get_seller(generator)
+			seller.legal_registration = legal_registration
+			return seller
+
+		invoice = create_sales_invoice(do_not_save=True)
+		invoice.einvoice_profile = EInvoiceProfile.EN16931.value
+		invoice.insert()
+		with patch.object(SalesInvoiceGenerator, "get_seller", get_seller_with_legal_registration):
+			root = ET.fromstring(get_einvoice(invoice))
+
+		return root.find(".//ram:SellerTradeParty/ram:SpecifiedLegalOrganization", NAMESPACES)
+
+	def test_legal_registration_without_scheme(self):
+		legal_organization = self._get_legal_organization(("", "HRB 12345, Amtsgericht Köln"))
+		legal_id = legal_organization.find("ram:ID", NAMESPACES)
+		self.assertEqual(legal_id.text, "HRB 12345, Amtsgericht Köln")
+		self.assertNotIn("schemeID", legal_id.attrib)
+
+	def test_legal_registration_with_scheme(self):
+		legal_organization = self._get_legal_organization(("0088", "4000001000005"))
+		legal_id = legal_organization.find("ram:ID", NAMESPACES)
+		self.assertEqual(legal_id.text, "4000001000005")
+		self.assertEqual(legal_id.attrib["schemeID"], "0088")
+
+	def test_no_legal_registration(self):
+		self.assertIsNone(self._get_legal_organization(None))
