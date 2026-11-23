@@ -21,6 +21,8 @@ required_apps = ["frappe/erpnext"]
 # 	}
 # ]
 
+develop_version = "17.x.x-develop"
+
 # Includes in <head>
 # ------------------
 
