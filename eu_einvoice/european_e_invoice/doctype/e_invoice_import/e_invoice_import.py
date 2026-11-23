@@ -11,13 +11,14 @@ from drafthorse.models.document import Document as DrafthorseDocument
 from erpnext import get_default_company
 from erpnext.edi.doctype.code_list.code_list import get_docnames_for
 from facturx import get_xml_from_pdf
-from frappe import _, _dict, get_site_path
+from frappe import _, _dict
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
 from lxml.etree import QName, XMLParser, XMLSyntaxError, fromstring
 
 from eu_einvoice.schematron import get_validation_errors
 from eu_einvoice.utils import EInvoiceProfile, get_profile
+from eu_einvoice.xml_text import decode_xml_bytes
 
 if TYPE_CHECKING:
 	from drafthorse.models.accounting import ApplicableTradeTax, MonetarySummation
@@ -221,12 +222,16 @@ class EInvoiceImport(Document):
 	def _validate_schematron(self, xml_bytes):
 		self.validation_errors = ""
 		self.validation_warnings = ""
-		xml_string = xml_bytes.decode("utf-8")
 
+		xml_string = decode_xml_bytes(xml_bytes)
 		try:
-			validation_errors, validation_warnings = get_validation_errors(
-				xml_string, EInvoiceProfile(self.profile)
-			)
+			profile = EInvoiceProfile(self.profile)
+			validation_errors, validation_warnings = get_validation_errors(xml_string, profile)
+			# Match outbound / protocol: XRechnung also requires EN 16931
+			if profile == EInvoiceProfile.XRECHNUNG:
+				basic_errors, basic_warnings = get_validation_errors(xml_string, EInvoiceProfile.EN16931)
+				validation_errors = list(validation_errors) + list(basic_errors)
+				validation_warnings = list(validation_warnings) + list(basic_warnings)
 		except Exception:
 			frappe.log_error(
 				title="E Invoice schematron validation",
@@ -248,6 +253,13 @@ class EInvoiceImport(Document):
 
 		if any(validation_warnings):
 			self.validation_warnings += "\n".join(validation_warnings)
+
+		# Defer protocol write until after attach_files (parent on_update hook).
+		self.flags.einvoice_protocol_payload = {
+			"xml_bytes": xml_bytes,
+			"errors": list(validation_errors) if validation_errors else [],
+			"warnings": list(validation_warnings) if validation_warnings else [],
+		}
 
 	def parse_seller(self, seller: TradeParty):
 		# stripped, because we use them to find the Supplier
@@ -586,10 +598,17 @@ def is_ubl_xml(root) -> bool:
 
 
 def get_xml_bytes(einvoice: str) -> bytes:
-	"""Reads the XML data from the attached XML or PDF file."""
-	file = relative_url_to_path(einvoice)
-	if file.suffix.lower() == ".pdf":
-		xml_filename, xml_bytes = get_xml_from_pdf(file.read_bytes(), check_xsd=False)
+	"""Reads the XML data from the attached XML or PDF file via the **File** content API."""
+	file_name = frappe.db.get_value("File", {"file_url": einvoice}, "name")
+	if not file_name:
+		frappe.throw(_("File not found."))
+
+	file_doc = frappe.get_doc("File", file_name)
+	content = _file_content_as_bytes(file_doc)
+	suffix = Path(file_doc.file_name or einvoice).suffix.lower()
+
+	if suffix == ".pdf":
+		xml_filename, xml_bytes = get_xml_from_pdf(content, check_xsd=False)
 		if not xml_bytes:
 			frappe.throw(
 				msg=_(
@@ -598,13 +617,13 @@ def get_xml_bytes(einvoice: str) -> bytes:
 				title=_("Not an E-Invoice"),
 				primary_action=get_create_purchase_invoice_action(),
 			)
-	elif file.suffix.lower() == ".xml":
-		xml_bytes = file.read_bytes()
+	elif suffix == ".xml":
+		xml_bytes = content
 	else:
 		frappe.throw(
 			msg=_(
 				"The format of the uploaded file ({0}) is not supported for E-Invoices. Please upload a valid E-Invoice file or create a regular Purchase Invoice manually instead."
-			).format(file.suffix),
+			).format(suffix),
 			title=_("Unsupported file format"),
 			primary_action=get_create_purchase_invoice_action(),
 		)
@@ -612,9 +631,20 @@ def get_xml_bytes(einvoice: str) -> bytes:
 	return xml_bytes
 
 
-def relative_url_to_path(url: str) -> Path:
-	"""Convert a relative URL to a file path."""
-	return Path(get_site_path(url.lstrip("/"))).resolve()
+def _file_content_as_bytes(file_doc) -> bytes:
+	"""Return raw **File** bytes without guessing a text encoding.
+
+	``File.get_content()`` defaults to decoding via ``FILE_ENCODING_OPTIONS``
+	(e.g. Windows-1250 / utf-8-sig). Re-encoding that ``str`` as UTF-8 can garble
+	XML declared as another charset and drops a UTF-8 BOM, so ``file_hash`` would
+	not match the stored payload. Empty ``encodings`` keeps on-disk bytes unchanged
+	(same approach as ERPNext EDI / code list imports).
+	"""
+	content = file_doc.get_content(encodings=())
+	if isinstance(content, str):
+		# In-memory ``content`` on a new File can still be str.
+		return content.encode("utf-8")
+	return content
 
 
 def should_map_purchase_invoice_item(source) -> bool:

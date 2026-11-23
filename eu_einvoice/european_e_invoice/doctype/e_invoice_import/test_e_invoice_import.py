@@ -12,6 +12,7 @@ from drafthorse.models.document import Document
 from drafthorse.models.party import TaxRegistration, TradeParty
 from drafthorse.models.payment import PaymentMeans
 from drafthorse.models.tradelines import LineItem
+from facturx import get_xml_from_pdf
 from frappe.tests import IntegrationTestCase
 from lxml.etree import fromstring
 from pypdf import PdfWriter
@@ -137,17 +138,16 @@ class TestEInvoiceImport(IntegrationTestCase):
 		writer.add_blank_page(width=595, height=842)
 		writer.add_attachment("factur-x.xml", make_cii_invoice_xml_with_prolog(b"<!DOCTYPE invoice>"))
 
-		doc = frappe.new_doc("E Invoice Import")
-		doc.einvoice = "/private/files/invoice.pdf"
 		with TemporaryDirectory() as directory:
 			pdf_path = Path(directory) / "invoice.pdf"
 			writer.write(pdf_path)
-			with patch(
-				"eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.relative_url_to_path",
-				return_value=pdf_path,
-			):
-				with self.assertRaises(frappe.ValidationError) as cm:
-					doc.read_values_from_einvoice()
+			_xml_filename, extracted = get_xml_from_pdf(pdf_path.read_bytes(), check_xsd=False)
+
+		self.assertIn(b"DOCTYPE", extracted)
+		doc = frappe.new_doc("E Invoice Import")
+		with patch.object(EInvoiceImport, "get_xml_bytes", return_value=extracted):
+			with self.assertRaises(frappe.ValidationError) as cm:
+				doc.read_values_from_einvoice()
 
 		self.assertIn("DOCTYPE", str(cm.exception))
 

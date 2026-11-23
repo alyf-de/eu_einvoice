@@ -1,0 +1,70 @@
+/* File status icon after the file name (not before / not inside the truncated label) */
+.eu-einvoice-view-btn {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	margin-left: 4px;
+	color: var(--text-muted);
+	line-height: 1;
+	cursor: pointer;
+}
+
+.eu-einvoice-view-btn .icon {
+	stroke: currentColor;
+}
+
+.eu-einvoice-view-btn.is-valid {
+	color: var(--green-500);
+}
+
+.eu-einvoice-view-btn.is-valid:hover {
+	color: var(--green-600, var(--green-500));
+}
+
+.eu-einvoice-view-btn.is-invalid {
+	color: var(--red-500);
+}
+
+.eu-einvoice-view-btn.is-invalid:hover {
+	color: var(--red-600, var(--red-500));
+}
+
+.eu-einvoice-view-btn.is-unsupported {
+	color: var(--gray-500, var(--text-muted));
+}
+
+.eu-einvoice-view-btn.is-unsupported:hover {
+	color: var(--gray-600, var(--text-color));
+}
+
+.eu-einvoice-view-btn.is-pending:hover {
+	color: var(--text-color);
+}
+
+.attachment-row .data-pill > div.flex {
+	/* filename may ellipsis; status icon + X stay outside this flex child */
+	min-width: 0;
+	flex: 1 1 auto;
+	overflow: hidden;
+}
+
+.attachment-row .eu-einvoice-view-btn {
+	flex-shrink: 0;
+	margin-left: 4px;
+	margin-right: 2px;
+}
+
+.attachment-row .remove-btn {
+	flex-shrink: 0;
+}
+
+.attached-file .ellipsis {
+	display: inline-flex;
+	align-items: center;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.attached-file .eu-einvoice-view-btn {
+	margin-left: 6px;
+}

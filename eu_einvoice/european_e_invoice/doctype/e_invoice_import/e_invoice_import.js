@@ -69,6 +69,12 @@ frappe.ui.form.on("E Invoice Import", {
 			attach_field.file_uploader = new frappe.ui.FileUploader(attach_field.upload_options);
 		};
 
+		if (!frm.is_new() && frm.doc.einvoice) {
+			frm.add_custom_button(__("View e-Invoice"), () => {
+				eu_einvoice.viewer.open({ doctype: frm.doc.doctype, name: frm.doc.name });
+			});
+		}
+
 		if (frm.doc.docstatus === 1) {
 			const { linked_invoice, unlinked_invoice } = frm.doc.__onload;
 			if (linked_invoice && frappe.model.can_read("Purchase Invoice")) {
@@ -99,6 +105,7 @@ frappe.ui.form.on("E Invoice Import", {
 			}
 		}
 	},
+
 	create_supplier: function (frm) {
 		frappe.model.open_mapped_doc({
 			method: "eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import.create_supplier",

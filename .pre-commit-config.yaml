@@ -2,6 +2,10 @@ exclude: "node_modules|.git"
 default_stages: [pre-commit]
 default_install_hook_types: [pre-commit, commit-msg]
 fail_fast: false
+# nodeenv's "default" currently resolves to a 27.0.0-alpha build and crashes
+# (ValueError on '0-alpha'). Use the Node already on PATH (nvm).
+default_language_version:
+  node: system
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -9,7 +13,8 @@ repos:
     hooks:
       - id: trailing-whitespace
         files: "eu_einvoice.*"
-        exclude: ".*json$|.*txt$|.*csv|.*md|.*svg"
+        # Keep KoSIT visualization vendored tree byte-identical to upstream.
+        exclude: ".*json$|.*txt$|.*csv|.*md|.*svg|eu_einvoice/visualization/"
       - id: check-yaml
       - id: check-merge-conflict
       - id: check-ast
@@ -39,7 +44,8 @@ repos:
               .*node_modules.*|
               .*boilerplate.*|
               eu_einvoice/templates/includes/.*|
-              eu_einvoice/public/js/lib/.*
+              eu_einvoice/public/js/lib/.*|
+              eu_einvoice/visualization/.*
           )$
 
   - repo: https://github.com/pre-commit/mirrors-eslint
@@ -60,7 +66,8 @@ repos:
               .*node_modules.*|
               .*boilerplate.*|
               eu_einvoice/templates/includes/.*|
-              eu_einvoice/public/js/lib/.*
+              eu_einvoice/public/js/lib/.*|
+              eu_einvoice/visualization/.*
           )$
 
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
