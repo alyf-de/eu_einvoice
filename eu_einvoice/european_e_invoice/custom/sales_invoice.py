@@ -82,6 +82,7 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 		seller = TradeParty(
 			name=self.invoice.company,
 			id=self._get_seller_id(),
+			legal_registration=self._get_seller_legal_registration(company),
 			phone=company.phone_no,
 			fax=company.fax,
 		)
@@ -130,6 +131,24 @@ class SalesInvoiceGenerator(EInvoiceGenerator):
 			if row.company == self.invoice.company and row.supplier_number:
 				return row.supplier_number
 		return None
+
+	@staticmethod
+	def _get_seller_legal_registration(company) -> tuple[str, str] | None:
+		"""Return the company's commercial register entry (BT-30), e.g. "HRB 12345, Amtsgericht Köln".
+
+		Uses the register fields added by ERPNext Germany, if present. German register numbers
+		are only unique per court, so the court is part of the identifier. ISO/IEC 6523 has no
+		scheme for German commercial registers, so BT-30-1 stays empty.
+		"""
+		register_number = (company.get("register_number") or "").strip()
+		if not register_number:
+			return None
+
+		legal_registration = f"{company.get('register_type') or ''} {register_number}".strip()
+		if register_court := company.get("register_court"):
+			legal_registration += f", Amtsgericht {register_court}"
+
+		return "", legal_registration
 
 	def get_buyer(self) -> TradeParty:
 		buyer = TradeParty(name=self.invoice.customer_name)

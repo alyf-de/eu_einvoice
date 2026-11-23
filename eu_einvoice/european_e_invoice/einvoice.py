@@ -100,6 +100,7 @@ class TradeParty:
 
 	name: str
 	id: str | None = None
+	legal_registration: tuple[str, str] | None = None  # (scheme, ID), scheme may be "" (BT-30, BT-47)
 	tax_registration: tuple[str, str] | None = None  # (scheme, ID), scheme is "VA" or "FC"
 	address: Address | None = None
 	person_name: str | None = None
@@ -304,6 +305,9 @@ class EInvoiceGenerator:
 
 		if party.id:
 			target.id = party.id
+
+		if party.legal_registration:
+			target.legal_organization.id = party.legal_registration
 
 		if party.tax_registration:
 			target.tax_registrations.add(TaxRegistration(id=party.tax_registration))
