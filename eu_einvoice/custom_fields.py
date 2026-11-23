@@ -120,6 +120,17 @@ def get_custom_fields():
 				"fetch_if_empty": 1,
 			},
 		],
+		"Item Tax Template": [
+			{
+				"fieldname": "vat_exemption_reason_text",
+				"label": _("VAT exemption reason"),
+				"insert_after": "taxes",
+				"fieldtype": "Small Text",
+				"description": _(
+					"Written to BT-120 on the e-invoice's VAT breakdown of exempt lines using this template. Overrides the default from E Invoice Settings."
+				),
+			},
+		],
 		"Sales Invoice": [
 			{
 				"fieldname": "buyer_reference",
