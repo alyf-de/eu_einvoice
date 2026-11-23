@@ -647,7 +647,8 @@ class EInvoiceGenerator:
 		self.doc.trade.settlement.monetary_summation.grand_total = grand_total
 
 		# [BR-DEC-17]-The allowed maximum number of decimals for the Rounding amount (BT-114) is 2.
-		rounding_amount = flt(self.invoice.rounding_adjustment, 2)
+		# ERPNext ignores the rounding adjustment when the rounded total is zero.
+		rounding_amount = flt(self.invoice.rounding_adjustment, 2) if self.invoice.rounded_total else 0
 		if rounding_amount:
 			self.doc.trade.settlement.monetary_summation.rounding_amount = rounding_amount
 

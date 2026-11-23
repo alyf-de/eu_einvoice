@@ -551,6 +551,19 @@ class TestMonetaryTotals(IntegrationTestCase):
 				(0, 100.05, 0.05),
 			),
 			(
+				"rounding to zero",
+				{
+					"net_total": 0.4,
+					"grand_total": 0.4,
+					"rounded_total": 0,
+					"base_grand_total": 0.4,
+					"base_rounded_total": 0,
+					"outstanding_amount": 0.4,
+					"rounding_adjustment": -0.4,
+				},
+				(0, 0.4, None),
+			),
+			(
 				"POS payment",
 				{"is_pos": 1, "paid_amount": 40, "outstanding_amount": 60},
 				(40, 60, None),
