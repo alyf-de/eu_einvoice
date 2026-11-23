@@ -575,7 +575,8 @@ class EInvoiceGenerator:
 						if discount_days > 0:
 							basis_amount = (
 								ps.payment_amount
-								if round(ps.payment_amount, 2) != round(self.invoice.outstanding_amount, 2)
+								if round(ps.payment_amount, 2)
+								!= round(self._get_outstanding_amount_in_invoice_currency(), 2)
 								else None
 							)
 							if ps_description:
@@ -607,6 +608,19 @@ class EInvoiceGenerator:
 
 		self.doc.trade.settlement.payment_means.add(payment_means)
 
+	def _get_outstanding_amount_in_invoice_currency(self):
+		outstanding_amount = flt(self.invoice.outstanding_amount)
+		party_account_currency = self.invoice.get("party_account_currency") or self.invoice.currency
+		if party_account_currency == self.invoice.currency:
+			return outstanding_amount
+
+		total = flt(self.invoice.get("rounded_total") or self.invoice.grand_total)
+		base_total = flt(self.invoice.get("base_rounded_total") or self.invoice.base_grand_total)
+		if not base_total:
+			return outstanding_amount
+
+		return flt(outstanding_amount * total / base_total, 2)
+
 	def _set_totals(self):
 		# [BR-DEC-09]-The allowed maximum number of decimals for the Sum of Invoice line net amount (BT-106) is 2.
 		self.doc.trade.settlement.monetary_summation.line_total = flt(self.invoice.net_total, 2)
@@ -629,16 +643,23 @@ class EInvoiceGenerator:
 		)
 
 		# [BR-DEC-14]-The allowed maximum number of decimals for the Invoice total amount with VAT (BT-112) is 2.
-		self.doc.trade.settlement.monetary_summation.grand_total = flt(self.invoice.grand_total, 2)
+		grand_total = flt(self.invoice.grand_total, 2)
+		self.doc.trade.settlement.monetary_summation.grand_total = grand_total
 
-		# [BR-DEC-16]-The allowed maximum number of decimals for the Paid amount (BT-113) is 2.
-		if self.invoice.outstanding_amount == 0:
-			self.doc.trade.settlement.monetary_summation.prepaid_total = flt(self.invoice.grand_total, 2)
-		else:
-			self.doc.trade.settlement.monetary_summation.prepaid_total = flt(self.invoice.total_advance, 2)
+		# [BR-DEC-17]-The allowed maximum number of decimals for the Rounding amount (BT-114) is 2.
+		# ERPNext ignores the rounding adjustment when the rounded total is zero.
+		rounding_amount = flt(self.invoice.rounding_adjustment, 2) if self.invoice.rounded_total else 0
+		if rounding_amount:
+			self.doc.trade.settlement.monetary_summation.rounding_amount = rounding_amount
 
 		# [BR-DEC-18]-The allowed maximum number of decimals for the Amount due for payment (BT-115) is 2.
-		self.doc.trade.settlement.monetary_summation.due_amount = flt(self.invoice.outstanding_amount, 2)
+		due_amount = flt(self._get_outstanding_amount_in_invoice_currency(), 2)
+		self.doc.trade.settlement.monetary_summation.due_amount = due_amount
+
+		# [BR-DEC-16]-The allowed maximum number of decimals for the Paid amount (BT-113) is 2.
+		self.doc.trade.settlement.monetary_summation.prepaid_total = flt(
+			grand_total + rounding_amount - due_amount, 2
+		)
 
 
 def validate_vat_id(vat_id: str) -> str:

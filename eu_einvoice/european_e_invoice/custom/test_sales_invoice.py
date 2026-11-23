@@ -501,6 +501,129 @@ class TestPaymentMeans(IntegrationTestCase):
 		self.assertFalse(instructions[0].payee_account.iban._text)
 
 
+class TestMonetaryTotals(IntegrationTestCase):
+	def _set_totals(self, **overrides):
+		values = {
+			"currency": "EUR",
+			"party_account_currency": "EUR",
+			"net_total": 100,
+			"grand_total": 100,
+			"rounded_total": 100,
+			"base_grand_total": 100,
+			"base_rounded_total": 100,
+			"outstanding_amount": 100,
+			"rounding_adjustment": 0,
+			"total_advance": 0,
+			"taxes": [],
+		}
+		values.update(overrides)
+		generator = SalesInvoiceGenerator(frappe._dict(values), EInvoiceProfile.EN16931)
+		generator.doc = Document()
+		generator._set_totals()
+		return generator.doc.trade.settlement.monetary_summation
+
+	def test_paid_and_due_amounts_cover_payments_and_rounding(self):
+		cases = [
+			(
+				"foreign currency",
+				{
+					"currency": "USD",
+					"party_account_currency": "EUR",
+					"base_grand_total": 90,
+					"base_rounded_total": 90,
+					"outstanding_amount": 90,
+				},
+				(0, 100, None),
+			),
+			(
+				"partial payment",
+				{"outstanding_amount": 79, "grand_total": 119, "rounded_total": 119},
+				(40, 79, None),
+			),
+			(
+				"rounding",
+				{
+					"rounded_total": 100.05,
+					"base_rounded_total": 100.05,
+					"outstanding_amount": 100.05,
+					"rounding_adjustment": 0.05,
+				},
+				(0, 100.05, 0.05),
+			),
+			(
+				"rounding to zero",
+				{
+					"net_total": 0.4,
+					"grand_total": 0.4,
+					"rounded_total": 0,
+					"base_grand_total": 0.4,
+					"base_rounded_total": 0,
+					"outstanding_amount": 0.4,
+					"rounding_adjustment": -0.4,
+				},
+				(0, 0.4, None),
+			),
+			(
+				"POS payment",
+				{"is_pos": 1, "paid_amount": 40, "outstanding_amount": 60},
+				(40, 60, None),
+			),
+			(
+				"return",
+				{
+					"grand_total": -100,
+					"rounded_total": -100,
+					"base_grand_total": -100,
+					"base_rounded_total": -100,
+					"outstanding_amount": -100,
+				},
+				(0, -100, None),
+			),
+		]
+
+		for name, values, expected in cases:
+			with self.subTest(name=name):
+				totals = self._set_totals(**values)
+				self.assertEqual(totals.prepaid_total._value, expected[0])
+				self.assertEqual(totals.due_amount._value, expected[1])
+				self.assertEqual(totals.rounding_amount._value, expected[2])
+				self.assertEqual(
+					totals.grand_total._amount
+					+ (totals.rounding_amount._value or 0)
+					- totals.prepaid_total._value,
+					totals.due_amount._value,
+				)
+
+	def test_payment_terms_compare_invoice_currency_amounts(self):
+		invoice = frappe._dict(
+			currency="USD",
+			party_account_currency="EUR",
+			rounded_total=100,
+			grand_total=100,
+			base_rounded_total=90,
+			base_grand_total=90,
+			outstanding_amount=90,
+			posting_date=date(2026, 1, 1),
+			payment_schedule=[
+				frappe._dict(
+					description="",
+					due_date=date(2026, 1, 15),
+					payment_amount=100,
+					discount=2,
+					discount_date=date(2026, 1, 10),
+					discount_type="Percentage",
+				)
+			],
+		)
+		generator = SalesInvoiceGenerator(invoice, EInvoiceProfile.XRECHNUNG)
+		generator.doc = Document()
+
+		generator._add_payment_terms()
+
+		description = generator.doc.trade.settlement.terms.children[0].description._text
+		self.assertNotIn("BASISBETRAG", description)
+
+
 class TestPdfXmpMetadata(IntegrationTestCase):
 	"""drafthorse < 2025.2 wrote unescaped user input into the XMP metadata (invalid PDF/A-3)."""
 
