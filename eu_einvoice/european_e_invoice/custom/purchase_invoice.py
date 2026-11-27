@@ -14,7 +14,6 @@ from eu_einvoice.european_e_invoice.einvoice import (
 	duty_tax_fee_category_codes,
 	get_tax_registration,
 	validate_doc,
-	validate_einvoice,
 )
 from eu_einvoice.utils import EInvoiceProfile
 
@@ -126,8 +125,7 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 
 	def _get_buyer_id(self) -> str | None:
 		"""Return our customer number at the supplier (BT-46)."""
-		# `customer_numbers` exists from ERPNext v16 on
-		for row in getattr(self.supplier, "customer_numbers", None) or []:
+		for row in self.supplier.customer_numbers:
 			if row.company == self.invoice.company and row.customer_number:
 				return row.customer_number
 		return None
@@ -210,7 +208,7 @@ def validate(doc: PurchaseInvoice, event: str):
 	"""Validate a self-billed Purchase Invoice. Others are left alone."""
 	if not doc.einvoice_profile:
 		# Clears the status left by an earlier profile
-		validate_einvoice(doc)
+		validate_doc(doc, event)
 		return
 
 	warnings = []

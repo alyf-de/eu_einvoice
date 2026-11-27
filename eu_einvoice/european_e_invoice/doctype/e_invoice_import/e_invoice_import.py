@@ -799,7 +799,9 @@ def link_to_purchase_invoice(einvoice: str, purchase_invoice: str):
 	values = {"e_invoice_import": einvoice}
 	if pi.docstatus.is_draft():
 		# The supplier sent their own invoice, so we don't bill ourselves
-		values["einvoice_profile"] = None
+		values.update(
+			einvoice_profile=None, einvoice_is_correct=0, validation_errors="", validation_warnings=""
+		)
 
 	pi.db_set(values)
 
