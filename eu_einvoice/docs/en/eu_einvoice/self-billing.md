@@ -31,17 +31,17 @@ The app creates the e-invoice for such a "Gutschrift" from a **Purchase Invoice*
 
 ## Create a self-billed invoice
 
-1. Create a **Purchase Invoice** and select the supplier. The _E Invoice Profile_ (tab "E Invoicing") is set from the supplier's _Self-billing E Invoice Profile_.
+1. Create a **Purchase Invoice** and select the supplier. If the supplier has a _Self-billing E Invoice Profile_, _Self-billed Invoice_ is ticked and the _E Invoice Profile_ (tab "E Invoicing") is set from it. For other suppliers, tick _Self-billed Invoice_ yourself and select the profile.
 2. Add items and taxes as usual, then save.
 3. When you save, the app creates the e-invoice and validates it. Problems are shown at the top of the form and in the "E Invoicing" tab.
 4. Submit the invoice.
 5. Download the XML file via "..." > "Download eInvoice". For profiles other than "XRECHNUNG", the PDF from the print preview contains the XML.
 
-Only invoices with an _E Invoice Profile_ get an e-invoice. Ordinary purchase invoices stay unaffected.
+Only invoices with _Self-billed Invoice_ ticked get an e-invoice. Ordinary purchase invoices stay unaffected and do not show the "E Invoicing" tab.
 
 Good to know:
 
-- The profile is only a default in the form. You can change or clear it per invoice. Duplicates, amendments and returns keep the profile of the original.
+- The profile is only a default in the form. You can change it per invoice. To turn the e-invoice off, untick _Self-billed Invoice_. Scripts and API calls must tick it too: a profile without it is removed on save. Duplicates, amendments and returns keep the settings of the original.
 - If **E Invoice Settings** > _Auto-attach XML File_ is enabled, invoices with "XRECHNUNG" get the XML attached on submit.
 - **E Invoice Settings** > _Validate Invoice on Save/Submit_ and the error actions apply to self-billed invoices too.
 

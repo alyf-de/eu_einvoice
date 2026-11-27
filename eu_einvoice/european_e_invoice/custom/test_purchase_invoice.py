@@ -8,6 +8,9 @@ from erpnext.stock.doctype.item.test_item import make_item
 from frappe.tests import IntegrationTestCase
 
 from eu_einvoice.european_e_invoice.custom.purchase_invoice import validate
+from eu_einvoice.european_e_invoice.doctype.e_invoice_import.e_invoice_import import (
+	link_to_purchase_invoice,
+)
 from eu_einvoice.european_e_invoice.einvoice import (
 	attach_xml_to_pdf,
 	duty_tax_fee_category_codes,
@@ -64,6 +67,7 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		self, supplier: frappe._dict, profile: EInvoiceProfile | None, taxes=(), tax_category=None
 	):
 		invoice = make_purchase_invoice(supplier=supplier.name, qty=1, rate=100, do_not_save=True)
+		invoice.is_self_billed = int(bool(profile))
 		invoice.einvoice_profile = profile.value if profile else None
 		invoice.tax_category = tax_category
 		invoice.supplier_address = supplier.address
@@ -347,8 +351,9 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		invoice = self.make_invoice(self.domestic, EInvoiceProfile.XRECHNUNG, taxes=[vat_row(19)])
 		self.assertTrue(invoice.einvoice_is_correct, invoice.validation_errors)
 
-		invoice.einvoice_profile = None
+		invoice.is_self_billed = 0
 		invoice.save()
+		self.assertFalse(invoice.einvoice_profile)
 		self.assertFalse(invoice.einvoice_is_correct)
 		self.assertFalse(invoice.validation_errors)
 
@@ -382,8 +387,25 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 			"GU-1500087",
 		)
 
+	def test_self_billed_invoice_needs_a_profile(self):
+		invoice = self.make_invoice(self.domestic, None)
+		invoice.is_self_billed = 1
+		self.assertRaisesRegex(frappe.ValidationError, "self-billed", invoice.save)
+
+	def test_linking_a_supplier_einvoice_ends_self_billing(self):
+		invoice = self.make_invoice(self.domestic, EInvoiceProfile.EN16931, taxes=[vat_row(19)])
+		einvoice = frappe.get_doc(
+			doctype="E Invoice Import", supplier=self.domestic.name, company=COMPANY, currency="EUR"
+		).insert()
+
+		link_to_purchase_invoice(einvoice.name, invoice.name)
+		invoice.reload()
+		invoice.save()
+		self.assertFalse(invoice.is_self_billed)
+		self.assertFalse(invoice.einvoice_profile)
+
 	def test_server_never_sets_the_profile(self):
-		"""The supplier's profile is only a default in the form. Code that sets the profile wins."""
+		"""The supplier's profile is only a default in the form. A profile alone is not enough."""
 		supplier = frappe.get_doc(
 			doctype="Supplier",
 			supplier_name="_Test Supplier With Self-Billing Profile",
@@ -393,6 +415,11 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		invoice = make_purchase_invoice(supplier=supplier.name, qty=1, rate=100, do_not_submit=True)
 		self.assertFalse(invoice.einvoice_profile)
 
+		invoice.einvoice_profile = EInvoiceProfile.EN16931.value
+		invoice.save()
+		self.assertFalse(invoice.einvoice_profile)
+
+		invoice.is_self_billed = 1
 		invoice.einvoice_profile = EInvoiceProfile.EN16931.value
 		invoice.supplier = self.domestic.name
 		invoice.save()

@@ -206,10 +206,16 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 
 def validate(doc: PurchaseInvoice, event: str):
 	"""Validate a self-billed Purchase Invoice. Others are left alone."""
-	if not doc.einvoice_profile:
+	if not doc.is_self_billed:
+		doc.einvoice_profile = None
 		# Clears the status left by an earlier profile
 		validate_doc(doc, event)
 		return
+
+	if not doc.einvoice_profile:
+		frappe.throw(
+			_("{0} is mandatory for a self-billed invoice.").format(_(doc.meta.get_label("einvoice_profile")))
+		)
 
 	warnings = []
 	generator = PurchaseInvoiceGenerator(doc, EInvoiceProfile(doc.einvoice_profile))

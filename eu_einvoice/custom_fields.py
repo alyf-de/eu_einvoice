@@ -29,8 +29,15 @@ def get_custom_fields():
 				"insert_after": "bill_date",
 				"fieldtype": "Attach",
 			},
+			{
+				"fieldname": "is_self_billed",
+				"label": _("Self-billed Invoice"),
+				"insert_after": "apply_tds",
+				"fieldtype": "Check",
+				"print_hide": 1,
+			},
 			# The profile is a default from the supplier, copied in the form (purchase_invoice.js)
-			*get_einvoice_tab_fields(),
+			*get_einvoice_tab_fields(depends_on="is_self_billed"),
 		],
 		"Customer": [
 			{
@@ -118,7 +125,7 @@ def get_custom_fields():
 				"fieldtype": "Select",
 				"options": PROFILE_OPTIONS,
 				"description": _(
-					"Set this if we issue the invoices for this supplier (self-billing). Selecting this supplier in a Purchase Invoice sets its e-invoice profile."
+					"Set this if we issue the invoices for this supplier (self-billing). Selecting this supplier in a Purchase Invoice marks it as self-billed with this profile."
 				),
 			},
 		],
@@ -146,10 +153,13 @@ def get_custom_fields():
 	}
 
 
-def get_einvoice_tab_fields(fetch_profile_from: str | None = None) -> list[dict]:
+def get_einvoice_tab_fields(
+	fetch_profile_from: str | None = None, depends_on: str | None = None
+) -> list[dict]:
 	"""Return the e-invoice tab of a doctype that has a registered e-invoice generator.
 
 	`fetch_profile_from` fills an empty profile from the party on every save.
+	`depends_on` shows the tab and requires a profile only if that field is set.
 	"""
 	profile = {
 		"fieldname": "einvoice_profile",
@@ -162,13 +172,18 @@ def get_einvoice_tab_fields(fetch_profile_from: str | None = None) -> list[dict]
 	if fetch_profile_from:
 		profile |= {"fetch_from": fetch_profile_from, "fetch_if_empty": 1}
 
+	tab = {
+		"fieldname": "einvoice_tab",
+		"label": _("E Invoicing"),
+		"insert_after": "terms",
+		"fieldtype": "Tab Break",
+	}
+	if depends_on:
+		tab["depends_on"] = depends_on
+		profile["mandatory_depends_on"] = depends_on
+
 	return [
-		{
-			"fieldname": "einvoice_tab",
-			"label": _("E Invoicing"),
-			"insert_after": "terms",
-			"fieldtype": "Tab Break",
-		},
+		tab,
 		{
 			"fieldname": "e_invoice_validation_section",
 			"label": "",

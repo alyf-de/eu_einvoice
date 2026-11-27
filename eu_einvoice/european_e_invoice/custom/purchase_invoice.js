@@ -25,12 +25,20 @@ frappe.ui.form.on("Purchase Invoice", {
 		}
 
 		if (!frm.doc.supplier) {
-			return frm.set_value("einvoice_profile", "");
+			return frm.set_value("is_self_billed", 0);
 		}
 
 		return frappe.db
 			.get_value("Supplier", frm.doc.supplier, "self_billing_einvoice_profile")
-			.then((r) => frm.set_value("einvoice_profile", r.message.self_billing_einvoice_profile || ""));
+			.then((r) => {
+				const profile = r.message.self_billing_einvoice_profile || "";
+				return frm.set_value({ is_self_billed: profile ? 1 : 0, einvoice_profile: profile });
+			});
+	},
+	is_self_billed: function (frm) {
+		if (!frm.doc.is_self_billed) {
+			return frm.set_value("einvoice_profile", "");
+		}
 	},
 	add_einvoice_button: function (frm) {
 		if (frm.is_new() || !frm.doc.einvoice_profile) {

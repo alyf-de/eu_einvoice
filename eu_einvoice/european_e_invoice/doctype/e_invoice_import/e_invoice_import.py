@@ -800,7 +800,11 @@ def link_to_purchase_invoice(einvoice: str, purchase_invoice: str):
 	if pi.docstatus.is_draft():
 		# The supplier sent their own invoice, so we don't bill ourselves
 		values.update(
-			einvoice_profile=None, einvoice_is_correct=0, validation_errors="", validation_warnings=""
+			is_self_billed=0,
+			einvoice_profile=None,
+			einvoice_is_correct=0,
+			validation_errors="",
+			validation_warnings="",
 		)
 
 	pi.db_set(values)
