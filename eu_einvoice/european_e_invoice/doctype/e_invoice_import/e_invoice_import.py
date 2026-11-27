@@ -812,7 +812,18 @@ def link_to_purchase_invoice(einvoice: str, purchase_invoice: str):
 	if not frappe.db.get_list("E Invoice Import", filters={"name": einvoice}, limit=1):
 		frappe.throw(_("E Invoice Import {0} does not exist").format(einvoice))
 
-	pi.db_set("e_invoice_import", einvoice)
+	values = {"e_invoice_import": einvoice}
+	if pi.docstatus.is_draft():
+		# The supplier sent their own invoice, so we don't bill ourselves
+		values.update(
+			is_self_billed=0,
+			einvoice_profile=None,
+			einvoice_is_correct=0,
+			validation_errors="",
+			validation_warnings="",
+		)
+
+	pi.db_set(values)
 
 
 @frappe.whitelist()

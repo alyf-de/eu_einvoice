@@ -1,0 +1,56 @@
+frappe.ui.form.on("Purchase Invoice", {
+	refresh: function (frm) {
+		frm.trigger("add_einvoice_button");
+
+		if (!frm.is_dirty() && !frm.doc.einvoice_is_correct && frm.doc.einvoice_profile) {
+			frm.dashboard.set_headline_alert(__("Please note the validation errors of the e-invoice."));
+		}
+	},
+	supplier: function (frm) {
+		// The supplier's self-billing profile is a default. Other scripts may change it afterwards.
+		// ERPNext also triggers this event when a new document with a supplier is loaded.
+		if (frm.doc.e_invoice_import) {
+			// The supplier sent their own e-invoice, so we don't bill ourselves
+			return;
+		}
+
+		if (frm.doc.return_against) {
+			return;
+		}
+
+		if (frm.doc.__run_link_triggers === false && !frm.doc.__einvoice_profile_kept) {
+			// Keep the copied profile on load of a duplicate or amendment, not on later changes
+			frm.doc.__einvoice_profile_kept = true;
+			return;
+		}
+
+		if (!frm.doc.supplier) {
+			return frm.set_value("is_self_billed", 0);
+		}
+
+		return frappe.db
+			.get_value("Supplier", frm.doc.supplier, "self_billing_einvoice_profile")
+			.then((r) => {
+				const profile = r.message.self_billing_einvoice_profile || "";
+				return frm.set_value({ is_self_billed: profile ? 1 : 0, einvoice_profile: profile });
+			});
+	},
+	is_self_billed: function (frm) {
+		if (!frm.doc.is_self_billed) {
+			return frm.set_value("einvoice_profile", "");
+		}
+	},
+	add_einvoice_button: function (frm) {
+		if (frm.is_new() || !frm.doc.einvoice_profile) {
+			return;
+		}
+
+		frm.page.add_menu_item(__("Download eInvoice"), () => {
+			const args = new URLSearchParams({ doctype: frm.doc.doctype, name: frm.doc.name });
+			window.open(
+				`/api/method/eu_einvoice.european_e_invoice.einvoice.download_einvoice?${args}`,
+				"_blank"
+			);
+		});
+	},
+});

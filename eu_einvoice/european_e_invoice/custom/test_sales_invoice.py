@@ -341,6 +341,58 @@ class TestNotSubjectToVatInvoice(IntegrationTestCase):
 		self.assertEqual(buyer_fc_ids[0].text, "98/765/43210")
 
 
+class TestReferencedInvoice(IntegrationTestCase):
+	def make_original(self):
+		original = create_sales_invoice(do_not_submit=True)
+		original.po_no = "RE-2025-0001"
+		return original.submit()
+
+	def get_reference(self, invoice) -> str | None:
+		invoice.einvoice_profile = EInvoiceProfile.EN16931.value
+		root = ET.fromstring(get_einvoice(invoice))
+		return root.findtext(".//ram:InvoiceReferencedDocument/ram:IssuerAssignedID", namespaces=NAMESPACES)
+
+	def use_invoice_number_field(self, fieldname: str | None):
+		self.addCleanup(
+			frappe.db.set_single_value,
+			"E Invoice Settings",
+			"sales_invoice_number_field",
+			frappe.db.get_single_value("E Invoice Settings", "sales_invoice_number_field"),
+		)
+		frappe.db.set_single_value("E Invoice Settings", "sales_invoice_number_field", fieldname)
+
+	def test_credit_note_references_the_invoice_number(self):
+		original = self.make_original()
+		credit_note = create_sales_invoice(
+			is_return=1, return_against=original.name, qty=-1, do_not_submit=True
+		)
+		self.use_invoice_number_field(None)
+		self.assertEqual(self.get_reference(credit_note), original.name)
+
+		self.use_invoice_number_field("po_no")
+		self.assertEqual(self.get_reference(credit_note), "RE-2025-0001")
+
+	def test_amendment_references_the_invoice_number(self):
+		original = self.make_original()
+		original.cancel()
+		amendment = frappe.copy_doc(original)
+		amendment.docstatus = 0
+		amendment.amended_from = original.name
+		amendment.po_no = "RE-2025-0002"
+		amendment.insert()
+		self.use_invoice_number_field(None)
+		self.assertEqual(self.get_reference(amendment), original.name)
+
+		self.use_invoice_number_field("po_no")
+		self.assertEqual(self.get_reference(amendment), "RE-2025-0001")
+
+	def test_return_without_original(self):
+		credit_note = create_sales_invoice(is_return=1, qty=-1, do_not_submit=True)
+		credit_note.einvoice_profile = EInvoiceProfile.EN16931.value
+		root = ET.fromstring(get_einvoice(credit_note))
+		self.assertIsNone(root.find(".//ram:InvoiceReferencedDocument", NAMESPACES))
+
+
 class TestApplicableTradeTaxes(IntegrationTestCase):
 	def test_multi_tax_invoice_groups_and_basis_amounts(self):
 		"""Unused tax rows are dropped, the basis comes from net_amount before any fallback."""
