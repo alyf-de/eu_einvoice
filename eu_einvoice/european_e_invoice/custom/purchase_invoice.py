@@ -64,18 +64,7 @@ class PurchaseInvoiceGenerator(EInvoiceGenerator):
 
 	def get_type_code(self) -> str:
 		# https://unece.org/fileadmin/DAM/trade/untdid/d16b/tred/tred1001.htm
-		if self.invoice.is_return:
-			# -- Self-billed invoice with negative amounts, referencing the original --
-			# 389 keeps the self-billing marking, which a plain 381 credit note lacks. XRechnung warns
-			# about 261 "self-billed credit note" (BR-DE-17). Peppol self-billing corrects the same way.
-			return "389"
-
-		if self.invoice.amended_from:
-			# -- Corrected invoice --
-			return "384"
-
-		# -- Self-billed invoice --
-		# An invoice the invoicee is producing instead of the seller.
+		# Also for returns and amendments: 381 and 384 lack the self-billing marking, BR-DE-17 excludes 261
 		return "389"
 
 	def get_seller(self) -> TradeParty:

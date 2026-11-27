@@ -292,7 +292,7 @@ class TestSelfBilledPurchaseInvoice(IntegrationTestCase):
 		for profile in (EInvoiceProfile.EN16931, EInvoiceProfile.XRECHNUNG):
 			with self.subTest(profile=profile):
 				root = self.assert_valid_einvoice(invoice, profile)
-				self.assertEqual(root.findtext(".//rsm:ExchangedDocument/ram:TypeCode", namespaces=NS), "384")
+				self.assertEqual(root.findtext(".//rsm:ExchangedDocument/ram:TypeCode", namespaces=NS), "389")
 				self.assertEqual(
 					root.findtext(".//ram:InvoiceReferencedDocument/ram:IssuerAssignedID", namespaces=NS),
 					original.name,

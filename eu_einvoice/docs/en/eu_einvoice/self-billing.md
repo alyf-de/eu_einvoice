@@ -64,7 +64,7 @@ It also warns when the supplier has no default bank account, or when the invoice
 
 - **Invoice type**: "389" (self-billed invoice). This code marks the e-invoice as a Gutschrift, so no extra note is needed.
 - **Returns** (Create > Return / Debit Note): also "389", with negative amounts and a reference to the original invoice.
-- **Amendments**: "384" (corrected invoice) with a reference to the cancelled invoice.
+- **Amendments**: also "389", with a reference to the cancelled invoice.
 - **Invoice number**: the name of the **Purchase Invoice**, or the field set in **E Invoice Settings** > _Invoice Number Field_, if the **Purchase Invoice** has that field.
 - **Buyer reference**: the **Purchase Order**, if all items come from exactly one. Otherwise the invoice number.
 - **Seller**: supplier name, address, contact, tax ID and electronic address (or the contact's email).
